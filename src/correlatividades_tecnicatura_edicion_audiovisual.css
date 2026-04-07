@@ -83,7 +83,7 @@ h1 {
 .materia {
   border-radius: 8px;
   padding: 7px 10px;
-  margin-bottom: 6px;
+  margin-bottom: 18px;
   font-size: 12px;
   font-weight: 500;
   cursor: pointer;
@@ -159,9 +159,6 @@ h1 {
   top: 0;
   pointer-events: none;
   line-height: 1.6;
-}
-.materia:hover .tooltip {
-  display: block;
 }
 .tt-title {
   font-weight: 600;

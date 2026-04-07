@@ -1,4 +1,5 @@
 // Archivo JS extraído de correlatividades_tecnicatura_edicion_audiovisual.html
+console.log("[LOG] Script JS cargado");
 // ─── Datos ───────────────────────────────────────────────────────────────────
 const materias = [
   {
@@ -382,6 +383,7 @@ const years = [1, 2, 3];
 const qlabels = { 1: "1er cuatrimestre", 2: "2do cuatrimestre", 3: "Anual" };
 let selectedId = null;
 function render() {
+  console.log("[LOG] render() llamada");
   grid.innerHTML = "";
   years.forEach((y) => {
     const col = document.createElement("div");
@@ -449,7 +451,9 @@ function render() {
             <div class="tt-title">${m.name}</div>
             ${ttBody}
           </div>`;
+        console.log(`[LOG] Listener click agregado a: ${m.name} (${m.id})`);
         div.addEventListener("click", (e) => {
+          console.log(`[LOG] Click en: ${m.name} (${m.id})`);
           e.stopPropagation();
           if (m.status === "pending") m.status = "encurso";
           else if (m.status === "encurso") m.status = "approved";
@@ -459,7 +463,7 @@ function render() {
         });
         div.addEventListener("mouseenter", () => {
           selectedId = m.id;
-          render();
+          // No llamar a render() aquí para evitar bucle de renderizados
           const needs = needsIds(m)
             .map((id) => materias.find((x) => x.id === id)?.name)
             .filter(Boolean);
@@ -499,5 +503,8 @@ document.getElementById("resetBtn").addEventListener("click", () => {
   saveState();
   render();
 });
+console.log("[LOG] Antes de loadState()");
 loadState();
+console.log("[LOG] Antes de render() inicial");
 render();
+console.log("[LOG] Después de render() inicial");
