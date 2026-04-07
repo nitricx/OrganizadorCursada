@@ -1,0 +1,214 @@
+/* Archivo CSS extraído de correlatividades_tecnicatura_edicion_audiovisual.html */
+:root {
+  --gap: 14px;
+  --color-text-primary: #1a1a1a;
+  --color-text-secondary: #555;
+  --color-text-tertiary: #888;
+  --color-background-primary: #fff;
+  --color-background-secondary: #e8e7e0;
+  --color-border-secondary: #c5c3bb;
+  --color-border-tertiary: #ddd;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  padding: 0;
+  background: #f5f4f0;
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
+}
+h1 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 14px;
+  color: var(--color-text-primary);
+}
+.wrap {
+  padding: 20px 16px 32px;
+  max-width: 960px;
+  margin: 0 auto;
+}
+.legend {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  align-items: center;
+}
+.leg-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.leg-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+.grid {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+.year-col {
+  flex: 1;
+  min-width: 0;
+}
+.year-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  margin-bottom: 10px;
+  text-align: center;
+  padding: 4px 0;
+  border-bottom: 1px solid var(--color-border-tertiary);
+}
+.q-section {
+  margin-bottom: 14px;
+}
+.q-label {
+  font-size: 11px;
+  color: var(--color-text-tertiary);
+  margin-bottom: 6px;
+  text-align: center;
+  letter-spacing: 0.03em;
+}
+.materia {
+  border-radius: 8px;
+  padding: 7px 10px;
+  margin-bottom: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    transform 0.1s,
+    box-shadow 0.1s,
+    opacity 0.15s;
+  position: relative;
+  line-height: 1.35;
+  user-select: none;
+  border: 1px solid transparent;
+}
+.materia:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.13);
+}
+.materia.pending {
+  background: var(--color-background-secondary);
+  border-color: var(--color-border-secondary);
+  color: var(--color-text-primary);
+}
+.materia.approved {
+  background: #e1f5ee;
+  color: #04342c;
+  border-color: #0f6e56;
+}
+.materia.encurso {
+  background: #e6f1fb;
+  color: #042c53;
+  border-color: #185fa5;
+}
+.materia.selected {
+  outline: 2.5px solid #ef9f27;
+  outline-offset: 1px;
+}
+.materia.dim {
+  opacity: 0.25;
+}
+.materia.req-highlight {
+  background: #fac775 !important;
+  color: #412402 !important;
+  border-color: #ba7517 !important;
+}
+.materia.unlocks-highlight {
+  background: #9fe1cb !important;
+  color: #04342c !important;
+  border-color: #0f6e56 !important;
+}
+.materia.can-cursar.pending {
+  outline: 2px dashed #185fa5;
+  outline-offset: 2px;
+}
+.tag {
+  font-size: 10px;
+  font-weight: 400;
+  opacity: 0.75;
+  margin-left: 4px;
+}
+.tooltip {
+  display: none;
+  position: absolute;
+  background: #fff;
+  border: 1px solid var(--color-border-secondary);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 12px;
+  color: var(--color-text-primary);
+  z-index: 100;
+  min-width: 200px;
+  max-width: 280px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.14);
+  left: 105%;
+  top: 0;
+  pointer-events: none;
+  line-height: 1.6;
+}
+.materia:hover .tooltip {
+  display: block;
+}
+.tt-title {
+  font-weight: 600;
+  margin-bottom: 6px;
+  font-size: 12px;
+}
+.tt-section {
+  font-size: 11px;
+  color: var(--color-text-secondary);
+  margin-top: 5px;
+}
+.tt-item {
+  color: var(--color-text-primary);
+  font-size: 11px;
+}
+.info-bar {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  margin-top: 14px;
+  min-height: 18px;
+  text-align: center;
+  padding: 6px;
+  border-radius: 6px;
+  background: #efefea;
+}
+.reset-btn {
+  font-size: 11px;
+  color: #888;
+  background: none;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 3px 9px;
+  cursor: pointer;
+  margin-left: 12px;
+  vertical-align: middle;
+}
+.reset-btn:hover {
+  background: #eee;
+}
+@media (max-width: 640px) {
+  .grid {
+    flex-direction: column;
+    gap: 14px;
+  }
+  .tooltip {
+    left: 0;
+    top: 110%;
+    min-width: 180px;
+  }
+}

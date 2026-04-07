@@ -1,0 +1,257 @@
+[
+  {
+    "materia": "Producción Audiovisual 1",
+    "requiere_cursadas": [],
+    "requiere_aprobadas": []
+  },
+  {
+    "materia": "Escritura Audiovisual 1",
+    "requiere_cursadas": [],
+    "requiere_aprobadas": []
+  },
+  {
+    "materia": "Software en Edición Audiovisual",
+    "requiere_cursadas": [],
+    "requiere_aprobadas": []
+  },
+  {
+    "materia": "Iluminación y Cámara 1",
+    "requiere_cursadas": [],
+    "requiere_aprobadas": []
+  },
+  {
+    "materia": "Historia del Arte 1",
+    "requiere_cursadas": [],
+    "requiere_aprobadas": []
+  },
+  {
+    "materia": "Sonido 1",
+    "requiere_cursadas": [],
+    "requiere_aprobadas": []
+  },
+  {
+    "materia": "Montaje 1",
+    "requiere_cursadas": [],
+    "requiere_aprobadas": []
+  },
+  {
+    "materia": "Proyecto Audiovisual 1",
+    "requiere_cursadas": [],
+    "requiere_aprobadas": []
+  },
+  {
+    "materia": "Iluminación y Cámara 2",
+    "requiere_cursadas": [
+      "Iluminación y Cámara 1"
+    ],
+    "requiere_aprobadas": [
+      "Iluminación y Cámara 1"
+    ]
+  },
+  {
+    "materia": "Sonido 2",
+    "requiere_cursadas": [
+      "Sonido 1"
+    ],
+    "requiere_aprobadas": [
+      "Sonido 1"
+    ]
+  },
+  {
+    "materia": "Montaje 2",
+    "requiere_cursadas": [
+      "Montaje 1",
+      "Software en Edición Audiovisual"
+    ],
+    "requiere_aprobadas": [
+      "Montaje 1",
+      "Software en Edición Audiovisual"
+    ]
+  },
+  {
+    "materia": "Producción Audiovisual 2",
+    "requiere_cursadas": [
+      "Producción Audiovisual 1"
+    ],
+    "requiere_aprobadas": [
+      "Producción Audiovisual 1"
+    ]
+  },
+  {
+    "materia": "Software de Composición",
+    "requiere_cursadas": [],
+    "requiere_aprobadas": []
+  },
+  {
+    "materia": "Inglés Técnico",
+    "requiere_cursadas": [],
+    "requiere_aprobadas": []
+  },
+  {
+    "materia": "Historia del Arte 2",
+    "requiere_cursadas": [
+      "Historia del Arte 1"
+    ],
+    "requiere_aprobadas": [
+      "Historia del Arte 1"
+    ]
+  },
+  {
+    "materia": "Escritura Audiovisual 2",
+    "requiere_cursadas": [
+      "Escritura Audiovisual 1"
+    ],
+    "requiere_aprobadas": [
+      "Escritura Audiovisual 1"
+    ]
+  },
+  {
+    "materia": "Proyecto Audiovisual 2",
+    "requiere_cursadas": [
+      "Proyecto Audiovisual 1"
+    ],
+    "requiere_aprobadas": [
+      "Proyecto Audiovisual 1"
+    ]
+  },
+  {
+    "materia": "Diseño Sonoro",
+    "requiere_cursadas": [
+      "Montaje 2",
+      "Sonido 2",
+      "Montaje 1",
+      "Sonido 1",
+      "Software en Edición Audiovisual"
+    ],
+    "requiere_aprobadas": [
+      "Montaje 1",
+      "Sonido 1",
+      "Montaje 2",
+      "Sonido 2",
+      "Software en Edición Audiovisual"
+    ]
+  },
+  {
+    "materia": "Historia de los Medios",
+    "requiere_cursadas": [],
+    "requiere_aprobadas": []
+  },
+  {
+    "materia": "Postproducción Audiovisual 1",
+    "requiere_cursadas": [
+      "Montaje 1",
+      "Sonido 1",
+      "Montaje 2",
+      "Sonido 2",
+      "Software en Edición Audiovisual",
+      "Software de Composición"
+    ],
+    "requiere_aprobadas": [
+      "Montaje 1",
+      "Sonido 1",
+      "Montaje 2",
+      "Sonido 2",
+      "Software en Edición Audiovisual",
+      "Software de Composición"
+    ]
+  },
+  {
+    "materia": "Nociones de Colorimetría",
+    "requiere_cursadas": [
+      "Iluminación y Cámara 1",
+      "Iluminación y Cámara 2"
+    ],
+    "requiere_aprobadas": [
+      "Iluminación y Cámara 1",
+      "Iluminación y Cámara 2"
+    ]
+  },
+  {
+    "materia": "Montaje Documental",
+    "requiere_cursadas": [
+      "Montaje 1",
+      "Sonido 1",
+      "Montaje 2",
+      "Sonido 2",
+      "Software en Edición Audiovisual"
+    ],
+    "requiere_aprobadas": [
+      "Montaje 1",
+      "Sonido 1",
+      "Montaje 2",
+      "Sonido 2",
+      "Software en Edición Audiovisual"
+    ]
+  },
+  {
+    "materia": "Postproducción Audiovisual 2",
+    "requiere_cursadas": [
+      "Montaje 1",
+      "Sonido 1",
+      "Montaje 2",
+      "Sonido 2",
+      "Software en Edición Audiovisual",
+      "Software de Composición"
+    ],
+    "requiere_aprobadas": [
+      "Montaje 1",
+      "Sonido 1",
+      "Montaje 2",
+      "Sonido 2",
+      "Software en Edición Audiovisual",
+      "Software de Composición"
+    ]
+  },
+  {
+    "materia": "Práctica Profesional",
+    "requiere_cursadas": [
+      "Escritura Audiovisual 1",
+      "Producción Audiovisual 1",
+      "Iluminación y Cámara 1",
+      "Montaje 1",
+      "Sonido 1",
+      "Proyecto Audiovisual 1",
+      "Producción Audiovisual 2",
+      "Montaje 2",
+      "Sonido 2",
+      "Iluminación y Cámara 2",
+      "Escritura Audiovisual 2",
+      "Proyecto Audiovisual 2",
+      "Software en Edición Audiovisual",
+      "Software de Composición",
+      "Postproducción Audiovisual 1"
+    ],
+    "requiere_aprobadas": [
+      "Escritura Audiovisual 1",
+      "Producción Audiovisual 1",
+      "Iluminación y Cámara 1",
+      "Montaje 1",
+      "Sonido 1",
+      "Proyecto Audiovisual 1",
+      "Producción Audiovisual 2",
+      "Montaje 2",
+      "Sonido 2",
+      "Iluminación y Cámara 2",
+      "Escritura Audiovisual 2",
+      "Proyecto Audiovisual 2",
+      "Software en Edición Audiovisual",
+      "Software de Composición",
+      "Postproducción Audiovisual 1"
+    ]
+  },
+  {
+    "materia": "Proyecto Audiovisual 3",
+    "requiere_cursadas": [
+      "Proyecto Audiovisual 1",
+      "Producción Audiovisual 2",
+      "Proyecto Audiovisual 2",
+      "Producción Audiovisual 1"
+    ],
+    "requiere_aprobadas": [
+      "Proyecto Audiovisual 1",
+      "Producción Audiovisual 2",
+      "Proyecto Audiovisual 2",
+      "Producción Audiovisual 1"
+    ]
+  }
+]
