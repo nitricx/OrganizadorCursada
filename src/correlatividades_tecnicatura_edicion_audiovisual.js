@@ -412,9 +412,8 @@ function render() {
               div.classList.add("req-highlight");
             } else if (unlocks.has(m.id)) {
               div.classList.add("unlocks-highlight");
-            } else {
-              div.classList.add("dim");
             }
+            // No agregar la clase 'dim' para evitar el efecto de ocultar
           }
         }
         const tag =
