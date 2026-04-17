@@ -1,6 +1,11 @@
 <div
   [class]="'materia ' + course().status + getHighlightClass()"
   [attr.id]="'mat-' + course().id"
+  [ngStyle]="
+    allRequirementsMet() && course().status === 'pending'
+      ? { outline: '2px dashed #185fa5', 'outline-offset': '1px', background: '#e8e7e0' }
+      : {}
+  "
   (click)="onCardClick()"
   (mouseenter)="onMouseEnter()"
   (mouseleave)="onMouseLeave()"

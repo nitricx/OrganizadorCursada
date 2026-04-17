@@ -110,6 +110,12 @@ export class CourseService {
     return false;
   }
 
+  areAllRequirementsMet(course: Course): boolean {
+    const allCursarReqMet = this.areRequirementsSatisfied(course.cursarReq, 'coursed');
+    const allAprobarReqMet = this.areRequirementsSatisfied(course.aprobarReq, 'approved');
+    return allCursarReqMet && allAprobarReqMet;
+  }
+
   toggleCourseStatus(courseId: string): void {
     const courses = this.coursesSignal();
     const courseIndex = courses.findIndex((c) => c.id === courseId);

@@ -6,6 +6,7 @@ import { CourseService } from '../../services/course.service';
 @Component({
   selector: 'app-course-card',
   standalone: true,
+  imports: [CommonModule],
   templateUrl: './course-card.component.html',
   styleUrls: ['./course-card.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -26,6 +27,10 @@ export class CourseCardComponent {
     return unlockedIds
       .map((id) => this.courseService.getCourseById(id)?.name)
       .filter((name): name is string => !!name);
+  });
+
+  allRequirementsMet = computed(() => {
+    return this.courseService.areAllRequirementsMet(this.course());
   });
 
   onCardClick(): void {
