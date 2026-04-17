@@ -381,7 +381,8 @@ const grid = document.getElementById("grid");
 const infoBar = document.getElementById("info");
 const years = [1, 2, 3];
 const qlabels = { 1: "1er cuatrimestre", 2: "2do cuatrimestre", 3: "Anual" };
-let selectedId = null;
+// Permitir múltiples seleccionadas
+let selectedIds = new Set();
 function render() {
   console.log("[LOG] render() llamada");
   grid.innerHTML = "";
@@ -401,26 +402,30 @@ function render() {
         const classes = ["materia", m.status];
         if (canCursar(m)) classes.push("can-cursar");
         div.className = classes.join(" ");
-        if (selectedId) {
-          if (m.id === selectedId) {
+        if (selectedIds.size > 0) {
+          if (selectedIds.has(m.id)) {
             div.classList.add("selected");
           } else {
-            const sel = materias.find((x) => x.id === selectedId);
-            const needs = new Set(needsIds(sel));
-            const unlocks = unlockMap[selectedId] || new Set();
+            // Unir correlativas de todas las seleccionadas
+            let needs = new Set();
+            let unlocks = new Set();
+            selectedIds.forEach((sid) => {
+              const sel = materias.find((x) => x.id === sid);
+              needsIds(sel).forEach((nid) => needs.add(nid));
+              (unlockMap[sid] || new Set()).forEach((uid) => unlocks.add(uid));
+            });
             if (needs.has(m.id)) {
               div.classList.add("req-highlight");
-            } else if (unlocks.has(m.id)) {
-              div.classList.add("unlocks-highlight");
+              // } else if (unlocks.has(m.id)) {
+              //   div.classList.add("unlocks-highlight");
             }
-            // No agregar la clase 'dim' para evitar el efecto de ocultar
           }
         }
         const tag =
           m.status === "approved"
             ? '<span class="tag">✓ aprobada</span>'
             : m.status === "encurso"
-              ? '<span class="tag">● en curso</span>'
+              ? '<span class="tag">● cursada</span>'
               : "";
         let ttBody = "";
         if (m.cursarReq.length) {
@@ -454,6 +459,13 @@ function render() {
         div.addEventListener("click", (e) => {
           console.log(`[LOG] Click en: ${m.name} (${m.id})`);
           e.stopPropagation();
+          // Selección múltiple: toggle en selectedIds
+          if (selectedIds.has(m.id)) {
+            selectedIds.delete(m.id);
+          } else {
+            selectedIds.add(m.id);
+          }
+          // Cambio de estado de la materia
           if (m.status === "pending") m.status = "encurso";
           else if (m.status === "encurso") m.status = "approved";
           else m.status = "pending";
@@ -461,8 +473,7 @@ function render() {
           render();
         });
         div.addEventListener("mouseenter", () => {
-          selectedId = m.id;
-          // No llamar a render() aquí para evitar bucle de renderizados
+          // No modificar selectedIds ni llamar a render()
           const needs = needsIds(m)
             .map((id) => materias.find((x) => x.id === id)?.name)
             .filter(Boolean);
@@ -471,9 +482,9 @@ function render() {
             .filter(Boolean);
           let msg = `<strong>${m.name}</strong>`;
           if (needs.length)
-            msg += ` &nbsp;·&nbsp; <span style="color:#8a4a00">Requiere: ${needs.join(", ")}</span>`;
+            msg += ` &nbsp;·&nbsp; <span style=\"color:#8a4a00\">Requiere: ${needs.join(", ")}</span>`;
           if (unlocks.length)
-            msg += ` &nbsp;·&nbsp; <span style="color:#0a5c3f">Habilita: ${unlocks.join(", ")}</span>`;
+            msg += ` &nbsp;·&nbsp; <span style=\"color:#0a5c3f\">Habilita: ${unlocks.join(", ")}</span>`;
           if (!needs.length && !unlocks.length)
             msg += " &nbsp;·&nbsp; Sin correlativas";
           infoBar.innerHTML = msg;
@@ -486,12 +497,8 @@ function render() {
   });
 }
 document.addEventListener("click", () => {
-  if (selectedId) {
-    selectedId = null;
-    render();
-    infoBar.innerHTML =
-      "Pasá el cursor sobre una materia para ver qué requiere y qué habilita.";
-  }
+  // Ya no se limpia selectedIds al hacer click fuera, para mantener la selección múltiple
+  // y que materias aprobadas sigan seleccionadas.
 });
 document.getElementById("resetBtn").addEventListener("click", () => {
   if (!confirm("¿Reiniciar todas las materias a Pendiente?")) return;
@@ -499,6 +506,7 @@ document.getElementById("resetBtn").addEventListener("click", () => {
     m.status = "pending";
   });
   selectedId = null;
+  selectedIds.clear();
   saveState();
   render();
 });

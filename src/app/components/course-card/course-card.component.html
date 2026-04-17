@@ -1,0 +1,16 @@
+<div
+  [class]="'materia ' + course().status + (canTake() ? ' can-cursar' : '') + getHighlightClass()"
+  [attr.id]="'mat-' + course().id"
+  (click)="onCardClick()"
+  (mouseenter)="onMouseEnter()"
+  (mouseleave)="onMouseLeave()"
+  role="button"
+  tabindex="0"
+>
+  <span>{{ course().name }}</span>
+  @if (course().status === 'approved') {
+    <span class="tag">✓ aprobada</span>
+  } @else if (course().status === 'encurso') {
+    <span class="tag">● cursada</span>
+  }
+</div>

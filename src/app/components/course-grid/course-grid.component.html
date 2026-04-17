@@ -1,0 +1,23 @@
+<div class="grid">
+  @for (year of [1, 2, 3]; track year) {
+    <div class="year-col">
+      <div class="year-label">{{ year }}° Año</div>
+      @for (q of [1, 2, 3]; track q) {
+        @if (getCoursesForYearAndQuarter(year, q).length > 0) {
+          <div class="q-section">
+            <div class="q-label">{{ getQuarterLabel(q) }}</div>
+            @for (course of getCoursesForYearAndQuarter(year, q); track course.id) {
+              <app-course-card
+                [course]="course"
+                [selectedIds]="selectedIds()"
+                (cardClicked)="onCardClicked($event)"
+                (mouseEntered)="onMouseEntered($event)"
+                (mouseLeft)="onMouseLeft()"
+              />
+            }
+          </div>
+        }
+      }
+    </div>
+  }
+</div>
