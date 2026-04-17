@@ -9,35 +9,63 @@
   color: var(--color-text-primary);
 }
 
-.days-grid {
-  display: flex;
-  gap: 20px;
-  align-items: flex-start;
+/* 6 columns: time gutter + 5 days; 21 rows: header + 20 half-hour slots (08:00–17:30) */
+.calendar-grid {
+  display: grid;
+  grid-template-columns: 44px repeat(5, 1fr);
+  grid-template-rows: 36px repeat(20, 30px);
 }
 
-.day-column {
-  flex: 1;
-  min-width: 0;
+.time-gutter {
+  grid-column: 1;
+  grid-row: 1;
 }
 
-.day-column-header {
+.day-header {
   font-size: 13px;
   font-weight: 600;
   color: var(--color-text-secondary);
-  margin-bottom: 10px;
   text-align: center;
   padding: 4px 0;
   border-bottom: 1px solid var(--color-border-tertiary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.time-label {
+  grid-column: 1;
+  font-size: 10px;
+  color: var(--color-text-tertiary);
+  text-align: right;
+  padding-right: 8px;
+  align-self: start;
+  transform: translateY(-7px);
+  white-space: nowrap;
+}
+
+.hour-line {
+  align-self: start;
+  height: 1px;
+  background: var(--color-border-tertiary);
 }
 
 .calendar-course {
   border-radius: 6px;
   padding: 6px 8px;
-  margin-bottom: 6px;
+  margin: 2px;
   font-size: 12px;
   display: flex;
   flex-direction: column;
   gap: 2px;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.calendar-course.available {
+  outline: 2px dashed #185fa5;
+  outline-offset: -2px;
+  background: #e8e7e0;
 }
 
 .calendar-course-name {
