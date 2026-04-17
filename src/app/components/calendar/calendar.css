@@ -9,10 +9,9 @@
   color: var(--color-text-primary);
 }
 
-/* 6 columns: time gutter + 5 days; 21 rows: header + 20 half-hour slots (08:00–17:30) */
+/* Columns are set dynamically via style binding based on visible days */
 .calendar-grid {
   display: grid;
-  grid-template-columns: 44px repeat(5, 1fr);
   grid-template-rows: 36px repeat(20, 30px);
 }
 

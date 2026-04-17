@@ -2,20 +2,24 @@
   <div class="calendar-header">
     <h2>{{ currentDate().toLocaleDateString('es-ES', { month: 'long', year: 'numeric' }) }}</h2>
   </div>
-  <div class="calendar-grid">
+  <div class="calendar-grid" [style.grid-template-columns]="gridTemplateColumns()">
     <!-- Corner cell -->
     <div class="time-gutter"></div>
     <!-- Day headers (row 1) -->
-    @for (entry of days; track entry.day) {
+    @for (entry of days(); track entry.day) {
       <div class="day-header">{{ entry.label }}</div>
     }
     <!-- Time labels and hour lines -->
     @for (slot of timeSlots(); track slot.row) {
       <div class="time-label" [style.grid-row]="slot.row">{{ slot.label }}</div>
-      <div class="hour-line" [style.grid-row]="slot.row" [style.grid-column]="'2 / 7'"></div>
+      <div
+        class="hour-line"
+        [style.grid-row]="slot.row"
+        [style.grid-column]="'2 / ' + hourLineEnd()"
+      ></div>
     }
     <!-- Courses positioned by time -->
-    @for (entry of days; track entry.day) {
+    @for (entry of days(); track entry.day) {
       @for (course of availableCoursesByDay().get(entry.day) ?? []; track course.id) {
         <div
           class="calendar-course available"

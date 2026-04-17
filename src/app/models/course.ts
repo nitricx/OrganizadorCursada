@@ -6,6 +6,7 @@ export enum DayOfWeek {
   Wednesday = 2,
   Thursday = 3,
   Friday = 4,
+  Saturday = 5,
 }
 
 export interface Course {

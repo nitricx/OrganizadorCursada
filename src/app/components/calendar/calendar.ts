@@ -14,18 +14,19 @@ export class Calendar {
 
   currentDate = signal(new Date());
 
-  days: { label: string; day: DayOfWeek; col: number }[] = [
+  private readonly allDays: { label: string; day: DayOfWeek; col: number }[] = [
     { label: 'Monday', day: DayOfWeek.Monday, col: 2 },
     { label: 'Tuesday', day: DayOfWeek.Tuesday, col: 3 },
     { label: 'Wednesday', day: DayOfWeek.Wednesday, col: 4 },
     { label: 'Thursday', day: DayOfWeek.Thursday, col: 5 },
     { label: 'Friday', day: DayOfWeek.Friday, col: 6 },
+    { label: 'Saturday', day: DayOfWeek.Saturday, col: 7 },
   ];
 
   availableCoursesByDay = computed(() => {
     const courses = this.courseService.courses();
     const map = new Map<DayOfWeek, Course[]>();
-    for (const entry of this.days) {
+    for (const entry of this.allDays) {
       map.set(entry.day, []);
     }
     courses
@@ -35,6 +36,12 @@ export class Calendar {
       });
     return map;
   });
+
+  days = computed(() => this.allDays.map((day, i) => ({ ...day, col: i + 2 })));
+
+  gridTemplateColumns = computed(() => `44px repeat(${this.days().length}, 1fr)`);
+
+  hourLineEnd = computed(() => this.days().length + 2);
 
   private readonly startHour = computed(() => {
     const courses = this.courseService
