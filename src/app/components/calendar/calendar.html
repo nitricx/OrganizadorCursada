@@ -3,9 +3,15 @@
     <h2>{{ currentDate().toLocaleDateString('es-ES', { month: 'long', year: 'numeric' }) }}</h2>
   </div>
   <div class="days-grid">
-    @for (day of days; track day) {
+    @for (entry of days; track entry.day) {
       <div class="day-column">
-        <div class="day-column-header">{{ day }}</div>
+        <div class="day-column-header">{{ entry.label }}</div>
+        @for (course of availableCoursesByDay().get(entry.day) ?? []; track course.id) {
+          <div class="calendar-course available">
+            <span class="calendar-course-name">{{ course.name }}</span>
+            <span class="calendar-course-time">{{ course.startTime }} – {{ course.endTime }}</span>
+          </div>
+        }
       </div>
     }
   </div>
