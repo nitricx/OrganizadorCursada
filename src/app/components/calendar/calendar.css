@@ -1,21 +1,31 @@
-.calendar {
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  padding: 16px;
-  background-color: #fff;
-}
-
 .calendar-header {
-  text-align: center;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
 }
 
 .calendar-header h2 {
-  margin: 0;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
+  margin: 0 0 14px;
+  color: var(--color-text-primary);
 }
 
-.calendar-content {
-  min-height: 200px;
+.days-grid {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.day-column {
+  flex: 1;
+  min-width: 0;
+}
+
+.day-column-header {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  margin-bottom: 10px;
+  text-align: center;
+  padding: 4px 0;
+  border-bottom: 1px solid var(--color-border-tertiary);
 }

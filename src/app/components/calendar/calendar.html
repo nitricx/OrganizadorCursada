@@ -2,7 +2,11 @@
   <div class="calendar-header">
     <h2>{{ currentDate().toLocaleDateString('es-ES', { month: 'long', year: 'numeric' }) }}</h2>
   </div>
-  <div class="calendar-content">
-    <!-- Calendar content will go here -->
+  <div class="days-grid">
+    @for (day of days; track day) {
+      <div class="day-column">
+        <div class="day-column-header">{{ day }}</div>
+      </div>
+    }
   </div>
 </div>

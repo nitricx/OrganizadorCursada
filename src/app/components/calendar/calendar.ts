@@ -9,4 +9,6 @@ import { Component, ChangeDetectionStrategy, signal } from '@angular/core';
 })
 export class Calendar {
   currentDate = signal(new Date());
+
+  days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 }
