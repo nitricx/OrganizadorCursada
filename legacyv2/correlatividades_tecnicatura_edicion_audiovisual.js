@@ -1,324 +1,324 @@
 // Archivo JS extraído de correlatividades_tecnicatura_edicion_audiovisual.html
-console.log("[LOG] Script JS cargado");
+console.log('[LOG] Script JS cargado');
 // ─── Datos ───────────────────────────────────────────────────────────────────
 const materias = [
   {
-    id: "PA1",
-    name: "Producción Audiovisual 1",
+    id: 'PA1',
+    name: 'Producción Audiovisual 1',
     year: 1,
     q: 1,
-    status: "pending",
+    status: 'pending',
     cursarReq: [],
     aprobarReq: [],
   },
   {
-    id: "EA1",
-    name: "Escritura Audiovisual 1",
+    id: 'EA1',
+    name: 'Escritura Audiovisual 1',
     year: 1,
     q: 1,
-    status: "pending",
+    status: 'pending',
     cursarReq: [],
     aprobarReq: [],
   },
   {
-    id: "SEA",
-    name: "Software en Edición Audiovisual",
+    id: 'SEA',
+    name: 'Software en Edición Audiovisual',
     year: 1,
     q: 1,
-    status: "pending",
+    status: 'pending',
     cursarReq: [],
     aprobarReq: [],
   },
   {
-    id: "IyC1",
-    name: "Iluminación y Cámara 1",
+    id: 'IyC1',
+    name: 'Iluminación y Cámara 1',
     year: 1,
     q: 2,
-    status: "pending",
+    status: 'pending',
     cursarReq: [],
     aprobarReq: [],
   },
   {
-    id: "HA1",
-    name: "Historia del Arte 1",
+    id: 'HA1',
+    name: 'Historia del Arte 1',
     year: 1,
     q: 2,
-    status: "pending",
+    status: 'pending',
     cursarReq: [],
     aprobarReq: [],
   },
   {
-    id: "S1",
-    name: "Sonido 1",
+    id: 'S1',
+    name: 'Sonido 1',
     year: 1,
     q: 2,
-    status: "pending",
+    status: 'pending',
     cursarReq: [],
     aprobarReq: [],
   },
   {
-    id: "M1",
-    name: "Montaje 1",
+    id: 'M1',
+    name: 'Montaje 1',
     year: 1,
     q: 2,
-    status: "pending",
+    status: 'pending',
     cursarReq: [],
     aprobarReq: [],
   },
   {
-    id: "PROY1",
-    name: "Proyecto Audiovisual 1",
+    id: 'PROY1',
+    name: 'Proyecto Audiovisual 1',
     year: 1,
     q: 3,
-    status: "pending",
+    status: 'pending',
     cursarReq: [],
     aprobarReq: [],
   },
   {
-    id: "IyC2",
-    name: "Iluminación y Cámara 2",
+    id: 'IyC2',
+    name: 'Iluminación y Cámara 2',
     year: 2,
     q: 1,
-    status: "pending",
-    cursarReq: ["Iluminación y Cámara 1"],
-    aprobarReq: ["Iluminación y Cámara 1"],
+    status: 'pending',
+    cursarReq: ['Iluminación y Cámara 1'],
+    aprobarReq: ['Iluminación y Cámara 1'],
   },
   {
-    id: "S2",
-    name: "Sonido 2",
+    id: 'S2',
+    name: 'Sonido 2',
     year: 2,
     q: 1,
-    status: "pending",
-    cursarReq: ["Sonido 1"],
-    aprobarReq: ["Sonido 1"],
+    status: 'pending',
+    cursarReq: ['Sonido 1'],
+    aprobarReq: ['Sonido 1'],
   },
   {
-    id: "M2",
-    name: "Montaje 2",
+    id: 'M2',
+    name: 'Montaje 2',
     year: 2,
     q: 1,
-    status: "pending",
-    cursarReq: ["Montaje 1", "Software en Edición Audiovisual"],
-    aprobarReq: ["Montaje 1", "Software en Edición Audiovisual"],
+    status: 'pending',
+    cursarReq: ['Montaje 1', 'Software en Edición Audiovisual'],
+    aprobarReq: ['Montaje 1', 'Software en Edición Audiovisual'],
   },
   {
-    id: "PA2",
-    name: "Producción Audiovisual 2",
+    id: 'PA2',
+    name: 'Producción Audiovisual 2',
     year: 2,
     q: 1,
-    status: "pending",
-    cursarReq: ["Producción Audiovisual 1"],
-    aprobarReq: ["Producción Audiovisual 1"],
+    status: 'pending',
+    cursarReq: ['Producción Audiovisual 1'],
+    aprobarReq: ['Producción Audiovisual 1'],
   },
   {
-    id: "SC",
-    name: "Software de Composición",
+    id: 'SC',
+    name: 'Software de Composición',
     year: 2,
     q: 2,
-    status: "pending",
+    status: 'pending',
     cursarReq: [],
     aprobarReq: [],
   },
   {
-    id: "IT",
-    name: "Inglés Técnico",
+    id: 'IT',
+    name: 'Inglés Técnico',
     year: 2,
     q: 2,
-    status: "pending",
+    status: 'pending',
     cursarReq: [],
     aprobarReq: [],
   },
   {
-    id: "HA2",
-    name: "Historia del Arte 2",
+    id: 'HA2',
+    name: 'Historia del Arte 2',
     year: 2,
     q: 2,
-    status: "pending",
-    cursarReq: ["Historia del Arte 1"],
-    aprobarReq: ["Historia del Arte 1"],
+    status: 'pending',
+    cursarReq: ['Historia del Arte 1'],
+    aprobarReq: ['Historia del Arte 1'],
   },
   {
-    id: "EA2",
-    name: "Escritura Audiovisual 2",
+    id: 'EA2',
+    name: 'Escritura Audiovisual 2',
     year: 2,
     q: 2,
-    status: "pending",
-    cursarReq: ["Escritura Audiovisual 1"],
-    aprobarReq: ["Escritura Audiovisual 1"],
+    status: 'pending',
+    cursarReq: ['Escritura Audiovisual 1'],
+    aprobarReq: ['Escritura Audiovisual 1'],
   },
   {
-    id: "PROY2",
-    name: "Proyecto Audiovisual 2",
+    id: 'PROY2',
+    name: 'Proyecto Audiovisual 2',
     year: 2,
     q: 3,
-    status: "pending",
-    cursarReq: ["Proyecto Audiovisual 1"],
-    aprobarReq: ["Proyecto Audiovisual 1"],
+    status: 'pending',
+    cursarReq: ['Proyecto Audiovisual 1'],
+    aprobarReq: ['Proyecto Audiovisual 1'],
   },
   {
-    id: "DS",
-    name: "Diseño Sonoro",
+    id: 'DS',
+    name: 'Diseño Sonoro',
     year: 3,
     q: 1,
-    status: "pending",
+    status: 'pending',
     cursarReq: [
-      "Montaje 2",
-      "Sonido 2",
-      "Montaje 1",
-      "Sonido 1",
-      "Software en Edición Audiovisual",
+      'Montaje 2',
+      'Sonido 2',
+      'Montaje 1',
+      'Sonido 1',
+      'Software en Edición Audiovisual',
     ],
     aprobarReq: [
-      "Montaje 1",
-      "Sonido 1",
-      "Montaje 2",
-      "Sonido 2",
-      "Software en Edición Audiovisual",
+      'Montaje 1',
+      'Sonido 1',
+      'Montaje 2',
+      'Sonido 2',
+      'Software en Edición Audiovisual',
     ],
   },
   {
-    id: "HM",
-    name: "Historia de los Medios",
+    id: 'HM',
+    name: 'Historia de los Medios',
     year: 3,
     q: 1,
-    status: "pending",
+    status: 'pending',
     cursarReq: [],
     aprobarReq: [],
   },
   {
-    id: "PProd1",
-    name: "Postproducción Audiovisual 1",
+    id: 'PProd1',
+    name: 'Postproducción Audiovisual 1',
     year: 3,
     q: 1,
-    status: "pending",
+    status: 'pending',
     cursarReq: [
-      "Montaje 1",
-      "Sonido 1",
-      "Montaje 2",
-      "Sonido 2",
-      "Software en Edición Audiovisual",
-      "Software de Composición",
+      'Montaje 1',
+      'Sonido 1',
+      'Montaje 2',
+      'Sonido 2',
+      'Software en Edición Audiovisual',
+      'Software de Composición',
     ],
     aprobarReq: [
-      "Montaje 1",
-      "Sonido 1",
-      "Montaje 2",
-      "Sonido 2",
-      "Software en Edición Audiovisual",
-      "Software de Composición",
+      'Montaje 1',
+      'Sonido 1',
+      'Montaje 2',
+      'Sonido 2',
+      'Software en Edición Audiovisual',
+      'Software de Composición',
     ],
   },
   {
-    id: "NC",
-    name: "Nociones de Colorimetría",
+    id: 'NC',
+    name: 'Nociones de Colorimetría',
     year: 3,
     q: 1,
-    status: "pending",
-    cursarReq: ["Iluminación y Cámara 1", "Iluminación y Cámara 2"],
-    aprobarReq: ["Iluminación y Cámara 1", "Iluminación y Cámara 2"],
+    status: 'pending',
+    cursarReq: ['Iluminación y Cámara 1', 'Iluminación y Cámara 2'],
+    aprobarReq: ['Iluminación y Cámara 1', 'Iluminación y Cámara 2'],
   },
   {
-    id: "MD",
-    name: "Montaje Documental",
+    id: 'MD',
+    name: 'Montaje Documental',
     year: 3,
     q: 2,
-    status: "pending",
+    status: 'pending',
     cursarReq: [
-      "Montaje 1",
-      "Sonido 1",
-      "Montaje 2",
-      "Sonido 2",
-      "Software en Edición Audiovisual",
+      'Montaje 1',
+      'Sonido 1',
+      'Montaje 2',
+      'Sonido 2',
+      'Software en Edición Audiovisual',
     ],
     aprobarReq: [
-      "Montaje 1",
-      "Sonido 1",
-      "Montaje 2",
-      "Sonido 2",
-      "Software en Edición Audiovisual",
+      'Montaje 1',
+      'Sonido 1',
+      'Montaje 2',
+      'Sonido 2',
+      'Software en Edición Audiovisual',
     ],
   },
   {
-    id: "PProd2",
-    name: "Postproducción Audiovisual 2",
+    id: 'PProd2',
+    name: 'Postproducción Audiovisual 2',
     year: 3,
     q: 2,
-    status: "pending",
+    status: 'pending',
     cursarReq: [
-      "Montaje 1",
-      "Sonido 1",
-      "Montaje 2",
-      "Sonido 2",
-      "Software en Edición Audiovisual",
-      "Software de Composición",
+      'Montaje 1',
+      'Sonido 1',
+      'Montaje 2',
+      'Sonido 2',
+      'Software en Edición Audiovisual',
+      'Software de Composición',
     ],
     aprobarReq: [
-      "Montaje 1",
-      "Sonido 1",
-      "Montaje 2",
-      "Sonido 2",
-      "Software en Edición Audiovisual",
-      "Software de Composición",
+      'Montaje 1',
+      'Sonido 1',
+      'Montaje 2',
+      'Sonido 2',
+      'Software en Edición Audiovisual',
+      'Software de Composición',
     ],
   },
   {
-    id: "PP",
-    name: "Práctica Profesional",
+    id: 'PP',
+    name: 'Práctica Profesional',
     year: 3,
     q: 2,
-    status: "pending",
+    status: 'pending',
     cursarReq: [
-      "Escritura Audiovisual 1",
-      "Producción Audiovisual 1",
-      "Iluminación y Cámara 1",
-      "Montaje 1",
-      "Sonido 1",
-      "Proyecto Audiovisual 1",
-      "Producción Audiovisual 2",
-      "Montaje 2",
-      "Sonido 2",
-      "Iluminación y Cámara 2",
-      "Escritura Audiovisual 2",
-      "Proyecto Audiovisual 2",
-      "Software en Edición Audiovisual",
-      "Software de Composición",
-      "Postproducción Audiovisual 1",
+      'Escritura Audiovisual 1',
+      'Producción Audiovisual 1',
+      'Iluminación y Cámara 1',
+      'Montaje 1',
+      'Sonido 1',
+      'Proyecto Audiovisual 1',
+      'Producción Audiovisual 2',
+      'Montaje 2',
+      'Sonido 2',
+      'Iluminación y Cámara 2',
+      'Escritura Audiovisual 2',
+      'Proyecto Audiovisual 2',
+      'Software en Edición Audiovisual',
+      'Software de Composición',
+      'Postproducción Audiovisual 1',
     ],
     aprobarReq: [
-      "Escritura Audiovisual 1",
-      "Producción Audiovisual 1",
-      "Iluminación y Cámara 1",
-      "Montaje 1",
-      "Sonido 1",
-      "Proyecto Audiovisual 1",
-      "Producción Audiovisual 2",
-      "Montaje 2",
-      "Sonido 2",
-      "Iluminación y Cámara 2",
-      "Escritura Audiovisual 2",
-      "Proyecto Audiovisual 2",
-      "Software en Edición Audiovisual",
-      "Software de Composición",
-      "Postproducción Audiovisual 1",
+      'Escritura Audiovisual 1',
+      'Producción Audiovisual 1',
+      'Iluminación y Cámara 1',
+      'Montaje 1',
+      'Sonido 1',
+      'Proyecto Audiovisual 1',
+      'Producción Audiovisual 2',
+      'Montaje 2',
+      'Sonido 2',
+      'Iluminación y Cámara 2',
+      'Escritura Audiovisual 2',
+      'Proyecto Audiovisual 2',
+      'Software en Edición Audiovisual',
+      'Software de Composición',
+      'Postproducción Audiovisual 1',
     ],
   },
   {
-    id: "PROY3",
-    name: "Proyecto Audiovisual 3",
+    id: 'PROY3',
+    name: 'Proyecto Audiovisual 3',
     year: 3,
     q: 3,
-    status: "pending",
+    status: 'pending',
     cursarReq: [
-      "Proyecto Audiovisual 1",
-      "Producción Audiovisual 2",
-      "Proyecto Audiovisual 2",
-      "Producción Audiovisual 1",
+      'Proyecto Audiovisual 1',
+      'Producción Audiovisual 2',
+      'Proyecto Audiovisual 2',
+      'Producción Audiovisual 1',
     ],
     aprobarReq: [
-      "Proyecto Audiovisual 1",
-      "Producción Audiovisual 2",
-      "Proyecto Audiovisual 2",
-      "Producción Audiovisual 1",
+      'Proyecto Audiovisual 1',
+      'Producción Audiovisual 2',
+      'Proyecto Audiovisual 2',
+      'Producción Audiovisual 1',
     ],
   },
 ];
@@ -348,7 +348,7 @@ function needsIds(m) {
 }
 function loadState() {
   try {
-    const saved = localStorage.getItem("materiasStatus_tea");
+    const saved = localStorage.getItem('materiasStatus_tea');
     if (!saved) return;
     const obj = JSON.parse(saved);
     materias.forEach((m) => {
@@ -361,50 +361,46 @@ function saveState() {
   materias.forEach((m) => {
     obj[m.id] = m.status;
   });
-  localStorage.setItem("materiasStatus_tea", JSON.stringify(obj));
+  localStorage.setItem('materiasStatus_tea', JSON.stringify(obj));
 }
 function canCursar(m) {
-  if (m.status !== "pending") return false;
-  const aprobadas = new Set(
-    materias.filter((x) => x.status === "approved").map((x) => x.name),
-  );
+  if (m.status !== 'pending') return false;
+  const aprobadas = new Set(materias.filter((x) => x.status === 'approved').map((x) => x.name));
   const enCursoOAprobadas = new Set(
-    materias
-      .filter((x) => x.status === "encurso" || x.status === "approved")
-      .map((x) => x.name),
+    materias.filter((x) => x.status === 'coursed' || x.status === 'approved').map((x) => x.name),
   );
   const cursarOk = m.cursarReq.every((r) => enCursoOAprobadas.has(r));
   const aprobarOk = m.aprobarReq.every((r) => aprobadas.has(r));
   return cursarOk && aprobarOk;
 }
-const grid = document.getElementById("grid");
-const infoBar = document.getElementById("info");
+const grid = document.getElementById('grid');
+const infoBar = document.getElementById('info');
 const years = [1, 2, 3];
-const qlabels = { 1: "1er cuatrimestre", 2: "2do cuatrimestre", 3: "Anual" };
+const qlabels = { 1: '1er cuatrimestre', 2: '2do cuatrimestre', 3: 'Anual' };
 // Permitir múltiples seleccionadas
 let selectedIds = new Set();
 function render() {
-  console.log("[LOG] render() llamada");
-  grid.innerHTML = "";
+  console.log('[LOG] render() llamada');
+  grid.innerHTML = '';
   years.forEach((y) => {
-    const col = document.createElement("div");
-    col.className = "year-col";
+    const col = document.createElement('div');
+    col.className = 'year-col';
     col.innerHTML = `<div class="year-label">${y}° Año</div>`;
     [1, 2, 3].forEach((q) => {
       const ms = materias.filter((m) => m.year === y && m.q === q);
       if (!ms.length) return;
-      const sec = document.createElement("div");
-      sec.className = "q-section";
+      const sec = document.createElement('div');
+      sec.className = 'q-section';
       sec.innerHTML = `<div class="q-label">${qlabels[q]}</div>`;
       ms.forEach((m) => {
-        const div = document.createElement("div");
-        div.id = "mat-" + m.id;
-        const classes = ["materia", m.status];
-        if (canCursar(m)) classes.push("can-cursar");
-        div.className = classes.join(" ");
+        const div = document.createElement('div');
+        div.id = 'mat-' + m.id;
+        const classes = ['materia', m.status];
+        if (canCursar(m)) classes.push('can-cursar');
+        div.className = classes.join(' ');
         if (selectedIds.size > 0) {
           if (selectedIds.has(m.id)) {
-            div.classList.add("selected");
+            div.classList.add('selected');
           } else {
             // Unir correlativas de todas las seleccionadas
             let needs = new Set();
@@ -415,19 +411,19 @@ function render() {
               (unlockMap[sid] || new Set()).forEach((uid) => unlocks.add(uid));
             });
             if (needs.has(m.id)) {
-              div.classList.add("req-highlight");
+              div.classList.add('req-highlight');
               // } else if (unlocks.has(m.id)) {
               //   div.classList.add("unlocks-highlight");
             }
           }
         }
         const tag =
-          m.status === "approved"
+          m.status === 'approved'
             ? '<span class="tag">✓ aprobada</span>'
-            : m.status === "encurso"
+            : m.status === 'coursed'
               ? '<span class="tag">● cursada</span>'
-              : "";
-        let ttBody = "";
+              : '';
+        let ttBody = '';
         if (m.cursarReq.length) {
           ttBody += `<div class="tt-section">Para cursar:</div>`;
           m.cursarReq.forEach((r) => {
@@ -456,7 +452,7 @@ function render() {
             ${ttBody}
           </div>`;
         console.log(`[LOG] Listener click agregado a: ${m.name} (${m.id})`);
-        div.addEventListener("click", (e) => {
+        div.addEventListener('click', (e) => {
           console.log(`[LOG] Click en: ${m.name} (${m.id})`);
           e.stopPropagation();
           // Selección múltiple: toggle en selectedIds
@@ -466,13 +462,13 @@ function render() {
             selectedIds.add(m.id);
           }
           // Cambio de estado de la materia
-          if (m.status === "pending") m.status = "encurso";
-          else if (m.status === "encurso") m.status = "approved";
-          else m.status = "pending";
+          if (m.status === 'pending') m.status = 'coursed';
+          else if (m.status === 'coursed') m.status = 'approved';
+          else m.status = 'pending';
           saveState();
           render();
         });
-        div.addEventListener("mouseenter", () => {
+        div.addEventListener('mouseenter', () => {
           // No modificar selectedIds ni llamar a render()
           const needs = needsIds(m)
             .map((id) => materias.find((x) => x.id === id)?.name)
@@ -482,11 +478,10 @@ function render() {
             .filter(Boolean);
           let msg = `<strong>${m.name}</strong>`;
           if (needs.length)
-            msg += ` &nbsp;·&nbsp; <span style=\"color:#8a4a00\">Requiere: ${needs.join(", ")}</span>`;
+            msg += ` &nbsp;·&nbsp; <span style=\"color:#8a4a00\">Requiere: ${needs.join(', ')}</span>`;
           if (unlocks.length)
-            msg += ` &nbsp;·&nbsp; <span style=\"color:#0a5c3f\">Habilita: ${unlocks.join(", ")}</span>`;
-          if (!needs.length && !unlocks.length)
-            msg += " &nbsp;·&nbsp; Sin correlativas";
+            msg += ` &nbsp;·&nbsp; <span style=\"color:#0a5c3f\">Habilita: ${unlocks.join(', ')}</span>`;
+          if (!needs.length && !unlocks.length) msg += ' &nbsp;·&nbsp; Sin correlativas';
           infoBar.innerHTML = msg;
         });
         sec.appendChild(div);
@@ -496,22 +491,22 @@ function render() {
     grid.appendChild(col);
   });
 }
-document.addEventListener("click", () => {
+document.addEventListener('click', () => {
   // Ya no se limpia selectedIds al hacer click fuera, para mantener la selección múltiple
   // y que materias aprobadas sigan seleccionadas.
 });
-document.getElementById("resetBtn").addEventListener("click", () => {
-  if (!confirm("¿Reiniciar todas las materias a Pendiente?")) return;
+document.getElementById('resetBtn').addEventListener('click', () => {
+  if (!confirm('¿Reiniciar todas las materias a Pendiente?')) return;
   materias.forEach((m) => {
-    m.status = "pending";
+    m.status = 'pending';
   });
   selectedId = null;
   selectedIds.clear();
   saveState();
   render();
 });
-console.log("[LOG] Antes de loadState()");
+console.log('[LOG] Antes de loadState()');
 loadState();
-console.log("[LOG] Antes de render() inicial");
+console.log('[LOG] Antes de render() inicial');
 render();
-console.log("[LOG] Después de render() inicial");
+console.log('[LOG] Después de render() inicial');

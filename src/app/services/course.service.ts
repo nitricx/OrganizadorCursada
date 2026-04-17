@@ -82,8 +82,8 @@ export class CourseService {
       const course = updatedCourses[courseIndex];
 
       if (course.status === 'pending') {
-        course.status = 'encurso';
-      } else if (course.status === 'encurso') {
+        course.status = 'coursed';
+      } else if (course.status === 'coursed') {
         course.status = 'approved';
       } else {
         course.status = 'pending';

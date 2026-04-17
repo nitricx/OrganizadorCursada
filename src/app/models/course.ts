@@ -1,4 +1,4 @@
-export type CourseStatus = 'pending' | 'encurso' | 'approved';
+export type CourseStatus = 'pending' | 'coursed' | 'approved';
 
 export interface Course {
   id: string;
