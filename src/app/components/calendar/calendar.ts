@@ -37,7 +37,15 @@ export class Calendar {
     return map;
   });
 
-  days = computed(() => this.allDays.map((day, i) => ({ ...day, col: i + 2 })));
+  days = computed(() => {
+    const coursesByDay = this.availableCoursesByDay();
+    const weekdays = this.allDays.slice(0, 5); // Monday-Friday always shown
+    const saturday = this.allDays[5];
+    // Only include Saturday if there are courses on that day
+    const allVisibleDays =
+      (coursesByDay.get(saturday.day) ?? []).length > 0 ? [...weekdays, saturday] : weekdays;
+    return allVisibleDays.map((day, i) => ({ ...day, col: i + 2 }));
+  });
 
   gridTemplateColumns = computed(() => `44px repeat(${this.days().length}, 1fr)`);
 
