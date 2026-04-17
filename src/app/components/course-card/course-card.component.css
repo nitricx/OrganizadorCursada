@@ -1,0 +1,5 @@
+.available {
+  outline: 2px dashed #185fa5;
+  outline-offset: 1px;
+  background: #e8e7e0;
+}
