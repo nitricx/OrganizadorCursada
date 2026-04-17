@@ -21,14 +21,11 @@
     <!-- Courses positioned by time -->
     @for (entry of days(); track entry.day) {
       @for (course of availableCoursesByDay().get(entry.day) ?? []; track course.id) {
-        <div
-          class="calendar-course available"
+        <app-calendar-card
+          [course]="course"
           [style.grid-column]="entry.col"
           [style.grid-row]="getCourseRows(course)"
-        >
-          <span class="calendar-course-name">{{ course.name }}</span>
-          <span class="calendar-course-time">{{ course.startTime }} – {{ course.endTime }}</span>
-        </div>
+        />
       }
     }
   </div>

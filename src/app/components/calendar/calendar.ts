@@ -1,10 +1,11 @@
 import { Component, ChangeDetectionStrategy, signal, computed, inject } from '@angular/core';
 import { CourseService } from '../../services/course.service';
 import { Course, DayOfWeek } from '../../models/course';
+import { CalendarCard } from './calendar-card';
 
 @Component({
   selector: 'app-calendar',
-  imports: [],
+  imports: [CalendarCard],
   templateUrl: './calendar.html',
   styleUrl: './calendar.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
