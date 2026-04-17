@@ -20,8 +20,6 @@ export class CourseCardComponent {
 
   private readonly courseService = inject(CourseService);
 
-  canTake = computed(() => this.courseService.canTakeCourse(this.course()));
-
   unlocks = computed(() => {
     const c = this.course();
     const unlockedIds = this.courseService.getUnlockedCourseIds(c.id);

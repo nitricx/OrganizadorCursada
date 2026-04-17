@@ -73,27 +73,6 @@ export class CourseService {
     return Array.from(unlockMap.get(courseId) || []);
   }
 
-  canTakeCourse(course: Course): boolean {
-    if (course.status !== 'pending') return false;
-
-    const approvedNames = new Set(
-      this.coursesSignal()
-        .filter((c) => c.status === 'approved')
-        .map((c) => c.name),
-    );
-
-    const takenOrApprovedNames = new Set(
-      this.coursesSignal()
-        .filter((c) => c.status === 'encurso' || c.status === 'approved')
-        .map((c) => c.name),
-    );
-
-    const cursarOk = course.cursarReq.every((req) => takenOrApprovedNames.has(req));
-    const aprobarOk = course.aprobarReq.every((req) => approvedNames.has(req));
-
-    return cursarOk && aprobarOk;
-  }
-
   toggleCourseStatus(courseId: string): void {
     const courses = this.coursesSignal();
     const courseIndex = courses.findIndex((c) => c.id === courseId);

@@ -1,5 +1,5 @@
 <div
-  [class]="'materia ' + course().status + (canTake() ? ' can-cursar' : '') + getHighlightClass()"
+  [class]="'materia ' + course().status + getHighlightClass()"
   [attr.id]="'mat-' + course().id"
   (click)="onCardClick()"
   (mouseenter)="onMouseEnter()"

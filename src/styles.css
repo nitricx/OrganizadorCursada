@@ -162,11 +162,6 @@ h1 {
   border-color: #0f6e56 !important;
 }
 
-.materia.can-cursar.pending {
-  outline: 2px dashed #185fa5;
-  outline-offset: 2px;
-}
-
 .materia.selected {
   opacity: 1;
 }
