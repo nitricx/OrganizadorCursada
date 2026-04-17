@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { signal, computed } from '@angular/core';
-import { Course } from '../models/course';
+import { Course, CourseStatus } from '../models/course';
 import { COURSES_DATA } from '../data/courses.data';
 
 @Injectable({
@@ -73,6 +73,43 @@ export class CourseService {
     return Array.from(unlockMap.get(courseId) || []);
   }
 
+  private areRequirementsSatisfied(
+    requiredNames: string[],
+    requiredStatus: 'coursed' | 'approved',
+  ): boolean {
+    const courses = this.coursesSignal();
+    return requiredNames.every((reqName) => {
+      const reqCourse = courses.find((c) => c.name === reqName);
+      if (!reqCourse) return false;
+
+      if (requiredStatus === 'coursed') {
+        return reqCourse.status === 'coursed' || reqCourse.status === 'approved';
+      }
+      return reqCourse.status === 'approved';
+    });
+  }
+
+  canChangeStatusTo(courseId: string, targetStatus: CourseStatus): boolean {
+    const course = this.getCourseById(courseId);
+    if (!course) return false;
+
+    if (targetStatus === 'pending') {
+      return true; // Always can go back to pending
+    }
+
+    if (targetStatus === 'coursed') {
+      // All cursarReq must be at least 'coursed'
+      return this.areRequirementsSatisfied(course.cursarReq, 'coursed');
+    }
+
+    if (targetStatus === 'approved') {
+      // All aprobarReq must be 'approved'
+      return this.areRequirementsSatisfied(course.aprobarReq, 'approved');
+    }
+
+    return false;
+  }
+
   toggleCourseStatus(courseId: string): void {
     const courses = this.coursesSignal();
     const courseIndex = courses.findIndex((c) => c.id === courseId);
@@ -80,17 +117,21 @@ export class CourseService {
     if (courseIndex !== -1) {
       const updatedCourses = [...courses];
       const course = updatedCourses[courseIndex];
+      let nextStatus: CourseStatus;
 
       if (course.status === 'pending') {
-        course.status = 'coursed';
+        nextStatus = 'coursed';
       } else if (course.status === 'coursed') {
-        course.status = 'approved';
+        nextStatus = 'approved';
       } else {
-        course.status = 'pending';
+        nextStatus = 'pending';
       }
 
-      this.coursesSignal.set(updatedCourses);
-      this.saveState();
+      if (this.canChangeStatusTo(courseId, nextStatus)) {
+        course.status = nextStatus;
+        this.coursesSignal.set(updatedCourses);
+        this.saveState();
+      }
     }
   }
 
