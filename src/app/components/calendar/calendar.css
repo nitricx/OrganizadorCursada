@@ -9,7 +9,7 @@
   color: var(--color-text-primary);
 }
 
-/* Columns are set dynamically via style binding based on visible days */
+/* Columns are set dynamically via style binding based on visible days and overlapping courses */
 .calendar-grid {
   display: grid;
   grid-template-rows: 36px repeat(20, 30px);
@@ -30,6 +30,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  /* Borders between day columns for visual separation */
+  border-right: 1px solid var(--color-border-tertiary);
+}
+
+.day-header:last-child {
+  border-right: none;
 }
 
 .time-label {

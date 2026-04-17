@@ -141,7 +141,7 @@ export const COURSES_DATA: Course[] = [
     aprobarReq: ['Montaje 1', 'Software en Edición Audiovisual'],
     professor: 'Lic. Fernando Torres',
     day: DayOfWeek.Thursday,
-    startTime: '14:00',
+    startTime: '10:00',
     endTime: '17:00',
   },
   {

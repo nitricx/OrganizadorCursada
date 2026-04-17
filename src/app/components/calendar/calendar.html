@@ -7,7 +7,9 @@
     <div class="time-gutter"></div>
     <!-- Day headers (row 1) -->
     @for (entry of days(); track entry.day) {
-      <div class="day-header">{{ entry.label }}</div>
+      <div class="day-header" [style.grid-column]="'span ' + getMaxConcurrentForDay(entry.day)">
+        {{ entry.label }}
+      </div>
     }
     <!-- Time labels and hour lines -->
     @for (slot of timeSlots(); track slot.row) {
@@ -23,8 +25,9 @@
       @for (course of availableCoursesByDay().get(entry.day) ?? []; track course.id) {
         <app-calendar-card
           [course]="course"
-          [style.grid-column]="entry.col"
+          [style.grid-column]="getCourseColumn(course, days().indexOf(entry))"
           [style.grid-row]="getCourseRows(course)"
+          [class.overlapping]="courseHasOverlap(course.id)"
         />
       }
     }

@@ -1,6 +1,7 @@
 :host {
   border-radius: 6px;
   padding: 6px 8px;
+  /* Reduced margin to prevent overflow when courses overlap */
   margin: 2px;
   font-size: 12px;
   display: flex;
@@ -13,6 +14,14 @@
   background: #e8e7e0;
 }
 
+/* When a course overlaps with another, reduce padding to make it thinner */
+:host.overlapping {
+  padding: 4px 6px;
+  margin: 1px;
+  font-size: 11px;
+  gap: 1px;
+}
+
 .calendar-course-name {
   font-weight: 600;
   line-height: 1.3;
@@ -23,7 +32,15 @@
   font-size: 11px;
 }
 
+:host.overlapping .calendar-course-time {
+  font-size: 10px;
+}
+
 .calendar-course-professor {
   color: var(--color-text-tertiary);
   font-size: 10px;
+}
+
+:host.overlapping .calendar-course-professor {
+  font-size: 9px;
 }
