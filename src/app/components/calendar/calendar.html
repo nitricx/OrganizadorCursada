@@ -10,7 +10,7 @@
       <div class="day-header">{{ entry.label }}</div>
     }
     <!-- Time labels and hour lines -->
-    @for (slot of timeSlots; track slot.row) {
+    @for (slot of timeSlots(); track slot.row) {
       <div class="time-label" [style.grid-row]="slot.row">{{ slot.label }}</div>
       <div class="hour-line" [style.grid-row]="slot.row" [style.grid-column]="'2 / 7'"></div>
     }

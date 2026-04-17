@@ -12,9 +12,6 @@ import { Course, DayOfWeek } from '../../models/course';
 export class Calendar {
   private readonly courseService = inject(CourseService);
 
-  private readonly START_HOUR = 8;
-  private readonly END_HOUR = 18;
-
   currentDate = signal(new Date());
 
   days: { label: string; day: DayOfWeek; col: number }[] = [
@@ -24,12 +21,6 @@ export class Calendar {
     { label: 'Thursday', day: DayOfWeek.Thursday, col: 5 },
     { label: 'Friday', day: DayOfWeek.Friday, col: 6 },
   ];
-
-  // One label per hour from START_HOUR to END_HOUR-1
-  timeSlots = Array.from({ length: this.END_HOUR - this.START_HOUR }, (_, i) => ({
-    label: `${(this.START_HOUR + i).toString().padStart(2, '0')}:00`,
-    row: 2 + i * 2, // row 1 = header, row 2 = START_HOUR, each 30min = 1 row
-  }));
 
   availableCoursesByDay = computed(() => {
     const courses = this.courseService.courses();
@@ -45,12 +36,49 @@ export class Calendar {
     return map;
   });
 
+  private readonly startHour = computed(() => {
+    const courses = this.courseService
+      .courses()
+      .filter((c) => c.status === 'pending' && this.courseService.areAllRequirementsMet(c));
+    if (courses.length === 0) {
+      return 8; // Default if no courses
+    }
+    const earliestTime = courses.reduce((min, course) => {
+      const courseStartHour = parseInt(course.startTime.split(':')[0]);
+      return courseStartHour < min ? courseStartHour : min;
+    }, 24);
+    return Math.max(0, earliestTime - 1);
+  });
+
+  private readonly endHour = computed(() => {
+    const courses = this.courseService
+      .courses()
+      .filter((c) => c.status === 'pending' && this.courseService.areAllRequirementsMet(c));
+    if (courses.length === 0) {
+      return 18; // Default if no courses
+    }
+    const latestTime = courses.reduce((max, course) => {
+      const courseEndHour = parseInt(course.endTime.split(':')[0]);
+      return courseEndHour > max ? courseEndHour : max;
+    }, 0);
+    return Math.min(24, latestTime + 1);
+  });
+
+  timeSlots = computed(() => {
+    const start = this.startHour();
+    const end = this.endHour();
+    return Array.from({ length: end - start }, (_, i) => ({
+      label: `${(start + i).toString().padStart(2, '0')}:00`,
+      row: 2 + i * 2, // row 1 = header, row 2 = START_HOUR, each 30min = 1 row
+    }));
+  });
+
   getCourseRows(course: Course): string {
     return `${this.timeToRow(course.startTime)} / ${this.timeToRow(course.endTime)}`;
   }
 
   private timeToRow(time: string): number {
     const [h, m] = time.split(':').map(Number);
-    return 2 + (h - this.START_HOUR) * 2 + m / 30;
+    return 2 + (h - this.startHour()) * 2 + m / 30;
   }
 }
