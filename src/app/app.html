@@ -1,4 +1,16 @@
-<div class="wrap">
-  <app-course-organizer />
-  <app-calendar />
-</div>
+<mat-sidenav-container class="app-container">
+  <mat-sidenav mode="side" [opened]="isOpen()" role="navigation">
+    <app-sidebar />
+  </mat-sidenav>
+  <mat-sidenav-content role="main">
+    <mat-toolbar>
+      <button mat-icon-button (click)="isOpen.update(v => !v)" aria-label="Toggle navigation">
+        <mat-icon>menu</mat-icon>
+      </button>
+    </mat-toolbar>
+    <div class="wrap">
+      <app-course-organizer />
+      <app-calendar />
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>
