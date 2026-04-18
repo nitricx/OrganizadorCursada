@@ -1,7 +1,7 @@
 import { Component, ChangeDetectionStrategy, signal, computed, inject, input } from '@angular/core';
 import { CourseService } from '../../services/course.service';
 import { Course, DayOfWeek } from '../../models/course';
-import { CalendarCard } from './calendar-card';
+import { CalendarCard } from '../calendar-card/calendar-card';
 
 @Component({
   selector: 'app-calendar',
@@ -22,12 +22,12 @@ export class Calendar {
   currentDate = signal(new Date());
 
   private readonly allDays: { label: string; day: DayOfWeek; col: number }[] = [
-    { label: 'Monday', day: DayOfWeek.Monday, col: 2 },
-    { label: 'Tuesday', day: DayOfWeek.Tuesday, col: 3 },
-    { label: 'Wednesday', day: DayOfWeek.Wednesday, col: 4 },
-    { label: 'Thursday', day: DayOfWeek.Thursday, col: 5 },
-    { label: 'Friday', day: DayOfWeek.Friday, col: 6 },
-    { label: 'Saturday', day: DayOfWeek.Saturday, col: 7 },
+    { label: 'Lunes', day: DayOfWeek.Monday, col: 2 },
+    { label: 'Martes', day: DayOfWeek.Tuesday, col: 3 },
+    { label: 'Miércoles', day: DayOfWeek.Wednesday, col: 4 },
+    { label: 'Jueves', day: DayOfWeek.Thursday, col: 5 },
+    { label: 'Viernes', day: DayOfWeek.Friday, col: 6 },
+    { label: 'Sábado', day: DayOfWeek.Saturday, col: 7 },
   ];
 
   availableCoursesByDay = computed(() => {
