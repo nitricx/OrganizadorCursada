@@ -20,5 +20,6 @@ export class SidebarComponent {
   items = input<SidebarItem[]>([
     { label: 'Home', route: '/home' },
     { label: 'Mi Semana', route: '/calendar' },
+    { label: 'Calendario Académico', route: '/academicCalendar' },
   ]);
 }

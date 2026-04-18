@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, signal, computed, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, signal, computed, inject, input } from '@angular/core';
 import { CourseService } from '../../services/course.service';
 import { Course, DayOfWeek } from '../../models/course';
 import { CalendarCard } from './calendar-card';
@@ -13,6 +13,12 @@ import { CalendarCard } from './calendar-card';
 export class Calendar {
   private readonly courseService = inject(CourseService);
 
+  /** When provided, these courses are shown directly instead of the user's active coursing courses */
+  coursesOverride = input<Course[] | undefined>(undefined);
+
+  /** Whether to show the "Mi Semana" title header */
+  showHeader = input<boolean>(true);
+
   currentDate = signal(new Date());
 
   private readonly allDays: { label: string; day: DayOfWeek; col: number }[] = [
@@ -25,20 +31,25 @@ export class Calendar {
   ];
 
   availableCoursesByDay = computed(() => {
-    const courses = this.courseService.courses();
+    const override = this.coursesOverride();
+    const courses =
+      override !== undefined
+        ? override
+        : this.courseService
+            .courses()
+            .filter((c) => c.status === 'coursing' && this.courseService.areAllRequirementsMet(c));
+
     const map = new Map<DayOfWeek, Course[]>();
     for (const entry of this.allDays) {
       map.set(entry.day, []);
     }
-    courses
-      .filter((c) => c.status === 'coursing' && this.courseService.areAllRequirementsMet(c))
-      .forEach((c) => {
-        // Use the first lesson's day
-        const day = c.lessons[0]?.day;
-        if (day !== undefined) {
-          map.get(day)?.push(c);
-        }
-      });
+    courses.forEach((c) => {
+      // Use the first lesson's day
+      const day = c.lessons[0]?.day;
+      if (day !== undefined) {
+        map.get(day)?.push(c);
+      }
+    });
     return map;
   });
 
@@ -245,9 +256,13 @@ export class Calendar {
   });
 
   private readonly startHour = computed(() => {
-    const courses = this.courseService
-      .courses()
-      .filter((c) => c.status === 'pending' && this.courseService.areAllRequirementsMet(c));
+    const override = this.coursesOverride();
+    const courses =
+      override !== undefined
+        ? override
+        : this.courseService
+            .courses()
+            .filter((c) => c.status === 'pending' && this.courseService.areAllRequirementsMet(c));
     if (courses.length === 0) {
       return 8; // Default if no courses
     }
@@ -260,9 +275,13 @@ export class Calendar {
   });
 
   private readonly endHour = computed(() => {
-    const courses = this.courseService
-      .courses()
-      .filter((c) => c.status === 'pending' && this.courseService.areAllRequirementsMet(c));
+    const override = this.coursesOverride();
+    const courses =
+      override !== undefined
+        ? override
+        : this.courseService
+            .courses()
+            .filter((c) => c.status === 'pending' && this.courseService.areAllRequirementsMet(c));
     if (courses.length === 0) {
       return 18; // Default if no courses
     }

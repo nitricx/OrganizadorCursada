@@ -1,8 +1,10 @@
 <div class="calendar">
-  <div class="calendar-header">
-    <h1>Mi Semana</h1>
-    <h2>{{ currentDate().toLocaleDateString('es-ES', { month: 'long', year: 'numeric' }) }}</h2>
-  </div>
+  @if (showHeader()) {
+    <div class="calendar-header">
+      <h1>Mi Semana</h1>
+      <h2>{{ currentDate().toLocaleDateString('es-ES', { month: 'long', year: 'numeric' }) }}</h2>
+    </div>
+  }
   <div class="calendar-grid" [style.grid-template-columns]="gridTemplateColumns()">
     <!-- Corner cell -->
     <div class="time-gutter"></div>
