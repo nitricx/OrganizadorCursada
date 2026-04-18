@@ -129,16 +129,22 @@ h1 {
   color: var(--color-text-primary);
 }
 
-.materia.approved {
-  background: #e1f5ee;
-  color: #04342c;
-  border-color: #0f6e56;
+.materia.coursing {
+  background: #fff8e1;
+  color: #5d4e06;
+  border-color: #d4b856;
 }
 
 .materia.coursed {
   background: #e6f1fb;
   color: #042c53;
   border-color: #185fa5;
+}
+
+.materia.approved {
+  background: #e1f5ee;
+  color: #04342c;
+  border-color: #0f6e56;
 }
 
 .materia:focus,

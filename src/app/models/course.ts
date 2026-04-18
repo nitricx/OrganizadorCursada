@@ -1,4 +1,4 @@
-export type CourseStatus = 'pending' | 'coursed' | 'approved';
+export type CourseStatus = 'pending' | 'coursing' | 'coursed' | 'approved';
 
 export enum DayOfWeek {
   Monday = 0,

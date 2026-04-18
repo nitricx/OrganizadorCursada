@@ -97,7 +97,7 @@ export class CourseService {
       return true; // Always can go back to pending
     }
 
-    if (targetStatus === 'coursed') {
+    if (targetStatus === 'coursing' || targetStatus === 'coursed') {
       // All cursarReq must be at least 'coursed'
       return this.areRequirementsSatisfied(course.cursarReq, 'coursed');
     }
@@ -126,6 +126,8 @@ export class CourseService {
       let nextStatus: CourseStatus;
 
       if (course.status === 'pending') {
+        nextStatus = 'coursing';
+      } else if (course.status === 'coursing') {
         nextStatus = 'coursed';
       } else if (course.status === 'coursed') {
         nextStatus = 'approved';
