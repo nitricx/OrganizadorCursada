@@ -303,6 +303,18 @@ export class Calendar {
   });
 
   /**
+   * Calculates the dynamic grid template rows based on the number of hours needed
+   * Row 1: header (36px)
+   * Rows 2+: time slots (30px each)
+   * Formula: highestRowNeeded = 2 * (endHour - startHour)
+   */
+  gridTemplateRows = computed(() => {
+    const numHours = this.endHour() - this.startHour();
+    const dataRows = 2 * numHours - 1;
+    return `36px repeat(${dataRows}, 30px)`;
+  });
+
+  /**
    * Get the grid column range for a course, accounting for overlaps
    * - Non-overlapping courses span the full width of their day
    * - Overlapping courses get a sub-column based on their position

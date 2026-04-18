@@ -5,7 +5,11 @@
       <h2>{{ currentDate().toLocaleDateString('es-ES', { month: 'long', year: 'numeric' }) }}</h2>
     </div>
   }
-  <div class="calendar-grid" [style.grid-template-columns]="gridTemplateColumns()">
+  <div
+    class="calendar-grid"
+    [style.grid-template-columns]="gridTemplateColumns()"
+    [style.grid-template-rows]="gridTemplateRows()"
+  >
     <!-- Corner cell -->
     <div class="time-gutter"></div>
     <!-- Day headers (row 1) -->

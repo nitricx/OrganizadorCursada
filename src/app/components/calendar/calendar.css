@@ -12,7 +12,6 @@
 /* Columns are set dynamically via style binding based on visible days and overlapping courses */
 .calendar-grid {
   display: grid;
-  grid-template-rows: 36px repeat(20, 30px);
 }
 
 .time-gutter {
