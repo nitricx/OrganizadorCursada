@@ -19,6 +19,6 @@ export interface SidebarItem {
 export class SidebarComponent {
   items = input<SidebarItem[]>([
     { label: 'Home', route: '/home' },
-    { label: 'Calendar', route: '/calendar' },
+    { label: 'Mi Semana', route: '/calendar' },
   ]);
 }
