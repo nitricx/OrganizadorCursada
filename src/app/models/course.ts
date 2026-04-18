@@ -9,6 +9,14 @@ export enum DayOfWeek {
   Saturday = 5,
 }
 
+export interface Lesson {
+  id: string; // e.g., 'PA1-L1', 'PA1-L2'
+  professor: string;
+  day: DayOfWeek;
+  startTime: string; // HH:MM format
+  endTime: string; // HH:MM format
+}
+
 export interface Course {
   id: string;
   name: string;
@@ -17,8 +25,5 @@ export interface Course {
   status: CourseStatus;
   cursarReq: string[]; // Requirements to take the course
   aprobarReq: string[]; // Requirements to approve the course
-  professor: string;
-  day: DayOfWeek;
-  startTime: string; // HH:MM format
-  endTime: string; // HH:MM format
+  lessons: Lesson[]; // Multiple lessons per subject with different professors
 }

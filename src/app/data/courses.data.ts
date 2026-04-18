@@ -9,10 +9,15 @@ export const COURSES_DATA: Course[] = [
     status: 'pending',
     cursarReq: [],
     aprobarReq: [],
-    professor: 'Dr. Carlos Mendez',
-    day: DayOfWeek.Monday,
-    startTime: '09:00',
-    endTime: '12:00',
+    lessons: [
+      {
+        id: 'PA1-L1',
+        professor: 'Dr. Carlos Mendez',
+        day: DayOfWeek.Monday,
+        startTime: '18:00',
+        endTime: '22:00',
+      },
+    ],
   },
   {
     id: 'EA1',
@@ -22,10 +27,15 @@ export const COURSES_DATA: Course[] = [
     status: 'pending',
     cursarReq: [],
     aprobarReq: [],
-    professor: 'Lic. María Gutiérrez',
-    day: DayOfWeek.Tuesday,
-    startTime: '14:00',
-    endTime: '17:00',
+    lessons: [
+      {
+        id: 'EA1-L1',
+        professor: 'Lic. María Gutiérrez',
+        day: DayOfWeek.Tuesday,
+        startTime: '18:00',
+        endTime: '22:00',
+      },
+    ],
   },
   {
     id: 'SEA',
@@ -35,10 +45,15 @@ export const COURSES_DATA: Course[] = [
     status: 'pending',
     cursarReq: [],
     aprobarReq: [],
-    professor: 'Ing. Roberto Flores',
-    day: DayOfWeek.Wednesday,
-    startTime: '10:00',
-    endTime: '13:00',
+    lessons: [
+      {
+        id: 'SEA-L1',
+        professor: 'Ing. Roberto Flores',
+        day: DayOfWeek.Wednesday,
+        startTime: '18:00',
+        endTime: '22:00',
+      },
+    ],
   },
   {
     id: 'IyC1',
@@ -48,10 +63,15 @@ export const COURSES_DATA: Course[] = [
     status: 'pending',
     cursarReq: [],
     aprobarReq: [],
-    professor: 'Prof. Andrés González',
-    day: DayOfWeek.Monday,
-    startTime: '13:00',
-    endTime: '16:00',
+    lessons: [
+      {
+        id: 'IyC1-L1',
+        professor: 'Prof. Andrés González',
+        day: DayOfWeek.Thursday,
+        startTime: '18:00',
+        endTime: '22:00',
+      },
+    ],
   },
   {
     id: 'HA1',
@@ -61,10 +81,15 @@ export const COURSES_DATA: Course[] = [
     status: 'pending',
     cursarReq: [],
     aprobarReq: [],
-    professor: 'Dra. Sofía Rodriguez',
-    day: DayOfWeek.Thursday,
-    startTime: '09:00',
-    endTime: '12:00',
+    lessons: [
+      {
+        id: 'HA1-L1',
+        professor: 'Dra. Sofía Rodriguez',
+        day: DayOfWeek.Friday,
+        startTime: '18:00',
+        endTime: '22:00',
+      },
+    ],
   },
   {
     id: 'S1',
@@ -74,10 +99,15 @@ export const COURSES_DATA: Course[] = [
     status: 'pending',
     cursarReq: [],
     aprobarReq: [],
-    professor: 'Ing. Pablo Domínguez',
-    day: DayOfWeek.Tuesday,
-    startTime: '10:00',
-    endTime: '13:00',
+    lessons: [
+      {
+        id: 'S1-L1',
+        professor: 'Ing. Pablo Domínguez',
+        day: DayOfWeek.Monday,
+        startTime: '18:00',
+        endTime: '22:00',
+      },
+    ],
   },
   {
     id: 'M1',
@@ -87,10 +117,15 @@ export const COURSES_DATA: Course[] = [
     status: 'pending',
     cursarReq: [],
     aprobarReq: [],
-    professor: 'Lic. Fernando Torres',
-    day: DayOfWeek.Friday,
-    startTime: '14:00',
-    endTime: '17:00',
+    lessons: [
+      {
+        id: 'M1-L1',
+        professor: 'Lic. Fernando Torres',
+        day: DayOfWeek.Tuesday,
+        startTime: '18:00',
+        endTime: '22:00',
+      },
+    ],
   },
   {
     id: 'PROY1',
@@ -100,10 +135,15 @@ export const COURSES_DATA: Course[] = [
     status: 'pending',
     cursarReq: [],
     aprobarReq: [],
-    professor: 'Prof. Javier Morales',
-    day: DayOfWeek.Wednesday,
-    startTime: '14:00',
-    endTime: '17:00',
+    lessons: [
+      {
+        id: 'PROY1-L1',
+        professor: 'Prof. Javier Morales',
+        day: DayOfWeek.Wednesday,
+        startTime: '18:00',
+        endTime: '22:00',
+      },
+    ],
   },
   {
     id: 'IyC2',
@@ -113,10 +153,15 @@ export const COURSES_DATA: Course[] = [
     status: 'pending',
     cursarReq: ['Iluminación y Cámara 1'],
     aprobarReq: ['Iluminación y Cámara 1'],
-    professor: 'Prof. Andrés González',
-    day: DayOfWeek.Monday,
-    startTime: '10:00',
-    endTime: '13:00',
+    lessons: [
+      {
+        id: 'IyC2-L1',
+        professor: 'Prof. Andrés González',
+        day: DayOfWeek.Thursday,
+        startTime: '18:00',
+        endTime: '22:00',
+      },
+    ],
   },
   {
     id: 'S2',
@@ -126,10 +171,15 @@ export const COURSES_DATA: Course[] = [
     status: 'pending',
     cursarReq: ['Sonido 1'],
     aprobarReq: ['Sonido 1'],
-    professor: 'Ing. Pablo Domínguez',
-    day: DayOfWeek.Wednesday,
-    startTime: '09:00',
-    endTime: '12:00',
+    lessons: [
+      {
+        id: 'S2-L1',
+        professor: 'Ing. Pablo Domínguez',
+        day: DayOfWeek.Friday,
+        startTime: '18:00',
+        endTime: '22:00',
+      },
+    ],
   },
   {
     id: 'M2',
@@ -139,10 +189,15 @@ export const COURSES_DATA: Course[] = [
     status: 'pending',
     cursarReq: ['Montaje 1', 'Software en Edición Audiovisual'],
     aprobarReq: ['Montaje 1', 'Software en Edición Audiovisual'],
-    professor: 'Lic. Fernando Torres',
-    day: DayOfWeek.Thursday,
-    startTime: '10:00',
-    endTime: '17:00',
+    lessons: [
+      {
+        id: 'M2-L1',
+        professor: 'Lic. Fernando Torres',
+        day: DayOfWeek.Monday,
+        startTime: '18:00',
+        endTime: '22:00',
+      },
+    ],
   },
   {
     id: 'PA2',
@@ -152,10 +207,15 @@ export const COURSES_DATA: Course[] = [
     status: 'pending',
     cursarReq: ['Producción Audiovisual 1'],
     aprobarReq: ['Producción Audiovisual 1'],
-    professor: 'Dr. Carlos Mendez',
-    day: DayOfWeek.Tuesday,
-    startTime: '09:00',
-    endTime: '12:00',
+    lessons: [
+      {
+        id: 'PA2-L1',
+        professor: 'Dr. Carlos Mendez',
+        day: DayOfWeek.Tuesday,
+        startTime: '18:00',
+        endTime: '22:00',
+      },
+    ],
   },
   {
     id: 'SC',
@@ -165,10 +225,15 @@ export const COURSES_DATA: Course[] = [
     status: 'pending',
     cursarReq: [],
     aprobarReq: [],
-    professor: 'Ing. Roberto Flores',
-    day: DayOfWeek.Friday,
-    startTime: '10:00',
-    endTime: '13:00',
+    lessons: [
+      {
+        id: 'SC-L1',
+        professor: 'Ing. Roberto Flores',
+        day: DayOfWeek.Wednesday,
+        startTime: '18:00',
+        endTime: '22:00',
+      },
+    ],
   },
   {
     id: 'IT',
@@ -178,10 +243,15 @@ export const COURSES_DATA: Course[] = [
     status: 'pending',
     cursarReq: [],
     aprobarReq: [],
-    professor: 'Prof. David Mitchell',
-    day: DayOfWeek.Tuesday,
-    startTime: '13:00',
-    endTime: '16:00',
+    lessons: [
+      {
+        id: 'IT-L1',
+        professor: 'Prof. David Mitchell',
+        day: DayOfWeek.Thursday,
+        startTime: '18:00',
+        endTime: '22:00',
+      },
+    ],
   },
   {
     id: 'HA2',
@@ -191,10 +261,15 @@ export const COURSES_DATA: Course[] = [
     status: 'pending',
     cursarReq: ['Historia del Arte 1'],
     aprobarReq: ['Historia del Arte 1'],
-    professor: 'Dra. Sofía Rodriguez',
-    day: DayOfWeek.Thursday,
-    startTime: '10:00',
-    endTime: '13:00',
+    lessons: [
+      {
+        id: 'HA2-L1',
+        professor: 'Dra. Sofía Rodriguez',
+        day: DayOfWeek.Friday,
+        startTime: '18:00',
+        endTime: '22:00',
+      },
+    ],
   },
   {
     id: 'EA2',
@@ -204,10 +279,15 @@ export const COURSES_DATA: Course[] = [
     status: 'pending',
     cursarReq: ['Escritura Audiovisual 1'],
     aprobarReq: ['Escritura Audiovisual 1'],
-    professor: 'Lic. María Gutiérrez',
-    day: DayOfWeek.Wednesday,
-    startTime: '13:00',
-    endTime: '16:00',
+    lessons: [
+      {
+        id: 'EA2-L1',
+        professor: 'Lic. María Gutiérrez',
+        day: DayOfWeek.Monday,
+        startTime: '18:00',
+        endTime: '22:00',
+      },
+    ],
   },
   {
     id: 'PROY2',
@@ -217,10 +297,15 @@ export const COURSES_DATA: Course[] = [
     status: 'pending',
     cursarReq: ['Proyecto Audiovisual 1'],
     aprobarReq: ['Proyecto Audiovisual 1'],
-    professor: 'Prof. Javier Morales',
-    day: DayOfWeek.Friday,
-    startTime: '09:00',
-    endTime: '12:00',
+    lessons: [
+      {
+        id: 'PROY2-L1',
+        professor: 'Prof. Javier Morales',
+        day: DayOfWeek.Tuesday,
+        startTime: '18:00',
+        endTime: '22:00',
+      },
+    ],
   },
   {
     id: 'DS',
@@ -242,10 +327,15 @@ export const COURSES_DATA: Course[] = [
       'Sonido 2',
       'Software en Edición Audiovisual',
     ],
-    professor: 'Ing. Martín López',
-    day: DayOfWeek.Monday,
-    startTime: '14:00',
-    endTime: '17:00',
+    lessons: [
+      {
+        id: 'DS-L1',
+        professor: 'Ing. Martín López',
+        day: DayOfWeek.Wednesday,
+        startTime: '18:00',
+        endTime: '22:00',
+      },
+    ],
   },
   {
     id: 'HM',
@@ -255,10 +345,15 @@ export const COURSES_DATA: Course[] = [
     status: 'pending',
     cursarReq: [],
     aprobarReq: [],
-    professor: 'Dra. Beatriz Sánchez',
-    day: DayOfWeek.Tuesday,
-    startTime: '14:00',
-    endTime: '17:00',
+    lessons: [
+      {
+        id: 'HM-L1',
+        professor: 'Dra. Beatriz Sánchez',
+        day: DayOfWeek.Thursday,
+        startTime: '18:00',
+        endTime: '22:00',
+      },
+    ],
   },
   {
     id: 'PProd1',
@@ -282,10 +377,15 @@ export const COURSES_DATA: Course[] = [
       'Software en Edición Audiovisual',
       'Software de Composición',
     ],
-    professor: 'Ing. Rafael Castillo',
-    day: DayOfWeek.Wednesday,
-    startTime: '09:00',
-    endTime: '12:00',
+    lessons: [
+      {
+        id: 'PProd1-L1',
+        professor: 'Ing. Rafael Castillo',
+        day: DayOfWeek.Friday,
+        startTime: '18:00',
+        endTime: '22:00',
+      },
+    ],
   },
   {
     id: 'NC',
@@ -295,10 +395,15 @@ export const COURSES_DATA: Course[] = [
     status: 'pending',
     cursarReq: ['Iluminación y Cámara 1', 'Iluminación y Cámara 2'],
     aprobarReq: ['Iluminación y Cámara 1', 'Iluminación y Cámara 2'],
-    professor: 'Prof. Alejandro Vargas',
-    day: DayOfWeek.Thursday,
-    startTime: '13:00',
-    endTime: '16:00',
+    lessons: [
+      {
+        id: 'NC-L1',
+        professor: 'Prof. Alejandro Vargas',
+        day: DayOfWeek.Monday,
+        startTime: '18:00',
+        endTime: '22:00',
+      },
+    ],
   },
   {
     id: 'MD',
@@ -320,10 +425,15 @@ export const COURSES_DATA: Course[] = [
       'Sonido 2',
       'Software en Edición Audiovisual',
     ],
-    professor: 'Lic. Claudia Pérez',
-    day: DayOfWeek.Friday,
-    startTime: '14:00',
-    endTime: '17:00',
+    lessons: [
+      {
+        id: 'MD-L1',
+        professor: 'Lic. Claudia Pérez',
+        day: DayOfWeek.Tuesday,
+        startTime: '18:00',
+        endTime: '22:00',
+      },
+    ],
   },
   {
     id: 'PProd2',
@@ -347,10 +457,15 @@ export const COURSES_DATA: Course[] = [
       'Software en Edición Audiovisual',
       'Software de Composición',
     ],
-    professor: 'Ing. Rafael Castillo',
-    day: DayOfWeek.Monday,
-    startTime: '09:00',
-    endTime: '12:00',
+    lessons: [
+      {
+        id: 'PProd2-L1',
+        professor: 'Ing. Rafael Castillo',
+        day: DayOfWeek.Wednesday,
+        startTime: '18:00',
+        endTime: '22:00',
+      },
+    ],
   },
   {
     id: 'PP',
@@ -392,10 +507,15 @@ export const COURSES_DATA: Course[] = [
       'Software de Composición',
       'Postproducción Audiovisual 1',
     ],
-    professor: 'Prof. Enrique Hernández',
-    day: DayOfWeek.Wednesday,
-    startTime: '13:00',
-    endTime: '16:00',
+    lessons: [
+      {
+        id: 'PP-L1',
+        professor: 'Prof. Enrique Hernández',
+        day: DayOfWeek.Thursday,
+        startTime: '18:00',
+        endTime: '22:00',
+      },
+    ],
   },
   {
     id: 'PROY3',
@@ -415,9 +535,14 @@ export const COURSES_DATA: Course[] = [
       'Proyecto Audiovisual 2',
       'Producción Audiovisual 1',
     ],
-    professor: 'Prof. Javier Morales',
-    day: DayOfWeek.Thursday,
-    startTime: '09:00',
-    endTime: '12:00',
+    lessons: [
+      {
+        id: 'PROY3-L1',
+        professor: 'Prof. Javier Morales',
+        day: DayOfWeek.Friday,
+        startTime: '18:00',
+        endTime: '22:00',
+      },
+    ],
   },
 ];

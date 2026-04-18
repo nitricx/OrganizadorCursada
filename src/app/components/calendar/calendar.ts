@@ -33,7 +33,11 @@ export class Calendar {
     courses
       .filter((c) => c.status === 'pending' && this.courseService.areAllRequirementsMet(c))
       .forEach((c) => {
-        map.get(c.day)?.push(c);
+        // Use the first lesson's day
+        const day = c.lessons[0]?.day;
+        if (day !== undefined) {
+          map.get(day)?.push(c);
+        }
       });
     return map;
   });
@@ -147,10 +151,14 @@ export class Calendar {
   }
 
   private coursesOverlap(course1: Course, course2: Course): boolean {
-    const start1 = this.timeToMinutes(course1.startTime);
-    const end1 = this.timeToMinutes(course1.endTime);
-    const start2 = this.timeToMinutes(course2.startTime);
-    const end2 = this.timeToMinutes(course2.endTime);
+    const lesson1 = course1.lessons[0];
+    const lesson2 = course2.lessons[0];
+    if (!lesson1 || !lesson2) return false;
+
+    const start1 = this.timeToMinutes(lesson1.startTime);
+    const end1 = this.timeToMinutes(lesson1.endTime);
+    const start2 = this.timeToMinutes(lesson2.startTime);
+    const end2 = this.timeToMinutes(lesson2.endTime);
 
     return start1 < end2 && start2 < end1;
   }
@@ -161,8 +169,11 @@ export class Calendar {
     // Get all time points where courses start or end
     const timePoints = new Set<number>();
     courses.forEach((c) => {
-      timePoints.add(this.timeToMinutes(c.startTime));
-      timePoints.add(this.timeToMinutes(c.endTime));
+      const lesson = c.lessons[0];
+      if (lesson) {
+        timePoints.add(this.timeToMinutes(lesson.startTime));
+        timePoints.add(this.timeToMinutes(lesson.endTime));
+      }
     });
 
     const sortedTimes = Array.from(timePoints).sort((a, b) => a - b);
@@ -171,8 +182,10 @@ export class Calendar {
     // For each time point, count how many courses are active
     for (const time of sortedTimes) {
       const concurrent = courses.filter((c) => {
-        const start = this.timeToMinutes(c.startTime);
-        const end = this.timeToMinutes(c.endTime);
+        const lesson = c.lessons[0];
+        if (!lesson) return false;
+        const start = this.timeToMinutes(lesson.startTime);
+        const end = this.timeToMinutes(lesson.endTime);
         return start <= time && time < end;
       }).length;
 
@@ -239,7 +252,8 @@ export class Calendar {
       return 8; // Default if no courses
     }
     const earliestTime = courses.reduce((min, course) => {
-      const courseStartHour = parseInt(course.startTime.split(':')[0]);
+      const lesson = course.lessons[0];
+      const courseStartHour = lesson ? parseInt(lesson.startTime.split(':')[0]) : 24;
       return courseStartHour < min ? courseStartHour : min;
     }, 24);
     return Math.max(0, earliestTime - 1);
@@ -253,7 +267,8 @@ export class Calendar {
       return 18; // Default if no courses
     }
     const latestTime = courses.reduce((max, course) => {
-      const courseEndHour = parseInt(course.endTime.split(':')[0]);
+      const lesson = course.lessons[0];
+      const courseEndHour = lesson ? parseInt(lesson.endTime.split(':')[0]) : 0;
       return courseEndHour > max ? courseEndHour : max;
     }, 0);
     return Math.min(24, latestTime + 1);
@@ -300,7 +315,9 @@ export class Calendar {
   }
 
   getCourseRows(course: Course): string {
-    return `${this.timeToRow(course.startTime)} / ${this.timeToRow(course.endTime)}`;
+    const lesson = course.lessons[0];
+    if (!lesson) return '2 / 2';
+    return `${this.timeToRow(lesson.startTime)} / ${this.timeToRow(lesson.endTime)}`;
   }
 
   private timeToRow(time: string): number {
