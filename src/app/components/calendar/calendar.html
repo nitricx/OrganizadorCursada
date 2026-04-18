@@ -14,7 +14,7 @@
     <div class="time-gutter"></div>
     <!-- Day headers (row 1) -->
     @for (entry of days(); track entry.day) {
-      <div class="day-header" [style.grid-column]="'span ' + getMaxConcurrentForDay(entry.day)">
+      <div class="day-header" [style.grid-column]="'span ' + maxConcurrentCourses()">
         {{ entry.label }}
       </div>
     }

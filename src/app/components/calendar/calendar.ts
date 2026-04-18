@@ -224,33 +224,26 @@ export class Calendar {
   });
 
   /**
-   * Calculates columns dynamically: time-gutter (1) + each day's own max concurrent
-   * Example: "44px 1fr 1fr 3fr 2fr 1fr" for days with 1, 1, 3, 2, 1 concurrent courses
+   * Calculates columns dynamically: time-gutter (1) + same width for each day
+   * Each day gets the same number of columns (the max concurrent courses across all days)
+   * This ensures all day columns have equal width
+   * Example: "44px 1fr 1fr 1fr 1fr 1fr 1fr" for 5 days with max 2 concurrent courses
    */
   gridTemplateColumns = computed(() => {
     const days = this.days();
-    const maxPerDay = this.maxConcurrentPerDay();
+    const maxConcurrent = this.maxConcurrentCourses();
 
-    const dayColumns = days
-      .map((day) => {
-        const maxConcurrent = maxPerDay.get(day.day) ?? 1;
-        // Each day gets columns equal to its max concurrent courses
-        return `repeat(${maxConcurrent}, 1fr)`;
-      })
-      .join(' ');
+    const dayColumns = days.map(() => `repeat(${maxConcurrent}, 1fr)`).join(' ');
 
     return `44px ${dayColumns}`;
   });
 
   hourLineEnd = computed(() => {
     const days = this.days();
-    const maxPerDay = this.maxConcurrentPerDay();
+    const maxConcurrent = this.maxConcurrentCourses();
 
-    // Total columns: time-gutter (1) + sum of all day columns
-    const totalDayColumns = days.reduce((sum, day) => {
-      const maxConcurrent = maxPerDay.get(day.day) ?? 1;
-      return sum + maxConcurrent;
-    }, 0);
+    // Total columns: time-gutter (1) + (days.length * maxConcurrent)
+    const totalDayColumns = days.length * maxConcurrent;
 
     return totalDayColumns + 1;
   });
@@ -318,24 +311,20 @@ export class Calendar {
    * Get the grid column range for a course, accounting for overlaps
    * - Non-overlapping courses span the full width of their day
    * - Overlapping courses get a sub-column based on their position
-   * Accounts for variable column widths per day
+   * All days have the same width (maxConcurrentCourses across all days)
    */
   getCourseColumn(course: Course, dayColIndex: number): string {
-    const days = this.days();
-    const maxPerDay = this.maxConcurrentPerDay();
+    const maxConcurrent = this.maxConcurrentCourses();
 
-    // Calculate the starting column for this day by summing previous days' columns
-    let dayStartCol = 2; // +2 skips time-gutter and header
-    for (let i = 0; i < dayColIndex; i++) {
-      const dayMaxConcurrent = maxPerDay.get(days[i].day) ?? 1;
-      dayStartCol += dayMaxConcurrent;
-    }
-
-    const dayMaxConcurrent = maxPerDay.get(days[dayColIndex].day) ?? 1;
+    // Calculate the starting column for this day
+    // dayColIndex 0 = column 2 (skip time-gutter at 1)
+    // dayColIndex 1 = column 2 + maxConcurrent
+    // dayColIndex 2 = column 2 + 2*maxConcurrent, etc.
+    const dayStartCol = 2 + dayColIndex * maxConcurrent;
 
     // If this course doesn't overlap, it should span the full day width
     if (!this.courseHasOverlap(course.id)) {
-      return `${dayStartCol} / span ${dayMaxConcurrent}`;
+      return `${dayStartCol} / span ${maxConcurrent}`;
     }
 
     // For overlapping courses, use the assigned sub-column
