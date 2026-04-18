@@ -1,3 +1,22 @@
 a.active-link {
   background-color: var(--mat-sidenav-container-shape, rgba(0, 0, 0, 0.08));
 }
+
+.sidebar-expansion-panel {
+  box-shadow: none !important;
+  background: transparent;
+  border-radius: 0 !important;
+}
+
+.sidebar-expansion-panel .mat-expansion-panel-header {
+  padding: 0 16px;
+  height: 48px;
+}
+
+.nested-nav-list {
+  padding: 0;
+}
+
+.nested-nav-list a {
+  padding-left: 32px;
+}
