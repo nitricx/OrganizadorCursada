@@ -31,7 +31,7 @@ export class Calendar {
       map.set(entry.day, []);
     }
     courses
-      .filter((c) => c.status === 'pending' && this.courseService.areAllRequirementsMet(c))
+      .filter((c) => c.status === 'coursing' && this.courseService.areAllRequirementsMet(c))
       .forEach((c) => {
         // Use the first lesson's day
         const day = c.lessons[0]?.day;
