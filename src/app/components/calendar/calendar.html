@@ -29,12 +29,16 @@
     }
     <!-- Courses positioned by time -->
     @for (entry of days(); track entry.day) {
-      @for (course of availableCoursesByDay().get(entry.day) ?? []; track course.id) {
+      @for (
+        courseWithLesson of availableCoursesByDay().get(entry.day) ?? [];
+        track courseWithLesson.lesson.id
+      ) {
         <app-calendar-card
-          [course]="course"
-          [style.grid-column]="getCourseColumn(course, days().indexOf(entry))"
-          [style.grid-row]="getCourseRows(course)"
-          [class.overlapping]="courseHasOverlap(course.id)"
+          [course]="courseWithLesson.course"
+          [lesson]="courseWithLesson.lesson"
+          [style.grid-column]="getCourseColumn(courseWithLesson, days().indexOf(entry))"
+          [style.grid-row]="getCourseRows(courseWithLesson)"
+          [class.overlapping]="courseHasOverlap(courseWithLesson.lesson.id)"
         />
       }
     }

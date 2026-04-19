@@ -1,7 +1,12 @@
 import { Component, ChangeDetectionStrategy, signal, computed, inject, input } from '@angular/core';
 import { CourseService } from '../../services/course.service';
-import { Course, DayOfWeek } from '../../models/course';
+import { Course, DayOfWeek, Lesson } from '../../models/course';
 import { CalendarCard } from '../calendar-card/calendar-card';
+
+interface CourseWithLesson {
+  course: Course;
+  lesson: Lesson;
+}
 
 @Component({
   selector: 'app-calendar',
@@ -39,32 +44,32 @@ export class Calendar {
             .courses()
             .filter((c) => c.status === 'coursing' && this.courseService.areAllRequirementsMet(c));
 
-    const map = new Map<DayOfWeek, Course[]>();
+    const map = new Map<DayOfWeek, CourseWithLesson[]>();
     for (const entry of this.allDays) {
       map.set(entry.day, []);
     }
     courses.forEach((c) => {
-      // Use the first lesson's day
-      const day = c.lessons[0]?.day;
-      if (day !== undefined) {
-        map.get(day)?.push(c);
-      }
+      // Add all lessons for this course
+      c.lessons.forEach((lesson) => {
+        const day = lesson.day;
+        map.get(day)?.push({ course: c, lesson });
+      });
     });
     return map;
   });
 
   /**
-   * Maps course IDs to their sub-column index when overlapping with other courses on the same day
-   * Format: courseId -> subColumnIndex (0-based, where higher index = further right)
+   * Maps lesson IDs to their sub-column index when overlapping with other lessons on the same day
+   * Format: lessonId -> subColumnIndex (0-based, where higher index = further right)
    */
   courseColumnMap = computed(() => {
     const map = new Map<string, number>();
     const coursesByDay = this.availableCoursesByDay();
 
-    for (const courses of coursesByDay.values()) {
+    for (const courseWithLessons of coursesByDay.values()) {
       // For each day, determine which courses overlap and assign them sub-columns
-      this.assignSubColumnsForDay(courses).forEach((subCol, courseId) => {
-        map.set(courseId, subCol);
+      this.assignSubColumnsForDay(courseWithLessons).forEach((subCol, lessonId) => {
+        map.set(lessonId, subCol);
       });
     }
 
@@ -72,15 +77,15 @@ export class Calendar {
   });
 
   /**
-   * Calculates the maximum number of simultaneous overlapping courses per day
-   * Returns a map of DayOfWeek -> max concurrent courses for that day
+   * Calculates the maximum number of simultaneous overlapping lessons per day
+   * Returns a map of DayOfWeek -> max concurrent lessons for that day
    */
   maxConcurrentPerDay = computed(() => {
     const map = new Map<DayOfWeek, number>();
     const coursesByDay = this.availableCoursesByDay();
 
-    for (const [day, courses] of coursesByDay.entries()) {
-      const concurrent = this.getMaxConcurrentCourses(courses);
+    for (const [day, courseWithLessons] of coursesByDay.entries()) {
+      const concurrent = this.getMaxConcurrentLessons(courseWithLessons);
       map.set(day, concurrent);
     }
 
@@ -88,14 +93,14 @@ export class Calendar {
   });
 
   /**
-   * Calculates the maximum number of simultaneous overlapping courses on any day
+   * Calculates the maximum number of simultaneous overlapping lessons on any day
    */
   maxConcurrentCourses = computed(() => {
     const coursesByDay = this.availableCoursesByDay();
     let max = 1;
 
-    for (const courses of coursesByDay.values()) {
-      const concurrent = this.getMaxConcurrentCourses(courses);
+    for (const courseWithLessons of coursesByDay.values()) {
+      const concurrent = this.getMaxConcurrentLessons(courseWithLessons);
       if (concurrent > max) {
         max = concurrent;
       }
@@ -105,19 +110,19 @@ export class Calendar {
   });
 
   /**
-   * Identifies which courses have time conflicts with other courses on the same day
+   * Identifies which lessons have time conflicts with other lessons on the same day
    */
   overlappingCourseIds = computed(() => {
     const overlappingIds = new Set<string>();
     const coursesByDay = this.availableCoursesByDay();
 
-    for (const courses of coursesByDay.values()) {
-      for (const course of courses) {
-        const hasOverlap = courses.some(
-          (other) => other.id !== course.id && this.coursesOverlap(course, other),
+    for (const courseWithLessons of coursesByDay.values()) {
+      for (const cwl of courseWithLessons) {
+        const hasOverlap = courseWithLessons.some(
+          (other) => other.lesson.id !== cwl.lesson.id && this.lessonsOverlap(cwl, other),
         );
         if (hasOverlap) {
-          overlappingIds.add(course.id);
+          overlappingIds.add(cwl.lesson.id);
         }
       }
     }
@@ -126,10 +131,10 @@ export class Calendar {
   });
 
   /**
-   * Check if a specific course has overlaps
+   * Check if a specific lesson has overlaps
    */
-  courseHasOverlap(courseId: string): boolean {
-    return this.overlappingCourseIds().has(courseId);
+  courseHasOverlap(lessonId: string): boolean {
+    return this.overlappingCourseIds().has(lessonId);
   }
 
   /**
@@ -139,32 +144,31 @@ export class Calendar {
     return this.maxConcurrentPerDay().get(day) ?? 1;
   }
 
-  private assignSubColumnsForDay(courses: Course[]): Map<string, number> {
+  private assignSubColumnsForDay(courseWithLessons: CourseWithLesson[]): Map<string, number> {
     const result = new Map<string, number>();
 
-    for (const course of courses) {
-      // Find how many courses overlap with this one
-      const overlappingCourses = courses.filter((c) => this.coursesOverlap(course, c));
+    for (const cwl of courseWithLessons) {
+      // Find how many lessons overlap with this one
+      const overlappingLessons = courseWithLessons.filter((c) => this.lessonsOverlap(cwl, c));
 
-      // Assign this course a sub-column based on how many already assigned
-      const assignedColumns = overlappingCourses
-        .filter((c) => result.has(c.id))
-        .map((c) => result.get(c.id)!);
+      // Assign this lesson a sub-column based on how many already assigned
+      const assignedColumns = overlappingLessons
+        .filter((c) => result.has(c.lesson.id))
+        .map((c) => result.get(c.lesson.id)!);
 
       let subCol = 0;
       while (assignedColumns.includes(subCol)) {
         subCol++;
       }
-      result.set(course.id, subCol);
+      result.set(cwl.lesson.id, subCol);
     }
 
     return result;
   }
 
-  private coursesOverlap(course1: Course, course2: Course): boolean {
-    const lesson1 = course1.lessons[0];
-    const lesson2 = course2.lessons[0];
-    if (!lesson1 || !lesson2) return false;
+  private lessonsOverlap(cwl1: CourseWithLesson, cwl2: CourseWithLesson): boolean {
+    const lesson1 = cwl1.lesson;
+    const lesson2 = cwl2.lesson;
 
     const start1 = this.timeToMinutes(lesson1.startTime);
     const end1 = this.timeToMinutes(lesson1.endTime);
@@ -174,27 +178,24 @@ export class Calendar {
     return start1 < end2 && start2 < end1;
   }
 
-  private getMaxConcurrentCourses(courses: Course[]): number {
-    if (courses.length === 0) return 1;
+  private getMaxConcurrentLessons(courseWithLessons: CourseWithLesson[]): number {
+    if (courseWithLessons.length === 0) return 1;
 
-    // Get all time points where courses start or end
+    // Get all time points where lessons start or end
     const timePoints = new Set<number>();
-    courses.forEach((c) => {
-      const lesson = c.lessons[0];
-      if (lesson) {
-        timePoints.add(this.timeToMinutes(lesson.startTime));
-        timePoints.add(this.timeToMinutes(lesson.endTime));
-      }
+    courseWithLessons.forEach((cwl) => {
+      const lesson = cwl.lesson;
+      timePoints.add(this.timeToMinutes(lesson.startTime));
+      timePoints.add(this.timeToMinutes(lesson.endTime));
     });
 
     const sortedTimes = Array.from(timePoints).sort((a, b) => a - b);
     let maxConcurrent = 1;
 
-    // For each time point, count how many courses are active
+    // For each time point, count how many lessons are active
     for (const time of sortedTimes) {
-      const concurrent = courses.filter((c) => {
-        const lesson = c.lessons[0];
-        if (!lesson) return false;
+      const concurrent = courseWithLessons.filter((cwl) => {
+        const lesson = cwl.lesson;
         const start = this.timeToMinutes(lesson.startTime);
         const end = this.timeToMinutes(lesson.endTime);
         return start <= time && time < end;
@@ -255,14 +256,17 @@ export class Calendar {
         ? override
         : this.courseService
             .courses()
-            .filter((c) => c.status === 'pending' && this.courseService.areAllRequirementsMet(c));
+            .filter((c) => c.status === 'coursing' && this.courseService.areAllRequirementsMet(c));
     if (courses.length === 0) {
       return 8; // Default if no courses
     }
     const earliestTime = courses.reduce((min, course) => {
-      const lesson = course.lessons[0];
-      const courseStartHour = lesson ? parseInt(lesson.startTime.split(':')[0]) : 24;
-      return courseStartHour < min ? courseStartHour : min;
+      // Check all lessons, not just the first one
+      const minCourseTime = course.lessons.reduce((courseMin, lesson) => {
+        const lessonStartHour = parseInt(lesson.startTime.split(':')[0]);
+        return lessonStartHour < courseMin ? lessonStartHour : courseMin;
+      }, 24);
+      return minCourseTime < min ? minCourseTime : min;
     }, 24);
     return Math.max(0, earliestTime - 1);
   });
@@ -274,14 +278,17 @@ export class Calendar {
         ? override
         : this.courseService
             .courses()
-            .filter((c) => c.status === 'pending' && this.courseService.areAllRequirementsMet(c));
+            .filter((c) => c.status === 'coursing' && this.courseService.areAllRequirementsMet(c));
     if (courses.length === 0) {
       return 18; // Default if no courses
     }
     const latestTime = courses.reduce((max, course) => {
-      const lesson = course.lessons[0];
-      const courseEndHour = lesson ? parseInt(lesson.endTime.split(':')[0]) : 0;
-      return courseEndHour > max ? courseEndHour : max;
+      // Check all lessons, not just the first one
+      const maxCourseTime = course.lessons.reduce((courseMax, lesson) => {
+        const lessonEndHour = parseInt(lesson.endTime.split(':')[0]);
+        return lessonEndHour > courseMax ? lessonEndHour : courseMax;
+      }, 0);
+      return maxCourseTime > max ? maxCourseTime : max;
     }, 0);
     return Math.min(24, latestTime + 1);
   });
@@ -308,12 +315,12 @@ export class Calendar {
   });
 
   /**
-   * Get the grid column range for a course, accounting for overlaps
-   * - Non-overlapping courses span the full width of their day
-   * - Overlapping courses get a sub-column based on their position
+   * Get the grid column range for a lesson, accounting for overlaps
+   * - Non-overlapping lessons span the full width of their day
+   * - Overlapping lessons get a sub-column based on their position
    * All days have the same width (maxConcurrentCourses across all days)
    */
-  getCourseColumn(course: Course, dayColIndex: number): string {
+  getCourseColumn(courseWithLesson: CourseWithLesson, dayColIndex: number): string {
     const maxConcurrent = this.maxConcurrentCourses();
 
     // Calculate the starting column for this day
@@ -322,21 +329,20 @@ export class Calendar {
     // dayColIndex 2 = column 2 + 2*maxConcurrent, etc.
     const dayStartCol = 2 + dayColIndex * maxConcurrent;
 
-    // If this course doesn't overlap, it should span the full day width
-    if (!this.courseHasOverlap(course.id)) {
+    // If this lesson doesn't overlap, it should span the full day width
+    if (!this.courseHasOverlap(courseWithLesson.lesson.id)) {
       return `${dayStartCol} / span ${maxConcurrent}`;
     }
 
-    // For overlapping courses, use the assigned sub-column
-    const subCol = this.courseColumnMap().get(course.id) ?? 0;
+    // For overlapping lessons, use the assigned sub-column
+    const subCol = this.courseColumnMap().get(courseWithLesson.lesson.id) ?? 0;
     const startCol = dayStartCol + subCol;
 
     return `${startCol} / span 1`;
   }
 
-  getCourseRows(course: Course): string {
-    const lesson = course.lessons[0];
-    if (!lesson) return '2 / 2';
+  getCourseRows(courseWithLesson: CourseWithLesson): string {
+    const lesson = courseWithLesson.lesson;
     return `${this.timeToRow(lesson.startTime)} / ${this.timeToRow(lesson.endTime)}`;
   }
 

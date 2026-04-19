@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, input } from '@angular/core';
-import { Course } from '../../models/course';
+import { Course, Lesson } from '../../models/course';
 
 @Component({
   selector: 'app-calendar-card',
@@ -10,4 +10,5 @@ import { Course } from '../../models/course';
 })
 export class CalendarCard {
   course = input.required<Course>();
+  lesson = input.required<Lesson>();
 }

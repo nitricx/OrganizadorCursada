@@ -1,5 +1,3 @@
 <span class="calendar-course-name">{{ course().name }}</span>
-<span class="calendar-course-time"
-  >{{ course().lessons[0]?.startTime }} – {{ course().lessons[0]?.endTime }}</span
->
-<span class="calendar-course-professor">{{ course().lessons[0]?.professor }}</span>
+<span class="calendar-course-time">{{ lesson().startTime }} – {{ lesson().endTime }}</span>
+<span class="calendar-course-professor">{{ lesson().professor }}</span>
