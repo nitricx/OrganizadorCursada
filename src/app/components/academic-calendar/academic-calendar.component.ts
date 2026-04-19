@@ -1,4 +1,6 @@
 import { Component, ChangeDetectionStrategy, inject, computed } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { ActivatedRoute } from '@angular/router';
 import { CourseService } from '../../services/course.service';
 import { Course } from '../../models/course';
 import { Calendar } from '../calendar/calendar';
@@ -18,6 +20,14 @@ interface Semester {
 })
 export class AcademicCalendarComponent {
   private readonly courseService = inject(CourseService);
+  private readonly route = inject(ActivatedRoute);
+
+  private readonly routeParamId = toSignal(this.route.paramMap.pipe());
+
+  planId = computed(() => {
+    const id = this.routeParamId()?.get('id');
+    return id ? `Plan de estudio ${id}` : null;
+  });
 
   semesters = computed<Semester[]>(() => {
     const courses = this.courseService.courses();

@@ -1,6 +1,9 @@
 <div class="academic-calendar">
   <div class="page-header">
     <h1>Calendario Académico</h1>
+    @if (planId()) {
+      <h2 class="plan-title">{{ planId() }}</h2>
+    }
   </div>
   @for (semester of semesters(); track semester.label) {
     <section class="semester-section">
