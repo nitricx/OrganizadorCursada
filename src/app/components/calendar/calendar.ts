@@ -7,6 +7,7 @@ import { CourseService } from '../../services/course.service';
 import { PlanService } from '../../services/plan.service';
 import { Course, DayOfWeek, Lesson } from '../../models/course';
 import { CalendarCard } from '../calendar-card/calendar-card';
+import { CalendarLegendComponent } from '../calendar-legend/calendar-legend.component';
 
 interface CourseWithLesson {
   course: Course;
@@ -15,7 +16,7 @@ interface CourseWithLesson {
 
 @Component({
   selector: 'app-calendar',
-  imports: [CalendarCard, CommonModule],
+  imports: [CalendarCard, CalendarLegendComponent, CommonModule],
   templateUrl: './calendar.html',
   styleUrl: './calendar.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
