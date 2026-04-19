@@ -7,27 +7,51 @@ import { COURSES_DATA } from '../data/courses.data';
   providedIn: 'root',
 })
 export class CourseService {
-  private readonly STORAGE_KEY = 'materiasStatus_tea';
   private coursesSignal = signal<Course[]>(this.initializeCourses());
+  private lessonStatesSignal = signal<Map<string, CourseStatus>>(this.initializeLessonStates());
   private selectedIdsSignal = signal<Set<string>>(new Set());
   private hoveredCourseIdSignal = signal<string | null>(null);
 
-  courses = computed(() => this.coursesSignal());
+  courses = computed(() => {
+    const courses = this.coursesSignal();
+    const lessonStates = this.lessonStatesSignal();
+
+    // Merge lesson states into courses for display
+    return courses.map((course) => ({
+      ...course,
+      lessons: course.lessons.map((lesson) => ({
+        ...lesson,
+        status: (lessonStates.get(lesson.id) || 'pending') as CourseStatus,
+      })),
+    }));
+  });
   selectedIds = computed(() => this.selectedIdsSignal());
   hoveredCourseId = computed(() => this.hoveredCourseIdSignal());
 
   private readonly nameToIdMap = this.buildNameToIdMap();
 
-  constructor() {
-    this.loadState();
-  }
+  constructor() {}
 
   private initializeCourses(): Course[] {
     return COURSES_DATA.map((course) => ({
       ...course,
+      status: 'pending',
       cursarReq: course.cursarReq.slice(),
       aprobarReq: course.aprobarReq.slice(),
+      lessons: course.lessons.map((lesson) => ({
+        ...lesson,
+      })),
     }));
+  }
+
+  private initializeLessonStates(): Map<string, CourseStatus> {
+    const states = new Map<string, CourseStatus>();
+    COURSES_DATA.forEach((course) => {
+      course.lessons.forEach((lesson) => {
+        states.set(lesson.id, 'pending');
+      });
+    });
+    return states;
   }
 
   private buildNameToIdMap(): Map<string, string> {
@@ -125,22 +149,45 @@ export class CourseService {
       const course = updatedCourses[courseIndex];
       let nextStatus: CourseStatus;
 
+      // Cycle through states in legend order: Unselected → Planned → Coursing → Finished
+      // pending → coursed → coursing → approved → pending
       if (course.status === 'pending') {
-        nextStatus = 'coursing';
-      } else if (course.status === 'coursing') {
-        nextStatus = 'coursed';
+        nextStatus = 'coursed'; // Unselected → Planned
       } else if (course.status === 'coursed') {
-        nextStatus = 'approved';
+        nextStatus = 'coursing'; // Planned → Coursing
+      } else if (course.status === 'coursing') {
+        nextStatus = 'approved'; // Coursing → Finished
       } else {
-        nextStatus = 'pending';
+        nextStatus = 'pending'; // Finished → Unselected
       }
 
       if (this.canChangeStatusTo(courseId, nextStatus)) {
         course.status = nextStatus;
         this.coursesSignal.set(updatedCourses);
-        this.saveState();
       }
     }
+  }
+
+  toggleLessonStatus(lessonId: string): void {
+    const lessonStates = this.lessonStatesSignal();
+    const oldStatus = lessonStates.get(lessonId) || 'pending';
+    let nextStatus: CourseStatus;
+
+    // Cycle through states: pending → coursed → coursing → approved → pending
+    if (oldStatus === 'pending') {
+      nextStatus = 'coursed';
+    } else if (oldStatus === 'coursed') {
+      nextStatus = 'coursing';
+    } else if (oldStatus === 'coursing') {
+      nextStatus = 'approved';
+    } else {
+      nextStatus = 'pending';
+    }
+
+    // Create new map with updated state
+    const updatedStates = new Map(lessonStates);
+    updatedStates.set(lessonId, nextStatus);
+    this.lessonStatesSignal.set(updatedStates);
   }
 
   toggleCourseSelection(courseId: string): void {
@@ -158,38 +205,13 @@ export class CourseService {
   }
 
   reset(): void {
-    const courses = this.coursesSignal();
-    const resetCourses = courses.map((course) => ({
-      ...course,
-      status: 'pending' as const,
-    }));
-    this.coursesSignal.set(resetCourses);
-    this.selectedIdsSignal.set(new Set());
-    this.saveState();
-  }
-
-  private loadState(): void {
-    try {
-      const saved = localStorage.getItem(this.STORAGE_KEY);
-      if (!saved) return;
-
-      const obj = JSON.parse(saved) as Record<string, string>;
-      const courses = this.coursesSignal();
-      const updatedCourses = courses.map((course) => ({
-        ...course,
-        status: (obj[course.id] || course.status) as any,
-      }));
-      this.coursesSignal.set(updatedCourses);
-    } catch (e) {
-      console.error('Error loading course state:', e);
-    }
-  }
-
-  private saveState(): void {
-    const obj: Record<string, string> = {};
+    const states = new Map<string, CourseStatus>();
     this.coursesSignal().forEach((course) => {
-      obj[course.id] = course.status;
+      course.lessons.forEach((lesson) => {
+        states.set(lesson.id, 'pending');
+      });
     });
-    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(obj));
+    this.lessonStatesSignal.set(states);
+    this.selectedIdsSignal.set(new Set());
   }
 }

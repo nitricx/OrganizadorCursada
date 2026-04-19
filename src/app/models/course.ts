@@ -15,6 +15,7 @@ export interface Lesson {
   day: DayOfWeek;
   startTime: string; // HH:MM format
   endTime: string; // HH:MM format
+  status?: CourseStatus; // Individual lesson status (defaults to pending)
 }
 
 export interface Course {

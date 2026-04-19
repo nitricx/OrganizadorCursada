@@ -12,6 +12,42 @@
   outline: 2px dashed #185fa5;
   outline-offset: -2px;
   background: #e8e7e0;
+  border: 1px solid #888;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+:host:hover {
+  opacity: 0.9;
+  transform: scale(1.02);
+}
+
+/* Status: Planned (coursed) */
+:host.status-coursed {
+  background: #e6f1fb;
+  border-color: #185fa5;
+  outline-color: #185fa5;
+}
+
+/* Status: Coursing (coursing) */
+:host.status-coursing {
+  background: #e1f5ee;
+  border-color: #0f6e56;
+  outline-color: #0f6e56;
+}
+
+/* Status: Finished (approved) */
+:host.status-approved {
+  background: #c8e6c9;
+  border-color: #2e7d32;
+  outline-color: #2e7d32;
+}
+
+.calendar-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
 }
 
 /* When a course overlaps with another, reduce padding to make it thinner */
@@ -19,6 +55,10 @@
   padding: 4px 6px;
   margin: 1px;
   font-size: 11px;
+  gap: 1px;
+}
+
+:host.overlapping .calendar-card-content {
   gap: 1px;
 }
 

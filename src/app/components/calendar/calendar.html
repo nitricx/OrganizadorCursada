@@ -52,6 +52,7 @@
           [style.grid-column]="getCourseColumn(courseWithLesson, days().indexOf(entry))"
           [style.grid-row]="getCourseRows(courseWithLesson)"
           [class.overlapping]="courseHasOverlap(courseWithLesson.lesson.id)"
+          [class]="'status-' + (courseWithLesson.lesson.status || 'pending')"
         />
       }
     }

@@ -58,9 +58,7 @@ export class Calendar {
     const courses =
       override !== undefined
         ? override
-        : this.courseService
-            .courses()
-            .filter((c) => c.status === 'coursing' && this.courseService.areAllRequirementsMet(c));
+        : this.courseService.courses().filter((c) => this.courseService.areAllRequirementsMet(c));
 
     const map = new Map<DayOfWeek, CourseWithLesson[]>();
     for (const entry of this.allDays) {
@@ -315,7 +313,7 @@ export class Calendar {
     const start = this.startHour();
     const end = this.endHour();
     return Array.from({ length: end - start }, (_, i) => ({
-      label: `${(start + i).toString().padStart(2, '0')}:00`,
+      label: i % 2 === 0 ? `${(start + i).toString().padStart(2, '0')}:00` : '',
       row: 2 + i * 2, // row 1 = header, row 2 = START_HOUR, each 30min = 1 row
     }));
   });
@@ -323,13 +321,13 @@ export class Calendar {
   /**
    * Calculates the dynamic grid template rows based on the number of hours needed
    * Row 1: header (36px)
-   * Rows 2+: time slots (30px each)
+   * Rows 2+: time slots (15px each - compressed for vertical space efficiency)
    * Formula: highestRowNeeded = 2 * (endHour - startHour)
    */
   gridTemplateRows = computed(() => {
     const numHours = this.endHour() - this.startHour();
     const dataRows = 2 * numHours - 1;
-    return `36px repeat(${dataRows}, 30px)`;
+    return `36px repeat(${dataRows}, 15px)`;
   });
 
   /**
