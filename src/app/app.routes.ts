@@ -6,8 +6,7 @@ import { AcademicCalendarComponent } from './components/academic-calendar/academ
 export const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
   { path: 'home', component: CourseOrganizerComponent },
-  { path: 'myWeek', redirectTo: '/myWeek/plan/1', pathMatch: 'full' },
-  { path: 'myWeek/plan/:planId', component: Calendar },
+  { path: 'myWeek', component: Calendar },
   { path: 'academicCalendar', component: AcademicCalendarComponent },
   { path: 'academicCalendar/plan/:id', component: AcademicCalendarComponent },
 ];
