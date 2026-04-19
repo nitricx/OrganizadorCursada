@@ -22,7 +22,7 @@ export interface SidebarItem {
 export class SidebarComponent {
   items = signal<SidebarItem[]>([
     { label: 'Home', route: '/home' },
-    { label: 'Mi Semana', route: '/calendar' },
+    { label: 'Mi Semana', route: '/myWeek' },
     {
       label: 'Calendario Académico',
       children: [{ label: 'Plan de estudio 1', route: '/academicCalendar/plan/1' }],
