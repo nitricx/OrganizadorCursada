@@ -56,6 +56,7 @@ export class AcademicCalendarComponent {
       if (id) {
         this.planService.setSelectedPlanId(id);
         this.courseService.setCurrentPlanId(id);
+        this.extraSlots.set(this.planService.getExtraSlots(id));
       }
     });
   }
@@ -149,10 +150,13 @@ export class AcademicCalendarComponent {
     const id1 = `extra-${ts}-1`;
     const id2 = `extra-${ts}-2`;
 
-    this.extraSlots.update((slots) => [
-      ...slots,
-      { id: id1, afterId: id },
-      { id: id2, afterId: id1 },
-    ]);
+    this.extraSlots.update((slots) => {
+      const updated = [...slots, { id: id1, afterId: id }, { id: id2, afterId: id1 }];
+      const planId = this.routeParamId()?.get('id');
+      if (planId) {
+        this.planService.setExtraSlots(planId, updated);
+      }
+      return updated;
+    });
   }
 }
