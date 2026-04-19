@@ -3,6 +3,17 @@
     <div class="calendar-header">
       <h1>Mi Semana</h1>
       <h2>{{ currentDate().toLocaleDateString('es-ES', { month: 'long', year: 'numeric' }) }}</h2>
+      @if (availablePlans().length > 0) {
+        <div class="plan-selector">
+          <label for="plan-select">Seleccionar Plan:</label>
+          <select id="plan-select" [value]="selectedPlanId()" (change)="onPlanChange($any($event.target).value)">
+            <option value="">-- Seleccionar un plan --</option>
+            @for (plan of availablePlans(); track plan.id) {
+              <option [value]="plan.id">{{ plan.label }}</option>
+            }
+          </select>
+        </div>
+      }
     </div>
   }
   <div

@@ -1,9 +1,10 @@
-import { Component, ChangeDetectionStrategy, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, signal, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { MatListModule } from '@angular/material/list';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { PlanService } from '../../services/plan.service';
 
 export interface SidebarItem {
   label: string;
@@ -20,6 +21,8 @@ export interface SidebarItem {
   imports: [RouterModule, MatListModule, MatExpansionModule, MatIconModule, MatButtonModule],
 })
 export class SidebarComponent {
+  private readonly planService = inject(PlanService);
+
   items = signal<SidebarItem[]>([
     { label: 'Home', route: '/home' },
     { label: 'Mi Semana', route: '/myWeek' },
@@ -39,5 +42,7 @@ export class SidebarComponent {
     this.items.update((items) =>
       items.map((i) => (i === item ? { ...i, children: [...(i.children ?? []), newChild] } : i)),
     );
+    // Also update the PlanService
+    this.planService.addPlan({ id: count.toString(), label: `Plan de estudio ${count}` });
   }
 }

@@ -1,5 +1,10 @@
 import { Component, ChangeDetectionStrategy, signal, computed, inject, input } from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { map } from 'rxjs/operators';
 import { CourseService } from '../../services/course.service';
+import { PlanService } from '../../services/plan.service';
 import { Course, DayOfWeek, Lesson } from '../../models/course';
 import { CalendarCard } from '../calendar-card/calendar-card';
 
@@ -10,13 +15,16 @@ interface CourseWithLesson {
 
 @Component({
   selector: 'app-calendar',
-  imports: [CalendarCard],
+  imports: [CalendarCard, CommonModule],
   templateUrl: './calendar.html',
   styleUrl: './calendar.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Calendar {
   private readonly courseService = inject(CourseService);
+  private readonly planService = inject(PlanService);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
 
   /** When provided, these courses are shown directly instead of the user's active coursing courses */
   coursesOverride = input<Course[] | undefined>(undefined);
@@ -25,6 +33,25 @@ export class Calendar {
   showHeader = input<boolean>(true);
 
   currentDate = signal(new Date());
+  
+  /** Track the selected plan from the route */
+  private readonly routePlanId = toSignal(
+    this.route.paramMap.pipe(map(params => params.get('planId') || '1')),
+    { initialValue: '1' }
+  );
+
+  /** Selected plan ID signal (defaults to "1") */
+  selectedPlanId = computed(() => this.routePlanId());
+  
+  /** Available plans for selection */
+  availablePlans = this.planService.plans;
+
+  /** Handle plan selection change */
+  onPlanChange(planId: string): void {
+    if (planId) {
+      this.router.navigate(['/myWeek/plan', planId]);
+    }
+  }
 
   private readonly allDays: { label: string; day: DayOfWeek; col: number }[] = [
     { label: 'Lunes', day: DayOfWeek.Monday, col: 2 },
