@@ -39,6 +39,7 @@ export class Calendar {
   /** Handle plan selection change (no navigation, just update selection) */
   onPlanChange(planId: string): void {
     this.planService.setSelectedPlanId(planId);
+    this.courseService.setCurrentPlanId(planId);
   }
 
   /** Determine if calendar is read-only (true when no override provided, i.e., on /myWeek) */
@@ -58,6 +59,8 @@ export class Calendar {
   availableCoursesByDay = computed(() => {
     const override = this.coursesOverride();
     const readOnly = this.isReadOnly();
+    // Ensure plan is synced before computing courses
+    this.selectedPlanId();
     const courses =
       override !== undefined
         ? override

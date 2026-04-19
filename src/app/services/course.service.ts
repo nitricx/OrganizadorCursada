@@ -8,13 +8,16 @@ import { COURSES_DATA } from '../data/courses.data';
 })
 export class CourseService {
   private coursesSignal = signal<Course[]>(this.initializeCourses());
-  private lessonStatesSignal = signal<Map<string, CourseStatus>>(this.initializeLessonStates());
+  private lessonStatesByPlanSignal = signal<Map<string, Map<string, CourseStatus>>>(new Map());
+  private currentPlanIdSignal = signal<string>('1');
   private selectedIdsSignal = signal<Set<string>>(new Set());
   private hoveredCourseIdSignal = signal<string | null>(null);
 
   courses = computed(() => {
     const courses = this.coursesSignal();
-    const lessonStates = this.lessonStatesSignal();
+    const lessonStatesByPlan = this.lessonStatesByPlanSignal();
+    const currentPlanId = this.currentPlanIdSignal();
+    const lessonStates = lessonStatesByPlan.get(currentPlanId) || new Map();
 
     // Merge lesson states into courses for display
     return courses.map((course) => {
@@ -64,7 +67,7 @@ export class CourseService {
     }));
   }
 
-  private initializeLessonStates(): Map<string, CourseStatus> {
+  private initializeLessonStatesForPlan(planId: string): Map<string, CourseStatus> {
     const states = new Map<string, CourseStatus>();
     COURSES_DATA.forEach((course) => {
       course.lessons.forEach((lesson) => {
@@ -189,8 +192,16 @@ export class CourseService {
   }
 
   toggleLessonStatus(lessonId: string): void {
-    const lessonStates = this.lessonStatesSignal();
-    const oldStatus = lessonStates.get(lessonId) || 'pending';
+    const lessonStatesByPlan = this.lessonStatesByPlanSignal();
+    const currentPlanId = this.currentPlanIdSignal();
+    const planStates = lessonStatesByPlan.get(currentPlanId);
+
+    if (!planStates) {
+      console.warn(`No lesson states found for plan ${currentPlanId}`);
+      return;
+    }
+
+    const oldStatus = planStates.get(lessonId) || 'pending';
     let nextStatus: CourseStatus;
 
     // Cycle through states: pending → coursed → coursing → approved → pending
@@ -205,9 +216,13 @@ export class CourseService {
     }
 
     // Create new map with updated state
-    const updatedStates = new Map(lessonStates);
-    updatedStates.set(lessonId, nextStatus);
-    this.lessonStatesSignal.set(updatedStates);
+    const updatedPlanStates = new Map(planStates);
+    updatedPlanStates.set(lessonId, nextStatus);
+
+    // Update the plan-specific states
+    const updatedStatesByPlan = new Map(lessonStatesByPlan);
+    updatedStatesByPlan.set(currentPlanId, updatedPlanStates);
+    this.lessonStatesByPlanSignal.set(updatedStatesByPlan);
   }
 
   toggleCourseSelection(courseId: string): void {
@@ -225,13 +240,25 @@ export class CourseService {
   }
 
   reset(): void {
-    const states = new Map<string, CourseStatus>();
-    this.coursesSignal().forEach((course) => {
-      course.lessons.forEach((lesson) => {
-        states.set(lesson.id, 'pending');
-      });
-    });
-    this.lessonStatesSignal.set(states);
+    const currentPlanId = this.currentPlanIdSignal();
+    const lessonStatesByPlan = this.lessonStatesByPlanSignal();
+    const states = this.initializeLessonStatesForPlan(currentPlanId);
+
+    const updatedStatesByPlan = new Map(lessonStatesByPlan);
+    updatedStatesByPlan.set(currentPlanId, states);
+    this.lessonStatesByPlanSignal.set(updatedStatesByPlan);
     this.selectedIdsSignal.set(new Set());
+  }
+
+  setCurrentPlanId(planId: string): void {
+    this.currentPlanIdSignal.set(planId);
+
+    // Initialize lesson states for this plan if they don't exist
+    const lessonStatesByPlan = this.lessonStatesByPlanSignal();
+    if (!lessonStatesByPlan.has(planId)) {
+      const updatedStatesByPlan = new Map(lessonStatesByPlan);
+      updatedStatesByPlan.set(planId, this.initializeLessonStatesForPlan(planId));
+      this.lessonStatesByPlanSignal.set(updatedStatesByPlan);
+    }
   }
 }

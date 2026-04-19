@@ -37,6 +37,7 @@ export class AcademicCalendarComponent {
       const id = this.routeParamId()?.get('id');
       if (id) {
         this.planService.setSelectedPlanId(id);
+        this.courseService.setCurrentPlanId(id);
       }
     });
   }
