@@ -103,30 +103,56 @@ export class AcademicCalendarComponent {
     }));
     const extras = this.extraSlots();
 
-    const afterMap = new Map<string, DisplaySemester[]>();
+    const afterMap = new Map<string, { id: string }[]>();
     extras.forEach((e) => {
       const list = afterMap.get(e.afterId) ?? [];
-      list.push({ id: e.id, label: 'Semestre adicional', courses: [] });
+      list.push({ id: e.id });
       afterMap.set(e.afterId, list);
     });
 
     const result: DisplaySemester[] = [];
+    let position = 0;
 
-    const addWithChildren = (item: DisplaySemester) => {
-      result.push(item);
-      (afterMap.get(item.id) ?? []).forEach((child) => addWithChildren(child));
+    const itemToLabel = (pos: number): string => {
+      const year = Math.floor(pos / 2) + 1;
+      const quarter = (pos % 2) + 1;
+      return `Año ${year} – Cuatrimestre ${quarter}`;
     };
 
-    base.forEach((item) => addWithChildren(item));
+    const addWithChildren = (item: DisplaySemester): void => {
+      const displayItem: DisplaySemester = {
+        ...item,
+        label: itemToLabel(position),
+      };
+      result.push(displayItem);
+      position++;
+
+      (afterMap.get(item.id) ?? []).forEach((childInfo) => {
+        const childItem: DisplaySemester = {
+          id: childInfo.id,
+          label: '',
+          courses: [],
+        };
+        addWithChildren(childItem);
+      });
+    };
+
+    base.forEach((item) => {
+      addWithChildren(item);
+    });
+
     return result;
   });
 
   addCalendarAfter(id: string): void {
     const ts = Date.now();
+    const id1 = `extra-${ts}-1`;
+    const id2 = `extra-${ts}-2`;
+
     this.extraSlots.update((slots) => [
       ...slots,
-      { id: `extra-${ts}-1`, afterId: id },
-      { id: `extra-${ts}-2`, afterId: `extra-${ts}-1` },
+      { id: id1, afterId: id },
+      { id: id2, afterId: id1 },
     ]);
   }
 }
