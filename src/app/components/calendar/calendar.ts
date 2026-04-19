@@ -28,6 +28,9 @@ export class Calendar {
   /** Whether to show the "Mi Semana" title header */
   showHeader = input<boolean>(true);
 
+  /** Whether the calendar is editable (allows dragging) */
+  isEditable = input<boolean>(true);
+
   currentDate = signal(new Date());
 
   /** Selected plan ID signal (defaults to the first available plan) */

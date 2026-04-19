@@ -8,7 +8,11 @@
   @for (item of displaySemesters(); track item.id; let i = $index; let last = $last) {
     <section class="semester-section">
       <h2 class="semester-title">{{ item.label }}</h2>
-      <app-calendar [coursesOverride]="item.courses" [showHeader]="false" />
+      <app-calendar
+        [coursesOverride]="item.courses"
+        [showHeader]="false"
+        [isEditable]="isEditable()"
+      />
     </section>
     @if (isEditable() && (i + 1) % 2 === 0) {
       <div class="add-semester-divider">

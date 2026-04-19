@@ -52,6 +52,7 @@
           [course]="courseWithLesson.course"
           [lesson]="courseWithLesson.lesson"
           [isReadOnly]="isReadOnly()"
+          [isEditable]="isEditable()"
           [style.grid-column]="getCourseColumn(courseWithLesson, days().indexOf(entry))"
           [style.grid-row]="getCourseRows(courseWithLesson)"
           [class.overlapping]="courseHasOverlap(courseWithLesson.lesson.id)"

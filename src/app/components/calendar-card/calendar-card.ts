@@ -22,7 +22,7 @@ import { CourseService } from '../../services/course.service';
     '[style.transition]':
       'isDragging() ? "none" : "transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.2s ease"',
     '[style.z-index]': 'isDragging() ? 100 : 1',
-    '[style.cursor]': 'isDragging() ? "grabbing" : "grab"',
+    '[style.cursor]': 'isEditable() ? (isDragging() ? "grabbing" : "grab") : "default"',
     '[class.is-dragging]': 'isDragging()',
   },
 })
@@ -30,6 +30,7 @@ export class CalendarCard {
   course = input.required<Course>();
   lesson = input.required<Lesson>();
   isReadOnly = input<boolean>(false);
+  isEditable = input<boolean>(true);
   debugMode = signal(false);
   isDragging = signal(false);
   dragY = signal(0);
@@ -54,6 +55,7 @@ export class CalendarCard {
 
   @HostListener('pointerdown', ['$event'])
   onPointerDown(event: PointerEvent): void {
+    if (!this.isEditable()) return;
     if ((event.target as HTMLElement).closest('.debug-button')) return;
     const el = this.el.nativeElement as HTMLElement;
     el.setPointerCapture(event.pointerId);
