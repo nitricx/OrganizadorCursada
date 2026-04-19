@@ -10,6 +10,14 @@
   --color-border-tertiary: #ddd;
 }
 
+.info-req {
+  color: #8a4a00;
+}
+
+.info-unlocks {
+  color: #0a5c3f;
+}
+
 html,
 body {
   margin: 0;

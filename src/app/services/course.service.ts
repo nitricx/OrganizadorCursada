@@ -26,24 +26,8 @@ export class CourseService {
         status: (lessonStates.get(lesson.id) || 'pending') as CourseStatus,
       }));
 
-      // Determine course status based on lesson statuses
-      const lessonStatusPriority: Record<CourseStatus, number> = {
-        pending: 0,
-        coursed: 1,
-        coursing: 2,
-        approved: 3,
-      };
-
-      const maxLessonPriority = updatedLessons.reduce((max, lesson) => {
-        return Math.max(max, lessonStatusPriority[lesson.status as CourseStatus] || 0);
-      }, 0);
-
-      const statusFromPriority: CourseStatus[] = ['pending', 'coursed', 'coursing', 'approved'];
-      const computedStatus = statusFromPriority[maxLessonPriority] as CourseStatus;
-
       return {
         ...course,
-        status: computedStatus,
         lessons: updatedLessons,
       };
     });
@@ -247,6 +231,7 @@ export class CourseService {
     const updatedStatesByPlan = new Map(lessonStatesByPlan);
     updatedStatesByPlan.set(currentPlanId, states);
     this.lessonStatesByPlanSignal.set(updatedStatesByPlan);
+    this.coursesSignal.set(this.initializeCourses());
     this.selectedIdsSignal.set(new Set());
   }
 

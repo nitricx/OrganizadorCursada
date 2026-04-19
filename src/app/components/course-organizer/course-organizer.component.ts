@@ -39,12 +39,10 @@ export class CourseOrganizerComponent {
 
       let msg = `<strong>${course.name}</strong>`;
       if (requirements.length) {
-        msg += ` &nbsp;·&nbsp; <span style="color:#8a4a00">Requiere: ${requirements.join(
-          ', ',
-        )}</span>`;
+        msg += ` &nbsp;·&nbsp; <span class="info-req">Requiere: ${requirements.join(', ')}</span>`;
       }
       if (unlocks.length) {
-        msg += ` &nbsp;·&nbsp; <span style="color:#0a5c3f">Habilita: ${unlocks.join(', ')}</span>`;
+        msg += ` &nbsp;·&nbsp; <span class="info-unlocks">Habilita: ${unlocks.join(', ')}</span>`;
       }
       if (!requirements.length && !unlocks.length) {
         msg += ' &nbsp;·&nbsp; Sin correlativas';
