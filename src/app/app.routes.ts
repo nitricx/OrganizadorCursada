@@ -8,7 +8,5 @@ export const routes: Routes = [
   { path: 'home', component: CourseOrganizerComponent },
   { path: 'calendar', component: Calendar },
   { path: 'academicCalendar', component: AcademicCalendarComponent },
-  { path: 'academicCalendar/plan', component: AcademicCalendarComponent },
-  { path: 'academicCalendar/plan-1', component: AcademicCalendarComponent },
-  { path: 'academicCalendar/plan-2', component: AcademicCalendarComponent },
+  { path: 'academicCalendar/plan/:id', component: AcademicCalendarComponent },
 ];

@@ -20,6 +20,11 @@
               <span matListItemTitle>{{ child.label }}</span>
             </a>
           }
+          @if (item.addButton) {
+            <button mat-list-item aria-label="Agregar" (click)="addPlan(item)">
+              <mat-icon matListItemIcon>add</mat-icon>
+            </button>
+          }
         </mat-nav-list>
       </mat-expansion-panel>
     } @else {
