@@ -36,12 +36,19 @@ export class Calendar {
 
   /** Track the selected plan from the route */
   private readonly routePlanId = toSignal(
-    this.route.paramMap.pipe(map((params) => params.get('planId') || '1')),
-    { initialValue: '1' },
+    this.route.paramMap.pipe(map((params) => params.get('planId'))),
+    { initialValue: undefined },
   );
 
-  /** Selected plan ID signal (defaults to "1") */
-  selectedPlanId = computed(() => this.routePlanId());
+  /** Selected plan ID signal (defaults to the first available plan) */
+  selectedPlanId = computed(() => {
+    const routeId = this.routePlanId();
+    if (routeId) {
+      return routeId;
+    }
+    const plans = this.availablePlans();
+    return plans.length > 0 ? plans[0].id : '';
+  });
 
   /** Available plans for selection */
   availablePlans = this.planService.plans;
