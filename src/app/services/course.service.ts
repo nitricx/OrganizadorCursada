@@ -246,4 +246,105 @@ export class CourseService {
       this.lessonStatesByPlanSignal.set(updatedStatesByPlan);
     }
   }
+
+  moveLessonToYear(lessonId: string, yearDelta: number): void {
+    // Find the course containing this lesson
+    const courses = this.coursesSignal();
+    let currentCourse: Course | undefined;
+    let currentLessonIndex = -1;
+
+    for (const course of courses) {
+      const lessonIndex = course.lessons.findIndex((l) => l.id === lessonId);
+      if (lessonIndex !== -1) {
+        currentCourse = course;
+        currentLessonIndex = lessonIndex;
+        break;
+      }
+    }
+
+    if (!currentCourse || currentLessonIndex === -1) {
+      console.warn(`Lesson ${lessonId} not found`);
+      return;
+    }
+
+    const currentLesson = currentCourse.lessons[currentLessonIndex];
+    const targetYear = currentCourse.year + yearDelta;
+
+    // Check if a duplicate already exists for this course+year (from a previous drag)
+    const duplicateId = currentCourse.id + '-Y' + targetYear;
+    let targetCourse = courses.find((c) => c.id === duplicateId);
+
+    if (!targetCourse) {
+      // Create a duplicate of the current course for the target year
+      const newCourse: Course = {
+        id: duplicateId,
+        name: currentCourse.name,
+        year: targetYear,
+        q: currentCourse.q,
+        status: 'pending',
+        cursarReq: [...currentCourse.cursarReq],
+        aprobarReq: [...currentCourse.aprobarReq],
+        lessons: currentCourse.lessons.map((lesson) => ({
+          id: lesson.id,
+          professor: lesson.professor,
+          day: lesson.day,
+          startTime: lesson.startTime,
+          endTime: lesson.endTime,
+        })),
+      };
+
+      const updatedCourses = [...courses, newCourse];
+      this.coursesSignal.set(updatedCourses);
+      targetCourse = newCourse;
+    }
+
+    // Find matching lesson in target course
+    const targetLessonIndex = targetCourse.lessons.findIndex(
+      (l) =>
+        l.day === currentLesson.day &&
+        l.startTime === currentLesson.startTime &&
+        l.endTime === currentLesson.endTime,
+    );
+
+    if (targetLessonIndex === -1) {
+      console.warn(`Matching lesson not found in target course`);
+      return;
+    }
+
+    const targetLesson = targetCourse.lessons[targetLessonIndex];
+
+    // Transfer the lesson status
+    const lessonStatesByPlan = this.lessonStatesByPlanSignal();
+    const currentPlanId = this.currentPlanIdSignal();
+    const planStates = lessonStatesByPlan.get(currentPlanId);
+
+    if (!planStates) {
+      console.warn(`No lesson states found for plan ${currentPlanId}`);
+      return;
+    }
+
+    const lessonStatus = planStates.get(lessonId) || 'pending';
+
+    // Remove status from old lesson, add to new lesson
+    const updatedPlanStates = new Map(planStates);
+    updatedPlanStates.delete(lessonId);
+    updatedPlanStates.set(targetLesson.id, lessonStatus);
+
+    const updatedStatesByPlan = new Map(lessonStatesByPlan);
+    updatedStatesByPlan.set(currentPlanId, updatedPlanStates);
+    this.lessonStatesByPlanSignal.set(updatedStatesByPlan);
+
+    // Remove the original lesson from its course; remove course entirely if no lessons remain
+    const latestCourses = this.coursesSignal();
+    const updatedCourses = latestCourses
+      .map((c) => {
+        if (c.id !== currentCourse!.id) return c;
+        const remainingLessons = c.lessons.filter((l) => l.id !== lessonId);
+        return { ...c, lessons: remainingLessons };
+      })
+      .filter((c) => c.lessons.length > 0);
+    this.coursesSignal.set(updatedCourses);
+
+    console.log(`✅ Moved lesson from ${lessonId} to ${targetLesson.id}`);
+  }
 }

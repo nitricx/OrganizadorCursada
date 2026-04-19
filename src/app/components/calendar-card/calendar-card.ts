@@ -78,6 +78,29 @@ export class CalendarCard {
   @HostListener('pointercancel')
   onPointerUp(): void {
     if (!this.isDragging()) return;
+
+    const el = this.el.nativeElement as HTMLElement;
+    const cardHeight = el.offsetHeight;
+    const threshold = cardHeight * 0.5;
+    const currentDragY = this.dragY();
+
+    const course = this.course();
+    const lesson = this.lesson();
+
+    if (currentDragY > threshold) {
+      const targetYear = course.year + 1;
+      console.log(
+        `🔵 Dropped in BLUE zone (below): ${course.name} - ${lesson.id} → Año ${targetYear}`,
+      );
+      this.courseService.moveLessonToYear(lesson.id, 1);
+    } else if (currentDragY < -threshold) {
+      const targetYear = course.year - 1;
+      console.log(
+        `🔴 Dropped in RED zone (above): ${course.name} - ${lesson.id} → Año ${targetYear}`,
+      );
+      this.courseService.moveLessonToYear(lesson.id, -1);
+    }
+
     this.isDragging.set(false);
     this.dragY.set(0);
   }

@@ -72,6 +72,7 @@ export class AcademicCalendarComponent {
     years.forEach((year) => {
       const yearCourses = courses.filter((c) => c.year === year);
       const hasNonAnnualCourses = yearCourses.some((c) => c.q < 3);
+      let annualCoursesIncluded = false;
 
       [1, 2, 3].forEach((q) => {
         // Skip the annual section if this year has q:1 or q:2 courses
@@ -80,7 +81,14 @@ export class AcademicCalendarComponent {
         }
 
         const quarterLabel = q === 3 ? 'Anual' : `Cuatrimestre ${q}`;
-        const semesterCourses = yearCourses.filter((c) => c.q === q || (q < 3 && c.q === 3));
+        const semesterCourses = yearCourses.filter((c) => {
+          if (c.q === q) return true;
+          if (c.q === 3 && q === 1 && !annualCoursesIncluded) {
+            annualCoursesIncluded = true;
+            return true;
+          }
+          return false;
+        });
 
         if (semesterCourses.length > 0) {
           semesters.push({
