@@ -17,13 +17,33 @@ export class CourseService {
     const lessonStates = this.lessonStatesSignal();
 
     // Merge lesson states into courses for display
-    return courses.map((course) => ({
-      ...course,
-      lessons: course.lessons.map((lesson) => ({
+    return courses.map((course) => {
+      const updatedLessons = course.lessons.map((lesson) => ({
         ...lesson,
         status: (lessonStates.get(lesson.id) || 'pending') as CourseStatus,
-      })),
-    }));
+      }));
+
+      // Determine course status based on lesson statuses
+      const lessonStatusPriority: Record<CourseStatus, number> = {
+        pending: 0,
+        coursed: 1,
+        coursing: 2,
+        approved: 3,
+      };
+
+      const maxLessonPriority = updatedLessons.reduce((max, lesson) => {
+        return Math.max(max, lessonStatusPriority[lesson.status as CourseStatus] || 0);
+      }, 0);
+
+      const statusFromPriority: CourseStatus[] = ['pending', 'coursed', 'coursing', 'approved'];
+      const computedStatus = statusFromPriority[maxLessonPriority] as CourseStatus;
+
+      return {
+        ...course,
+        status: computedStatus,
+        lessons: updatedLessons,
+      };
+    });
   });
   selectedIds = computed(() => this.selectedIdsSignal());
   hoveredCourseId = computed(() => this.hoveredCourseIdSignal());

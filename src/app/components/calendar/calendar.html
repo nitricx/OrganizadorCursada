@@ -17,7 +17,9 @@
       </div>
     </div>
   }
-  <app-calendar-legend></app-calendar-legend>
+  @if (!isReadOnly()) {
+    <app-calendar-legend></app-calendar-legend>
+  }
   <div
     class="calendar-grid"
     [style.grid-template-columns]="gridTemplateColumns()"
@@ -49,6 +51,7 @@
         <app-calendar-card
           [course]="courseWithLesson.course"
           [lesson]="courseWithLesson.lesson"
+          [isReadOnly]="isReadOnly()"
           [style.grid-column]="getCourseColumn(courseWithLesson, days().indexOf(entry))"
           [style.grid-row]="getCourseRows(courseWithLesson)"
           [class.overlapping]="courseHasOverlap(courseWithLesson.lesson.id)"

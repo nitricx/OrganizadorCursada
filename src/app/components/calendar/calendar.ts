@@ -31,18 +31,20 @@ export class Calendar {
   currentDate = signal(new Date());
 
   /** Selected plan ID signal (defaults to the first available plan) */
-  selectedPlanId = computed(() => {
-    const plans = this.availablePlans();
-    return plans.length > 0 ? plans[0].id : '';
-  });
+  selectedPlanId = this.planService.selectedPlanId;
 
   /** Available plans for selection */
   availablePlans = this.planService.plans;
 
   /** Handle plan selection change (no navigation, just update selection) */
   onPlanChange(planId: string): void {
-    // Plan selection changed but no navigation occurs
+    this.planService.setSelectedPlanId(planId);
   }
+
+  /** Determine if calendar is read-only (true when no override provided, i.e., on /myWeek) */
+  isReadOnly = computed(() => {
+    return this.coursesOverride() === undefined;
+  });
 
   private readonly allDays: { label: string; day: DayOfWeek; col: number }[] = [
     { label: 'Lunes', day: DayOfWeek.Monday, col: 2 },
@@ -55,10 +57,13 @@ export class Calendar {
 
   availableCoursesByDay = computed(() => {
     const override = this.coursesOverride();
+    const readOnly = this.isReadOnly();
     const courses =
       override !== undefined
         ? override
-        : this.courseService.courses().filter((c) => this.courseService.areAllRequirementsMet(c));
+        : this.courseService
+            .courses()
+            .filter((c) => c.status === 'coursing' && this.courseService.areAllRequirementsMet(c));
 
     const map = new Map<DayOfWeek, CourseWithLesson[]>();
     for (const entry of this.allDays) {
@@ -67,6 +72,10 @@ export class Calendar {
     courses.forEach((c) => {
       // Add all lessons for this course
       c.lessons.forEach((lesson) => {
+        // On /myWeek (read-only), only show lessons that are 'coursing'
+        if (readOnly && lesson.status !== 'coursing') {
+          return;
+        }
         const day = lesson.day;
         map.get(day)?.push({ course: c, lesson });
       });
@@ -262,11 +271,12 @@ export class Calendar {
     // Total columns: time-gutter (1) + (days.length * maxConcurrent)
     const totalDayColumns = days.length * maxConcurrent;
 
-    return totalDayColumns + 1;
+    return totalDayColumns + 2;
   });
 
   private readonly startHour = computed(() => {
     const override = this.coursesOverride();
+    const readOnly = this.isReadOnly();
     const courses =
       override !== undefined
         ? override
@@ -279,6 +289,10 @@ export class Calendar {
     const earliestTime = courses.reduce((min, course) => {
       // Check all lessons, not just the first one
       const minCourseTime = course.lessons.reduce((courseMin, lesson) => {
+        // On /myWeek (read-only), only consider lessons that are 'coursing'
+        if (readOnly && lesson.status !== 'coursing') {
+          return courseMin;
+        }
         const lessonStartHour = parseInt(lesson.startTime.split(':')[0]);
         return lessonStartHour < courseMin ? lessonStartHour : courseMin;
       }, 24);
@@ -289,6 +303,7 @@ export class Calendar {
 
   private readonly endHour = computed(() => {
     const override = this.coursesOverride();
+    const readOnly = this.isReadOnly();
     const courses =
       override !== undefined
         ? override
@@ -301,6 +316,10 @@ export class Calendar {
     const latestTime = courses.reduce((max, course) => {
       // Check all lessons, not just the first one
       const maxCourseTime = course.lessons.reduce((courseMax, lesson) => {
+        // On /myWeek (read-only), only consider lessons that are 'coursing'
+        if (readOnly && lesson.status !== 'coursing') {
+          return courseMax;
+        }
         const lessonEndHour = parseInt(lesson.endTime.split(':')[0]);
         return lessonEndHour > courseMax ? lessonEndHour : courseMax;
       }, 0);

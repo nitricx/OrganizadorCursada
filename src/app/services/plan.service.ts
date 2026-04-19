@@ -11,8 +11,10 @@ export interface Plan {
 })
 export class PlanService {
   private readonly plansSignal = signal<Plan[]>([{ id: '1', label: 'Plan de estudio 1' }]);
+  private readonly selectedPlanIdSignal = signal<string>('1');
 
   plans = this.plansSignal.asReadonly();
+  selectedPlanId = this.selectedPlanIdSignal.asReadonly();
 
   addPlan(plan: Plan): void {
     this.plansSignal.update((plans) => [...plans, plan]);
@@ -20,5 +22,9 @@ export class PlanService {
 
   getPlanLabel(id: string): string | undefined {
     return this.plansSignal().find((p) => p.id === id)?.label;
+  }
+
+  setSelectedPlanId(id: string): void {
+    this.selectedPlanIdSignal.set(id);
   }
 }

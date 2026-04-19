@@ -1,7 +1,8 @@
-import { Component, ChangeDetectionStrategy, inject, computed } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, computed, effect } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { CourseService } from '../../services/course.service';
+import { PlanService } from '../../services/plan.service';
 import { Course } from '../../models/course';
 import { Calendar } from '../calendar/calendar';
 
@@ -21,6 +22,7 @@ interface Semester {
 export class AcademicCalendarComponent {
   private readonly courseService = inject(CourseService);
   private readonly route = inject(ActivatedRoute);
+  private readonly planService = inject(PlanService);
 
   private readonly routeParamId = toSignal(this.route.paramMap.pipe());
 
@@ -28,6 +30,16 @@ export class AcademicCalendarComponent {
     const id = this.routeParamId()?.get('id');
     return id ? `Plan de estudio ${id}` : null;
   });
+
+  constructor() {
+    // Update selected plan when route parameter changes
+    effect(() => {
+      const id = this.routeParamId()?.get('id');
+      if (id) {
+        this.planService.setSelectedPlanId(id);
+      }
+    });
+  }
 
   semesters = computed<Semester[]>(() => {
     const courses = this.courseService.courses();
