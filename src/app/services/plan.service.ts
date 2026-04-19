@@ -36,7 +36,14 @@ export class PlanService {
     const raw = localStorage.getItem(PlanService.PLANS_KEY);
     if (raw !== null) {
       try {
-        return JSON.parse(raw) as Plan[];
+        const parsed = JSON.parse(raw) as Plan[];
+        const deduplicated = parsed.filter(
+          (p, i, arr) => arr.findIndex((x) => x.id === p.id) === i,
+        );
+        if (deduplicated.length !== parsed.length) {
+          localStorage.setItem(PlanService.PLANS_KEY, JSON.stringify(deduplicated));
+        }
+        return deduplicated;
       } catch {
         return PlanService.DEFAULT_PLANS;
       }

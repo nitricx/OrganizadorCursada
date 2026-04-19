@@ -28,7 +28,10 @@ export class SidebarComponent {
     { label: 'Mi Semana', route: '/myWeek' },
     {
       label: 'Calendario Académico',
-      children: [{ label: 'Plan de estudio 1', route: '/academicCalendar/plan/1' }],
+      children: this.planService.plans().map((p) => ({
+        label: p.label,
+        route: `/academicCalendar/plan/${p.id}`,
+      })),
       addButton: true,
     },
   ]);
