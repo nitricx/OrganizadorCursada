@@ -33,16 +33,16 @@ export class Calendar {
   showHeader = input<boolean>(true);
 
   currentDate = signal(new Date());
-  
+
   /** Track the selected plan from the route */
   private readonly routePlanId = toSignal(
-    this.route.paramMap.pipe(map(params => params.get('planId') || '1')),
-    { initialValue: '1' }
+    this.route.paramMap.pipe(map((params) => params.get('planId') || '1')),
+    { initialValue: '1' },
   );
 
   /** Selected plan ID signal (defaults to "1") */
   selectedPlanId = computed(() => this.routePlanId());
-  
+
   /** Available plans for selection */
   availablePlans = this.planService.plans;
 

@@ -10,9 +10,7 @@ export interface Plan {
   providedIn: 'root',
 })
 export class PlanService {
-  private readonly plansSignal = signal<Plan[]>([
-    { id: '1', label: 'Plan de estudio 1' },
-  ]);
+  private readonly plansSignal = signal<Plan[]>([{ id: '1', label: 'Plan de estudio 1' }]);
 
   plans = this.plansSignal.asReadonly();
 

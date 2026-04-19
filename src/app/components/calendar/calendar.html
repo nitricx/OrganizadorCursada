@@ -6,7 +6,11 @@
       @if (availablePlans().length > 0) {
         <div class="plan-selector">
           <label for="plan-select">Seleccionar Plan:</label>
-          <select id="plan-select" [value]="selectedPlanId()" (change)="onPlanChange($any($event.target).value)">
+          <select
+            id="plan-select"
+            [value]="selectedPlanId()"
+            (change)="onPlanChange($any($event.target).value)"
+          >
             <option value="">-- Seleccionar un plan --</option>
             @for (plan of availablePlans(); track plan.id) {
               <option [value]="plan.id">{{ plan.label }}</option>
