@@ -1,4 +1,11 @@
-import { Component, ChangeDetectionStrategy, inject, computed, effect } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  inject,
+  computed,
+  effect,
+  signal,
+} from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { CourseService } from '../../services/course.service';
@@ -7,6 +14,12 @@ import { Course } from '../../models/course';
 import { Calendar } from '../calendar/calendar';
 
 interface Semester {
+  label: string;
+  courses: Course[];
+}
+
+interface DisplaySemester {
+  id: string;
   label: string;
   courses: Course[];
 }
@@ -29,6 +42,11 @@ export class AcademicCalendarComponent {
   planId = computed(() => {
     const id = this.routeParamId()?.get('id');
     return id ? `Plan de estudio ${id}` : null;
+  });
+
+  isEditable = computed(() => {
+    const id = this.routeParamId()?.get('id');
+    return id !== null && id !== undefined && id !== '1';
   });
 
   constructor() {
@@ -74,4 +92,41 @@ export class AcademicCalendarComponent {
 
     return semesters;
   });
+
+  private readonly extraSlots = signal<{ id: string; afterId: string }[]>([]);
+
+  displaySemesters = computed<DisplaySemester[]>(() => {
+    const base: DisplaySemester[] = this.semesters().map((s) => ({
+      id: s.label,
+      label: s.label,
+      courses: s.courses,
+    }));
+    const extras = this.extraSlots();
+
+    const afterMap = new Map<string, DisplaySemester[]>();
+    extras.forEach((e) => {
+      const list = afterMap.get(e.afterId) ?? [];
+      list.push({ id: e.id, label: 'Semestre adicional', courses: [] });
+      afterMap.set(e.afterId, list);
+    });
+
+    const result: DisplaySemester[] = [];
+
+    const addWithChildren = (item: DisplaySemester) => {
+      result.push(item);
+      (afterMap.get(item.id) ?? []).forEach((child) => addWithChildren(child));
+    };
+
+    base.forEach((item) => addWithChildren(item));
+    return result;
+  });
+
+  addCalendarAfter(id: string): void {
+    const ts = Date.now();
+    this.extraSlots.update((slots) => [
+      ...slots,
+      { id: `extra-${ts}-1`, afterId: id },
+      { id: `extra-${ts}-2`, afterId: `extra-${ts}-1` },
+    ]);
+  }
 }

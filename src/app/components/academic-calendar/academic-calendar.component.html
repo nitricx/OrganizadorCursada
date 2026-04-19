@@ -5,10 +5,21 @@
       <h2 class="plan-title">{{ planId() }}</h2>
     }
   </div>
-  @for (semester of semesters(); track semester.label) {
+  @for (item of displaySemesters(); track item.id; let i = $index; let last = $last) {
     <section class="semester-section">
-      <h2 class="semester-title">{{ semester.label }}</h2>
-      <app-calendar [coursesOverride]="semester.courses" [showHeader]="false" />
+      <h2 class="semester-title">{{ item.label }}</h2>
+      <app-calendar [coursesOverride]="item.courses" [showHeader]="false" />
     </section>
+    @if (isEditable() && (i + 1) % 2 === 0) {
+      <div class="add-semester-divider">
+        <button
+          class="add-semester-btn"
+          (click)="addCalendarAfter(item.id)"
+          aria-label="Agregar semestres"
+        >
+          <span>+</span>
+        </button>
+      </div>
+    }
   }
 </div>
