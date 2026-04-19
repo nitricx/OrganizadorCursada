@@ -7,19 +7,25 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
-  overflow: hidden;
+  overflow: visible;
   z-index: 1;
   outline: 2px dashed #185fa5;
   outline-offset: -2px;
   background: #e8e7e0;
   border: 1px solid #888;
-  cursor: pointer;
-  transition: all 0.2s ease;
+  cursor: grab;
+  position: relative;
+  will-change: transform;
+  user-select: none;
 }
 
 :host:hover {
   opacity: 0.9;
-  transform: scale(1.02);
+}
+
+:host.is-dragging {
+  opacity: 0.85;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
 }
 
 /* Status: Planned (coursed) */
@@ -83,4 +89,44 @@
 
 :host.overlapping .calendar-course-professor {
   font-size: 9px;
+}
+
+.debug-button {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  background: transparent;
+  border: 1px solid transparent;
+  padding: 2px 4px;
+  cursor: pointer;
+  font-size: 12px;
+  opacity: 0.5;
+  transition: opacity 0.2s ease;
+}
+
+.debug-button:hover {
+  opacity: 1;
+}
+
+.debug-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  pointer-events: none;
+  width: 100%;
+}
+
+.debug-overlay-top {
+  top: -50%;
+  height: 50%;
+  background: rgba(255, 0, 0, 0.2);
+  border: 1px dashed rgba(255, 0, 0, 0.5);
+}
+
+.debug-overlay-bottom {
+  bottom: -50%;
+  top: auto;
+  height: 50%;
+  background: rgba(0, 0, 255, 0.2);
+  border: 1px dashed rgba(0, 0, 255, 0.5);
 }
