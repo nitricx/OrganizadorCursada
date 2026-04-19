@@ -1,7 +1,7 @@
 import { Component, ChangeDetectionStrategy, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CourseService } from '../../services/course.service';
-import { LegendComponent } from '../legend/legend.component';
+import { CourseOrganizerLegendComponent } from '../course-organizer-legend/course-organizer-legend.component';
 import { CourseGridComponent } from '../course-grid/course-grid.component';
 
 @Component({
@@ -9,7 +9,7 @@ import { CourseGridComponent } from '../course-grid/course-grid.component';
   templateUrl: './course-organizer.component.html',
   styleUrls: ['./course-organizer.component.css'],
   standalone: true,
-  imports: [CommonModule, LegendComponent, CourseGridComponent],
+  imports: [CommonModule, CourseOrganizerLegendComponent, CourseGridComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CourseOrganizerComponent {
