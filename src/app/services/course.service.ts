@@ -1,4 +1,4 @@
-import { Injectable, inject, effect } from '@angular/core';
+import { Injectable, effect } from '@angular/core';
 import { signal, computed } from '@angular/core';
 import { Course, CourseStatus } from '../models/course';
 import { COURSES_DATA } from '../data/courses.data';
@@ -7,8 +7,11 @@ import { COURSES_DATA } from '../data/courses.data';
   providedIn: 'root',
 })
 export class CourseService {
+  // Layout per plan (which semester each subject is placed in)
   private coursesByPlanSignal = signal<Map<string, Course[]>>(new Map());
-  private lessonStatesByPlanSignal = signal<Map<string, Map<string, CourseStatus>>>(new Map());
+  // Single source of truth for statuses — shared across all views
+  private courseStatusesSignal = signal<Map<string, CourseStatus>>(new Map());
+  private lessonStatusesSignal = signal<Map<string, CourseStatus>>(new Map());
   private currentPlanIdSignal = signal<string>('1');
   private selectedIdsSignal = signal<Set<string>>(new Set());
   private hoveredCourseIdSignal = signal<string | null>(null);
@@ -21,21 +24,19 @@ export class CourseService {
 
   getCoursesForPlan(planId: string): Course[] {
     const rawCourses = this.coursesByPlanSignal().get(planId) ?? [];
-    const lessonStates =
-      this.lessonStatesByPlanSignal().get(planId) || new Map<string, CourseStatus>();
+    const courseStatuses = this.courseStatusesSignal();
+    const lessonStatuses = this.lessonStatusesSignal();
 
-    return rawCourses.map((course) => {
-      const updatedLessons = course.lessons.map((lesson) => ({
+    return rawCourses.map((course) => ({
+      ...course,
+      status: (courseStatuses.get(course.id) ?? 'pending') as CourseStatus,
+      lessons: course.lessons.map((lesson) => ({
         ...lesson,
-        status: (lessonStates.get(lesson.id) || 'pending') as CourseStatus,
-      }));
-
-      return {
-        ...course,
-        lessons: updatedLessons,
-      };
-    });
+        status: (lessonStatuses.get(lesson.id) ?? 'pending') as CourseStatus,
+      })),
+    }));
   }
+
   selectedIds = computed(() => this.selectedIdsSignal());
   hoveredCourseId = computed(() => this.hoveredCourseIdSignal());
 
@@ -45,25 +46,26 @@ export class CourseService {
     const initialCourses = new Map<string, Course[]>();
     initialCourses.set('1', this.initializeCourses());
     this.coursesByPlanSignal.set(initialCourses);
+    this.courseStatusesSignal.set(this.initializeCourseStatuses());
+    this.lessonStatusesSignal.set(this.initializeLessonStatuses());
 
-    const initialStates = new Map<string, Map<string, CourseStatus>>();
-    initialStates.set('1', this.initializeLessonStatesForPlan('1'));
-    this.lessonStatesByPlanSignal.set(initialStates);
-
-    // Load persisted state from localStorage
     this.loadState();
 
-    // Setup auto-save on state changes
     effect(() => {
       this.coursesByPlanSignal();
-      this.lessonStatesByPlanSignal();
-      this.currentPlanIdSignal();
+      this.courseStatusesSignal();
+      this.lessonStatusesSignal();
       this.saveState();
     });
   }
 
   private currentRawCourses(): Course[] {
-    return this.coursesByPlanSignal().get(this.currentPlanIdSignal()) ?? [];
+    const courses = this.coursesByPlanSignal().get(this.currentPlanIdSignal()) ?? [];
+    const courseStatuses = this.courseStatusesSignal();
+    return courses.map((c) => ({
+      ...c,
+      status: (courseStatuses.get(c.id) ?? 'pending') as CourseStatus,
+    }));
   }
 
   private setCurrentRawCourses(courses: Course[]): void {
@@ -76,23 +78,29 @@ export class CourseService {
   private initializeCourses(): Course[] {
     return COURSES_DATA.map((course) => ({
       ...course,
-      status: 'pending',
+      status: 'pending' as CourseStatus,
       cursarReq: course.cursarReq.slice(),
       aprobarReq: course.aprobarReq.slice(),
-      lessons: course.lessons.map((lesson) => ({
-        ...lesson,
-      })),
+      lessons: course.lessons.map((lesson) => ({ ...lesson })),
     }));
   }
 
-  private initializeLessonStatesForPlan(planId: string): Map<string, CourseStatus> {
-    const states = new Map<string, CourseStatus>();
+  private initializeCourseStatuses(): Map<string, CourseStatus> {
+    const statuses = new Map<string, CourseStatus>();
+    COURSES_DATA.forEach((course) => {
+      statuses.set(course.id, 'pending');
+    });
+    return statuses;
+  }
+
+  private initializeLessonStatuses(): Map<string, CourseStatus> {
+    const statuses = new Map<string, CourseStatus>();
     COURSES_DATA.forEach((course) => {
       course.lessons.forEach((lesson) => {
-        states.set(lesson.id, 'pending');
+        statuses.set(lesson.id, 'pending');
       });
     });
-    return states;
+    return statuses;
   }
 
   private buildNameToIdMap(): Map<string, string> {
@@ -182,112 +190,38 @@ export class CourseService {
   }
 
   toggleCourseStatus(courseId: string): void {
-    const courses = this.currentRawCourses();
-    const courseIndex = courses.findIndex((c) => c.id === courseId);
-
-    if (courseIndex !== -1) {
-      const updatedCourses = [...courses];
-      const course = updatedCourses[courseIndex];
-      let nextStatus: CourseStatus;
-
-      // Cycle through states in legend order: Unselected → Coursing → Planned → Finished
-      // pending → coursing → coursed → approved → pending
-      if (course.status === 'pending') {
-        nextStatus = 'coursing'; // Unselected → Coursing
-      } else if (course.status === 'coursing') {
-        nextStatus = 'coursed'; // Coursing → Planned
-      } else if (course.status === 'coursed') {
-        nextStatus = 'approved'; // Planned → Finished
-      } else {
-        nextStatus = 'pending'; // Finished → Unselected
-      }
-
-      if (this.canChangeStatusTo(courseId, nextStatus)) {
-        course.status = nextStatus;
-        this.setCurrentRawCourses(updatedCourses);
-
-        // Sync: Update all lessons of this course to the new status across ALL plans
-        this.updateLessonStatesForCourseAllPlans(courseId, nextStatus);
-        this.updateCourseStatusAllPlans(courseId, nextStatus);
-      }
-    }
-  }
-
-  private updateLessonStatesForCourse(courseId: string, newStatus: CourseStatus): void {
-    const lessonStatesByPlan = this.lessonStatesByPlanSignal();
-    const currentPlanId = this.currentPlanIdSignal();
-    const planStates = lessonStatesByPlan.get(currentPlanId);
-
-    if (!planStates) {
-      return;
-    }
-
-    const course = this.getCourseById(courseId);
-    if (!course) {
-      return;
-    }
-
-    // Update all lessons of this course
-    const updatedPlanStates = new Map(planStates);
-    course.lessons.forEach((lesson) => {
-      updatedPlanStates.set(lesson.id, newStatus);
-    });
-
-    const updatedStatesByPlan = new Map(lessonStatesByPlan);
-    updatedStatesByPlan.set(currentPlanId, updatedPlanStates);
-    this.lessonStatesByPlanSignal.set(updatedStatesByPlan);
-  }
-
-  private updateLessonStatesForCourseAllPlans(courseId: string, newStatus: CourseStatus): void {
     const course = this.getCourseById(courseId);
     if (!course) return;
 
-    const lessonStatesByPlan = this.lessonStatesByPlanSignal();
-    const updatedStatesByPlan = new Map(lessonStatesByPlan);
+    let nextStatus: CourseStatus;
+    if (course.status === 'pending') {
+      nextStatus = 'coursing';
+    } else if (course.status === 'coursing') {
+      nextStatus = 'coursed';
+    } else if (course.status === 'coursed') {
+      nextStatus = 'approved';
+    } else {
+      nextStatus = 'pending';
+    }
 
-    updatedStatesByPlan.forEach((planStates, planId) => {
-      const updatedPlanStates = new Map(planStates);
+    if (this.canChangeStatusTo(courseId, nextStatus)) {
+      const updatedCourseStatuses = new Map(this.courseStatusesSignal());
+      updatedCourseStatuses.set(courseId, nextStatus);
+      this.courseStatusesSignal.set(updatedCourseStatuses);
+
+      const updatedLessonStatuses = new Map(this.lessonStatusesSignal());
       course.lessons.forEach((lesson) => {
-        updatedPlanStates.set(lesson.id, newStatus);
+        updatedLessonStatuses.set(lesson.id, nextStatus);
       });
-      updatedStatesByPlan.set(planId, updatedPlanStates);
-    });
-
-    this.lessonStatesByPlanSignal.set(updatedStatesByPlan);
-  }
-
-  private updateCourseStatusAllPlans(courseId: string, newStatus: CourseStatus): void {
-    const currentPlanId = this.currentPlanIdSignal();
-    const coursesByPlan = this.coursesByPlanSignal();
-    const updatedCoursesByPlan = new Map(coursesByPlan);
-
-    updatedCoursesByPlan.forEach((courses, planId) => {
-      if (planId === currentPlanId) return; // already updated
-      const idx = courses.findIndex((c) => c.id === courseId);
-      if (idx !== -1) {
-        const updatedCourses = [...courses];
-        updatedCourses[idx] = { ...updatedCourses[idx], status: newStatus };
-        updatedCoursesByPlan.set(planId, updatedCourses);
-      }
-    });
-
-    this.coursesByPlanSignal.set(updatedCoursesByPlan);
+      this.lessonStatusesSignal.set(updatedLessonStatuses);
+    }
   }
 
   toggleLessonStatus(lessonId: string): void {
-    const lessonStatesByPlan = this.lessonStatesByPlanSignal();
-    const currentPlanId = this.currentPlanIdSignal();
-    const planStates = lessonStatesByPlan.get(currentPlanId);
-
-    if (!planStates) {
-      console.warn(`No lesson states found for plan ${currentPlanId}`);
-      return;
-    }
-
-    const oldStatus = planStates.get(lessonId) || 'pending';
+    const lessonStatuses = this.lessonStatusesSignal();
+    const oldStatus = lessonStatuses.get(lessonId) ?? 'pending';
     let nextStatus: CourseStatus;
 
-    // Cycle through states in legend order: pending → coursing → coursed → approved → pending
     if (oldStatus === 'pending') {
       nextStatus = 'coursing';
     } else if (oldStatus === 'coursing') {
@@ -298,49 +232,26 @@ export class CourseService {
       nextStatus = 'pending';
     }
 
-    // Create new map with updated state
-    const updatedPlanStates = new Map(planStates);
-    updatedPlanStates.set(lessonId, nextStatus);
+    const updatedLessonStatuses = new Map(lessonStatuses);
+    updatedLessonStatuses.set(lessonId, nextStatus);
+    this.lessonStatusesSignal.set(updatedLessonStatuses);
 
-    // Update the plan-specific states
-    const updatedStatesByPlan = new Map(lessonStatesByPlan);
-    updatedStatesByPlan.set(currentPlanId, updatedPlanStates);
-    this.lessonStatesByPlanSignal.set(updatedStatesByPlan);
-
-    // Sync: Update course status if all lessons have the same status
     this.syncCourseStatusFromLessons(lessonId);
   }
 
   private syncCourseStatusFromLessons(lessonId: string): void {
     const courses = this.currentRawCourses();
     const course = courses.find((c) => c.lessons.some((l) => l.id === lessonId));
+    if (!course) return;
 
-    if (!course) {
-      return;
-    }
-
-    const lessonStatesByPlan = this.lessonStatesByPlanSignal();
-    const currentPlanId = this.currentPlanIdSignal();
-    const planStates = lessonStatesByPlan.get(currentPlanId);
-
-    if (!planStates) {
-      return;
-    }
-
-    // Get all statuses of lessons in this course
-    const lessonStatuses = course.lessons.map((lesson) => planStates.get(lesson.id) || 'pending');
-
-    // Check if all statuses are the same
-    const allSameStatus = lessonStatuses.every((status) => status === lessonStatuses[0]);
+    const lessonStatuses = this.lessonStatusesSignal();
+    const lessonStatusValues = course.lessons.map((l) => lessonStatuses.get(l.id) ?? 'pending');
+    const allSameStatus = lessonStatusValues.every((s) => s === lessonStatusValues[0]);
 
     if (allSameStatus) {
-      // Update the course status to match all lessons
-      const updatedCourses = [...courses];
-      const courseIndex = updatedCourses.findIndex((c) => c.id === course.id);
-      if (courseIndex !== -1) {
-        updatedCourses[courseIndex].status = lessonStatuses[0];
-        this.setCurrentRawCourses(updatedCourses);
-      }
+      const updatedCourseStatuses = new Map(this.courseStatusesSignal());
+      updatedCourseStatuses.set(course.id, lessonStatusValues[0]);
+      this.courseStatusesSignal.set(updatedCourseStatuses);
     }
   }
 
@@ -359,13 +270,8 @@ export class CourseService {
   }
 
   reset(): void {
-    const currentPlanId = this.currentPlanIdSignal();
-    const lessonStatesByPlan = this.lessonStatesByPlanSignal();
-    const states = this.initializeLessonStatesForPlan(currentPlanId);
-
-    const updatedStatesByPlan = new Map(lessonStatesByPlan);
-    updatedStatesByPlan.set(currentPlanId, states);
-    this.lessonStatesByPlanSignal.set(updatedStatesByPlan);
+    this.courseStatusesSignal.set(this.initializeCourseStatuses());
+    this.lessonStatusesSignal.set(this.initializeLessonStatuses());
     this.setCurrentRawCourses(this.initializeCourses());
     this.selectedIdsSignal.set(new Set());
   }
@@ -373,20 +279,12 @@ export class CourseService {
   setCurrentPlanId(planId: string): void {
     this.currentPlanIdSignal.set(planId);
 
-    // Initialize per-plan courses if not present
+    // Initialize per-plan layout if not present (statuses are shared, no copying needed)
     const coursesByPlan = this.coursesByPlanSignal();
     if (!coursesByPlan.has(planId)) {
       const updatedCoursesByPlan = new Map(coursesByPlan);
       updatedCoursesByPlan.set(planId, this.initializeCourses());
       this.coursesByPlanSignal.set(updatedCoursesByPlan);
-    }
-
-    // Initialize lesson states for this plan if they don't exist
-    const lessonStatesByPlan = this.lessonStatesByPlanSignal();
-    if (!lessonStatesByPlan.has(planId)) {
-      const updatedStatesByPlan = new Map(lessonStatesByPlan);
-      updatedStatesByPlan.set(planId, this.initializeLessonStatesForPlan(planId));
-      this.lessonStatesByPlanSignal.set(updatedStatesByPlan);
     }
   }
 
@@ -394,10 +292,6 @@ export class CourseService {
     const updatedCoursesByPlan = new Map(this.coursesByPlanSignal());
     updatedCoursesByPlan.delete(planId);
     this.coursesByPlanSignal.set(updatedCoursesByPlan);
-
-    const updatedStatesByPlan = new Map(this.lessonStatesByPlanSignal());
-    updatedStatesByPlan.delete(planId);
-    this.lessonStatesByPlanSignal.set(updatedStatesByPlan);
   }
 
   moveLessonToSemester(lessonId: string, targetYear: number, targetQ: number): void {
@@ -448,27 +342,7 @@ export class CourseService {
           })),
         };
 
-    // Transfer all lesson statuses from source to target
-    const lessonStatesByPlan = this.lessonStatesByPlanSignal();
-    const currentPlanId = this.currentPlanIdSignal();
-    const planStates = lessonStatesByPlan.get(currentPlanId);
-
-    if (!planStates) {
-      console.warn(`No lesson states found for plan ${currentPlanId}`);
-      return;
-    }
-
-    const updatedPlanStates = new Map(planStates);
-    currentCourse.lessons.forEach((lesson) => {
-      const status = updatedPlanStates.get(lesson.id) || 'pending';
-      updatedPlanStates.delete(lesson.id);
-      updatedPlanStates.set(lesson.id, status);
-    });
-
-    const updatedStatesByPlan = new Map(lessonStatesByPlan);
-    updatedStatesByPlan.set(currentPlanId, updatedPlanStates);
-    this.lessonStatesByPlanSignal.set(updatedStatesByPlan);
-
+    // Lesson statuses are shared globally — no transfer needed.
     // Replace source course with moved course; remove source entirely
     const updatedCourses = courses
       .filter((c) => c.id !== currentCourse.id && c.id !== duplicateId)
@@ -480,8 +354,8 @@ export class CourseService {
     try {
       const state = {
         coursesByPlan: this.serializeCoursesByPlan(this.coursesByPlanSignal()),
-        lessonStatesByPlan: this.serializeLessonStatesByPlan(this.lessonStatesByPlanSignal()),
-        currentPlanId: this.currentPlanIdSignal(),
+        courseStatuses: Object.fromEntries(this.courseStatusesSignal()),
+        lessonStatuses: Object.fromEntries(this.lessonStatusesSignal()),
       };
       localStorage.setItem(this.STORAGE_KEY, JSON.stringify(state));
     } catch (error) {
@@ -497,17 +371,19 @@ export class CourseService {
       const state = JSON.parse(stored);
 
       if (state.coursesByPlan) {
-        const coursesByPlan = this.deserializeCoursesByPlan(state.coursesByPlan);
-        this.coursesByPlanSignal.set(coursesByPlan);
+        this.coursesByPlanSignal.set(this.deserializeCoursesByPlan(state.coursesByPlan));
       }
 
-      if (state.lessonStatesByPlan) {
-        const lessonStatesByPlan = this.deserializeLessonStatesByPlan(state.lessonStatesByPlan);
-        this.lessonStatesByPlanSignal.set(lessonStatesByPlan);
+      if (state.courseStatuses) {
+        this.courseStatusesSignal.set(
+          new Map<string, CourseStatus>(Object.entries(state.courseStatuses)),
+        );
       }
 
-      if (state.currentPlanId) {
-        this.currentPlanIdSignal.set(state.currentPlanId);
+      if (state.lessonStatuses) {
+        this.lessonStatusesSignal.set(
+          new Map<string, CourseStatus>(Object.entries(state.lessonStatuses)),
+        );
       }
     } catch (error) {
       console.warn('Failed to load course state from localStorage:', error);
@@ -528,33 +404,5 @@ export class CourseService {
       coursesByPlan.set(planId, courses as Course[]);
     });
     return coursesByPlan;
-  }
-
-  private serializeLessonStatesByPlan(
-    lessonStatesByPlan: Map<string, Map<string, CourseStatus>>,
-  ): Record<string, Record<string, CourseStatus>> {
-    const result: Record<string, Record<string, CourseStatus>> = {};
-    lessonStatesByPlan.forEach((planStates, planId) => {
-      const planRecord: Record<string, CourseStatus> = {};
-      planStates.forEach((status, lessonId) => {
-        planRecord[lessonId] = status;
-      });
-      result[planId] = planRecord;
-    });
-    return result;
-  }
-
-  private deserializeLessonStatesByPlan(
-    data: Record<string, Record<string, CourseStatus>>,
-  ): Map<string, Map<string, CourseStatus>> {
-    const lessonStatesByPlan = new Map<string, Map<string, CourseStatus>>();
-    Object.entries(data).forEach(([planId, planRecord]) => {
-      const planStates = new Map<string, CourseStatus>();
-      Object.entries(planRecord).forEach(([lessonId, status]) => {
-        planStates.set(lessonId, status);
-      });
-      lessonStatesByPlan.set(planId, planStates);
-    });
-    return lessonStatesByPlan;
   }
 }
