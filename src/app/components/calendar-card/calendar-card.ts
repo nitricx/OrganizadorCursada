@@ -2,6 +2,7 @@ import {
   Component,
   ChangeDetectionStrategy,
   input,
+  output,
   inject,
   HostListener,
   signal,
@@ -31,6 +32,12 @@ export class CalendarCard {
   lesson = input.required<Lesson>();
   isReadOnly = input<boolean>(false);
   isEditable = input<boolean>(true);
+  lessonMoveRequested = output<{
+    lessonId: string;
+    direction: 'next' | 'prev';
+    courseYear: number;
+    courseQ: number;
+  }>();
   debugMode = signal(false);
   isDragging = signal(false);
   dragY = signal(0);
@@ -88,17 +95,19 @@ export class CalendarCard {
     const lesson = this.lesson();
 
     if (currentDragY > threshold) {
-      const targetYear = course.year + 1;
-      console.log(
-        `🔵 Dropped in BLUE zone (below): ${course.name} - ${lesson.id} → Año ${targetYear}`,
-      );
-      this.courseService.moveLessonToYear(lesson.id, 1);
+      this.lessonMoveRequested.emit({
+        lessonId: lesson.id,
+        direction: 'next',
+        courseYear: course.year,
+        courseQ: course.q,
+      });
     } else if (currentDragY < -threshold) {
-      const targetYear = course.year - 1;
-      console.log(
-        `🔴 Dropped in RED zone (above): ${course.name} - ${lesson.id} → Año ${targetYear}`,
-      );
-      this.courseService.moveLessonToYear(lesson.id, -1);
+      this.lessonMoveRequested.emit({
+        lessonId: lesson.id,
+        direction: 'prev',
+        courseYear: course.year,
+        courseQ: course.q,
+      });
     }
 
     this.isDragging.set(false);

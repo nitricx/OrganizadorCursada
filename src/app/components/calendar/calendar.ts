@@ -1,4 +1,12 @@
-import { Component, ChangeDetectionStrategy, signal, computed, inject, input } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  signal,
+  computed,
+  inject,
+  input,
+  output,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CourseService } from '../../services/course.service';
 import { PlanService } from '../../services/plan.service';
@@ -30,6 +38,13 @@ export class Calendar {
 
   /** Whether the calendar is editable (allows dragging) */
   isEditable = input<boolean>(true);
+
+  lessonMoveRequested = output<{
+    lessonId: string;
+    direction: 'next' | 'prev';
+    courseYear: number;
+    courseQ: number;
+  }>();
 
   currentDate = signal(new Date());
 
@@ -71,11 +86,19 @@ export class Calendar {
             .courses()
             .filter((c) => c.status === 'coursing' && this.courseService.areAllRequirementsMet(c));
 
+    // Deduplicate courses by ID (annual courses may appear in multiple semesters)
+    const seenCourseIds = new Set<string>();
+    const uniqueCourses = courses.filter((c) => {
+      if (seenCourseIds.has(c.id)) return false;
+      seenCourseIds.add(c.id);
+      return true;
+    });
+
     const map = new Map<DayOfWeek, CourseWithLesson[]>();
     for (const entry of this.allDays) {
       map.set(entry.day, []);
     }
-    courses.forEach((c) => {
+    uniqueCourses.forEach((c) => {
       // Add all lessons for this course
       c.lessons.forEach((lesson) => {
         // On /myWeek (read-only), only show lessons that are 'coursing'

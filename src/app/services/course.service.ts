@@ -7,20 +7,20 @@ import { COURSES_DATA } from '../data/courses.data';
   providedIn: 'root',
 })
 export class CourseService {
-  private coursesSignal = signal<Course[]>(this.initializeCourses());
+  private coursesByPlanSignal = signal<Map<string, Course[]>>(new Map());
   private lessonStatesByPlanSignal = signal<Map<string, Map<string, CourseStatus>>>(new Map());
   private currentPlanIdSignal = signal<string>('1');
   private selectedIdsSignal = signal<Set<string>>(new Set());
   private hoveredCourseIdSignal = signal<string | null>(null);
 
   courses = computed(() => {
-    const courses = this.coursesSignal();
+    const coursesByPlan = this.coursesByPlanSignal();
     const lessonStatesByPlan = this.lessonStatesByPlanSignal();
     const currentPlanId = this.currentPlanIdSignal();
+    const rawCourses = coursesByPlan.get(currentPlanId) ?? [];
     const lessonStates = lessonStatesByPlan.get(currentPlanId) || new Map();
 
-    // Merge lesson states into courses for display
-    return courses.map((course) => {
+    return rawCourses.map((course) => {
       const updatedLessons = course.lessons.map((lesson) => ({
         ...lesson,
         status: (lessonStates.get(lesson.id) || 'pending') as CourseStatus,
@@ -37,7 +37,26 @@ export class CourseService {
 
   private readonly nameToIdMap = this.buildNameToIdMap();
 
-  constructor() {}
+  constructor() {
+    const initialCourses = new Map<string, Course[]>();
+    initialCourses.set('1', this.initializeCourses());
+    this.coursesByPlanSignal.set(initialCourses);
+
+    const initialStates = new Map<string, Map<string, CourseStatus>>();
+    initialStates.set('1', this.initializeLessonStatesForPlan('1'));
+    this.lessonStatesByPlanSignal.set(initialStates);
+  }
+
+  private currentRawCourses(): Course[] {
+    return this.coursesByPlanSignal().get(this.currentPlanIdSignal()) ?? [];
+  }
+
+  private setCurrentRawCourses(courses: Course[]): void {
+    const planId = this.currentPlanIdSignal();
+    const updated = new Map(this.coursesByPlanSignal());
+    updated.set(planId, courses);
+    this.coursesByPlanSignal.set(updated);
+  }
 
   private initializeCourses(): Course[] {
     return COURSES_DATA.map((course) => ({
@@ -71,7 +90,7 @@ export class CourseService {
 
   private buildUnlockMap(): Map<string, Set<string>> {
     const map = new Map<string, Set<string>>();
-    const courses = this.coursesSignal();
+    const courses = this.currentRawCourses();
 
     courses.forEach((course) => {
       map.set(course.id, new Set());
@@ -91,7 +110,7 @@ export class CourseService {
   }
 
   getCourseById(id: string): Course | undefined {
-    return this.coursesSignal().find((c) => c.id === id);
+    return this.currentRawCourses().find((c) => c.id === id);
   }
 
   getRequiredCourseIds(course: Course): string[] {
@@ -108,7 +127,7 @@ export class CourseService {
     requiredNames: string[],
     requiredStatus: 'coursed' | 'approved',
   ): boolean {
-    const courses = this.coursesSignal();
+    const courses = this.currentRawCourses();
     return requiredNames.every((reqName) => {
       const reqCourse = courses.find((c) => c.name === reqName);
       if (!reqCourse) return false;
@@ -148,7 +167,7 @@ export class CourseService {
   }
 
   toggleCourseStatus(courseId: string): void {
-    const courses = this.coursesSignal();
+    const courses = this.currentRawCourses();
     const courseIndex = courses.findIndex((c) => c.id === courseId);
 
     if (courseIndex !== -1) {
@@ -170,7 +189,7 @@ export class CourseService {
 
       if (this.canChangeStatusTo(courseId, nextStatus)) {
         course.status = nextStatus;
-        this.coursesSignal.set(updatedCourses);
+        this.setCurrentRawCourses(updatedCourses);
       }
     }
   }
@@ -231,12 +250,20 @@ export class CourseService {
     const updatedStatesByPlan = new Map(lessonStatesByPlan);
     updatedStatesByPlan.set(currentPlanId, states);
     this.lessonStatesByPlanSignal.set(updatedStatesByPlan);
-    this.coursesSignal.set(this.initializeCourses());
+    this.setCurrentRawCourses(this.initializeCourses());
     this.selectedIdsSignal.set(new Set());
   }
 
   setCurrentPlanId(planId: string): void {
     this.currentPlanIdSignal.set(planId);
+
+    // Initialize per-plan courses if not present
+    const coursesByPlan = this.coursesByPlanSignal();
+    if (!coursesByPlan.has(planId)) {
+      const updatedCoursesByPlan = new Map(coursesByPlan);
+      updatedCoursesByPlan.set(planId, this.initializeCourses());
+      this.coursesByPlanSignal.set(updatedCoursesByPlan);
+    }
 
     // Initialize lesson states for this plan if they don't exist
     const lessonStatesByPlan = this.lessonStatesByPlanSignal();
@@ -247,73 +274,65 @@ export class CourseService {
     }
   }
 
-  moveLessonToYear(lessonId: string, yearDelta: number): void {
+  deletePlan(planId: string): void {
+    const updatedCoursesByPlan = new Map(this.coursesByPlanSignal());
+    updatedCoursesByPlan.delete(planId);
+    this.coursesByPlanSignal.set(updatedCoursesByPlan);
+
+    const updatedStatesByPlan = new Map(this.lessonStatesByPlanSignal());
+    updatedStatesByPlan.delete(planId);
+    this.lessonStatesByPlanSignal.set(updatedStatesByPlan);
+  }
+
+  moveLessonToSemester(lessonId: string, targetYear: number, targetQ: number): void {
     // Find the course containing this lesson
-    const courses = this.coursesSignal();
-    let currentCourse: Course | undefined;
-    let currentLessonIndex = -1;
+    const courses = this.currentRawCourses();
+    const currentCourse = courses.find((c) => c.lessons.some((l) => l.id === lessonId));
 
-    for (const course of courses) {
-      const lessonIndex = course.lessons.findIndex((l) => l.id === lessonId);
-      if (lessonIndex !== -1) {
-        currentCourse = course;
-        currentLessonIndex = lessonIndex;
-        break;
-      }
-    }
-
-    if (!currentCourse || currentLessonIndex === -1) {
+    if (!currentCourse) {
       console.warn(`Lesson ${lessonId} not found`);
       return;
     }
 
-    const currentLesson = currentCourse.lessons[currentLessonIndex];
-    const targetYear = currentCourse.year + yearDelta;
-
-    // Check if a duplicate already exists for this course+year (from a previous drag)
-    const duplicateId = currentCourse.id + '-Y' + targetYear;
-    let targetCourse = courses.find((c) => c.id === duplicateId);
-
-    if (!targetCourse) {
-      // Create a duplicate of the current course for the target year
-      const newCourse: Course = {
-        id: duplicateId,
-        name: currentCourse.name,
-        year: targetYear,
-        q: currentCourse.q,
-        status: 'pending',
-        cursarReq: [...currentCourse.cursarReq],
-        aprobarReq: [...currentCourse.aprobarReq],
-        lessons: currentCourse.lessons.map((lesson) => ({
-          id: lesson.id,
-          professor: lesson.professor,
-          day: lesson.day,
-          startTime: lesson.startTime,
-          endTime: lesson.endTime,
-        })),
-      };
-
-      const updatedCourses = [...courses, newCourse];
-      this.coursesSignal.set(updatedCourses);
-      targetCourse = newCourse;
-    }
-
-    // Find matching lesson in target course
-    const targetLessonIndex = targetCourse.lessons.findIndex(
-      (l) =>
-        l.day === currentLesson.day &&
-        l.startTime === currentLesson.startTime &&
-        l.endTime === currentLesson.endTime,
-    );
-
-    if (targetLessonIndex === -1) {
-      console.warn(`Matching lesson not found in target course`);
+    // Avoid no-op
+    if (currentCourse.year === targetYear && currentCourse.q === targetQ) {
       return;
     }
 
-    const targetLesson = targetCourse.lessons[targetLessonIndex];
+    // Check if a target course for this slot already exists (from a previous move)
+    const duplicateId = `${currentCourse.id}-Y${targetYear}Q${targetQ}`;
+    const existingTarget = courses.find((c) => c.id === duplicateId);
 
-    // Transfer the lesson status
+    // Build the moved course with all lessons from the source
+    const movedCourse: Course = existingTarget
+      ? {
+          ...existingTarget,
+          lessons: currentCourse.lessons.map((lesson) => ({
+            id: lesson.id,
+            professor: lesson.professor,
+            day: lesson.day,
+            startTime: lesson.startTime,
+            endTime: lesson.endTime,
+          })),
+        }
+      : {
+          id: duplicateId,
+          name: currentCourse.name,
+          year: targetYear,
+          q: targetQ,
+          status: 'pending',
+          cursarReq: [...currentCourse.cursarReq],
+          aprobarReq: [...currentCourse.aprobarReq],
+          lessons: currentCourse.lessons.map((lesson) => ({
+            id: lesson.id,
+            professor: lesson.professor,
+            day: lesson.day,
+            startTime: lesson.startTime,
+            endTime: lesson.endTime,
+          })),
+        };
+
+    // Transfer all lesson statuses from source to target
     const lessonStatesByPlan = this.lessonStatesByPlanSignal();
     const currentPlanId = this.currentPlanIdSignal();
     const planStates = lessonStatesByPlan.get(currentPlanId);
@@ -323,28 +342,21 @@ export class CourseService {
       return;
     }
 
-    const lessonStatus = planStates.get(lessonId) || 'pending';
-
-    // Remove status from old lesson, add to new lesson
     const updatedPlanStates = new Map(planStates);
-    updatedPlanStates.delete(lessonId);
-    updatedPlanStates.set(targetLesson.id, lessonStatus);
+    currentCourse.lessons.forEach((lesson) => {
+      const status = updatedPlanStates.get(lesson.id) || 'pending';
+      updatedPlanStates.delete(lesson.id);
+      updatedPlanStates.set(lesson.id, status);
+    });
 
     const updatedStatesByPlan = new Map(lessonStatesByPlan);
     updatedStatesByPlan.set(currentPlanId, updatedPlanStates);
     this.lessonStatesByPlanSignal.set(updatedStatesByPlan);
 
-    // Remove the original lesson from its course; remove course entirely if no lessons remain
-    const latestCourses = this.coursesSignal();
-    const updatedCourses = latestCourses
-      .map((c) => {
-        if (c.id !== currentCourse!.id) return c;
-        const remainingLessons = c.lessons.filter((l) => l.id !== lessonId);
-        return { ...c, lessons: remainingLessons };
-      })
-      .filter((c) => c.lessons.length > 0);
-    this.coursesSignal.set(updatedCourses);
-
-    console.log(`✅ Moved lesson from ${lessonId} to ${targetLesson.id}`);
+    // Replace source course with moved course; remove source entirely
+    const updatedCourses = courses
+      .filter((c) => c.id !== currentCourse.id && c.id !== duplicateId)
+      .concat(movedCourse);
+    this.setCurrentRawCourses(updatedCourses);
   }
 }

@@ -87,9 +87,8 @@ describe('CourseService - Lesson State Toggling', () => {
         if (lesson) {
           service.toggleLessonStatus(lesson.id);
           const updated = service.courses()[0]?.lessons[i];
-          expect(updated?.status).toBe(
+          expect(updated?.status, `Lesson ${i} should change to coursed on first click`).toBe(
             'coursed',
-            `Lesson ${i} should change to coursed on first click`,
           );
 
           // Reset for next iteration

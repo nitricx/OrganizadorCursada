@@ -13,15 +13,14 @@ import { PlanService } from '../../services/plan.service';
 import { Course } from '../../models/course';
 import { Calendar } from '../calendar/calendar';
 
-interface Semester {
-  label: string;
-  courses: Course[];
-}
-
 interface DisplaySemester {
   id: string;
   label: string;
   courses: Course[];
+  year: number;
+  q: number;
+  courseYear: number;
+  courseQ: number;
 }
 
 @Component({
@@ -56,114 +55,97 @@ export class AcademicCalendarComponent {
       if (id) {
         this.planService.setSelectedPlanId(id);
         this.courseService.setCurrentPlanId(id);
-        this.extraSlots.set(this.planService.getExtraSlots(id));
+        const stored = this.planService.getSemesterList(id);
+        if (stored.length > 0) {
+          this.semesterList.set(stored);
+        } else {
+          const courses = this.courseService.courses();
+          const years = Array.from(new Set(courses.map((c) => c.year))).sort((a, b) => a - b);
+          const base = years.flatMap((year) => [
+            { id: `Y${year}Q1`, courseYear: year, courseQ: 1 },
+            { id: `Y${year}Q2`, courseYear: year, courseQ: 2 },
+          ]);
+          this.semesterList.set(base);
+          this.planService.setSemesterList(id, base);
+        }
       }
     });
   }
 
-  semesters = computed<Semester[]>(() => {
-    const courses = this.courseService.courses();
-
-    const semesters: Semester[] = [];
-
-    // Group by year, then by quarter (1, 2, 3)
-    const years = Array.from(new Set(courses.map((c) => c.year))).sort((a, b) => a - b);
-
-    years.forEach((year) => {
-      const yearCourses = courses.filter((c) => c.year === year);
-      const hasNonAnnualCourses = yearCourses.some((c) => c.q < 3);
-      let annualCoursesIncluded = false;
-
-      [1, 2, 3].forEach((q) => {
-        // Skip the annual section if this year has q:1 or q:2 courses
-        if (q === 3 && hasNonAnnualCourses) {
-          return;
-        }
-
-        const quarterLabel = q === 3 ? 'Anual' : `Cuatrimestre ${q}`;
-        const semesterCourses = yearCourses.filter((c) => {
-          if (c.q === q) return true;
-          if (c.q === 3 && q === 1 && !annualCoursesIncluded) {
-            annualCoursesIncluded = true;
-            return true;
-          }
-          return false;
-        });
-
-        if (semesterCourses.length > 0) {
-          semesters.push({
-            label: `Año ${year} – ${quarterLabel}`,
-            courses: semesterCourses,
-          });
-        }
-      });
-    });
-
-    return semesters;
-  });
-
-  private readonly extraSlots = signal<{ id: string; afterId: string }[]>([]);
+  private readonly semesterList = signal<{ id: string; courseYear: number; courseQ: number }[]>([]);
 
   displaySemesters = computed<DisplaySemester[]>(() => {
-    const base: DisplaySemester[] = this.semesters().map((s) => ({
-      id: s.label,
-      label: s.label,
-      courses: s.courses,
-    }));
-    const extras = this.extraSlots();
+    const list = this.semesterList();
+    const courses = this.courseService.courses();
 
-    const afterMap = new Map<string, { id: string }[]>();
-    extras.forEach((e) => {
-      const list = afterMap.get(e.afterId) ?? [];
-      list.push({ id: e.id });
-      afterMap.set(e.afterId, list);
-    });
-
-    const result: DisplaySemester[] = [];
-    let position = 0;
-
-    const itemToLabel = (pos: number): string => {
-      const year = Math.floor(pos / 2) + 1;
-      const quarter = (pos % 2) + 1;
-      return `Año ${year} – Cuatrimestre ${quarter}`;
-    };
-
-    const addWithChildren = (item: DisplaySemester): void => {
-      const displayItem: DisplaySemester = {
-        ...item,
-        label: itemToLabel(position),
+    return list.map((item, position) => {
+      const displayYear = Math.floor(position / 2) + 1;
+      const displayQ = (position % 2) + 1;
+      const semesterCourses =
+        item.courseYear > 0
+          ? courses.filter((c) => c.year === item.courseYear && (c.q === item.courseQ || c.q === 3))
+          : [];
+      return {
+        id: item.id,
+        label: `Año ${displayYear} – Cuatrimestre ${displayQ}`,
+        courses: semesterCourses,
+        year: displayYear,
+        q: displayQ,
+        courseYear: item.courseYear,
+        courseQ: item.courseQ,
       };
-      result.push(displayItem);
-      position++;
-
-      (afterMap.get(item.id) ?? []).forEach((childInfo) => {
-        const childItem: DisplaySemester = {
-          id: childInfo.id,
-          label: '',
-          courses: [],
-        };
-        addWithChildren(childItem);
-      });
-    };
-
-    base.forEach((item) => {
-      addWithChildren(item);
     });
-
-    return result;
   });
 
+  onLessonMoveRequested(
+    event: { lessonId: string; direction: 'next' | 'prev'; courseYear: number; courseQ: number },
+    displayIndex: number,
+  ): void {
+    const semesters = this.displaySemesters();
+
+    const delta = event.direction === 'next' ? 1 : -1;
+    let searchIndex = displayIndex + delta;
+
+    while (searchIndex >= 0 && searchIndex < semesters.length) {
+      const candidate = semesters[searchIndex];
+      if (candidate.q === event.courseQ) {
+        this.courseService.moveLessonToSemester(
+          event.lessonId,
+          candidate.courseYear,
+          candidate.courseQ,
+        );
+        return;
+      }
+      searchIndex += delta;
+    }
+  }
+
   addCalendarAfter(id: string): void {
+    const planId = this.routeParamId()?.get('id');
+    if (!planId) {
+      console.warn('No plan ID available');
+      return;
+    }
+
     const ts = Date.now();
     const id1 = `extra-${ts}-1`;
     const id2 = `extra-${ts}-2`;
 
-    this.extraSlots.update((slots) => {
-      const updated = [...slots, { id: id1, afterId: id }, { id: id2, afterId: id1 }];
-      const planId = this.routeParamId()?.get('id');
-      if (planId) {
-        this.planService.setExtraSlots(planId, updated);
-      }
+    this.semesterList.update((list) => {
+      const maxVirtualYear = list
+        .filter((s) => s.courseYear >= 1000)
+        .reduce((max, s) => Math.max(max, s.courseYear), 999);
+      const virtualYear = maxVirtualYear + 1;
+
+      const idx = list.findIndex((s) => s.id === id);
+      const insertAt = idx >= 0 ? idx + 1 : list.length;
+      const updated = [
+        ...list.slice(0, insertAt),
+        { id: id1, courseYear: virtualYear, courseQ: 1 },
+        { id: id2, courseYear: virtualYear, courseQ: 2 },
+        ...list.slice(insertAt),
+      ];
+      this.planService.setSemesterList(planId, updated);
       return updated;
     });
   }

@@ -8,6 +8,20 @@ a.active-link {
   border-radius: 0 !important;
 }
 
+.nav-item-row {
+  display: flex;
+  align-items: center;
+}
+
+.nav-item-row a {
+  flex: 1;
+}
+
+.delete-plan-btn {
+  flex-shrink: 0;
+  margin-right: 4px;
+}
+
 .sidebar-expansion-panel .mat-expansion-panel-header {
   padding: 0 16px;
   height: 48px;

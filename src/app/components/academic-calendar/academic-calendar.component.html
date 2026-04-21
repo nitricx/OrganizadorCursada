@@ -12,6 +12,7 @@
         [coursesOverride]="item.courses"
         [showHeader]="false"
         [isEditable]="isEditable()"
+        (lessonMoveRequested)="onLessonMoveRequested($event, i)"
       />
     </section>
     @if (isEditable() && (i + 1) % 2 === 0) {

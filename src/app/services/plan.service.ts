@@ -19,9 +19,7 @@ export class PlanService {
   plans = this.plansSignal.asReadonly();
   selectedPlanId = this.selectedPlanIdSignal.asReadonly();
 
-  constructor() {
-    this.plansSignal().forEach((p) => this.initExtraYearsForPlan(p.id));
-  }
+  constructor() {}
 
   addPlan(plan: Plan): void {
     this.plansSignal.update((plans) => {
@@ -29,7 +27,15 @@ export class PlanService {
       localStorage.setItem(PlanService.PLANS_KEY, JSON.stringify(updated));
       return updated;
     });
-    this.initExtraYearsForPlan(plan.id);
+  }
+
+  deletePlan(planId: string): void {
+    this.plansSignal.update((plans) => {
+      const updated = plans.filter((p) => p.id !== planId);
+      localStorage.setItem(PlanService.PLANS_KEY, JSON.stringify(updated));
+      return updated;
+    });
+    localStorage.removeItem(this.semesterListKey(planId));
   }
 
   private loadPlans(): Plan[] {
@@ -61,27 +67,25 @@ export class PlanService {
     this.selectedPlanIdSignal.set(id);
   }
 
-  private extraSlotsKey(planId: string): string {
-    return `plan-extra-slots-${planId}`;
+  private semesterListKey(planId: string): string {
+    return `plan-semesters-${planId}`;
   }
 
-  private initExtraYearsForPlan(planId: string): void {
-    const key = this.extraSlotsKey(planId);
-    if (localStorage.getItem(key) === null) {
-      localStorage.setItem(key, JSON.stringify([]));
-    }
-  }
-
-  getExtraSlots(planId: string): { id: string; afterId: string }[] {
-    const raw = localStorage.getItem(this.extraSlotsKey(planId));
+  getSemesterList(planId: string): { id: string; courseYear: number; courseQ: number }[] {
+    const raw = localStorage.getItem(this.semesterListKey(planId));
     try {
-      return raw !== null ? (JSON.parse(raw) as { id: string; afterId: string }[]) : [];
+      return raw !== null
+        ? (JSON.parse(raw) as { id: string; courseYear: number; courseQ: number }[])
+        : [];
     } catch {
       return [];
     }
   }
 
-  setExtraSlots(planId: string, slots: { id: string; afterId: string }[]): void {
-    localStorage.setItem(this.extraSlotsKey(planId), JSON.stringify(slots));
+  setSemesterList(
+    planId: string,
+    slots: { id: string; courseYear: number; courseQ: number }[],
+  ): void {
+    localStorage.setItem(this.semesterListKey(planId), JSON.stringify(slots));
   }
 }

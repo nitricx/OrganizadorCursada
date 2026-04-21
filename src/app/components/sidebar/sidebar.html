@@ -9,16 +9,28 @@
         </mat-expansion-panel-header>
         <mat-nav-list class="nested-nav-list">
           @for (child of item.children; track child.route) {
-            <a
-              mat-list-item
-              [routerLink]="child.route"
-              routerLinkActive="active-link"
-              #childLink="routerLinkActive"
-              [activated]="childLink.isActive"
-              [attr.aria-current]="childLink.isActive ? 'page' : null"
-            >
-              <span matListItemTitle>{{ child.label }}</span>
-            </a>
+            <div class="nav-item-row">
+              <a
+                mat-list-item
+                [routerLink]="child.route"
+                routerLinkActive="active-link"
+                #childLink="routerLinkActive"
+                [activated]="childLink.isActive"
+                [attr.aria-current]="childLink.isActive ? 'page' : null"
+              >
+                <span matListItemTitle>{{ child.label }}</span>
+              </a>
+              @if (child.deletable) {
+                <button
+                  mat-icon-button
+                  class="delete-plan-btn"
+                  aria-label="Eliminar plan"
+                  (click)="deletePlan(child, item)"
+                >
+                  <mat-icon>delete</mat-icon>
+                </button>
+              }
+            </div>
           }
           @if (item.addButton) {
             <button mat-list-item aria-label="Agregar" (click)="addPlan(item)">
