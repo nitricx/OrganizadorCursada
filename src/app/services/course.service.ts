@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, effect } from '@angular/core';
 import { signal, computed } from '@angular/core';
 import { Course, CourseStatus } from '../models/course';
 import { COURSES_DATA } from '../data/courses.data';
@@ -12,6 +12,8 @@ export class CourseService {
   private currentPlanIdSignal = signal<string>('1');
   private selectedIdsSignal = signal<Set<string>>(new Set());
   private hoveredCourseIdSignal = signal<string | null>(null);
+
+  private readonly STORAGE_KEY = 'course-organizer-state';
 
   courses = computed(() => {
     return this.getCoursesForPlan(this.currentPlanIdSignal());
@@ -47,6 +49,17 @@ export class CourseService {
     const initialStates = new Map<string, Map<string, CourseStatus>>();
     initialStates.set('1', this.initializeLessonStatesForPlan('1'));
     this.lessonStatesByPlanSignal.set(initialStates);
+
+    // Load persisted state from localStorage
+    this.loadState();
+
+    // Setup auto-save on state changes
+    effect(() => {
+      this.coursesByPlanSignal();
+      this.lessonStatesByPlanSignal();
+      this.currentPlanIdSignal();
+      this.saveState();
+    });
   }
 
   private currentRawCourses(): Course[] {
@@ -461,5 +474,87 @@ export class CourseService {
       .filter((c) => c.id !== currentCourse.id && c.id !== duplicateId)
       .concat(movedCourse);
     this.setCurrentRawCourses(updatedCourses);
+  }
+
+  private saveState(): void {
+    try {
+      const state = {
+        coursesByPlan: this.serializeCoursesByPlan(this.coursesByPlanSignal()),
+        lessonStatesByPlan: this.serializeLessonStatesByPlan(this.lessonStatesByPlanSignal()),
+        currentPlanId: this.currentPlanIdSignal(),
+      };
+      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(state));
+    } catch (error) {
+      console.warn('Failed to save course state to localStorage:', error);
+    }
+  }
+
+  private loadState(): void {
+    try {
+      const stored = localStorage.getItem(this.STORAGE_KEY);
+      if (!stored) return;
+
+      const state = JSON.parse(stored);
+
+      if (state.coursesByPlan) {
+        const coursesByPlan = this.deserializeCoursesByPlan(state.coursesByPlan);
+        this.coursesByPlanSignal.set(coursesByPlan);
+      }
+
+      if (state.lessonStatesByPlan) {
+        const lessonStatesByPlan = this.deserializeLessonStatesByPlan(state.lessonStatesByPlan);
+        this.lessonStatesByPlanSignal.set(lessonStatesByPlan);
+      }
+
+      if (state.currentPlanId) {
+        this.currentPlanIdSignal.set(state.currentPlanId);
+      }
+    } catch (error) {
+      console.warn('Failed to load course state from localStorage:', error);
+    }
+  }
+
+  private serializeCoursesByPlan(coursesByPlan: Map<string, Course[]>): Record<string, Course[]> {
+    const result: Record<string, Course[]> = {};
+    coursesByPlan.forEach((courses, planId) => {
+      result[planId] = courses;
+    });
+    return result;
+  }
+
+  private deserializeCoursesByPlan(data: Record<string, Course[]>): Map<string, Course[]> {
+    const coursesByPlan = new Map<string, Course[]>();
+    Object.entries(data).forEach(([planId, courses]) => {
+      coursesByPlan.set(planId, courses as Course[]);
+    });
+    return coursesByPlan;
+  }
+
+  private serializeLessonStatesByPlan(
+    lessonStatesByPlan: Map<string, Map<string, CourseStatus>>,
+  ): Record<string, Record<string, CourseStatus>> {
+    const result: Record<string, Record<string, CourseStatus>> = {};
+    lessonStatesByPlan.forEach((planStates, planId) => {
+      const planRecord: Record<string, CourseStatus> = {};
+      planStates.forEach((status, lessonId) => {
+        planRecord[lessonId] = status;
+      });
+      result[planId] = planRecord;
+    });
+    return result;
+  }
+
+  private deserializeLessonStatesByPlan(
+    data: Record<string, Record<string, CourseStatus>>,
+  ): Map<string, Map<string, CourseStatus>> {
+    const lessonStatesByPlan = new Map<string, Map<string, CourseStatus>>();
+    Object.entries(data).forEach(([planId, planRecord]) => {
+      const planStates = new Map<string, CourseStatus>();
+      Object.entries(planRecord).forEach(([lessonId, status]) => {
+        planStates.set(lessonId, status);
+      });
+      lessonStatesByPlan.set(planId, planStates);
+    });
+    return lessonStatesByPlan;
   }
 }

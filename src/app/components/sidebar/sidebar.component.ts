@@ -46,17 +46,18 @@ export class SidebarComponent {
 
   addPlan(item: SidebarItem): void {
     this.planIdCounter++;
-    const count = this.planIdCounter;
+    const id = this.planIdCounter;
+    const labelNumber = this.planService.plans().length + 1;
     const newChild: SidebarItem = {
-      label: `Plan de estudio ${count}`,
-      route: `/academicCalendar/plan/${count}`,
+      label: `Plan de estudio ${labelNumber}`,
+      route: `/academicCalendar/plan/${id}`,
       deletable: true,
-      id: count.toString(),
+      id: id.toString(),
     };
     this.items.update((items) =>
       items.map((i) => (i === item ? { ...i, children: [...(i.children ?? []), newChild] } : i)),
     );
-    this.planService.addPlan({ id: count.toString(), label: `Plan de estudio ${count}` });
+    this.planService.addPlan({ id: id.toString(), label: `Plan de estudio ${labelNumber}` });
   }
 
   deletePlan(child: SidebarItem, parent: SidebarItem): void {
