@@ -38,7 +38,6 @@ export class CalendarCard {
     courseYear: number;
     courseQ: number;
   }>();
-  debugMode = signal(false);
   isDragging = signal(false);
   dragY = signal(0);
 
@@ -63,7 +62,6 @@ export class CalendarCard {
   @HostListener('pointerdown', ['$event'])
   onPointerDown(event: PointerEvent): void {
     if (!this.isEditable()) return;
-    if ((event.target as HTMLElement).closest('.debug-button')) return;
     const el = this.el.nativeElement as HTMLElement;
     el.setPointerCapture(event.pointerId);
     this.dragStartY = event.clientY;
@@ -112,10 +110,5 @@ export class CalendarCard {
 
     this.isDragging.set(false);
     this.dragY.set(0);
-  }
-
-  toggleDebugMode(event: MouseEvent): void {
-    event.stopPropagation();
-    this.debugMode.update((value) => !value);
   }
 }

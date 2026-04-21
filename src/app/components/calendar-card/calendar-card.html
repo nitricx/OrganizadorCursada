@@ -3,16 +3,3 @@
   <span class="calendar-course-time">{{ lesson().startTime }} – {{ lesson().endTime }}</span>
   <span class="calendar-course-professor">{{ lesson().professor }}</span>
 </div>
-<button class="debug-button" (click)="toggleDebugMode($event)" aria-label="Toggle debug mode">
-  🐛
-</button>
-<div
-  class="debug-overlay debug-overlay-top"
-  *ngIf="debugMode()"
-  [style.transform]="'translateY(' + -dragY() + 'px)'"
-></div>
-<div
-  class="debug-overlay debug-overlay-bottom"
-  *ngIf="debugMode()"
-  [style.transform]="'translateY(' + -dragY() + 'px)'"
-></div>
