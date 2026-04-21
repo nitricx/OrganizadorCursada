@@ -14,11 +14,13 @@ export class CourseService {
   private hoveredCourseIdSignal = signal<string | null>(null);
 
   courses = computed(() => {
-    const coursesByPlan = this.coursesByPlanSignal();
-    const lessonStatesByPlan = this.lessonStatesByPlanSignal();
-    const currentPlanId = this.currentPlanIdSignal();
-    const rawCourses = coursesByPlan.get(currentPlanId) ?? [];
-    const lessonStates = lessonStatesByPlan.get(currentPlanId) || new Map();
+    return this.getCoursesForPlan(this.currentPlanIdSignal());
+  });
+
+  getCoursesForPlan(planId: string): Course[] {
+    const rawCourses = this.coursesByPlanSignal().get(planId) ?? [];
+    const lessonStates =
+      this.lessonStatesByPlanSignal().get(planId) || new Map<string, CourseStatus>();
 
     return rawCourses.map((course) => {
       const updatedLessons = course.lessons.map((lesson) => ({
@@ -31,7 +33,7 @@ export class CourseService {
         lessons: updatedLessons,
       };
     });
-  });
+  }
   selectedIds = computed(() => this.selectedIdsSignal());
   hoveredCourseId = computed(() => this.hoveredCourseIdSignal());
 
@@ -175,14 +177,14 @@ export class CourseService {
       const course = updatedCourses[courseIndex];
       let nextStatus: CourseStatus;
 
-      // Cycle through states in legend order: Unselected → Planned → Coursing → Finished
-      // pending → coursed → coursing → approved → pending
+      // Cycle through states in legend order: Unselected → Coursing → Planned → Finished
+      // pending → coursing → coursed → approved → pending
       if (course.status === 'pending') {
-        nextStatus = 'coursed'; // Unselected → Planned
-      } else if (course.status === 'coursed') {
-        nextStatus = 'coursing'; // Planned → Coursing
+        nextStatus = 'coursing'; // Unselected → Coursing
       } else if (course.status === 'coursing') {
-        nextStatus = 'approved'; // Coursing → Finished
+        nextStatus = 'coursed'; // Coursing → Planned
+      } else if (course.status === 'coursed') {
+        nextStatus = 'approved'; // Planned → Finished
       } else {
         nextStatus = 'pending'; // Finished → Unselected
       }
@@ -190,8 +192,73 @@ export class CourseService {
       if (this.canChangeStatusTo(courseId, nextStatus)) {
         course.status = nextStatus;
         this.setCurrentRawCourses(updatedCourses);
+
+        // Sync: Update all lessons of this course to the new status across ALL plans
+        this.updateLessonStatesForCourseAllPlans(courseId, nextStatus);
+        this.updateCourseStatusAllPlans(courseId, nextStatus);
       }
     }
+  }
+
+  private updateLessonStatesForCourse(courseId: string, newStatus: CourseStatus): void {
+    const lessonStatesByPlan = this.lessonStatesByPlanSignal();
+    const currentPlanId = this.currentPlanIdSignal();
+    const planStates = lessonStatesByPlan.get(currentPlanId);
+
+    if (!planStates) {
+      return;
+    }
+
+    const course = this.getCourseById(courseId);
+    if (!course) {
+      return;
+    }
+
+    // Update all lessons of this course
+    const updatedPlanStates = new Map(planStates);
+    course.lessons.forEach((lesson) => {
+      updatedPlanStates.set(lesson.id, newStatus);
+    });
+
+    const updatedStatesByPlan = new Map(lessonStatesByPlan);
+    updatedStatesByPlan.set(currentPlanId, updatedPlanStates);
+    this.lessonStatesByPlanSignal.set(updatedStatesByPlan);
+  }
+
+  private updateLessonStatesForCourseAllPlans(courseId: string, newStatus: CourseStatus): void {
+    const course = this.getCourseById(courseId);
+    if (!course) return;
+
+    const lessonStatesByPlan = this.lessonStatesByPlanSignal();
+    const updatedStatesByPlan = new Map(lessonStatesByPlan);
+
+    updatedStatesByPlan.forEach((planStates, planId) => {
+      const updatedPlanStates = new Map(planStates);
+      course.lessons.forEach((lesson) => {
+        updatedPlanStates.set(lesson.id, newStatus);
+      });
+      updatedStatesByPlan.set(planId, updatedPlanStates);
+    });
+
+    this.lessonStatesByPlanSignal.set(updatedStatesByPlan);
+  }
+
+  private updateCourseStatusAllPlans(courseId: string, newStatus: CourseStatus): void {
+    const currentPlanId = this.currentPlanIdSignal();
+    const coursesByPlan = this.coursesByPlanSignal();
+    const updatedCoursesByPlan = new Map(coursesByPlan);
+
+    updatedCoursesByPlan.forEach((courses, planId) => {
+      if (planId === currentPlanId) return; // already updated
+      const idx = courses.findIndex((c) => c.id === courseId);
+      if (idx !== -1) {
+        const updatedCourses = [...courses];
+        updatedCourses[idx] = { ...updatedCourses[idx], status: newStatus };
+        updatedCoursesByPlan.set(planId, updatedCourses);
+      }
+    });
+
+    this.coursesByPlanSignal.set(updatedCoursesByPlan);
   }
 
   toggleLessonStatus(lessonId: string): void {
@@ -207,12 +274,12 @@ export class CourseService {
     const oldStatus = planStates.get(lessonId) || 'pending';
     let nextStatus: CourseStatus;
 
-    // Cycle through states: pending → coursed → coursing → approved → pending
+    // Cycle through states in legend order: pending → coursing → coursed → approved → pending
     if (oldStatus === 'pending') {
-      nextStatus = 'coursed';
-    } else if (oldStatus === 'coursed') {
       nextStatus = 'coursing';
     } else if (oldStatus === 'coursing') {
+      nextStatus = 'coursed';
+    } else if (oldStatus === 'coursed') {
       nextStatus = 'approved';
     } else {
       nextStatus = 'pending';
@@ -226,6 +293,42 @@ export class CourseService {
     const updatedStatesByPlan = new Map(lessonStatesByPlan);
     updatedStatesByPlan.set(currentPlanId, updatedPlanStates);
     this.lessonStatesByPlanSignal.set(updatedStatesByPlan);
+
+    // Sync: Update course status if all lessons have the same status
+    this.syncCourseStatusFromLessons(lessonId);
+  }
+
+  private syncCourseStatusFromLessons(lessonId: string): void {
+    const courses = this.currentRawCourses();
+    const course = courses.find((c) => c.lessons.some((l) => l.id === lessonId));
+
+    if (!course) {
+      return;
+    }
+
+    const lessonStatesByPlan = this.lessonStatesByPlanSignal();
+    const currentPlanId = this.currentPlanIdSignal();
+    const planStates = lessonStatesByPlan.get(currentPlanId);
+
+    if (!planStates) {
+      return;
+    }
+
+    // Get all statuses of lessons in this course
+    const lessonStatuses = course.lessons.map((lesson) => planStates.get(lesson.id) || 'pending');
+
+    // Check if all statuses are the same
+    const allSameStatus = lessonStatuses.every((status) => status === lessonStatuses[0]);
+
+    if (allSameStatus) {
+      // Update the course status to match all lessons
+      const updatedCourses = [...courses];
+      const courseIndex = updatedCourses.findIndex((c) => c.id === course.id);
+      if (courseIndex !== -1) {
+        updatedCourses[courseIndex].status = lessonStatuses[0];
+        this.setCurrentRawCourses(updatedCourses);
+      }
+    }
   }
 
   toggleCourseSelection(courseId: string): void {

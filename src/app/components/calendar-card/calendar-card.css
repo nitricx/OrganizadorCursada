@@ -23,30 +23,37 @@
   opacity: 0.9;
 }
 
+/* Status: Pending (pendiente) */
+:host.status-pending {
+  background: #e8e7e0;
+  border-color: #888;
+  outline-color: #185fa5;
+}
+
 :host.is-dragging {
   opacity: 0.85;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
 }
 
-/* Status: Planned (coursed) */
+/* Status: Coursing (cursando) */
+:host.status-coursing {
+  background: #fff8e1;
+  border-color: #d4b856;
+  outline-color: #d4b856;
+}
+
+/* Status: Planned (cursada) */
 :host.status-coursed {
   background: #e6f1fb;
   border-color: #185fa5;
   outline-color: #185fa5;
 }
 
-/* Status: Coursing (coursing) */
-:host.status-coursing {
+/* Status: Finished (aprobada) */
+:host.status-approved {
   background: #e1f5ee;
   border-color: #0f6e56;
   outline-color: #0f6e56;
-}
-
-/* Status: Finished (approved) */
-:host.status-approved {
-  background: #c8e6c9;
-  border-color: #2e7d32;
-  outline-color: #2e7d32;
 }
 
 .calendar-card-content {

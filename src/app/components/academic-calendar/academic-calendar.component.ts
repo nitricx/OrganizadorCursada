@@ -38,23 +38,25 @@ export class AcademicCalendarComponent {
 
   private readonly routeParamId = toSignal(this.route.paramMap.pipe());
 
+  private readonly currentRouteId = computed(() => this.routeParamId()?.get('id') ?? null);
+
   planId = computed(() => {
-    const id = this.routeParamId()?.get('id');
+    const id = this.currentRouteId();
     return id ? `Plan de estudio ${id}` : null;
   });
 
   isEditable = computed(() => {
-    const id = this.routeParamId()?.get('id');
+    const id = this.currentRouteId();
     return id !== null && id !== undefined && id !== '1';
   });
 
   constructor() {
-    // Update selected plan when route parameter changes
+    // Set the current plan ID and initialize semester list when route changes
     effect(() => {
-      const id = this.routeParamId()?.get('id');
+      const id = this.currentRouteId();
       if (id) {
-        this.planService.setSelectedPlanId(id);
         this.courseService.setCurrentPlanId(id);
+        this.planService.setSelectedPlanId(id);
         const stored = this.planService.getSemesterList(id);
         if (stored.length > 0) {
           this.semesterList.set(stored);
@@ -76,7 +78,9 @@ export class AcademicCalendarComponent {
 
   displaySemesters = computed<DisplaySemester[]>(() => {
     const list = this.semesterList();
-    const courses = this.courseService.courses();
+    const routeId = this.currentRouteId();
+    // Read directly from the plan by route ID, bypassing the async currentPlanIdSignal
+    const courses = routeId ? this.courseService.getCoursesForPlan(routeId) : [];
 
     return list.map((item, position) => {
       const displayYear = Math.floor(position / 2) + 1;
@@ -85,6 +89,7 @@ export class AcademicCalendarComponent {
         item.courseYear > 0
           ? courses.filter((c) => c.year === item.courseYear && (c.q === item.courseQ || c.q === 3))
           : [];
+
       return {
         id: item.id,
         label: `Año ${displayYear} – Cuatrimestre ${displayQ}`,
