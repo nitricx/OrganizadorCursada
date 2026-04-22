@@ -119,7 +119,9 @@ export class AcademicCalendarComponent {
       );
       const target = delta === 1 ? candidates[0] : candidates[candidates.length - 1];
       if (target) {
-        this.courseService.moveLessonToSemester(event.lessonId, target.courseYear, 3);
+        if (this.courseService.canMoveLessonToSemester(event.lessonId, target.courseYear)) {
+          this.courseService.moveLessonToSemester(event.lessonId, target.courseYear, 3);
+        }
       }
       return;
     }
@@ -128,11 +130,13 @@ export class AcademicCalendarComponent {
     while (searchIndex >= 0 && searchIndex < semesters.length) {
       const candidate = semesters[searchIndex];
       if (candidate.q === event.courseQ) {
-        this.courseService.moveLessonToSemester(
-          event.lessonId,
-          candidate.courseYear,
-          candidate.courseQ,
-        );
+        if (this.courseService.canMoveLessonToSemester(event.lessonId, candidate.courseYear)) {
+          this.courseService.moveLessonToSemester(
+            event.lessonId,
+            candidate.courseYear,
+            candidate.courseQ,
+          );
+        }
         return;
       }
       searchIndex += delta;

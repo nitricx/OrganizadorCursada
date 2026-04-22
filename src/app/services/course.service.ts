@@ -306,6 +306,27 @@ export class CourseService {
     this.coursesByPlanSignal.set(updatedCoursesByPlan);
   }
 
+  canMoveLessonToSemester(lessonId: string, targetYear: number): boolean {
+    const courses = this.currentRawCourses();
+    const currentCourse = courses.find((c) => c.lessons.some((l) => l.id === lessonId));
+    if (!currentCourse) return false;
+
+    // Block if any dependent (course that requires this one) is already at the target year
+    const hasOverlapWithDependent = courses.some(
+      (c) =>
+        c.year === targetYear &&
+        (c.cursarReq.includes(currentCourse.name) || c.aprobarReq.includes(currentCourse.name)),
+    );
+    if (hasOverlapWithDependent) return false;
+
+    // Block if any prerequisite of this course is already at the target year
+    const allReqNames = [...new Set([...currentCourse.cursarReq, ...currentCourse.aprobarReq])];
+    const hasOverlapWithPrerequisite = courses.some(
+      (c) => c.year === targetYear && allReqNames.includes(c.name),
+    );
+    return !hasOverlapWithPrerequisite;
+  }
+
   moveLessonToSemester(lessonId: string, targetYear: number, targetQ: number): void {
     // Find the course containing this lesson
     const courses = this.currentRawCourses();
