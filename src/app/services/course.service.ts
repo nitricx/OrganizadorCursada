@@ -42,6 +42,15 @@ export class CourseService {
 
   private readonly nameToIdMap = this.buildNameToIdMap();
 
+  private readonly rawCourseByIdMap = computed(() => {
+    const map = new Map<string, Course>();
+    const courses = this.coursesByPlanSignal().get(this.currentPlanIdSignal()) ?? [];
+    for (const c of courses) {
+      map.set(c.id, c);
+    }
+    return map;
+  });
+
   constructor() {
     const initialCourses = new Map<string, Course[]>();
     initialCourses.set('1', this.initializeCourses());
@@ -133,7 +142,10 @@ export class CourseService {
   }
 
   getCourseById(id: string): Course | undefined {
-    return this.currentRawCourses().find((c) => c.id === id);
+    const raw = this.rawCourseByIdMap().get(id);
+    if (!raw) return undefined;
+    const status = (this.courseStatusesSignal().get(id) ?? 'pending') as CourseStatus;
+    return { ...raw, status };
   }
 
   getRequiredCourseIds(course: Course): string[] {

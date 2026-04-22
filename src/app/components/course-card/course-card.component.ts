@@ -33,19 +33,7 @@ export class CourseCardComponent {
     return this.courseService.areAllRequirementsMet(this.course());
   });
 
-  onCardClick(): void {
-    this.cardClicked.emit(this.course().id);
-  }
-
-  onMouseEnter(): void {
-    this.mouseEntered.emit(this.course().id);
-  }
-
-  onMouseLeave(): void {
-    this.mouseLeft.emit();
-  }
-
-  getHighlightClass(): string {
+  highlightClass = computed(() => {
     const courseId = this.course().id;
     const selectedIds = this.selectedIds();
 
@@ -68,5 +56,17 @@ export class CourseCardComponent {
     }
 
     return '';
+  });
+
+  onCardClick(): void {
+    this.cardClicked.emit(this.course().id);
+  }
+
+  onMouseEnter(): void {
+    this.mouseEntered.emit(this.course().id);
+  }
+
+  onMouseLeave(): void {
+    this.mouseLeft.emit();
   }
 }
