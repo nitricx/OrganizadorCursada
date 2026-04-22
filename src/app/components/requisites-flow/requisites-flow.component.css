@@ -1,0 +1,15 @@
+.requisites-flow-page {
+  padding: 24px;
+}
+
+h2 {
+  margin: 0 0 16px;
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+
+.diagram-img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}

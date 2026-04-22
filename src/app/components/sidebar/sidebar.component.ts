@@ -32,6 +32,7 @@ export class SidebarComponent {
   items = signal<SidebarItem[]>([
     { label: 'Home', route: '/home' },
     { label: 'Mi Semana', route: '/myWeek' },
+    { label: 'Correlatividades', route: '/requisites' },
     {
       label: 'Calendario Académico',
       children: this.planService.plans().map((p) => ({
