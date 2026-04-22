@@ -1,4 +1,7 @@
 <div class="academic-calendar">
+  @if (toastMessage()) {
+    <div class="move-toast">{{ toastMessage() }}</div>
+  }
   <div class="page-header">
     <h1>Calendario Académico</h1>
     @if (planId()) {

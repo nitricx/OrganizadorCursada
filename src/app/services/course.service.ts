@@ -306,25 +306,35 @@ export class CourseService {
     this.coursesByPlanSignal.set(updatedCoursesByPlan);
   }
 
-  canMoveLessonToSemester(lessonId: string, targetYear: number): boolean {
+  getMoveBlockReason(lessonId: string, targetYear: number): string | null {
     const courses = this.currentRawCourses();
     const currentCourse = courses.find((c) => c.lessons.some((l) => l.id === lessonId));
-    if (!currentCourse) return false;
+    if (!currentCourse) return null;
 
     // Block if any dependent (course that requires this one) is already at the target year
-    const hasOverlapWithDependent = courses.some(
+    const overlappingDependent = courses.find(
       (c) =>
         c.year === targetYear &&
         (c.cursarReq.includes(currentCourse.name) || c.aprobarReq.includes(currentCourse.name)),
     );
-    if (hasOverlapWithDependent) return false;
+    if (overlappingDependent) {
+      return `No se puede mover "${currentCourse.name}" porque "${overlappingDependent.name}" la requiere y está en el mismo año`;
+    }
 
     // Block if any prerequisite of this course is already at the target year
     const allReqNames = [...new Set([...currentCourse.cursarReq, ...currentCourse.aprobarReq])];
-    const hasOverlapWithPrerequisite = courses.some(
+    const overlappingPrereq = courses.find(
       (c) => c.year === targetYear && allReqNames.includes(c.name),
     );
-    return !hasOverlapWithPrerequisite;
+    if (overlappingPrereq) {
+      return `No se puede mover "${currentCourse.name}" porque su requisito "${overlappingPrereq.name}" está en el mismo año`;
+    }
+
+    return null;
+  }
+
+  canMoveLessonToSemester(lessonId: string, targetYear: number): boolean {
+    return this.getMoveBlockReason(lessonId, targetYear) === null;
   }
 
   moveLessonToSemester(lessonId: string, targetYear: number, targetQ: number): void {

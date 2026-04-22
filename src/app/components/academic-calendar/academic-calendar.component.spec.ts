@@ -54,7 +54,14 @@ class MockCourseService {
   selectedIds = computed(() => new Set<string>());
   hoveredCourseId = computed(() => null as string | null);
 
+  // Controls returned by tests
+  blockReason: string | null = null;
+
   setCurrentPlanId(_id: string): void {}
+
+  getCoursesForPlan(_planId: string): Course[] {
+    return this._courses();
+  }
 
   areAllRequirementsMet(_course: Course): boolean {
     return true;
@@ -74,6 +81,14 @@ class MockCourseService {
         return;
       }
     }
+  }
+
+  getMoveBlockReason(_lessonId: string, _targetYear: number): string | null {
+    return this.blockReason;
+  }
+
+  canMoveLessonToSemester(lessonId: string, targetYear: number): boolean {
+    return this.getMoveBlockReason(lessonId, targetYear) === null;
   }
 }
 
@@ -165,5 +180,58 @@ describe('AcademicCalendarComponent – semester insertion and course movement',
     // The original y=3 q=1 slot is unaffected — Course 1 does NOT appear there
     const y3q1Slot = afterMove[4];
     expect(y3q1Slot.courses.every((c) => c.name !== 'Course 1')).toBe(true);
+  });
+
+  describe('toast notification', () => {
+    let mockService: MockCourseService;
+
+    beforeEach(() => {
+      mockService = TestBed.inject(CourseService) as unknown as MockCourseService;
+      mockService.blockReason = null;
+    });
+
+    it('should not show a toast when the move is allowed', () => {
+      mockService.blockReason = null;
+
+      component.onLessonMoveRequested(
+        { lessonId: 'C1-L1', direction: 'next', courseYear: 1, courseQ: 1 },
+        0,
+      );
+      fixture.detectChanges();
+
+      expect(component.toastMessage()).toBeNull();
+      const toast = (fixture.nativeElement as HTMLElement).querySelector('.move-toast');
+      expect(toast).toBeNull();
+    });
+
+    it('should show a toast with the block reason when the move is blocked', () => {
+      mockService.blockReason =
+        'No se puede mover "Course 1" porque "Course 2" la requiere y está en el mismo año';
+
+      component.onLessonMoveRequested(
+        { lessonId: 'C1-L1', direction: 'next', courseYear: 1, courseQ: 1 },
+        0,
+      );
+      fixture.detectChanges();
+
+      expect(component.toastMessage()).toBe(mockService.blockReason);
+      const toast = (fixture.nativeElement as HTMLElement).querySelector('.move-toast');
+      expect(toast).not.toBeNull();
+      expect(toast?.textContent?.trim()).toBe(mockService.blockReason);
+    });
+
+    it('should not move the lesson when the move is blocked', () => {
+      mockService.blockReason = 'blocked';
+      const semestersBefore = component.displaySemesters().map((s) => s.courses.length);
+
+      component.onLessonMoveRequested(
+        { lessonId: 'C1-L1', direction: 'next', courseYear: 1, courseQ: 1 },
+        0,
+      );
+      fixture.detectChanges();
+
+      const semestersAfter = component.displaySemesters().map((s) => s.courses.length);
+      expect(semestersAfter).toEqual(semestersBefore);
+    });
   });
 });

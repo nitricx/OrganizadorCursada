@@ -5,11 +5,13 @@ import {
   computed,
   effect,
   signal,
+  NgZone,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { CourseService } from '../../services/course.service';
 import { PlanService } from '../../services/plan.service';
+import { CommonModule } from '@angular/common';
 import { Course } from '../../models/course';
 import { Calendar } from '../calendar/calendar';
 
@@ -28,13 +30,27 @@ interface DisplaySemester {
   templateUrl: './academic-calendar.component.html',
   styleUrl: './academic-calendar.component.css',
   standalone: true,
-  imports: [Calendar],
+  imports: [Calendar, CommonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AcademicCalendarComponent {
   private readonly courseService = inject(CourseService);
   private readonly route = inject(ActivatedRoute);
   private readonly planService = inject(PlanService);
+  private readonly ngZone = inject(NgZone);
+
+  toastMessage = signal<string | null>(null);
+  private toastTimeout: ReturnType<typeof setTimeout> | null = null;
+
+  private showToast(message: string): void {
+    if (this.toastTimeout !== null) {
+      clearTimeout(this.toastTimeout);
+    }
+    this.toastMessage.set(message);
+    this.toastTimeout = this.ngZone.runOutsideAngular(() =>
+      setTimeout(() => this.ngZone.run(() => this.toastMessage.set(null)), 3500),
+    );
+  }
 
   private readonly routeParamId = toSignal(this.route.paramMap.pipe());
 
@@ -119,7 +135,10 @@ export class AcademicCalendarComponent {
       );
       const target = delta === 1 ? candidates[0] : candidates[candidates.length - 1];
       if (target) {
-        if (this.courseService.canMoveLessonToSemester(event.lessonId, target.courseYear)) {
+        const reason = this.courseService.getMoveBlockReason(event.lessonId, target.courseYear);
+        if (reason) {
+          this.showToast(reason);
+        } else {
           this.courseService.moveLessonToSemester(event.lessonId, target.courseYear, 3);
         }
       }
@@ -130,7 +149,10 @@ export class AcademicCalendarComponent {
     while (searchIndex >= 0 && searchIndex < semesters.length) {
       const candidate = semesters[searchIndex];
       if (candidate.q === event.courseQ) {
-        if (this.courseService.canMoveLessonToSemester(event.lessonId, candidate.courseYear)) {
+        const reason = this.courseService.getMoveBlockReason(event.lessonId, candidate.courseYear);
+        if (reason) {
+          this.showToast(reason);
+        } else {
           this.courseService.moveLessonToSemester(
             event.lessonId,
             candidate.courseYear,
