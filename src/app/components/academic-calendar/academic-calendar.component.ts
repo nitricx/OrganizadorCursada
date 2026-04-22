@@ -107,10 +107,24 @@ export class AcademicCalendarComponent {
     displayIndex: number,
   ): void {
     const semesters = this.displaySemesters();
-
     const delta = event.direction === 'next' ? 1 : -1;
-    let searchIndex = displayIndex + delta;
+    const isAnnual = event.courseQ === 3;
 
+    if (isAnnual) {
+      // Annual courses span both quarters of a year — find Q1 of the adjacent year
+      const candidates = semesters.filter(
+        (s) =>
+          s.courseQ === 1 &&
+          (delta === 1 ? s.courseYear > event.courseYear : s.courseYear < event.courseYear),
+      );
+      const target = delta === 1 ? candidates[0] : candidates[candidates.length - 1];
+      if (target) {
+        this.courseService.moveLessonToSemester(event.lessonId, target.courseYear, 3);
+      }
+      return;
+    }
+
+    let searchIndex = displayIndex + delta;
     while (searchIndex >= 0 && searchIndex < semesters.length) {
       const candidate = semesters[searchIndex];
       if (candidate.q === event.courseQ) {
