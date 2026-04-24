@@ -8,12 +8,13 @@ import {
   NgZone,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CourseService } from '../../services/course.service';
 import { PlanService } from '../../services/plan.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 import { Course } from '../../models/course';
 import { Calendar } from '../calendar/calendar';
 
@@ -32,13 +33,14 @@ interface DisplaySemester {
   templateUrl: './academic-calendar.component.html',
   styleUrl: './academic-calendar.component.css',
   standalone: true,
-  imports: [Calendar, CommonModule, MatIconModule, FormsModule],
+  imports: [Calendar, CommonModule, MatIconModule, MatButtonModule, FormsModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AcademicCalendarComponent {
   private readonly courseService = inject(CourseService);
   private readonly route = inject(ActivatedRoute);
   private readonly planService = inject(PlanService);
+  private readonly router = inject(Router);
   private readonly ngZone = inject(NgZone);
 
   toastMessage = signal<string | null>(null);
@@ -245,5 +247,17 @@ export class AcademicCalendarComponent {
       this.planService.setSemesterList(planId, updated);
       return updated;
     });
+  }
+
+  deletePlan(): void {
+    const planId = this.currentRouteId();
+    if (!planId) return;
+
+    this.courseService.deletePlan(planId);
+    this.planService.deletePlan(planId);
+
+    const remaining = this.planService.plans();
+    const fallback = remaining.length > 0 ? `/academicCalendar/plan/${remaining[0].id}` : '/home';
+    void this.router.navigateByUrl(fallback);
   }
 }

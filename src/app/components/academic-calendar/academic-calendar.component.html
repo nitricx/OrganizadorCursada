@@ -16,6 +16,14 @@
       }
       @if (!isEditingTitle() && isEditable()) {
         <mat-icon (click)="toggleEditTitle()">edit</mat-icon>
+        <button
+          mat-icon-button
+          class="delete-plan-btn"
+          aria-label="Eliminar plan"
+          (click)="deletePlan()"
+        >
+          <mat-icon>delete</mat-icon>
+        </button>
       } @else if (isEditingTitle()) {
         <mat-icon (click)="confirmEditTitle()">check_circle</mat-icon>
         <mat-icon (click)="cancelEditTitle()">cancel</mat-icon>

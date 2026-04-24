@@ -60,23 +60,4 @@ export class SidebarComponent {
     );
     this.planService.addPlan({ id: id.toString(), label: `Plan de estudio ${labelNumber}` });
   }
-
-  deletePlan(child: SidebarItem, parent: SidebarItem): void {
-    if (!child.id) return;
-
-    const deletedRoute = child.route;
-    this.courseService.deletePlan(child.id);
-    this.planService.deletePlan(child.id);
-    this.items.update((items) =>
-      items.map((i) =>
-        i === parent ? { ...i, children: (i.children ?? []).filter((c) => c !== child) } : i,
-      ),
-    );
-
-    if (deletedRoute && this.router.url === deletedRoute) {
-      const remaining = this.planService.plans();
-      const fallback = remaining.length > 0 ? `/academicCalendar/plan/${remaining[0].id}` : '/home';
-      void this.router.navigateByUrl(fallback);
-    }
-  }
 }
