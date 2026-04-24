@@ -32,6 +32,7 @@ export class CalendarCard {
   lesson = input.required<Lesson>();
   isReadOnly = input<boolean>(false);
   isEditable = input<boolean>(true);
+  clickTogglesStatus = input<boolean>(true);
   lessonMoveRequested = output<{
     lessonId: string;
     direction: 'next' | 'prev';
@@ -49,6 +50,7 @@ export class CalendarCard {
   @HostListener('click')
   onCardClick(): void {
     if (this.isReadOnly()) return;
+    if (!this.clickTogglesStatus()) return;
     if (this.hasDragged) {
       this.hasDragged = false;
       return;

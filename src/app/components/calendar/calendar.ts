@@ -39,6 +39,9 @@ export class Calendar {
   /** Whether the calendar is editable (allows dragging) */
   isEditable = input<boolean>(true);
 
+  /** Whether clicking on a lesson should toggle its status */
+  clickTogglesStatus = input<boolean>(true);
+
   lessonMoveRequested = output<{
     lessonId: string;
     direction: 'next' | 'prev';
