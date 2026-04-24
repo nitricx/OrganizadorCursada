@@ -5,7 +5,20 @@
   <div class="page-header">
     <h1>Calendario Académico</h1>
     @if (planId()) {
-      <h2 class="plan-title">{{ planId() }}</h2>
+      <div class="plan-header-row">
+        <h2 class="plan-title">{{ planId() }}</h2>
+        <div class="year-selector">
+          <label for="starting-year">Año inicial:</label>
+          <input
+            id="starting-year"
+            type="number"
+            [value]="startingYear()"
+            (change)="setStartingYear($event)"
+            min="1900"
+            max="2100"
+          />
+        </div>
+      </div>
     }
   </div>
   @for (item of displaySemesters(); track item.id; let i = $index; let last = $last) {

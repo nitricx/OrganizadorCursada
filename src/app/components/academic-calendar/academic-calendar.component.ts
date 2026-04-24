@@ -40,6 +40,7 @@ export class AcademicCalendarComponent {
   private readonly ngZone = inject(NgZone);
 
   toastMessage = signal<string | null>(null);
+  startingYear = signal<number>(new Date().getFullYear());
   private toastTimeout: ReturnType<typeof setTimeout> | null = null;
 
   private showToast(message: string): void {
@@ -73,6 +74,7 @@ export class AcademicCalendarComponent {
       if (id) {
         this.courseService.setCurrentPlanId(id);
         this.planService.setSelectedPlanId(id);
+        this.startingYear.set(this.planService.getStartingYear(id));
         const stored = this.planService.getSemesterList(id);
         if (stored.length > 0) {
           this.semesterList.set(stored);
@@ -95,11 +97,12 @@ export class AcademicCalendarComponent {
   displaySemesters = computed<DisplaySemester[]>(() => {
     const list = this.semesterList();
     const routeId = this.currentRouteId();
+    const starting = this.startingYear();
     // Read directly from the plan by route ID, bypassing the async currentPlanIdSignal
     const courses = routeId ? this.courseService.getCoursesForPlan(routeId) : [];
 
     return list.map((item, position) => {
-      const displayYear = Math.floor(position / 2) + 1;
+      const displayYear = starting + Math.floor(position / 2);
       const displayQ = (position % 2) + 1;
       const semesterCourses =
         item.courseYear > 0
@@ -117,6 +120,21 @@ export class AcademicCalendarComponent {
       };
     });
   });
+
+  setStartingYear(year: number | Event): void {
+    let yearValue: number;
+    if (year instanceof Event) {
+      const target = year.target as HTMLInputElement;
+      yearValue = parseInt(target.value, 10);
+    } else {
+      yearValue = year;
+    }
+    const planId = this.currentRouteId();
+    if (planId && !isNaN(yearValue)) {
+      this.startingYear.set(yearValue);
+      this.planService.setStartingYear(planId, yearValue);
+    }
+  }
 
   onLessonMoveRequested(
     event: { lessonId: string; direction: 'next' | 'prev'; courseYear: number; courseQ: number },

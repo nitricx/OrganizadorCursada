@@ -11,6 +11,50 @@
   font-weight: 500;
 }
 
+.plan-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.plan-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+.year-selector {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.year-selector label {
+  font-size: 0.95rem;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+.year-selector input {
+  width: 5rem;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--color-border-secondary);
+  border-radius: 0.25rem;
+  font-size: 0.95rem;
+  background: var(--color-input-background);
+  color: var(--color-text);
+  transition: border-color 0.15s;
+}
+
+.year-selector input:focus {
+  outline: none;
+  border-color: var(--color-primary, #1976d2);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary, #1976d2) 10%, transparent);
+}
+
 .semester-section {
   display: flex;
   flex-direction: column;

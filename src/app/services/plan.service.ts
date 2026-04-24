@@ -88,4 +88,21 @@ export class PlanService {
   ): void {
     localStorage.setItem(this.semesterListKey(planId), JSON.stringify(slots));
   }
+
+  private startingYearKey(planId: string): string {
+    return `plan-starting-year-${planId}`;
+  }
+
+  getStartingYear(planId: string): number {
+    const raw = localStorage.getItem(this.startingYearKey(planId));
+    try {
+      return raw !== null ? (JSON.parse(raw) as number) : new Date().getFullYear();
+    } catch {
+      return new Date().getFullYear();
+    }
+  }
+
+  setStartingYear(planId: string, year: number): void {
+    localStorage.setItem(this.startingYearKey(planId), JSON.stringify(year));
+  }
 }
