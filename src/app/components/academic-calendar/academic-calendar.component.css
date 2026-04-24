@@ -9,6 +9,56 @@
   margin: 0 0 0.5rem;
   font-size: 2rem;
   font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.page-header h1 mat-icon {
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.page-header h1 input {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 500;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--color-border-secondary);
+  border-radius: 0.25rem;
+  background: var(--color-input-background);
+  color: var(--color-text);
+  transition: border-color 0.15s;
+  font-family: inherit;
+}
+
+.page-header h1 input:focus {
+  outline: none;
+  border-color: var(--color-primary, #1976d2);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary, #1976d2) 10%, transparent);
+}
+
+.editable-title {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 500;
+  padding: 0 0.6rem;
+  border: 1px solid var(--color-border-secondary);
+  border-radius: 0.25rem;
+  background: var(--color-input-background);
+  color: var(--color-text);
+  transition: border-color 0.15s;
+  font-family: inherit;
+  min-width: 300px;
+  line-height: 1.2;
+  height: 2.4rem;
+  box-sizing: border-box;
+}
+
+.editable-title:focus {
+  outline: none;
+  border-color: var(--color-primary, #1976d2);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary, #1976d2) 10%, transparent);
 }
 
 .plan-header-row {
@@ -24,6 +74,25 @@
   font-size: 1.25rem;
   font-weight: 500;
   color: var(--color-text-secondary);
+}
+
+.editable-plan-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--color-border-secondary);
+  border-radius: 0.25rem;
+  background: var(--color-input-background);
+  transition: border-color 0.15s;
+  font-family: inherit;
+}
+
+.editable-plan-title:focus {
+  outline: none;
+  border-color: var(--color-primary, #1976d2);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary, #1976d2) 10%, transparent);
 }
 
 .year-selector {
@@ -44,9 +113,18 @@
   border: 1px solid var(--color-border-secondary);
   border-radius: 0.25rem;
   font-size: 0.95rem;
+  font-family: inherit;
   background: var(--color-input-background);
   color: var(--color-text);
   transition: border-color 0.15s;
+}
+
+.year-selector input:disabled {
+  border: none;
+  background: transparent;
+  padding: 0.4rem 0;
+  cursor: default;
+}
 }
 
 .year-selector input:focus {

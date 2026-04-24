@@ -3,20 +3,56 @@
     <div class="move-toast">{{ toastMessage() }}</div>
   }
   <div class="page-header">
-    <h1>Calendario Académico</h1>
+    <h1>
+      @if (!isEditingTitle()) {
+        Calendario Académico
+      } @else {
+        <input
+          type="text"
+          [(ngModel)]="editableTitle"
+          placeholder="Título"
+          class="editable-title"
+        />
+      }
+      @if (!isEditingTitle() && isEditable()) {
+        <mat-icon (click)="toggleEditTitle()">edit</mat-icon>
+      } @else if (isEditingTitle()) {
+        <mat-icon (click)="confirmEditTitle()">check_circle</mat-icon>
+        <mat-icon (click)="cancelEditTitle()">cancel</mat-icon>
+      }
+    </h1>
     @if (planId()) {
       <div class="plan-header-row">
-        <h2 class="plan-title">{{ planId() }}</h2>
+        @if (!isEditingTitle()) {
+          <h2 class="plan-title">{{ planId() }}</h2>
+        } @else {
+          <input
+            type="text"
+            [(ngModel)]="editablePlanId"
+            placeholder="Subtítulo"
+            class="editable-plan-title"
+          />
+        }
         <div class="year-selector">
           <label for="starting-year">Año inicial:</label>
-          <input
-            id="starting-year"
-            type="number"
-            [value]="startingYear()"
-            (change)="setStartingYear($event)"
-            min="1900"
-            max="2100"
-          />
+          @if (!isEditingTitle()) {
+            <input
+              id="starting-year"
+              type="number"
+              [value]="startingYear()"
+              [disabled]="true"
+              min="1900"
+              max="2100"
+            />
+          } @else {
+            <input
+              id="starting-year"
+              type="number"
+              [(ngModel)]="editableStartingYear"
+              min="1900"
+              max="2100"
+            />
+          }
         </div>
       </div>
     }

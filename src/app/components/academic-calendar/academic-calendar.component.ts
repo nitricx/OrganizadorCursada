@@ -12,6 +12,8 @@ import { ActivatedRoute } from '@angular/router';
 import { CourseService } from '../../services/course.service';
 import { PlanService } from '../../services/plan.service';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
 import { Course } from '../../models/course';
 import { Calendar } from '../calendar/calendar';
 
@@ -30,7 +32,7 @@ interface DisplaySemester {
   templateUrl: './academic-calendar.component.html',
   styleUrl: './academic-calendar.component.css',
   standalone: true,
-  imports: [Calendar, CommonModule],
+  imports: [Calendar, CommonModule, MatIconModule, FormsModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AcademicCalendarComponent {
@@ -41,6 +43,10 @@ export class AcademicCalendarComponent {
 
   toastMessage = signal<string | null>(null);
   startingYear = signal<number>(new Date().getFullYear());
+  isEditingTitle = signal<boolean>(false);
+  editableTitle = signal<string>('Calendario Académico');
+  editablePlanId = signal<string | null>(null);
+  editableStartingYear = signal<number>(new Date().getFullYear());
   private toastTimeout: ReturnType<typeof setTimeout> | null = null;
 
   private showToast(message: string): void {
@@ -72,6 +78,8 @@ export class AcademicCalendarComponent {
     effect(() => {
       const id = this.currentRouteId();
       if (id) {
+        // Cancel edit mode when route changes
+        this.isEditingTitle.set(false);
         this.courseService.setCurrentPlanId(id);
         this.planService.setSelectedPlanId(id);
         this.startingYear.set(this.planService.getStartingYear(id));
@@ -134,6 +142,32 @@ export class AcademicCalendarComponent {
       this.startingYear.set(yearValue);
       this.planService.setStartingYear(planId, yearValue);
     }
+  }
+
+  toggleEditTitle(): void {
+    if (!this.isEditingTitle()) {
+      // Entering edit mode - copy current values
+      this.editableTitle.set('Calendario Académico');
+      this.editablePlanId.set(this.planId());
+      this.editableStartingYear.set(this.startingYear());
+    }
+    this.isEditingTitle.set(!this.isEditingTitle());
+  }
+
+  confirmEditTitle(): void {
+    // Save the changes
+    const newYear = this.editableStartingYear();
+    const planId = this.currentRouteId();
+    if (planId && newYear !== this.startingYear()) {
+      this.startingYear.set(newYear);
+      this.planService.setStartingYear(planId, newYear);
+    }
+    this.isEditingTitle.set(false);
+  }
+
+  cancelEditTitle(): void {
+    // Restore previous values (they're not in signals, just discard editable versions)
+    this.isEditingTitle.set(false);
   }
 
   onLessonMoveRequested(
