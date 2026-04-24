@@ -59,7 +59,7 @@ export class AcademicCalendarComponent {
 
   planId = computed(() => {
     const id = this.currentRouteId();
-    return id ? `Plan de estudio ${id}` : null;
+    return id ? (this.planService.getPlanLabel(id) ?? `Plan de estudio ${id}`) : null;
   });
 
   isEditable = computed(() => {
