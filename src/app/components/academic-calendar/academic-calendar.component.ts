@@ -26,6 +26,8 @@ interface DisplaySemester {
   q: number;
   courseYear: number;
   courseQ: number;
+  startDate?: string;
+  endDate?: string;
 }
 
 @Component({
@@ -49,6 +51,7 @@ export class AcademicCalendarComponent {
   editableTitle = signal<string>('Calendario Académico');
   editablePlanId = signal<string | null>(null);
   editableStartingYear = signal<number>(new Date().getFullYear());
+  editableSemesterDates = signal<Map<string, { startDate?: string; endDate?: string }>>(new Map());
   private toastTimeout: ReturnType<typeof setTimeout> | null = null;
 
   private showToast(message: string): void {
@@ -91,9 +94,20 @@ export class AcademicCalendarComponent {
         } else {
           const courses = this.courseService.courses();
           const years = Array.from(new Set(courses.map((c) => c.year))).sort((a, b) => a - b);
+          const startingYear = this.planService.getStartingYear(id);
           const base = years.flatMap((year) => [
-            { id: `Y${year}Q1`, courseYear: year, courseQ: 1 },
-            { id: `Y${year}Q2`, courseYear: year, courseQ: 2 },
+            {
+              id: `Y${year}Q1`,
+              courseYear: year,
+              courseQ: 1,
+              ...this.planService.getDefaultSemesterDates(startingYear, 1),
+            },
+            {
+              id: `Y${year}Q2`,
+              courseYear: year,
+              courseQ: 2,
+              ...this.planService.getDefaultSemesterDates(startingYear, 2),
+            },
           ]);
           this.semesterList.set(base);
           this.planService.setSemesterList(id, base);
@@ -102,7 +116,9 @@ export class AcademicCalendarComponent {
     });
   }
 
-  private readonly semesterList = signal<{ id: string; courseYear: number; courseQ: number }[]>([]);
+  private readonly semesterList = signal<
+    { id: string; courseYear: number; courseQ: number; startDate?: string; endDate?: string }[]
+  >([]);
 
   displaySemesters = computed<DisplaySemester[]>(() => {
     const list = this.semesterList();
@@ -119,14 +135,21 @@ export class AcademicCalendarComponent {
           ? courses.filter((c) => c.year === item.courseYear && (c.q === item.courseQ || c.q === 3))
           : [];
 
+      const label =
+        item.startDate && item.endDate
+          ? `Año ${displayYear} – Cuatrimestre ${displayQ} (${item.startDate} - ${item.endDate})`
+          : `Año ${displayYear} – Cuatrimestre ${displayQ}`;
+
       return {
         id: item.id,
-        label: `Año ${displayYear} – Cuatrimestre ${displayQ}`,
+        label,
         courses: semesterCourses,
         year: displayYear,
         q: displayQ,
         courseYear: item.courseYear,
         courseQ: item.courseQ,
+        startDate: item.startDate,
+        endDate: item.endDate,
       };
     });
   });
@@ -152,6 +175,12 @@ export class AcademicCalendarComponent {
       this.editableTitle.set('Calendario Académico');
       this.editablePlanId.set(this.planId());
       this.editableStartingYear.set(this.startingYear());
+      // Copy semester dates into editable map
+      const dateMap = new Map<string, { startDate?: string; endDate?: string }>();
+      this.semesterList().forEach((sem) => {
+        dateMap.set(sem.id, { startDate: sem.startDate, endDate: sem.endDate });
+      });
+      this.editableSemesterDates.set(dateMap);
     }
     this.isEditingTitle.set(!this.isEditingTitle());
   }
@@ -170,12 +199,38 @@ export class AcademicCalendarComponent {
       this.planService.setStartingYear(planId, newYear);
     }
 
+    // Update semester dates from editable map
+    const dateMap = this.editableSemesterDates();
+    if (dateMap.size > 0 && planId) {
+      this.semesterList.update((list) => {
+        const updated = list.map((sem) => {
+          const dates = dateMap.get(sem.id);
+          return dates ? { ...sem, startDate: dates.startDate, endDate: dates.endDate } : sem;
+        });
+        this.planService.setSemesterList(planId, updated);
+        return updated;
+      });
+    }
+
     this.isEditingTitle.set(false);
   }
 
   cancelEditTitle(): void {
     // Restore previous values (they're not in signals, just discard editable versions)
     this.isEditingTitle.set(false);
+  }
+
+  updateSemesterDate(semesterId: string, field: 'startDate' | 'endDate', value: string): void {
+    this.editableSemesterDates.update((map) => {
+      const dates = map.get(semesterId) || {};
+      const updated = new Map(map);
+      updated.set(semesterId, { ...dates, [field]: value });
+      return updated;
+    });
+  }
+
+  getEditableSemesterDates(semesterId: string): { startDate?: string; endDate?: string } {
+    return this.editableSemesterDates().get(semesterId) || {};
   }
 
   onLessonMoveRequested(
@@ -244,10 +299,21 @@ export class AcademicCalendarComponent {
 
       const idx = list.findIndex((s) => s.id === id);
       const insertAt = idx >= 0 ? idx + 1 : list.length;
+      const year = this.startingYear();
       const updated = [
         ...list.slice(0, insertAt),
-        { id: id1, courseYear: virtualYear, courseQ: 1 },
-        { id: id2, courseYear: virtualYear, courseQ: 2 },
+        {
+          id: id1,
+          courseYear: virtualYear,
+          courseQ: 1,
+          ...this.planService.getDefaultSemesterDates(year, 1),
+        },
+        {
+          id: id2,
+          courseYear: virtualYear,
+          courseQ: 2,
+          ...this.planService.getDefaultSemesterDates(year, 2),
+        },
         ...list.slice(insertAt),
       ];
       this.planService.setSemesterList(planId, updated);

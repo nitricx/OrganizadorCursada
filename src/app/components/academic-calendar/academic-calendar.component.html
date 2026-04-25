@@ -58,7 +58,37 @@
   </div>
   @for (item of displaySemesters(); track item.id; let i = $index; let last = $last) {
     <section class="semester-section">
-      <h2 class="semester-title">{{ item.label }}</h2>
+      <div class="semester-header">
+        <h2 class="semester-title">{{ item.label }}</h2>
+        @if (isEditingTitle() && isEditable()) {
+          <div class="semester-date-inputs">
+            <div class="date-input-group">
+              <label for="start-{{ item.id }}">Inicio:</label>
+              <input
+                [id]="'start-' + item.id"
+                type="text"
+                placeholder="DD/MM"
+                [ngModel]="getEditableSemesterDates(item.id).startDate"
+                (ngModelChange)="updateSemesterDate(item.id, 'startDate', $event)"
+                class="date-input"
+                maxlength="5"
+              />
+            </div>
+            <div class="date-input-group">
+              <label for="end-{{ item.id }}">Fin:</label>
+              <input
+                [id]="'end-' + item.id"
+                type="text"
+                placeholder="DD/MM"
+                [ngModel]="getEditableSemesterDates(item.id).endDate"
+                (ngModelChange)="updateSemesterDate(item.id, 'endDate', $event)"
+                class="date-input"
+                maxlength="5"
+              />
+            </div>
+          </div>
+        }
+      </div>
       <app-calendar
         [coursesOverride]="item.courses"
         [showHeader]="false"

@@ -125,7 +125,6 @@
   padding: 0.4rem 0;
   cursor: default;
 }
-}
 
 .year-selector input:focus {
   outline: none;
@@ -140,6 +139,14 @@
   margin-top: 3rem;
 }
 
+.semester-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
 .semester-title {
   margin: 0;
   font-size: 1.1rem;
@@ -147,6 +154,49 @@
   color: var(--color-text-secondary);
   border-bottom: 1px solid var(--color-border-tertiary);
   padding-bottom: 0.4rem;
+  flex: 1;
+  min-width: 200px;
+}
+
+.semester-date-inputs {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-end;
+}
+
+.date-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.date-input-group label {
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+.date-input {
+  width: 5rem;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--color-border-secondary);
+  border-radius: 0.25rem;
+  font-size: 0.9rem;
+  font-family: inherit;
+  background: var(--color-input-background);
+  color: var(--color-text);
+  transition: border-color 0.15s;
+  text-align: center;
+}
+
+.date-input::placeholder {
+  color: var(--color-text-tertiary);
+}
+
+.date-input:focus {
+  outline: none;
+  border-color: var(--color-primary, #1976d2);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary, #1976d2) 10%, transparent);
 }
 
 .add-semester-divider {

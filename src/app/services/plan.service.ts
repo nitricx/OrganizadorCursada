@@ -79,11 +79,19 @@ export class PlanService {
     return `plan-semesters-${planId}`;
   }
 
-  getSemesterList(planId: string): { id: string; courseYear: number; courseQ: number }[] {
+  getSemesterList(
+    planId: string,
+  ): { id: string; courseYear: number; courseQ: number; startDate?: string; endDate?: string }[] {
     const raw = localStorage.getItem(this.semesterListKey(planId));
     try {
       return raw !== null
-        ? (JSON.parse(raw) as { id: string; courseYear: number; courseQ: number }[])
+        ? (JSON.parse(raw) as {
+            id: string;
+            courseYear: number;
+            courseQ: number;
+            startDate?: string;
+            endDate?: string;
+          }[])
         : [];
     } catch {
       return [];
@@ -92,7 +100,13 @@ export class PlanService {
 
   setSemesterList(
     planId: string,
-    slots: { id: string; courseYear: number; courseQ: number }[],
+    slots: {
+      id: string;
+      courseYear: number;
+      courseQ: number;
+      startDate?: string;
+      endDate?: string;
+    }[],
   ): void {
     localStorage.setItem(this.semesterListKey(planId), JSON.stringify(slots));
   }
@@ -112,5 +126,48 @@ export class PlanService {
 
   setStartingYear(planId: string, year: number): void {
     localStorage.setItem(this.startingYearKey(planId), JSON.stringify(year));
+  }
+
+  private getClosestWeekday(
+    year: number,
+    month: number,
+    day: number,
+    targetDayOfWeek: number,
+  ): string {
+    // targetDayOfWeek: 0 = Monday, 4 = Friday
+    const date = new Date(year, month - 1, day);
+    const currentDayOfWeek = date.getDay();
+    // Convert JS day (0 = Sunday) to our convention (0 = Monday)
+    const jsToOurWeekday = [6, 0, 1, 2, 3, 4, 5]; // Sun->6, Mon->0, Tue->1, etc.
+    const currentDay = jsToOurWeekday[currentDayOfWeek];
+
+    let daysToAdd = targetDayOfWeek - currentDay;
+    // Find closest: prefer same week if possible, otherwise next week
+    if (daysToAdd > 3) {
+      daysToAdd -= 7;
+    } else if (daysToAdd < -3) {
+      daysToAdd += 7;
+    }
+
+    const result = new Date(date);
+    result.setDate(result.getDate() + daysToAdd);
+
+    const d = String(result.getDate()).padStart(2, '0');
+    const m = String(result.getMonth() + 1).padStart(2, '0');
+    return `${d}/${m}`;
+  }
+
+  getDefaultSemesterDates(year: number, quarter: number): { startDate: string; endDate: string } {
+    if (quarter === 1) {
+      // Q1: Monday closest to April 1, Friday closest to June 15
+      const startDate = this.getClosestWeekday(year, 4, 1, 0);
+      const endDate = this.getClosestWeekday(year, 6, 15, 4);
+      return { startDate, endDate };
+    } else {
+      // Q2: Monday closest to July 15, Friday closest to November 30
+      const startDate = this.getClosestWeekday(year, 7, 15, 0);
+      const endDate = this.getClosestWeekday(year, 11, 30, 4);
+      return { startDate, endDate };
+    }
   }
 }
