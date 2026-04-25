@@ -21,8 +21,9 @@
             </a>
           }
           @if (item.addButton) {
-            <button mat-list-item aria-label="Agregar" (click)="addPlan(item)">
+            <button mat-list-item aria-label="Agregar Plan" (click)="addPlan(item)">
               <mat-icon matListItemIcon>add</mat-icon>
+              <span matListItemTitle>Agregar</span>
             </button>
           }
         </mat-nav-list>

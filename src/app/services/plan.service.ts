@@ -63,6 +63,14 @@ export class PlanService {
     return this.plansSignal().find((p) => p.id === id)?.label;
   }
 
+  updatePlanLabel(id: string, newLabel: string): void {
+    this.plansSignal.update((plans) => {
+      const updated = plans.map((p) => (p.id === id ? { ...p, label: newLabel } : p));
+      localStorage.setItem(PlanService.PLANS_KEY, JSON.stringify(updated));
+      return updated;
+    });
+  }
+
   setSelectedPlanId(id: string): void {
     this.selectedPlanIdSignal.set(id);
   }

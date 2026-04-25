@@ -157,13 +157,19 @@ export class AcademicCalendarComponent {
   }
 
   confirmEditTitle(): void {
-    // Save the changes
+    const newLabel = this.editablePlanId();
     const newYear = this.editableStartingYear();
     const planId = this.currentRouteId();
+
+    if (planId && newLabel && newLabel !== this.planId()) {
+      this.planService.updatePlanLabel(planId, newLabel);
+    }
+
     if (planId && newYear !== this.startingYear()) {
       this.startingYear.set(newYear);
       this.planService.setStartingYear(planId, newYear);
     }
+
     this.isEditingTitle.set(false);
   }
 

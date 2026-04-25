@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, signal, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, signal, inject, computed } from '@angular/core';
 import { RouterModule, Router } from '@angular/router';
 import { MatListModule } from '@angular/material/list';
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -29,7 +29,7 @@ export class SidebarComponent {
   private readonly router = inject(Router);
   private planIdCounter = Math.max(...this.planService.plans().map((p) => Number(p.id)), 1);
 
-  items = signal<SidebarItem[]>([
+  items = computed(() => [
     { label: 'Home', route: '/home' },
     { label: 'Mi Semana', route: '/myWeek' },
     { label: 'Correlatividades', route: '/requisites' },
@@ -55,8 +55,12 @@ export class SidebarComponent {
       deletable: true,
       id: id.toString(),
     };
-    this.items.update((items) =>
-      items.map((i) => (i === item ? { ...i, children: [...(i.children ?? []), newChild] } : i)),
+    // Find the "Calendario Académico" item and add the new child
+    const currentItems = this.items();
+    const updatedItems = currentItems.map((i) =>
+      i.label === 'Calendario Académico'
+        ? { ...i, children: [...(i.children ?? []), newChild] }
+        : i,
     );
     this.planService.addPlan({ id: id.toString(), label: `Plan de estudio ${labelNumber}` });
   }

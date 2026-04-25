@@ -4,16 +4,7 @@
   }
   <div class="page-header">
     <h1>
-      @if (!isEditingTitle()) {
-        Calendario Académico
-      } @else {
-        <input
-          type="text"
-          [(ngModel)]="editableTitle"
-          placeholder="Título"
-          class="editable-title"
-        />
-      }
+      Calendario Académico
       @if (!isEditingTitle() && isEditable()) {
         <mat-icon (click)="toggleEditTitle()">edit</mat-icon>
         <button

@@ -39,3 +39,17 @@ a.active-link {
 .nested-nav-list a {
   padding-left: 32px;
 }
+
+.sidebar-expansion-panel mat-panel-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+[matListItemTitle] {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
