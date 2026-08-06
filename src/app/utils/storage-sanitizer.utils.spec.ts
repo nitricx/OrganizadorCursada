@@ -117,7 +117,7 @@ describe('storage-sanitizer.utils', () => {
 
     it('should fallback to default entry if input is invalid', () => {
       const sanitized = sanitizeCourseStateEntry(null);
-      expect(sanitized).toEqual({ status: 'pending', lessonStatuses: {} });
+      expect(sanitized).toEqual({ status: 'pending', lessonStatuses: {}, selectedLessonId: null });
     });
 
     it('should sanitize course states map', () => {
@@ -128,8 +128,8 @@ describe('storage-sanitizer.utils', () => {
       };
       const map = sanitizeCourseStatesMap(raw);
       expect(map.size).toBe(2);
-      expect(map.get(10)).toEqual({ status: 'coursing', lessonStatuses: {} });
-      expect(map.get(20)).toEqual({ status: 'pending', lessonStatuses: {} });
+      expect(map.get(10)).toEqual({ status: 'coursing', lessonStatuses: {}, selectedLessonId: null });
+      expect(map.get(20)).toEqual({ status: 'pending', lessonStatuses: {}, selectedLessonId: null });
     });
   });
 

@@ -10,6 +10,7 @@ import {
 export interface CourseStateEntry {
   status: CourseStatus;
   lessonStatuses: Record<string, CourseStatus>;
+  selectedLessonId?: string | null;
 }
 
 @Injectable({
@@ -37,10 +38,12 @@ export class CourseService {
     return rawCourses.map((course) => {
       const courseState = stateMap.get(course.id);
       const courseStatus = courseState?.status ?? 'pending';
+      const selectedLessonId = courseState?.selectedLessonId ?? null;
 
       return {
         ...course,
         status: courseStatus,
+        selectedLessonId,
         lessons: course.lessons.map((lesson) => ({
           ...lesson,
           status: courseState?.lessonStatuses[lesson.id] ?? courseStatus,
@@ -153,6 +156,7 @@ export class CourseService {
       states.set(course.id, {
         status: 'pending',
         lessonStatuses,
+        selectedLessonId: null,
       });
     });
     return states;
@@ -163,9 +167,11 @@ export class CourseService {
     if (!raw) return undefined;
     const courseState = this.courseStateSignal().get(id);
     const status = courseState?.status ?? 'pending';
+    const selectedLessonId = courseState?.selectedLessonId ?? null;
     return {
       ...raw,
       status,
+      selectedLessonId,
       lessons: raw.lessons.map((lesson) => ({
         ...lesson,
         status: courseState?.lessonStatuses[lesson.id] ?? status,
@@ -262,7 +268,44 @@ export class CourseService {
     return this.canChangeStatusTo(course.id, 'coursing');
   }
 
-  toggleCourseStatus(courseId: number): void {
+  setSelectedLessonForCourse(courseId: number, lessonId: string | null): void {
+    const course = this.getCourseById(courseId);
+    if (!course) return;
+
+    const stateMap = new Map(this.courseStateSignal());
+    const existing = stateMap.get(courseId) ?? {
+      status: 'pending',
+      lessonStatuses: {},
+      selectedLessonId: null,
+    };
+
+    const updatedLessonStatuses: Record<string, CourseStatus> = { ...existing.lessonStatuses };
+
+    if (lessonId) {
+      const targetStatus = existing.status === 'pending' ? 'coursing' : existing.status;
+      course.lessons.forEach((l) => {
+        if (l.id === lessonId) {
+          updatedLessonStatuses[l.id] = targetStatus;
+        } else {
+          updatedLessonStatuses[l.id] = 'pending';
+        }
+      });
+    }
+
+    stateMap.set(courseId, {
+      ...existing,
+      selectedLessonId: lessonId,
+      lessonStatuses: updatedLessonStatuses,
+    });
+    this.courseStateSignal.set(stateMap);
+  }
+
+  getSelectedLessonId(courseId: number): string | null {
+    const entry = this.courseStateSignal().get(courseId);
+    return entry?.selectedLessonId ?? null;
+  }
+
+  toggleCourseStatus(courseId: number, targetLessonId?: string | null): void {
     const course = this.getCourseById(courseId);
     if (!course) return;
 
@@ -281,16 +324,28 @@ export class CourseService {
       const stateMap = new Map(this.courseStateSignal());
       const existing = stateMap.get(courseId);
 
-      const updatedLessonStatuses: Record<string, CourseStatus> = {
-        ...(existing?.lessonStatuses ?? {}),
-      };
+      let selectedLessonId = targetLessonId !== undefined ? targetLessonId : existing?.selectedLessonId ?? null;
+      if (nextStatus === 'coursing') {
+        if (!selectedLessonId && course.lessons.length > 0) {
+          selectedLessonId = course.lessons[0].id;
+        }
+      } else if (nextStatus === 'pending') {
+        selectedLessonId = null;
+      }
+
+      const updatedLessonStatuses: Record<string, CourseStatus> = {};
       course.lessons.forEach((lesson) => {
-        updatedLessonStatuses[lesson.id] = nextStatus;
+        if (nextStatus === 'coursing') {
+          updatedLessonStatuses[lesson.id] = lesson.id === selectedLessonId ? 'coursing' : 'pending';
+        } else {
+          updatedLessonStatuses[lesson.id] = nextStatus;
+        }
       });
 
       stateMap.set(courseId, {
         status: nextStatus,
         lessonStatuses: updatedLessonStatuses,
+        selectedLessonId,
       });
       this.courseStateSignal.set(stateMap);
     }
@@ -305,6 +360,7 @@ export class CourseService {
     const existing = stateMap.get(course.id) ?? {
       status: 'pending',
       lessonStatuses: {},
+      selectedLessonId: null,
     };
 
     const oldLessonStatus = existing.lessonStatuses[lessonId] ?? existing.status ?? 'pending';
@@ -324,15 +380,31 @@ export class CourseService {
       [lessonId]: nextStatus,
     };
 
+    let selectedLessonId = existing.selectedLessonId ?? null;
+    if (nextStatus === 'coursing') {
+      selectedLessonId = lessonId;
+      course.lessons.forEach((l) => {
+        if (l.id !== lessonId) {
+          updatedLessonStatuses[l.id] = 'pending';
+        }
+      });
+    }
+
     const lessonStatusValues = course.lessons.map(
       (l) => updatedLessonStatuses[l.id] ?? 'pending',
     );
+    const anyCoursing = lessonStatusValues.some((s) => s === 'coursing');
     const allSameStatus = lessonStatusValues.every((s) => s === lessonStatusValues[0]);
-    const newCourseStatus = allSameStatus ? lessonStatusValues[0] : existing.status;
+    const newCourseStatus = anyCoursing
+      ? 'coursing'
+      : allSameStatus
+        ? lessonStatusValues[0]
+        : existing.status;
 
     stateMap.set(course.id, {
       status: newCourseStatus,
       lessonStatuses: updatedLessonStatuses,
+      selectedLessonId,
     });
     this.courseStateSignal.set(stateMap);
   }

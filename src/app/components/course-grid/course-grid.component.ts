@@ -31,7 +31,12 @@ export class CourseGridComponent {
     this.mouseLeft.emit();
   }
 
+  onChangeLessonClicked(courseId: number): void {
+    this.changeLessonClicked.emit(courseId);
+  }
+
   readonly cardClicked = output<number>();
+  readonly changeLessonClicked = output<number>();
   readonly mouseEntered = output<number>();
   readonly mouseLeft = output<void>();
 

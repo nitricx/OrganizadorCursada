@@ -105,7 +105,7 @@ export function isValidCourse(val: unknown): val is Course {
 
 export function sanitizeCourseStateEntry(val: unknown): CourseStateEntry {
   if (typeof val !== 'object' || val === null) {
-    return { status: 'pending', lessonStatuses: {} };
+    return { status: 'pending', lessonStatuses: {}, selectedLessonId: null };
   }
   const entry = val as Partial<CourseStateEntry>;
   const status: CourseStatus = isValidCourseStatus(entry.status) ? entry.status : 'pending';
@@ -117,7 +117,12 @@ export function sanitizeCourseStateEntry(val: unknown): CourseStateEntry {
     });
   }
 
-  return { status, lessonStatuses };
+  const selectedLessonId =
+    typeof entry.selectedLessonId === 'string' && entry.selectedLessonId.trim() !== ''
+      ? entry.selectedLessonId
+      : null;
+
+  return { status, lessonStatuses, selectedLessonId };
 }
 
 export function sanitizeCourseStatesMap(parsed: unknown): Map<number, CourseStateEntry> {

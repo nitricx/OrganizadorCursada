@@ -3,3 +3,27 @@
   outline-offset: 1px;
   background: #e8e7e0;
 }
+
+.btn-commission-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-top: 0.35rem;
+  padding: 0.15rem 0.4rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(0, 0, 0, 0.25);
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  line-height: 1.2;
+}
+
+.btn-commission-badge:hover {
+  background: rgba(0, 0, 0, 0.45);
+  border-color: #38bdf8;
+  color: #38bdf8;
+}
+

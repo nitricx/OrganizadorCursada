@@ -115,8 +115,12 @@ export class Calendar {
       map.set(entry.day, []);
     }
     uniqueCourses.forEach((c) => {
-      // Add all lessons for this course
+      const selectedId = c.selectedLessonId;
       c.lessons.forEach((lesson) => {
+        // If a specific commission/lesson is selected for this course, only include that lesson
+        if (selectedId && lesson.id !== selectedId) {
+          return;
+        }
         // On /myWeek (read-only), only show lessons that are 'coursing'
         if (readOnly && lesson.status !== 'coursing') {
           return;

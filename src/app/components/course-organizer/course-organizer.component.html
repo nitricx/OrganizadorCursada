@@ -12,9 +12,17 @@
     [courses]="courseService.courses()"
     [selectedIds]="courseService.selectedIds()"
     (cardClicked)="onCourseCardClicked($event)"
+    (changeLessonClicked)="onChangeLessonRequested($event)"
     (mouseEntered)="onMouseEntered($event)"
     (mouseLeft)="onMouseLeft()"
   />
 
   <div class="info-bar" [innerHTML]="infoMessage()"></div>
+
+  <app-lesson-selector-modal
+    [course]="selectedCourseForModal()"
+    [isOpen]="isModalOpen()"
+    (closed)="closeModal()"
+    (lessonSelected)="onLessonSelected($event)"
+  />
 </div>

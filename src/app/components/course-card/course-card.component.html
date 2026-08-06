@@ -12,4 +12,9 @@
   @if (statusTag()) {
     <span class="tag">{{ statusTag() }}</span>
   }
+  @if (course().status === 'coursing' && course().lessons.length > 1) {
+    <button type="button" class="btn-commission-badge" (click)="onChangeLesson($event)" title="Cambiar comisión">
+      ⚙️ {{ selectedLessonProf() || 'Comisión' }}
+    </button>
+  }
 </div>

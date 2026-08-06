@@ -223,8 +223,8 @@ describe('CourseService - Lesson State Toggling', () => {
     });
   });
 
-  describe('unified reactive state consolidation with numeric IDs', () => {
-    it('should update course status and all lesson statuses atomically when toggleCourseStatus is called', () => {
+  describe('unified reactive state consolidation with numeric IDs and commission selection', () => {
+    it('should update course status and set only the selected lesson to coursing when toggleCourseStatus is called', () => {
       const course = service.courses()[0];
       expect(course.status).toBe('pending');
       expect(course.lessons.every((l) => l.status === 'pending')).toBe(true);
@@ -233,18 +233,37 @@ describe('CourseService - Lesson State Toggling', () => {
 
       const updatedCourse = service.getCourseById(course.id)!;
       expect(updatedCourse.status).toBe('coursing');
-      expect(updatedCourse.lessons.every((l) => l.status === 'coursing')).toBe(true);
+      expect(updatedCourse.selectedLessonId).toBe(course.lessons[0].id);
+
+      const selectedLesson = updatedCourse.lessons.find((l) => l.id === updatedCourse.selectedLessonId);
+      expect(selectedLesson?.status).toBe('coursing');
+
+      if (updatedCourse.lessons.length > 1) {
+        const unselectedLessons = updatedCourse.lessons.filter((l) => l.id !== updatedCourse.selectedLessonId);
+        expect(unselectedLessons.every((l) => l.status === 'pending')).toBe(true);
+      }
     });
 
-    it('should sync course status when all lessons are toggled to the same status', () => {
+    it('should allow setting a specific selected lesson via setSelectedLessonForCourse', () => {
+      const course = service.courses().find((c) => c.lessons.length > 1) ?? service.courses()[0];
+      const secondLessonId = course.lessons[1]?.id ?? course.lessons[0].id;
+
+      service.setSelectedLessonForCourse(course.id, secondLessonId);
+
+      const updatedCourse = service.getCourseById(course.id)!;
+      expect(updatedCourse.selectedLessonId).toBe(secondLessonId);
+      expect(service.getSelectedLessonId(course.id)).toBe(secondLessonId);
+    });
+
+    it('should set course status to coursing when a single lesson is toggled to coursing', () => {
       const course = service.courses()[0];
-      course.lessons.forEach((lesson) => {
-        service.toggleLessonStatus(lesson.id);
-      });
+      const targetLesson = course.lessons[0];
+
+      service.toggleLessonStatus(targetLesson.id);
 
       const updatedCourse = service.getCourseById(course.id)!;
       expect(updatedCourse.status).toBe('coursing');
-      expect(updatedCourse.lessons.every((l) => l.status === 'coursing')).toBe(true);
+      expect(updatedCourse.selectedLessonId).toBe(targetLesson.id);
     });
 
     it('should migrate legacy separate courseStatuses and lessonStatuses from localStorage cleanly using numeric IDs', () => {

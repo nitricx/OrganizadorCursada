@@ -1,0 +1,68 @@
+@if (isOpen() && course()) {
+  <div class="modal-backdrop" (click)="closeModal()">
+    <div class="modal-card" (click)="$event.stopPropagation()" role="dialog" aria-modal="true" [attr.aria-labelledby]="'modal-title-' + course()?.id">
+      <header class="modal-header">
+        <div>
+          <span class="modal-subtitle">Selección de Comisión</span>
+          <h2 class="modal-title" [id]="'modal-title-' + course()?.id">{{ course()?.name }}</h2>
+        </div>
+        <button type="button" class="btn-close" (click)="closeModal()" aria-label="Cerrar modal">&times;</button>
+      </header>
+
+      <div class="modal-body">
+        <p class="modal-instruction">
+          Elegí el horario y docente con el que vas a cursar esta materia:
+        </p>
+
+        <div class="lessons-list">
+          @for (lesson of course()?.lessons; track lesson.id) {
+            @let isCurrentSelected = (tempSelectedLessonId() !== null ? tempSelectedLessonId() === lesson.id : course()?.selectedLessonId === lesson.id);
+            <div
+              class="lesson-card"
+              [class.selected]="isCurrentSelected"
+              (click)="selectLesson(lesson.id)"
+              role="button"
+              tabindex="0"
+              (keydown.enter)="selectLesson(lesson.id)"
+              (keydown.space)="selectLesson(lesson.id)"
+            >
+              <div class="lesson-radio">
+                <input
+                  type="radio"
+                  [name]="'lesson-opt-' + course()?.id"
+                  [id]="'opt-' + lesson.id"
+                  [checked]="isCurrentSelected"
+                  (change)="selectLesson(lesson.id)"
+                />
+              </div>
+              <div class="lesson-details">
+                <div class="lesson-prof">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
+                  <span>{{ lesson.professor }}</span>
+                </div>
+                <div class="lesson-time">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                  <span><strong>{{ getDayName(lesson.day) }}</strong> {{ lesson.startTime }} - {{ lesson.endTime }} hs</span>
+                </div>
+              </div>
+              @if (isCurrentSelected) {
+                <span class="badge-active">Seleccionada</span>
+              }
+            </div>
+          }
+        </div>
+      </div>
+
+      <footer class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancelar</button>
+        <button type="button" class="btn btn-primary" (click)="confirmSelection()">Confirmar Selección</button>
+      </footer>
+    </div>
+  </div>
+}
