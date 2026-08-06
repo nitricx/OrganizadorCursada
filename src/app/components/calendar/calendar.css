@@ -1,12 +1,57 @@
 .calendar-header {
   margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.calendar-header h1 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
 }
 
 .calendar-header h2 {
-  font-size: 16px;
+  font-size: 14px;
+  font-weight: 500;
+  margin: 2px 0 0 0;
+  color: var(--color-text-secondary, #94a3b8);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn-export-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 13px;
   font-weight: 600;
-  margin: 0 0 14px;
-  color: var(--color-text-primary);
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
+  transition: all 0.2s ease;
+}
+
+.btn-export-trigger:hover {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+  transform: translateY(-1px);
+}
+
+.btn-export-trigger mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
 }
 
 /* Columns are set dynamically via style binding based on visible days and overlapping courses */

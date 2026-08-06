@@ -1,0 +1,149 @@
+<div class="modal-backdrop" (click)="onClose()">
+  <div class="modal-card glass-panel" (click)="$event.stopPropagation()">
+    <!-- Header -->
+    <header class="modal-header">
+      <div class="header-title">
+        <mat-icon class="header-icon">event_available</mat-icon>
+        <h2>Exportar Cuatrimestre a Calendario</h2>
+      </div>
+      <button mat-icon-button type="button" class="close-btn" (click)="onClose()" title="Cerrar">
+        <mat-icon>close</mat-icon>
+      </button>
+    </header>
+
+    <div class="modal-body">
+      <!-- Plan badge -->
+      <div class="plan-badge">
+        <mat-icon class="badge-icon">school</mat-icon>
+        <span>{{ planInfo().label }}</span>
+      </div>
+
+      <!-- Dates configuration section -->
+      <section class="config-section">
+        <h3>
+          <mat-icon class="section-icon">date_range</mat-icon>
+          Rango de Fechas del Cuatrimestre
+        </h3>
+        <p class="section-desc">
+          Estas fechas determinan cuándo comienza y termina la repetición semanal de tus clases.
+        </p>
+
+        <div class="date-inputs-grid">
+          <div class="input-group">
+            <label for="startDateInput">Inicio del Cuatrimestre</label>
+            <input
+              id="startDateInput"
+              type="text"
+              class="date-input"
+              [(ngModel)]="startDate"
+              placeholder="DD/MM/YYYY (ej. 01/04/2026)"
+            />
+          </div>
+          <div class="input-group">
+            <label for="endDateInput">Fin del Cuatrimestre</label>
+            <input
+              id="endDateInput"
+              type="text"
+              class="date-input"
+              [(ngModel)]="endDate"
+              placeholder="DD/MM/YYYY (ej. 15/06/2026)"
+            />
+          </div>
+        </div>
+      </section>
+
+      <!-- Active courses checklist section -->
+      <section class="config-section">
+        <div class="section-header-row">
+          <h3>
+            <mat-icon class="section-icon">class</mat-icon>
+            Materias en Cursada Active ({{ filteredEvents().length }}/{{ activeEvents().length }})
+          </h3>
+          @if (activeEvents().length > 0) {
+            <button type="button" class="btn-toggle-all" (click)="toggleSelectAll()">
+              {{ isAllSelected() ? 'Desmarcar todas' : 'Seleccionar todas' }}
+            </button>
+          }
+        </div>
+
+        @if (activeEvents().length === 0) {
+          <div class="empty-state">
+            <mat-icon class="empty-icon">info</mat-icon>
+            <p>No tienes materias marcadas como <strong>"Cursando"</strong> en este plan.</p>
+            <span class="empty-hint">Marca tus materias en estado Cursando en el organizador para poder exportar tu horario semanal.</span>
+          </div>
+        } @else {
+          <div class="courses-list">
+            @for (item of activeEvents(); track item.lesson.id) {
+              <div
+                class="course-item-card"
+                [class.selected]="selectedEventIds().has(item.lesson.id)"
+                (click)="toggleEvent(item.lesson.id)"
+              >
+                <div class="custom-checkbox">
+                  <input
+                    type="checkbox"
+                    [checked]="selectedEventIds().has(item.lesson.id)"
+                    (change)="toggleEvent(item.lesson.id)"
+                    (click)="$event.stopPropagation()"
+                  />
+                </div>
+                <div class="course-info">
+                  <span class="course-name">{{ item.course.name }}</span>
+                  <div class="lesson-meta">
+                    <span class="day-chip">{{ getDayLabel(item.lesson.day) }}</span>
+                    <span class="time-range">{{ item.lesson.startTime }} - {{ item.lesson.endTime }} hs</span>
+                    @if (item.lesson.professor) {
+                      <span class="prof-name">• Prof. {{ item.lesson.professor }}</span>
+                    }
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </section>
+
+      <!-- Cloud Sync Feature Banner -->
+      <section class="cloud-sync-banner glass-card">
+        <div class="cloud-sync-header">
+          <mat-icon class="cloud-icon">cloud_sync</mat-icon>
+          <div class="cloud-text">
+            <strong>Sincronización Automática (Próximamente)</strong>
+            <p>A futuro podrás conectar tu cuenta de Google para actualizar tus clases en tiempo real.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Modal Footer Actions -->
+    <footer class="modal-footer">
+      <button type="button" class="btn-cancel" (click)="onClose()">
+        Cancelar
+      </button>
+
+      <div class="primary-actions">
+        <button
+          type="button"
+          class="btn-gcal"
+          (click)="openGoogleCalendarLinks()"
+          [disabled]="filteredEvents().length === 0"
+          title="Abrir materia directamente en Google Calendar"
+        >
+          <mat-icon>launch</mat-icon>
+          Abrir en Google Calendar
+        </button>
+
+        <button
+          type="button"
+          class="btn-export-primary"
+          (click)="exportICS()"
+          [disabled]="filteredEvents().length === 0"
+        >
+          <mat-icon>download</mat-icon>
+          Descargar .ics (iCalendar)
+        </button>
+      </div>
+    </footer>
+  </div>
+</div>

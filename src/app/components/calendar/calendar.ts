@@ -9,11 +9,14 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DragDropModule, CdkDragEnd } from '@angular/cdk/drag-drop';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 import { CourseService } from '../../services/course.service';
 import { PlanService } from '../../services/plan.service';
 import { Course, DayOfWeek } from '../../models/course';
 import { CalendarCard } from '../calendar-card/calendar-card';
 import { CalendarLegendComponent } from '../calendar-legend/calendar-legend.component';
+import { ExportCalendarModalComponent } from '../export-calendar-modal/export-calendar-modal.component';
 import {
   CourseWithLesson,
   computeCourseColumnMap,
@@ -34,7 +37,15 @@ export type { CourseWithLesson };
 
 @Component({
   selector: 'app-calendar',
-  imports: [CalendarCard, CalendarLegendComponent, CommonModule, DragDropModule],
+  imports: [
+    CalendarCard,
+    CalendarLegendComponent,
+    CommonModule,
+    DragDropModule,
+    ExportCalendarModalComponent,
+    MatIconModule,
+    MatButtonModule,
+  ],
   templateUrl: './calendar.html',
   styleUrl: './calendar.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -42,6 +53,16 @@ export type { CourseWithLesson };
 export class Calendar {
   private readonly courseService = inject(CourseService);
   private readonly planService = inject(PlanService);
+
+  readonly showExportModal = signal(false);
+
+  openExportModal(): void {
+    this.showExportModal.set(true);
+  }
+
+  closeExportModal(): void {
+    this.showExportModal.set(false);
+  }
 
   /** When provided, these courses are shown directly instead of the user's active coursing courses */
   coursesOverride = input<Course[] | undefined>(undefined);
