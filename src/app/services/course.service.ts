@@ -147,10 +147,10 @@ export class CourseService {
   private areRequirementsSatisfied(
     requiredIds: string[],
     requiredStatus: 'coursed' | 'approved',
+    coursesList: Course[] = this.currentRawCourses(),
   ): boolean {
-    const courses = this.currentRawCourses();
     return requiredIds.every((reqId) => {
-      const reqCourse = courses.find((c) => c.id === reqId);
+      const reqCourse = coursesList.find((c) => c.id === reqId);
       if (!reqCourse) return false;
 
       if (requiredStatus === 'coursed') {
@@ -160,35 +160,64 @@ export class CourseService {
     });
   }
 
-  canChangeStatusTo(courseId: string, targetStatus: CourseStatus): boolean {
-    const course = this.getCourseById(courseId);
+  private canSatisfyUpstreamRequirements(
+    courseId: string,
+    targetStatus: CourseStatus,
+    coursesList: Course[] = this.currentRawCourses(),
+  ): boolean {
+    const course = coursesList.find((c) => c.id === courseId);
     if (!course) return false;
 
     if (targetStatus === 'pending') {
-      return true; // Always can go back to pending
+      return true; // Always can go back to pending upstream-wise
     }
 
     if (targetStatus === 'coursing' || targetStatus === 'coursed') {
       // 1. Direct cursarReq must be at least 'coursed' or 'approved'
-      const cursarReqMet = this.areRequirementsSatisfied(course.cursarReq, 'coursed');
+      const cursarReqMet = this.areRequirementsSatisfied(course.cursarReq, 'coursed', coursesList);
       if (!cursarReqMet) return false;
 
       // 2. Nested aprobarReq of prerequisites must be 'approved'
-      // (e.g. to course Math 3, Math 2 must be 'coursed' AND Math 1 [Math 2's aprobarReq] must be 'approved')
-      const courses = this.currentRawCourses();
       return course.cursarReq.every((reqId) => {
-        const reqCourse = courses.find((c) => c.id === reqId);
+        const reqCourse = coursesList.find((c) => c.id === reqId);
         if (!reqCourse) return true;
-        return this.areRequirementsSatisfied(reqCourse.aprobarReq, 'approved');
+        return this.areRequirementsSatisfied(reqCourse.aprobarReq, 'approved', coursesList);
       });
     }
 
     if (targetStatus === 'approved') {
       // All aprobarReq must be 'approved'
-      return this.areRequirementsSatisfied(course.aprobarReq, 'approved');
+      return this.areRequirementsSatisfied(course.aprobarReq, 'approved', coursesList);
     }
 
     return false;
+  }
+
+  canChangeStatusTo(courseId: string, targetStatus: CourseStatus): boolean {
+    // 1. Check upstream prerequisite satisfaction for targetStatus
+    if (!this.canSatisfyUpstreamRequirements(courseId, targetStatus)) {
+      return false;
+    }
+
+    // 2. Check if downstream active dependent courses would be invalidated
+    const currentCourses = this.currentRawCourses();
+    const targetCourse = currentCourses.find((c) => c.id === courseId);
+    if (!targetCourse || targetCourse.status === targetStatus) {
+      return true;
+    }
+
+    // Simulate changing courseId's status to targetStatus
+    const simulatedCourses = currentCourses.map((c) =>
+      c.id === courseId ? { ...c, status: targetStatus } : c,
+    );
+
+    // Ensure all active non-pending dependent courses remain valid in their current status
+    return simulatedCourses.every((c) => {
+      if (c.id === courseId || c.status === 'pending') {
+        return true;
+      }
+      return this.canSatisfyUpstreamRequirements(c.id, c.status, simulatedCourses);
+    });
   }
 
   areAllRequirementsMet(course: Course): boolean {

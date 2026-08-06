@@ -141,6 +141,34 @@ describe('CourseService - Lesson State Toggling', () => {
     });
   });
 
+  describe('downstream prerequisite locking', () => {
+    it('should block demoting a prerequisite if an active dependent course requires its current state', () => {
+      // Producción Audiovisual 1 & 2
+      const pa1 = service.courses().find((c) => c.id === 'Producción Audiovisual 1')!;
+      const pa2 = service.courses().find((c) => c.id === 'Producción Audiovisual 2')!;
+
+      // Approve PA1 first
+      service.toggleCourseStatus(pa1.id); // coursing
+      service.toggleCourseStatus(pa1.id); // coursed
+      service.toggleCourseStatus(pa1.id); // approved
+      expect(service.getCourseById(pa1.id)?.status).toBe('approved');
+
+      // Approve PA2
+      service.toggleCourseStatus(pa2.id); // coursing
+      service.toggleCourseStatus(pa2.id); // coursed
+      service.toggleCourseStatus(pa2.id); // approved
+      expect(service.getCourseById(pa2.id)?.status).toBe('approved');
+
+      // Attempting to demote PA1 to pending while PA2 is approved must be blocked
+      expect(service.canChangeStatusTo(pa1.id, 'pending')).toBe(false);
+
+      // Resetting PA2 to pending releases the lock on PA1
+      service.toggleCourseStatus(pa2.id); // resets PA2 to pending
+      expect(service.getCourseById(pa2.id)?.status).toBe('pending');
+      expect(service.canChangeStatusTo(pa1.id, 'pending')).toBe(true);
+    });
+  });
+
   describe('reset', () => {
     it('should reset all lesson statuses to pending', () => {
       const courses = service.courses();

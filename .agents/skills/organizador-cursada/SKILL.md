@@ -40,6 +40,9 @@ This skill provides context, rules, and guidelines for AI agents working on the 
 3. **`coursed` (Cursada / Regular)**: Passed continuous assessment / attendance, pending final exam. Same prerequisite constraints as `coursing`.
 4. **`approved` (Aprobada / Promocionada / Final Aprobado)**: Subject completed and credited. Requires direct `aprobarReq` subjects to be `approved`.
 
+### Downstream Prerequisite Locking Rule
+A prerequisite subject (e.g. `Math 1`) **cannot be demoted or changed to a lower state** if an active downstream dependent subject (e.g. `Math 2` marked as `approved` or `coursing`) requires `Math 1` to remain in its current state. Users must demote or reset the dependent subject (`Math 2`) first before modifying `Math 1`.
+
 ---
 
 ## 2. State Management & Architecture Rules
