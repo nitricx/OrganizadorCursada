@@ -3,9 +3,11 @@ import { TestBed } from '@angular/core/testing';
 import { ComponentFixture } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap } from '@angular/router';
 import { of } from 'rxjs';
+import { vi } from 'vitest';
 
 import { AcademicCalendarComponent } from './academic-calendar.component';
 import { CourseService } from '../../services/course.service';
+import { ToastService } from '../../services/toast.service';
 import { Course, DayOfWeek } from '../../models/course';
 
 // Two courses with no year=2 so the inserted semester pair at year=2 starts empty
@@ -189,10 +191,13 @@ describe('AcademicCalendarComponent – semester insertion and course movement',
 
   describe('toast notification', () => {
     let mockService: MockCourseService;
+    let toastService: ToastService;
 
     beforeEach(() => {
       mockService = TestBed.inject(CourseService) as unknown as MockCourseService;
+      toastService = TestBed.inject(ToastService);
       mockService.blockReason = null;
+      vi.spyOn(toastService, 'warning');
     });
 
     it('should not show a toast when the move is allowed', () => {
@@ -204,12 +209,11 @@ describe('AcademicCalendarComponent – semester insertion and course movement',
       );
       fixture.detectChanges();
 
-      expect(component.toastMessage()).toBeNull();
-      const toast = (fixture.nativeElement as HTMLElement).querySelector('.move-toast');
-      expect(toast).toBeNull();
+      expect(toastService.warning).not.toHaveBeenCalled();
+      expect(toastService.toasts().length).toBe(0);
     });
 
-    it('should show a toast with the block reason when the move is blocked', () => {
+    it('should call ToastService.warning with block reason when move is blocked', () => {
       mockService.blockReason =
         'No se puede mover "Course 1" porque "Course 2" la requiere y está en el mismo año';
 
@@ -219,10 +223,9 @@ describe('AcademicCalendarComponent – semester insertion and course movement',
       );
       fixture.detectChanges();
 
-      expect(component.toastMessage()).toBe(mockService.blockReason);
-      const toast = (fixture.nativeElement as HTMLElement).querySelector('.move-toast');
-      expect(toast).not.toBeNull();
-      expect(toast?.textContent?.trim()).toBe(mockService.blockReason);
+      expect(toastService.warning).toHaveBeenCalledWith(mockService.blockReason);
+      expect(toastService.toasts().length).toBe(1);
+      expect(toastService.toasts()[0].message).toBe(mockService.blockReason);
     });
 
     it('should not move the lesson when the move is blocked', () => {

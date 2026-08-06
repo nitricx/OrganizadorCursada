@@ -1,0 +1,16 @@
+<div class="toast-container" role="region" aria-label="Notificaciones" aria-live="polite">
+  @for (toast of toastService.toasts(); track toast.id) {
+    <div class="toast-item" [class]="'toast-' + toast.type">
+      <mat-icon class="toast-icon">{{ getIcon(toast.type) }}</mat-icon>
+      <span class="toast-message">{{ toast.message }}</span>
+      <button
+        type="button"
+        class="toast-close"
+        (click)="dismiss(toast.id)"
+        aria-label="Cerrar notificación"
+      >
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  }
+</div>

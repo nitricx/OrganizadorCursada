@@ -53,5 +53,5 @@ Este archivo documenta las características pendientes, mejoras de experiencia d
 
 - [x] **4.1 Drag & Drop Estándar**
   - Migrar el arrastre manual por eventos de puntero en `CalendarCard` hacia Angular CDK DragDrop o HTML5 Drag API para mejorar soporte táctil y accesibilidad por teclado.
-- [ ] **4.2 Servicio Centralizado de Notificaciones (Toasts)**
+- [x] **4.2 Servicio Centralizado de Notificaciones (Toasts)**
   - Reemplazar el manejo manual de `setTimeout` fuera de NgZone en `AcademicCalendarComponent` por un `ToastService` inyectable y reutilizable.

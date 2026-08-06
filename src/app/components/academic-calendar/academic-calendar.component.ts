@@ -5,12 +5,12 @@ import {
   computed,
   effect,
   signal,
-  NgZone,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CourseService } from '../../services/course.service';
 import { PlanService } from '../../services/plan.service';
+import { ToastService } from '../../services/toast.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
@@ -43,26 +43,15 @@ export class AcademicCalendarComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly planService = inject(PlanService);
   private readonly router = inject(Router);
-  private readonly ngZone = inject(NgZone);
+  private readonly toastService = inject(ToastService);
 
-  toastMessage = signal<string | null>(null);
   startingYear = signal<number>(new Date().getFullYear());
   isEditingTitle = signal<boolean>(false);
   editableTitle = signal<string>('Calendario Académico');
   editablePlanId = signal<string | null>(null);
   editableStartingYear = signal<number>(new Date().getFullYear());
   editableSemesterDates = signal<Map<string, { startDate?: string; endDate?: string }>>(new Map());
-  private toastTimeout: ReturnType<typeof setTimeout> | null = null;
 
-  private showToast(message: string): void {
-    if (this.toastTimeout !== null) {
-      clearTimeout(this.toastTimeout);
-    }
-    this.toastMessage.set(message);
-    this.toastTimeout = this.ngZone.runOutsideAngular(() =>
-      setTimeout(() => this.ngZone.run(() => this.toastMessage.set(null)), 3500),
-    );
-  }
 
   private readonly routeParamId = toSignal(this.route.paramMap.pipe());
 
@@ -252,7 +241,7 @@ export class AcademicCalendarComponent {
       if (target) {
         const reason = this.courseService.getMoveBlockReason(event.lessonId, target.courseYear);
         if (reason) {
-          this.showToast(reason);
+          this.toastService.warning(reason);
         } else {
           this.courseService.moveLessonToSemester(event.lessonId, target.courseYear, 3);
         }
@@ -266,7 +255,7 @@ export class AcademicCalendarComponent {
       if (candidate.q === event.courseQ) {
         const reason = this.courseService.getMoveBlockReason(event.lessonId, candidate.courseYear);
         if (reason) {
-          this.showToast(reason);
+          this.toastService.warning(reason);
         } else {
           this.courseService.moveLessonToSemester(
             event.lessonId,

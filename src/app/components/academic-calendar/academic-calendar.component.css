@@ -231,30 +231,3 @@
   background: color-mix(in srgb, var(--color-primary, #1976d2) 8%, transparent);
 }
 
-.move-toast {
-  position: fixed;
-  bottom: 1.5rem;
-  left: 50%;
-  transform: translateX(-50%);
-  background: #323232;
-  color: #fff;
-  padding: 0.75rem 1.25rem;
-  border-radius: 0.375rem;
-  font-size: 0.875rem;
-  max-width: 36rem;
-  text-align: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-  z-index: 1000;
-  animation: toast-in 0.2s ease;
-}
-
-@keyframes toast-in {
-  from {
-    opacity: 0;
-    transform: translateX(-50%) translateY(0.5rem);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
-}
