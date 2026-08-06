@@ -53,7 +53,7 @@ Este archivo documenta las características pendientes, mejoras de experiencia d
   - Unificar las etiquetas en español y estilos CSS de los estados de cursada en un diccionario/configurador único.
 - [x] **3.8 Sanitización y Guardas de Tipo para `localStorage`**
   - Validar estructuras parseadas desde almacenamiento local y corregir el contador de IDs en `SidebarComponent`.
-- [ ] **3.9 Limpieza de Console Logs de Depuración**
+- [x] **3.9 Limpieza de Console Logs de Depuración**
   - Remover llamadas a `console.log` en `CalendarCard` y otros componentes de UI.
 
 ---
