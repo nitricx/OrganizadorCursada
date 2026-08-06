@@ -12,13 +12,13 @@ import { Course, DayOfWeek } from '../../models/course';
 
 // Two courses with no year=2 so the inserted semester pair at year=2 starts empty
 const MOCK_Y1Q1: Course = {
-  id: 'C1',
+  id: 101,
   name: 'Course 1',
   year: 1,
   q: 1,
   status: 'pending',
-  cursarReq: [],
-  aprobarReq: [],
+  cursarReqId: [],
+  aprobarReqId: [],
   lessons: [
     {
       id: 'C1-L1',
@@ -31,13 +31,13 @@ const MOCK_Y1Q1: Course = {
 };
 
 const MOCK_Y3Q1: Course = {
-  id: 'C3',
+  id: 103,
   name: 'Course 3',
   year: 3,
   q: 1,
   status: 'pending',
-  cursarReq: [],
-  aprobarReq: [],
+  cursarReqId: [],
+  aprobarReqId: [],
   lessons: [
     {
       id: 'C3-L1',
@@ -53,8 +53,8 @@ class MockCourseService {
   private readonly _courses = signal<Course[]>([MOCK_Y1Q1, MOCK_Y3Q1]);
 
   courses = this._courses.asReadonly();
-  selectedIds = computed(() => new Set<string>());
-  hoveredCourseId = computed(() => null as string | null);
+  selectedIds = computed(() => new Set<number>());
+  hoveredCourseId = computed(() => null as number | null);
 
   // Controls returned by tests
   blockReason: string | null = null;
@@ -75,7 +75,6 @@ class MockCourseService {
       if (course.lessons.some((l) => l.id === lessonId)) {
         const movedCourse: Course = {
           ...course,
-          id: `${course.id}-Y${targetYear}Q${targetQ}`,
           year: targetYear,
           q: targetQ,
         };

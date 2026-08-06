@@ -41,7 +41,7 @@ Este archivo documenta las características pendientes, mejoras de experiencia d
   - Eliminar el desfasaje entre `courseStatusesSignal` y `lessonStatusesSignal`, creando una estructura reactiva unificada.
 - [x] **3.2 Normalización de IDs al Mover Materias**
   - Refactorizar `moveLessonToSemester()` en `CourseService` para evitar la generación de IDs sintéticos tipo `${id}-Y2Q1` que duplican materias en el mapa de correlatividades.
-- [ ] **3.3 Correlatividades por ID Único**
+- [x] **3.3 Correlatividades por ID Único**
   - Migrar `cursarReq` y `aprobarReq` para usar IDs de materia estables en lugar de coincidencia por strings de nombre plano.
 - [ ] **3.4 Desacoplamiento de Lógica de Grilla de Calendario**
   - Extraer cálculos de solapamiento de horarios, conversión de tiempos y generación de franjas de `calendar.ts` hacia una utilidad pura `calendar-layout.utils.ts`.

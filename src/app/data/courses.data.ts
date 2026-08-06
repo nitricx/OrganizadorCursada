@@ -2,13 +2,13 @@ import { Course, DayOfWeek } from '../models/course';
 
 export const COURSES_DATA: Course[] = [
   {
-    id: 'Producción Audiovisual 1',
+    id: 1,
     name: 'Producción Audiovisual 1',
     year: 1,
     q: 1,
     status: 'pending',
-    cursarReq: [],
-    aprobarReq: [],
+    cursarReqId: [],
+    aprobarReqId: [],
     lessons: [
       {
         id: 'PA1-L1',
@@ -34,13 +34,13 @@ export const COURSES_DATA: Course[] = [
     ],
   },
   {
-    id: 'Escritura Audiovisual 1',
+    id: 2,
     name: 'Escritura Audiovisual 1',
     year: 1,
     q: 1,
     status: 'pending',
-    cursarReq: [],
-    aprobarReq: [],
+    cursarReqId: [],
+    aprobarReqId: [],
     lessons: [
       {
         id: 'EA1-L1',
@@ -66,13 +66,13 @@ export const COURSES_DATA: Course[] = [
     ],
   },
   {
-    id: 'Software en Edición Audiovisual',
+    id: 3,
     name: 'Software en Edición Audiovisual',
     year: 1,
     q: 1,
     status: 'pending',
-    cursarReq: [],
-    aprobarReq: [],
+    cursarReqId: [],
+    aprobarReqId: [],
     lessons: [
       {
         id: 'SEA-L1',
@@ -98,13 +98,13 @@ export const COURSES_DATA: Course[] = [
     ],
   },
   {
-    id: 'Iluminación y Cámara 1',
+    id: 4,
     name: 'Iluminación y Cámara 1',
     year: 1,
     q: 2,
     status: 'pending',
-    cursarReq: [],
-    aprobarReq: [],
+    cursarReqId: [],
+    aprobarReqId: [],
     lessons: [
       {
         id: 'IyC1-L1',
@@ -130,13 +130,13 @@ export const COURSES_DATA: Course[] = [
     ],
   },
   {
-    id: 'Historia del Arte 1',
+    id: 5,
     name: 'Historia del Arte 1',
     year: 1,
     q: 2,
     status: 'pending',
-    cursarReq: [],
-    aprobarReq: [],
+    cursarReqId: [],
+    aprobarReqId: [],
     lessons: [
       {
         id: 'HA1-L1',
@@ -162,13 +162,13 @@ export const COURSES_DATA: Course[] = [
     ],
   },
   {
-    id: 'Sonido 1',
+    id: 6,
     name: 'Sonido 1',
     year: 1,
     q: 2,
     status: 'pending',
-    cursarReq: [],
-    aprobarReq: [],
+    cursarReqId: [],
+    aprobarReqId: [],
     lessons: [
       {
         id: 'S1-L1',
@@ -194,13 +194,13 @@ export const COURSES_DATA: Course[] = [
     ],
   },
   {
-    id: 'Montaje 1',
+    id: 7,
     name: 'Montaje 1',
     year: 1,
     q: 2,
     status: 'pending',
-    cursarReq: [],
-    aprobarReq: [],
+    cursarReqId: [],
+    aprobarReqId: [],
     lessons: [
       {
         id: 'M1-L1',
@@ -226,13 +226,13 @@ export const COURSES_DATA: Course[] = [
     ],
   },
   {
-    id: 'Proyecto Audiovisual 1',
+    id: 8,
     name: 'Proyecto Audiovisual 1',
     year: 1,
     q: 3,
     status: 'pending',
-    cursarReq: [],
-    aprobarReq: [],
+    cursarReqId: [],
+    aprobarReqId: [],
     lessons: [
       {
         id: 'PROY1-L1',
@@ -258,13 +258,13 @@ export const COURSES_DATA: Course[] = [
     ],
   },
   {
-    id: 'Iluminación y Cámara 2',
+    id: 9,
     name: 'Iluminación y Cámara 2',
     year: 2,
     q: 1,
     status: 'pending',
-    cursarReq: ['Iluminación y Cámara 1'],
-    aprobarReq: ['Iluminación y Cámara 1'],
+    cursarReqId: [4],
+    aprobarReqId: [4],
     lessons: [
       {
         id: 'IyC2-L1',
@@ -283,13 +283,13 @@ export const COURSES_DATA: Course[] = [
     ],
   },
   {
-    id: 'Sonido 2',
+    id: 10,
     name: 'Sonido 2',
     year: 2,
     q: 1,
     status: 'pending',
-    cursarReq: ['Sonido 1'],
-    aprobarReq: ['Sonido 1'],
+    cursarReqId: [6],
+    aprobarReqId: [6],
     lessons: [
       {
         id: 'S2-L1',
@@ -308,13 +308,13 @@ export const COURSES_DATA: Course[] = [
     ],
   },
   {
-    id: 'Montaje 2',
+    id: 11,
     name: 'Montaje 2',
     year: 2,
     q: 1,
     status: 'pending',
-    cursarReq: ['Montaje 1', 'Software en Edición Audiovisual'],
-    aprobarReq: ['Montaje 1', 'Software en Edición Audiovisual'],
+    cursarReqId: [7, 3],
+    aprobarReqId: [7, 3],
     lessons: [
       {
         id: 'M2-L1',
@@ -333,13 +333,13 @@ export const COURSES_DATA: Course[] = [
     ],
   },
   {
-    id: 'Producción Audiovisual 2',
+    id: 12,
     name: 'Producción Audiovisual 2',
     year: 2,
     q: 1,
     status: 'pending',
-    cursarReq: ['Producción Audiovisual 1'],
-    aprobarReq: ['Producción Audiovisual 1'],
+    cursarReqId: [1],
+    aprobarReqId: [1],
     lessons: [
       {
         id: 'PA2-L1',
@@ -358,13 +358,13 @@ export const COURSES_DATA: Course[] = [
     ],
   },
   {
-    id: 'Software de Composición',
+    id: 13,
     name: 'Software de Composición',
     year: 2,
     q: 2,
     status: 'pending',
-    cursarReq: [],
-    aprobarReq: [],
+    cursarReqId: [],
+    aprobarReqId: [],
     lessons: [
       {
         id: 'SC-L1',
@@ -383,13 +383,13 @@ export const COURSES_DATA: Course[] = [
     ],
   },
   {
-    id: 'Inglés Técnico',
+    id: 14,
     name: 'Inglés Técnico',
     year: 2,
     q: 2,
     status: 'pending',
-    cursarReq: [],
-    aprobarReq: [],
+    cursarReqId: [],
+    aprobarReqId: [],
     lessons: [
       {
         id: 'IT-L1',
@@ -408,13 +408,13 @@ export const COURSES_DATA: Course[] = [
     ],
   },
   {
-    id: 'Historia del Arte 2',
+    id: 15,
     name: 'Historia del Arte 2',
     year: 2,
     q: 2,
     status: 'pending',
-    cursarReq: ['Historia del Arte 1'],
-    aprobarReq: ['Historia del Arte 1'],
+    cursarReqId: [5],
+    aprobarReqId: [5],
     lessons: [
       {
         id: 'HA2-L1',
@@ -433,13 +433,13 @@ export const COURSES_DATA: Course[] = [
     ],
   },
   {
-    id: 'Escritura Audiovisual 2',
+    id: 16,
     name: 'Escritura Audiovisual 2',
     year: 2,
     q: 2,
     status: 'pending',
-    cursarReq: ['Escritura Audiovisual 1'],
-    aprobarReq: ['Escritura Audiovisual 1'],
+    cursarReqId: [2],
+    aprobarReqId: [2],
     lessons: [
       {
         id: 'EA2-L1',
@@ -458,13 +458,13 @@ export const COURSES_DATA: Course[] = [
     ],
   },
   {
-    id: 'Proyecto Audiovisual 2',
+    id: 17,
     name: 'Proyecto Audiovisual 2',
     year: 2,
     q: 3,
     status: 'pending',
-    cursarReq: ['Proyecto Audiovisual 1'],
-    aprobarReq: ['Proyecto Audiovisual 1'],
+    cursarReqId: [8],
+    aprobarReqId: [8],
     lessons: [
       {
         id: 'PROY2-L1',
@@ -483,25 +483,13 @@ export const COURSES_DATA: Course[] = [
     ],
   },
   {
-    id: 'Diseño Sonoro',
+    id: 18,
     name: 'Diseño Sonoro',
     year: 3,
     q: 1,
     status: 'pending',
-    cursarReq: [
-      'Montaje 2',
-      'Sonido 2',
-      'Montaje 1',
-      'Sonido 1',
-      'Software en Edición Audiovisual',
-    ],
-    aprobarReq: [
-      'Montaje 1',
-      'Sonido 1',
-      'Montaje 2',
-      'Sonido 2',
-      'Software en Edición Audiovisual',
-    ],
+    cursarReqId: [11, 10, 7, 6, 3],
+    aprobarReqId: [7, 6, 11, 10, 3],
     lessons: [
       {
         id: 'DS-L3',
@@ -513,13 +501,13 @@ export const COURSES_DATA: Course[] = [
     ],
   },
   {
-    id: 'Historia de los Medios',
+    id: 19,
     name: 'Historia de los Medios',
     year: 3,
     q: 1,
     status: 'pending',
-    cursarReq: [],
-    aprobarReq: [],
+    cursarReqId: [],
+    aprobarReqId: [],
     lessons: [
       {
         id: 'HM-L3',
@@ -531,27 +519,13 @@ export const COURSES_DATA: Course[] = [
     ],
   },
   {
-    id: 'Postproducción Audiovisual 1',
+    id: 20,
     name: 'Postproducción Audiovisual 1',
     year: 3,
     q: 1,
     status: 'pending',
-    cursarReq: [
-      'Montaje 1',
-      'Sonido 1',
-      'Montaje 2',
-      'Sonido 2',
-      'Software en Edición Audiovisual',
-      'Software de Composición',
-    ],
-    aprobarReq: [
-      'Montaje 1',
-      'Sonido 1',
-      'Montaje 2',
-      'Sonido 2',
-      'Software en Edición Audiovisual',
-      'Software de Composición',
-    ],
+    cursarReqId: [7, 6, 11, 10, 3, 13],
+    aprobarReqId: [7, 6, 11, 10, 3, 13],
     lessons: [
       {
         id: 'PProd1-L3',
@@ -563,13 +537,13 @@ export const COURSES_DATA: Course[] = [
     ],
   },
   {
-    id: 'Nociones de Colorimetría',
+    id: 21,
     name: 'Nociones de Colorimetría',
     year: 3,
     q: 1,
     status: 'pending',
-    cursarReq: ['Iluminación y Cámara 1', 'Iluminación y Cámara 2'],
-    aprobarReq: ['Iluminación y Cámara 1', 'Iluminación y Cámara 2'],
+    cursarReqId: [4, 9],
+    aprobarReqId: [4, 9],
     lessons: [
       {
         id: 'NC-L3',
@@ -581,25 +555,13 @@ export const COURSES_DATA: Course[] = [
     ],
   },
   {
-    id: 'Montaje Documental',
+    id: 22,
     name: 'Montaje Documental',
     year: 3,
     q: 2,
     status: 'pending',
-    cursarReq: [
-      'Montaje 1',
-      'Sonido 1',
-      'Montaje 2',
-      'Sonido 2',
-      'Software en Edición Audiovisual',
-    ],
-    aprobarReq: [
-      'Montaje 1',
-      'Sonido 1',
-      'Montaje 2',
-      'Sonido 2',
-      'Software en Edición Audiovisual',
-    ],
+    cursarReqId: [7, 6, 11, 10, 3],
+    aprobarReqId: [7, 6, 11, 10, 3],
     lessons: [
       {
         id: 'MD-L3',
@@ -611,27 +573,13 @@ export const COURSES_DATA: Course[] = [
     ],
   },
   {
-    id: 'Postproducción Audiovisual 2',
+    id: 23,
     name: 'Postproducción Audiovisual 2',
     year: 3,
     q: 2,
     status: 'pending',
-    cursarReq: [
-      'Montaje 1',
-      'Sonido 1',
-      'Montaje 2',
-      'Sonido 2',
-      'Software en Edición Audiovisual',
-      'Software de Composición',
-    ],
-    aprobarReq: [
-      'Montaje 1',
-      'Sonido 1',
-      'Montaje 2',
-      'Sonido 2',
-      'Software en Edición Audiovisual',
-      'Software de Composición',
-    ],
+    cursarReqId: [7, 6, 11, 10, 3, 13],
+    aprobarReqId: [7, 6, 11, 10, 3, 13],
     lessons: [
       {
         id: 'PProd2-L3',
@@ -643,45 +591,13 @@ export const COURSES_DATA: Course[] = [
     ],
   },
   {
-    id: 'Práctica Profesional',
+    id: 24,
     name: 'Práctica Profesional',
     year: 3,
     q: 2,
     status: 'pending',
-    cursarReq: [
-      'Escritura Audiovisual 1',
-      'Producción Audiovisual 1',
-      'Iluminación y Cámara 1',
-      'Montaje 1',
-      'Sonido 1',
-      'Proyecto Audiovisual 1',
-      'Producción Audiovisual 2',
-      'Montaje 2',
-      'Sonido 2',
-      'Iluminación y Cámara 2',
-      'Escritura Audiovisual 2',
-      'Proyecto Audiovisual 2',
-      'Software en Edición Audiovisual',
-      'Software de Composición',
-      'Postproducción Audiovisual 1',
-    ],
-    aprobarReq: [
-      'Escritura Audiovisual 1',
-      'Producción Audiovisual 1',
-      'Iluminación y Cámara 1',
-      'Montaje 1',
-      'Sonido 1',
-      'Proyecto Audiovisual 1',
-      'Producción Audiovisual 2',
-      'Montaje 2',
-      'Sonido 2',
-      'Iluminación y Cámara 2',
-      'Escritura Audiovisual 2',
-      'Proyecto Audiovisual 2',
-      'Software en Edición Audiovisual',
-      'Software de Composición',
-      'Postproducción Audiovisual 1',
-    ],
+    cursarReqId: [2, 1, 4, 7, 6, 8, 12, 11, 10, 9, 16, 17, 3, 13, 20],
+    aprobarReqId: [2, 1, 4, 7, 6, 8, 12, 11, 10, 9, 16, 17, 3, 13, 20],
     lessons: [
       {
         id: 'PP-L3',
@@ -693,23 +609,13 @@ export const COURSES_DATA: Course[] = [
     ],
   },
   {
-    id: 'Proyecto Audiovisual 3',
+    id: 25,
     name: 'Proyecto Audiovisual 3',
     year: 3,
     q: 3,
     status: 'pending',
-    cursarReq: [
-      'Proyecto Audiovisual 1',
-      'Producción Audiovisual 2',
-      'Proyecto Audiovisual 2',
-      'Producción Audiovisual 1',
-    ],
-    aprobarReq: [
-      'Proyecto Audiovisual 1',
-      'Producción Audiovisual 2',
-      'Proyecto Audiovisual 2',
-      'Producción Audiovisual 1',
-    ],
+    cursarReqId: [8, 12, 17, 1],
+    aprobarReqId: [8, 12, 17, 1],
     lessons: [
       {
         id: 'PROY3-L3',

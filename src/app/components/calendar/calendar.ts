@@ -92,7 +92,7 @@ export class Calendar {
             .filter((c) => c.status === 'coursing' && this.courseService.areAllRequirementsMet(c));
 
     // Deduplicate courses by ID (annual courses may appear in multiple semesters)
-    const seenCourseIds = new Set<string>();
+    const seenCourseIds = new Set<number>();
     const uniqueCourses = courses.filter((c) => {
       if (seenCourseIds.has(c.id)) return false;
       seenCourseIds.add(c.id);

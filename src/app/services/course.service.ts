@@ -15,10 +15,10 @@ export class CourseService {
   // Layout per plan (which semester each subject is placed in)
   private coursesByPlanSignal = signal<Map<string, Course[]>>(new Map());
   // Single unified source of truth for course & lesson statuses — shared across all views
-  private courseStateSignal = signal<Map<string, CourseStateEntry>>(new Map());
+  private courseStateSignal = signal<Map<number, CourseStateEntry>>(new Map());
   private currentPlanIdSignal = signal<string>('1');
-  private selectedIdsSignal = signal<Set<string>>(new Set());
-  private hoveredCourseIdSignal = signal<string | null>(null);
+  private selectedIdsSignal = signal<Set<number>>(new Set());
+  private hoveredCourseIdSignal = signal<number | null>(null);
 
   private readonly STORAGE_KEY = 'course-organizer-state';
 
@@ -26,17 +26,12 @@ export class CourseService {
     return this.getCoursesForPlan(this.currentPlanIdSignal());
   });
 
-  private getBaseCourseId(id: string): string {
-    return id.replace(/(-Y\d+Q\d+)+$/g, '');
-  }
-
   getCoursesForPlan(planId: string): Course[] {
     const rawCourses = this.coursesByPlanSignal().get(planId) ?? [];
     const stateMap = this.courseStateSignal();
 
     return rawCourses.map((course) => {
-      const baseId = this.getBaseCourseId(course.id);
-      const courseState = stateMap.get(baseId);
+      const courseState = stateMap.get(course.id);
       const courseStatus = courseState?.status ?? 'pending';
 
       return {
@@ -55,34 +50,20 @@ export class CourseService {
 
   readonly hoveredRequiredSet = computed(() => {
     const hoveredId = this.hoveredCourseIdSignal();
-    if (!hoveredId) return new Set<string>();
+    if (hoveredId === null) return new Set<number>();
     const course = this.getCourseById(hoveredId);
-    if (!course) return new Set<string>();
-    const reqs = this.getRequiredCourseIds(course);
-    const set = new Set<string>(reqs);
-    reqs.forEach((reqName) => {
-      const match = this.courses().find((c) => c.name === reqName);
-      if (match) set.add(match.id);
-    });
-    return set;
+    if (!course) return new Set<number>();
+    return new Set<number>(this.getRequiredCourseIds(course));
   });
 
   readonly hoveredUnlockedSet = computed(() => {
     const hoveredId = this.hoveredCourseIdSignal();
-    if (!hoveredId) return new Set<string>();
-    const unlockedIds = this.getUnlockedCourseIds(hoveredId);
-    const set = new Set<string>(unlockedIds);
-    unlockedIds.forEach((uId) => {
-      const course = this.getCourseById(uId);
-      if (course) {
-        set.add(course.name);
-      }
-    });
-    return set;
+    if (hoveredId === null) return new Set<number>();
+    return new Set<number>(this.getUnlockedCourseIds(hoveredId));
   });
 
   private readonly rawCourseByIdMap = computed(() => {
-    const map = new Map<string, Course>();
+    const map = new Map<number, Course>();
     const courses = this.coursesByPlanSignal().get(this.currentPlanIdSignal()) ?? [];
     for (const c of courses) {
       map.set(c.id, c);
@@ -109,8 +90,7 @@ export class CourseService {
     const courses = this.coursesByPlanSignal().get(this.currentPlanIdSignal()) ?? [];
     const stateMap = this.courseStateSignal();
     return courses.map((c) => {
-      const baseId = this.getBaseCourseId(c.id);
-      const courseState = stateMap.get(baseId);
+      const courseState = stateMap.get(c.id);
       const courseStatus = courseState?.status ?? 'pending';
       return {
         ...c,
@@ -134,14 +114,14 @@ export class CourseService {
     return COURSES_DATA.map((course) => ({
       ...course,
       status: 'pending' as CourseStatus,
-      cursarReq: course.cursarReq.slice(),
-      aprobarReq: course.aprobarReq.slice(),
+      cursarReqId: course.cursarReqId.slice(),
+      aprobarReqId: course.aprobarReqId.slice(),
       lessons: course.lessons.map((lesson) => ({ ...lesson })),
     }));
   }
 
-  private initializeCourseStates(): Map<string, CourseStateEntry> {
-    const states = new Map<string, CourseStateEntry>();
+  private initializeCourseStates(): Map<number, CourseStateEntry> {
+    const states = new Map<number, CourseStateEntry>();
     COURSES_DATA.forEach((course) => {
       const lessonStatuses: Record<string, CourseStatus> = {};
       course.lessons.forEach((lesson) => {
@@ -155,31 +135,28 @@ export class CourseService {
     return states;
   }
 
-  private buildUnlockMap(): Map<string, Set<string>> {
-    const map = new Map<string, Set<string>>();
+  private buildUnlockMap(): Map<number, Set<number>> {
+    const map = new Map<number, Set<number>>();
     const courses = this.currentRawCourses();
 
     courses.forEach((course) => {
-      if (!map.has(course.id)) map.set(course.id, new Set());
-      if (!map.has(course.name)) map.set(course.name, new Set());
+      map.set(course.id, new Set());
     });
 
     courses.forEach((target) => {
-      const allReqs = [...new Set([...target.cursarReq, ...target.aprobarReq])];
-      allReqs.forEach((req) => {
-        map.get(req)?.add(target.id);
-        map.get(req)?.add(target.name);
+      const allReqs = [...new Set([...target.cursarReqId, ...target.aprobarReqId])];
+      allReqs.forEach((reqId) => {
+        map.get(reqId)?.add(target.id);
       });
     });
 
     return map;
   }
 
-  getCourseById(id: string): Course | undefined {
+  getCourseById(id: number): Course | undefined {
     const raw = this.rawCourseByIdMap().get(id);
     if (!raw) return undefined;
-    const baseId = this.getBaseCourseId(id);
-    const courseState = this.courseStateSignal().get(baseId);
+    const courseState = this.courseStateSignal().get(id);
     const status = courseState?.status ?? 'pending';
     return {
       ...raw,
@@ -191,23 +168,18 @@ export class CourseService {
     };
   }
 
-  getRequiredCourseIds(course: Course): string[] {
-    return [...new Set([...course.cursarReq, ...course.aprobarReq])];
+  getRequiredCourseIds(course: Course): number[] {
+    return [...new Set([...course.cursarReqId, ...course.aprobarReqId])];
   }
 
-  getUnlockedCourseIds(courseId: string): string[] {
+  getUnlockedCourseIds(courseId: number): number[] {
     const unlockMap = this.buildUnlockMap();
-    const course = this.getCourseById(courseId);
     const byId = unlockMap.get(courseId);
-    const byName = course ? unlockMap.get(course.name) : undefined;
-    const combined = new Set<string>();
-    byId?.forEach((id) => combined.add(id));
-    byName?.forEach((id) => combined.add(id));
-    return Array.from(combined);
+    return byId ? Array.from(byId) : [];
   }
 
   private areRequirementsSatisfied(
-    requiredIds: string[],
+    requiredIds: number[],
     requiredStatus: 'coursed' | 'approved',
     coursesList: Course[] = this.currentRawCourses(),
   ): boolean {
@@ -223,7 +195,7 @@ export class CourseService {
   }
 
   private canSatisfyUpstreamRequirements(
-    courseId: string,
+    courseId: number,
     targetStatus: CourseStatus,
     coursesList: Course[] = this.currentRawCourses(),
   ): boolean {
@@ -235,27 +207,27 @@ export class CourseService {
     }
 
     if (targetStatus === 'coursing' || targetStatus === 'coursed') {
-      // 1. Direct cursarReq must be at least 'coursed' or 'approved'
-      const cursarReqMet = this.areRequirementsSatisfied(course.cursarReq, 'coursed', coursesList);
+      // 1. Direct cursarReqId must be at least 'coursed' or 'approved'
+      const cursarReqMet = this.areRequirementsSatisfied(course.cursarReqId, 'coursed', coursesList);
       if (!cursarReqMet) return false;
 
-      // 2. Nested aprobarReq of prerequisites must be 'approved'
-      return course.cursarReq.every((reqId) => {
+      // 2. Nested aprobarReqId of prerequisites must be 'approved'
+      return course.cursarReqId.every((reqId) => {
         const reqCourse = coursesList.find((c) => c.id === reqId);
         if (!reqCourse) return true;
-        return this.areRequirementsSatisfied(reqCourse.aprobarReq, 'approved', coursesList);
+        return this.areRequirementsSatisfied(reqCourse.aprobarReqId, 'approved', coursesList);
       });
     }
 
     if (targetStatus === 'approved') {
-      // All aprobarReq must be 'approved'
-      return this.areRequirementsSatisfied(course.aprobarReq, 'approved', coursesList);
+      // All aprobarReqId must be 'approved'
+      return this.areRequirementsSatisfied(course.aprobarReqId, 'approved', coursesList);
     }
 
     return false;
   }
 
-  canChangeStatusTo(courseId: string, targetStatus: CourseStatus): boolean {
+  canChangeStatusTo(courseId: number, targetStatus: CourseStatus): boolean {
     // 1. Check upstream prerequisite satisfaction for targetStatus
     if (!this.canSatisfyUpstreamRequirements(courseId, targetStatus)) {
       return false;
@@ -286,11 +258,9 @@ export class CourseService {
     return this.canChangeStatusTo(course.id, 'coursing');
   }
 
-  toggleCourseStatus(courseId: string): void {
+  toggleCourseStatus(courseId: number): void {
     const course = this.getCourseById(courseId);
     if (!course) return;
-
-    const baseId = this.getBaseCourseId(course.id);
 
     let nextStatus: CourseStatus;
     if (course.status === 'pending') {
@@ -305,7 +275,7 @@ export class CourseService {
 
     if (this.canChangeStatusTo(courseId, nextStatus)) {
       const stateMap = new Map(this.courseStateSignal());
-      const existing = stateMap.get(baseId);
+      const existing = stateMap.get(courseId);
 
       const updatedLessonStatuses: Record<string, CourseStatus> = {
         ...(existing?.lessonStatuses ?? {}),
@@ -314,7 +284,7 @@ export class CourseService {
         updatedLessonStatuses[lesson.id] = nextStatus;
       });
 
-      stateMap.set(baseId, {
+      stateMap.set(courseId, {
         status: nextStatus,
         lessonStatuses: updatedLessonStatuses,
       });
@@ -327,9 +297,8 @@ export class CourseService {
     const course = courses.find((c) => c.lessons.some((l) => l.id === lessonId));
     if (!course) return;
 
-    const baseId = this.getBaseCourseId(course.id);
     const stateMap = new Map(this.courseStateSignal());
-    const existing = stateMap.get(baseId) ?? {
+    const existing = stateMap.get(course.id) ?? {
       status: 'pending',
       lessonStatuses: {},
     };
@@ -357,14 +326,14 @@ export class CourseService {
     const allSameStatus = lessonStatusValues.every((s) => s === lessonStatusValues[0]);
     const newCourseStatus = allSameStatus ? lessonStatusValues[0] : existing.status;
 
-    stateMap.set(baseId, {
+    stateMap.set(course.id, {
       status: newCourseStatus,
       lessonStatuses: updatedLessonStatuses,
     });
     this.courseStateSignal.set(stateMap);
   }
 
-  toggleCourseSelection(courseId: string): void {
+  toggleCourseSelection(courseId: number): void {
     const selected = new Set(this.selectedIdsSignal());
     if (selected.has(courseId)) {
       selected.delete(courseId);
@@ -374,7 +343,7 @@ export class CourseService {
     this.selectedIdsSignal.set(selected);
   }
 
-  setHoveredCourseId(courseId: string | null): void {
+  setHoveredCourseId(courseId: number | null): void {
     this.hoveredCourseIdSignal.set(courseId);
   }
 
@@ -411,16 +380,16 @@ export class CourseService {
     const overlappingDependent = courses.find(
       (c) =>
         c.year === targetYear &&
-        (c.cursarReq.includes(currentCourse.name) || c.aprobarReq.includes(currentCourse.name)),
+        (c.cursarReqId.includes(currentCourse.id) || c.aprobarReqId.includes(currentCourse.id)),
     );
     if (overlappingDependent) {
       return `No se puede mover "${currentCourse.name}" porque "${overlappingDependent.name}" la requiere y está en el mismo año`;
     }
 
     // Block if any prerequisite of this course is already at the target year
-    const allReqNames = [...new Set([...currentCourse.cursarReq, ...currentCourse.aprobarReq])];
+    const allReqIds = [...new Set([...currentCourse.cursarReqId, ...currentCourse.aprobarReqId])];
     const overlappingPrereq = courses.find(
-      (c) => c.year === targetYear && allReqNames.includes(c.name),
+      (c) => c.year === targetYear && allReqIds.includes(c.id),
     );
     if (overlappingPrereq) {
       return `No se puede mover "${currentCourse.name}" porque su requisito "${overlappingPrereq.name}" está en el mismo año`;
@@ -457,7 +426,7 @@ export class CourseService {
       if (typeof localStorage === 'undefined' || !localStorage) return;
       const courseStatesObj: Record<string, CourseStateEntry> = {};
       this.courseStateSignal().forEach((val, key) => {
-        courseStatesObj[key] = val;
+        courseStatesObj[key.toString()] = val;
       });
       const state = {
         coursesByPlan: this.serializeCoursesByPlan(this.coursesByPlanSignal()),
@@ -482,9 +451,12 @@ export class CourseService {
       }
 
       if (state.courseStates) {
-        const loadedMap = new Map<string, CourseStateEntry>();
+        const loadedMap = new Map<number, CourseStateEntry>();
         Object.entries(state.courseStates).forEach(([k, v]) => {
-          loadedMap.set(k, v as CourseStateEntry);
+          const numericId = Number(k);
+          if (!isNaN(numericId)) {
+            loadedMap.set(numericId, v as CourseStateEntry);
+          }
         });
         this.courseStateSignal.set(loadedMap);
       } else if (state.courseStatuses || state.lessonStatuses) {
@@ -494,7 +466,9 @@ export class CourseService {
         const legacyLessonStatuses: Record<string, CourseStatus> = state.lessonStatuses ?? {};
 
         migratedMap.forEach((entry, courseId) => {
-          const cStatus = legacyCourseStatuses[courseId] ?? 'pending';
+          const targetCourse = COURSES_DATA.find((c) => c.id === courseId);
+          const legacyKey = targetCourse ? targetCourse.name : courseId.toString();
+          const cStatus = legacyCourseStatuses[legacyKey] ?? 'pending';
           const lStatuses: Record<string, CourseStatus> = { ...entry.lessonStatuses };
           Object.keys(lStatuses).forEach((lId) => {
             if (legacyLessonStatuses[lId]) {

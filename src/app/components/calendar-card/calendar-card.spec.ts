@@ -8,13 +8,13 @@ class MockCourseService {
 }
 
 const MOCK_COURSE: Course = {
-  id: 'MAT1',
+  id: 101,
   name: 'Matemática 1',
   year: 1,
   q: 1,
   status: 'pending',
-  cursarReq: [],
-  aprobarReq: [],
+  cursarReqId: [],
+  aprobarReqId: [],
   lessons: [
     {
       id: 'MAT1-L1',

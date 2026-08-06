@@ -141,11 +141,11 @@ describe('CourseService - Lesson State Toggling', () => {
     });
   });
 
-  describe('downstream prerequisite locking', () => {
+  describe('downstream prerequisite locking with numeric IDs', () => {
     it('should block demoting a prerequisite if an active dependent course requires its current state', () => {
-      // Producción Audiovisual 1 & 2
-      const pa1 = service.courses().find((c) => c.id === 'Producción Audiovisual 1')!;
-      const pa2 = service.courses().find((c) => c.id === 'Producción Audiovisual 2')!;
+      // Producción Audiovisual 1 (id: 1) & Producción Audiovisual 2 (id: 12)
+      const pa1 = service.courses().find((c) => c.id === 1)!;
+      const pa2 = service.courses().find((c) => c.id === 12)!;
 
       // Approve PA1 first
       service.toggleCourseStatus(pa1.id); // coursing
@@ -187,10 +187,11 @@ describe('CourseService - Lesson State Toggling', () => {
     });
   });
 
-  describe('hover prerequisite and unlock visual sets', () => {
+  describe('hover prerequisite and unlock visual sets with numeric IDs', () => {
     it('should calculate hoveredRequiredSet and hoveredUnlockedSet when hovering a course', () => {
-      // Find a course with requirements (e.g. Postproducción Audiovisual 1 or Producción Audiovisual 2)
-      const pa2 = service.courses().find((c) => c.name === 'Producción Audiovisual 2')!;
+      const pa1 = service.courses().find((c) => c.id === 1)!;
+      const pa2 = service.courses().find((c) => c.id === 12)!;
+      expect(pa1).toBeDefined();
       expect(pa2).toBeDefined();
 
       service.setHoveredCourseId(pa2.id);
@@ -198,7 +199,7 @@ describe('CourseService - Lesson State Toggling', () => {
       const reqSet = service.hoveredRequiredSet();
       const unlockSet = service.hoveredUnlockedSet();
 
-      expect(reqSet.has('Producción Audiovisual 1')).toBe(true);
+      expect(reqSet.has(pa1.id)).toBe(true);
 
       // Clearing hover resets sets
       service.setHoveredCourseId(null);
@@ -207,7 +208,7 @@ describe('CourseService - Lesson State Toggling', () => {
     });
   });
 
-  describe('unified reactive state consolidation', () => {
+  describe('unified reactive state consolidation with numeric IDs', () => {
     it('should update course status and all lesson statuses atomically when toggleCourseStatus is called', () => {
       const course = service.courses()[0];
       expect(course.status).toBe('pending');
@@ -231,7 +232,7 @@ describe('CourseService - Lesson State Toggling', () => {
       expect(updatedCourse.lessons.every((l) => l.status === 'coursing')).toBe(true);
     });
 
-    it('should migrate legacy separate courseStatuses and lessonStatuses from localStorage cleanly', () => {
+    it('should migrate legacy separate courseStatuses and lessonStatuses from localStorage cleanly using numeric IDs', () => {
       const legacyState = {
         courseStatuses: {
           'Producción Audiovisual 1': 'coursing',
@@ -265,7 +266,7 @@ describe('CourseService - Lesson State Toggling', () => {
       TestBed.resetTestingModule();
       TestBed.configureTestingModule({});
       const newService = TestBed.inject(CourseService);
-      const pa1 = newService.getCourseById('Producción Audiovisual 1');
+      const pa1 = newService.getCourseById(1);
 
       expect(pa1?.status).toBe('coursing');
       expect(pa1?.lessons[0].status).toBe('coursing');

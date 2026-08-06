@@ -13,17 +13,17 @@ import { CourseCardComponent } from '../course-card/course-card.component';
 })
 export class CourseGridComponent {
   readonly courses = input.required<Course[]>();
-  readonly selectedIds = input.required<Set<string>>();
+  readonly selectedIds = input.required<Set<number>>();
 
   getQuarterLabel(q: number): string {
     return this.quarterLabels[q] || '';
   }
 
-  onCardClicked(courseId: string): void {
+  onCardClicked(courseId: number): void {
     this.cardClicked.emit(courseId);
   }
 
-  onMouseEntered(courseId: string): void {
+  onMouseEntered(courseId: number): void {
     this.mouseEntered.emit(courseId);
   }
 
@@ -31,8 +31,8 @@ export class CourseGridComponent {
     this.mouseLeft.emit();
   }
 
-  readonly cardClicked = output<string>();
-  readonly mouseEntered = output<string>();
+  readonly cardClicked = output<number>();
+  readonly mouseEntered = output<number>();
   readonly mouseLeft = output<void>();
 
   private readonly quarterLabels: Record<number, string> = {
