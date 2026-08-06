@@ -40,8 +40,6 @@ export class CourseService {
   selectedIds = computed(() => this.selectedIdsSignal());
   hoveredCourseId = computed(() => this.hoveredCourseIdSignal());
 
-  private readonly nameToIdMap = this.buildNameToIdMap();
-
   private readonly rawCourseByIdMap = computed(() => {
     const map = new Map<string, Course>();
     const courses = this.coursesByPlanSignal().get(this.currentPlanIdSignal()) ?? [];
@@ -112,14 +110,6 @@ export class CourseService {
     return statuses;
   }
 
-  private buildNameToIdMap(): Map<string, string> {
-    const map = new Map<string, string>();
-    COURSES_DATA.forEach((course) => {
-      map.set(course.name, course.id);
-    });
-    return map;
-  }
-
   private buildUnlockMap(): Map<string, Set<string>> {
     const map = new Map<string, Set<string>>();
     const courses = this.currentRawCourses();
@@ -130,11 +120,8 @@ export class CourseService {
 
     courses.forEach((target) => {
       const allReqs = [...new Set([...target.cursarReq, ...target.aprobarReq])];
-      allReqs.forEach((reqName) => {
-        const srcId = this.nameToIdMap.get(reqName);
-        if (srcId) {
-          map.get(srcId)?.add(target.id);
-        }
+      allReqs.forEach((reqId) => {
+        map.get(reqId)?.add(target.id);
       });
     });
 
@@ -149,8 +136,7 @@ export class CourseService {
   }
 
   getRequiredCourseIds(course: Course): string[] {
-    const allReqs = [...new Set([...course.cursarReq, ...course.aprobarReq])];
-    return allReqs.map((name) => this.nameToIdMap.get(name)).filter((id): id is string => !!id);
+    return [...new Set([...course.cursarReq, ...course.aprobarReq])];
   }
 
   getUnlockedCourseIds(courseId: string): string[] {
@@ -159,12 +145,12 @@ export class CourseService {
   }
 
   private areRequirementsSatisfied(
-    requiredNames: string[],
+    requiredIds: string[],
     requiredStatus: 'coursed' | 'approved',
   ): boolean {
     const courses = this.currentRawCourses();
-    return requiredNames.every((reqName) => {
-      const reqCourse = courses.find((c) => c.name === reqName);
+    return requiredIds.every((reqId) => {
+      const reqCourse = courses.find((c) => c.id === reqId);
       if (!reqCourse) return false;
 
       if (requiredStatus === 'coursed') {
@@ -190,8 +176,8 @@ export class CourseService {
       // 2. Nested aprobarReq of prerequisites must be 'approved'
       // (e.g. to course Math 3, Math 2 must be 'coursed' AND Math 1 [Math 2's aprobarReq] must be 'approved')
       const courses = this.currentRawCourses();
-      return course.cursarReq.every((reqName) => {
-        const reqCourse = courses.find((c) => c.name === reqName);
+      return course.cursarReq.every((reqId) => {
+        const reqCourse = courses.find((c) => c.id === reqId);
         if (!reqCourse) return true;
         return this.areRequirementsSatisfied(reqCourse.aprobarReq, 'approved');
       });
@@ -206,9 +192,7 @@ export class CourseService {
   }
 
   areAllRequirementsMet(course: Course): boolean {
-    const allCursarReqMet = this.areRequirementsSatisfied(course.cursarReq, 'coursed');
-    const allAprobarReqMet = this.areRequirementsSatisfied(course.aprobarReq, 'approved');
-    return allCursarReqMet && allAprobarReqMet;
+    return this.canChangeStatusTo(course.id, 'coursing');
   }
 
   toggleCourseStatus(courseId: string): void {

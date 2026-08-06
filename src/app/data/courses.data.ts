@@ -2,7 +2,7 @@ import { Course, DayOfWeek } from '../models/course';
 
 export const COURSES_DATA: Course[] = [
   {
-    id: 'PA1',
+    id: 'Producción Audiovisual 1',
     name: 'Producción Audiovisual 1',
     year: 1,
     q: 1,
@@ -34,7 +34,7 @@ export const COURSES_DATA: Course[] = [
     ],
   },
   {
-    id: 'EA1',
+    id: 'Escritura Audiovisual 1',
     name: 'Escritura Audiovisual 1',
     year: 1,
     q: 1,
@@ -66,7 +66,7 @@ export const COURSES_DATA: Course[] = [
     ],
   },
   {
-    id: 'SEA',
+    id: 'Software en Edición Audiovisual',
     name: 'Software en Edición Audiovisual',
     year: 1,
     q: 1,
@@ -98,7 +98,7 @@ export const COURSES_DATA: Course[] = [
     ],
   },
   {
-    id: 'IyC1',
+    id: 'Iluminación y Cámara 1',
     name: 'Iluminación y Cámara 1',
     year: 1,
     q: 2,
@@ -130,7 +130,7 @@ export const COURSES_DATA: Course[] = [
     ],
   },
   {
-    id: 'HA1',
+    id: 'Historia del Arte 1',
     name: 'Historia del Arte 1',
     year: 1,
     q: 2,
@@ -162,7 +162,7 @@ export const COURSES_DATA: Course[] = [
     ],
   },
   {
-    id: 'S1',
+    id: 'Sonido 1',
     name: 'Sonido 1',
     year: 1,
     q: 2,
@@ -194,7 +194,7 @@ export const COURSES_DATA: Course[] = [
     ],
   },
   {
-    id: 'M1',
+    id: 'Montaje 1',
     name: 'Montaje 1',
     year: 1,
     q: 2,
@@ -226,7 +226,7 @@ export const COURSES_DATA: Course[] = [
     ],
   },
   {
-    id: 'PROY1',
+    id: 'Proyecto Audiovisual 1',
     name: 'Proyecto Audiovisual 1',
     year: 1,
     q: 3,
@@ -258,7 +258,7 @@ export const COURSES_DATA: Course[] = [
     ],
   },
   {
-    id: 'IyC2',
+    id: 'Iluminación y Cámara 2',
     name: 'Iluminación y Cámara 2',
     year: 2,
     q: 1,
@@ -283,7 +283,7 @@ export const COURSES_DATA: Course[] = [
     ],
   },
   {
-    id: 'S2',
+    id: 'Sonido 2',
     name: 'Sonido 2',
     year: 2,
     q: 1,
@@ -308,7 +308,7 @@ export const COURSES_DATA: Course[] = [
     ],
   },
   {
-    id: 'M2',
+    id: 'Montaje 2',
     name: 'Montaje 2',
     year: 2,
     q: 1,
@@ -333,7 +333,7 @@ export const COURSES_DATA: Course[] = [
     ],
   },
   {
-    id: 'PA2',
+    id: 'Producción Audiovisual 2',
     name: 'Producción Audiovisual 2',
     year: 2,
     q: 1,
@@ -358,7 +358,7 @@ export const COURSES_DATA: Course[] = [
     ],
   },
   {
-    id: 'SC',
+    id: 'Software de Composición',
     name: 'Software de Composición',
     year: 2,
     q: 2,
@@ -383,7 +383,7 @@ export const COURSES_DATA: Course[] = [
     ],
   },
   {
-    id: 'IT',
+    id: 'Inglés Técnico',
     name: 'Inglés Técnico',
     year: 2,
     q: 2,
@@ -408,7 +408,7 @@ export const COURSES_DATA: Course[] = [
     ],
   },
   {
-    id: 'HA2',
+    id: 'Historia del Arte 2',
     name: 'Historia del Arte 2',
     year: 2,
     q: 2,
@@ -433,7 +433,7 @@ export const COURSES_DATA: Course[] = [
     ],
   },
   {
-    id: 'EA2',
+    id: 'Escritura Audiovisual 2',
     name: 'Escritura Audiovisual 2',
     year: 2,
     q: 2,
@@ -458,7 +458,7 @@ export const COURSES_DATA: Course[] = [
     ],
   },
   {
-    id: 'PROY2',
+    id: 'Proyecto Audiovisual 2',
     name: 'Proyecto Audiovisual 2',
     year: 2,
     q: 3,
@@ -483,7 +483,7 @@ export const COURSES_DATA: Course[] = [
     ],
   },
   {
-    id: 'DS',
+    id: 'Diseño Sonoro',
     name: 'Diseño Sonoro',
     year: 3,
     q: 1,
@@ -513,7 +513,7 @@ export const COURSES_DATA: Course[] = [
     ],
   },
   {
-    id: 'HM',
+    id: 'Historia de los Medios',
     name: 'Historia de los Medios',
     year: 3,
     q: 1,
@@ -531,7 +531,7 @@ export const COURSES_DATA: Course[] = [
     ],
   },
   {
-    id: 'PProd1',
+    id: 'Postproducción Audiovisual 1',
     name: 'Postproducción Audiovisual 1',
     year: 3,
     q: 1,
@@ -563,7 +563,7 @@ export const COURSES_DATA: Course[] = [
     ],
   },
   {
-    id: 'NC',
+    id: 'Nociones de Colorimetría',
     name: 'Nociones de Colorimetría',
     year: 3,
     q: 1,
@@ -581,7 +581,7 @@ export const COURSES_DATA: Course[] = [
     ],
   },
   {
-    id: 'MD',
+    id: 'Montaje Documental',
     name: 'Montaje Documental',
     year: 3,
     q: 2,
@@ -611,7 +611,7 @@ export const COURSES_DATA: Course[] = [
     ],
   },
   {
-    id: 'PProd2',
+    id: 'Postproducción Audiovisual 2',
     name: 'Postproducción Audiovisual 2',
     year: 3,
     q: 2,
@@ -643,7 +643,7 @@ export const COURSES_DATA: Course[] = [
     ],
   },
   {
-    id: 'PP',
+    id: 'Práctica Profesional',
     name: 'Práctica Profesional',
     year: 3,
     q: 2,
@@ -693,7 +693,7 @@ export const COURSES_DATA: Course[] = [
     ],
   },
   {
-    id: 'PROY3',
+    id: 'Proyecto Audiovisual 3',
     name: 'Proyecto Audiovisual 3',
     year: 3,
     q: 3,
