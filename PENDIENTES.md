@@ -45,7 +45,7 @@ Este archivo documenta las características pendientes, mejoras de experiencia d
   - Migrar `cursarReq` y `aprobarReq` para usar IDs de materia estables en lugar de coincidencia por strings de nombre plano.
 - [x] **3.4 Desacoplamiento de Lógica de Grilla de Calendario**
   - Extraer cálculos de solapamiento de horarios, conversión de tiempos y generación de franjas de `calendar.ts` hacia una utilidad pura `calendar-layout.utils.ts`.
-- [ ] **3.5 Reactividad Completa en `PlanService`**
+- [x] **3.5 Reactividad Completa en `PlanService`**
   - Migrar la lectura/escritura de listas de cuatrimestres y año inicial a Signals reactivas en `PlanService`.
 - [ ] **3.6 Memoización de Correlatividades y Unlocks (`buildUnlockMap`)**
   - Convertir la construcción del mapa de materias que habilita cada curso en un `computed()` signal en `CourseService`.

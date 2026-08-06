@@ -1,9 +1,16 @@
-import { Injectable } from '@angular/core';
-import { signal } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 
 export interface Plan {
   id: string;
   label: string;
+}
+
+export interface SemesterSlot {
+  id: string;
+  courseYear: number;
+  courseQ: number;
+  startDate?: string;
+  endDate?: string;
 }
 
 @Injectable({
@@ -15,9 +22,17 @@ export class PlanService {
 
   private readonly plansSignal = signal<Plan[]>(this.loadPlans());
   private readonly selectedPlanIdSignal = signal<string>('1');
+  private readonly semesterListsSignal = signal<Map<string, SemesterSlot[]>>(
+    this.loadAllSemesterLists(),
+  );
+  private readonly startingYearsSignal = signal<Map<string, number>>(
+    this.loadAllStartingYears(),
+  );
 
   plans = this.plansSignal.asReadonly();
   selectedPlanId = this.selectedPlanIdSignal.asReadonly();
+  semesterLists = this.semesterListsSignal.asReadonly();
+  startingYears = this.startingYearsSignal.asReadonly();
 
   constructor() {}
 
@@ -60,7 +75,18 @@ export class PlanService {
       this.safeSetItem(PlanService.PLANS_KEY, JSON.stringify(updated));
       return updated;
     });
+    this.semesterListsSignal.update((map) => {
+      const next = new Map(map);
+      next.delete(planId);
+      return next;
+    });
+    this.startingYearsSignal.update((map) => {
+      const next = new Map(map);
+      next.delete(planId);
+      return next;
+    });
     this.safeRemoveItem(this.semesterListKey(planId));
+    this.safeRemoveItem(this.startingYearKey(planId));
   }
 
   private loadPlans(): Plan[] {
@@ -84,6 +110,36 @@ export class PlanService {
     return plans;
   }
 
+  private loadAllSemesterLists(): Map<string, SemesterSlot[]> {
+    const map = new Map<string, SemesterSlot[]>();
+    const plans = this.plansSignal ? this.plansSignal() : this.loadPlans();
+    for (const plan of plans) {
+      const raw = this.safeGetItem(this.semesterListKey(plan.id));
+      if (raw !== null) {
+        try {
+          const slots = JSON.parse(raw) as SemesterSlot[];
+          map.set(plan.id, slots);
+        } catch {}
+      }
+    }
+    return map;
+  }
+
+  private loadAllStartingYears(): Map<string, number> {
+    const map = new Map<string, number>();
+    const plans = this.plansSignal ? this.plansSignal() : this.loadPlans();
+    for (const plan of plans) {
+      const raw = this.safeGetItem(this.startingYearKey(plan.id));
+      if (raw !== null) {
+        try {
+          const year = JSON.parse(raw) as number;
+          map.set(plan.id, year);
+        } catch {}
+      }
+    }
+    return map;
+  }
+
   getPlanLabel(id: string): string | undefined {
     return this.plansSignal().find((p) => p.id === id)?.label;
   }
@@ -104,35 +160,16 @@ export class PlanService {
     return `plan-semesters-${planId}`;
   }
 
-  getSemesterList(
-    planId: string,
-  ): { id: string; courseYear: number; courseQ: number; startDate?: string; endDate?: string }[] {
-    const raw = this.safeGetItem(this.semesterListKey(planId));
-    try {
-      return raw !== null
-        ? (JSON.parse(raw) as {
-            id: string;
-            courseYear: number;
-            courseQ: number;
-            startDate?: string;
-            endDate?: string;
-          }[])
-        : [];
-    } catch {
-      return [];
-    }
+  getSemesterList(planId: string): SemesterSlot[] {
+    return this.semesterListsSignal().get(planId) ?? [];
   }
 
-  setSemesterList(
-    planId: string,
-    slots: {
-      id: string;
-      courseYear: number;
-      courseQ: number;
-      startDate?: string;
-      endDate?: string;
-    }[],
-  ): void {
+  setSemesterList(planId: string, slots: SemesterSlot[]): void {
+    this.semesterListsSignal.update((map) => {
+      const next = new Map(map);
+      next.set(planId, slots);
+      return next;
+    });
     this.safeSetItem(this.semesterListKey(planId), JSON.stringify(slots));
   }
 
@@ -141,15 +178,15 @@ export class PlanService {
   }
 
   getStartingYear(planId: string): number {
-    const raw = this.safeGetItem(this.startingYearKey(planId));
-    try {
-      return raw !== null ? (JSON.parse(raw) as number) : new Date().getFullYear();
-    } catch {
-      return new Date().getFullYear();
-    }
+    return this.startingYearsSignal().get(planId) ?? new Date().getFullYear();
   }
 
   setStartingYear(planId: string, year: number): void {
+    this.startingYearsSignal.update((map) => {
+      const next = new Map(map);
+      next.set(planId, year);
+      return next;
+    });
     this.safeSetItem(this.startingYearKey(planId), JSON.stringify(year));
   }
 
@@ -196,3 +233,4 @@ export class PlanService {
     }
   }
 }
+
