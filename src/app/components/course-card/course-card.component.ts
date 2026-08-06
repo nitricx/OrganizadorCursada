@@ -2,6 +2,7 @@ import { Component, input, output, ChangeDetectionStrategy, inject, computed } f
 import { CommonModule } from '@angular/common';
 import { Course } from '../../models/course';
 import { CourseService } from '../../services/course.service';
+import { getCourseStatusTag } from '../../constants/course-status.constants';
 
 @Component({
   selector: 'app-course-card',
@@ -20,6 +21,10 @@ export class CourseCardComponent {
   readonly mouseLeft = output<void>();
 
   private readonly courseService = inject(CourseService);
+
+  statusTag = computed(() => {
+    return getCourseStatusTag(this.course().status);
+  });
 
   unlocks = computed(() => {
     const c = this.course();

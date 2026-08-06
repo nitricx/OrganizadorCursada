@@ -49,7 +49,7 @@ Este archivo documenta las características pendientes, mejoras de experiencia d
   - Migrar la lectura/escritura de listas de cuatrimestres y año inicial a Signals reactivas en `PlanService`.
 - [x] **3.6 Memoización de Correlatividades y Unlocks (`buildUnlockMap`)**
   - Convertir la construcción del mapa de materias que habilita cada curso en un `computed()` signal en `CourseService`.
-- [ ] **3.7 Centralización de Constantes de Estado y Colores**
+- [x] **3.7 Centralización de Constantes de Estado y Colores**
   - Unificar las etiquetas en español y estilos CSS de los estados de cursada en un diccionario/configurador único.
 - [ ] **3.8 Sanitización y Guardas de Tipo para `localStorage`**
   - Validar estructuras parseadas desde almacenamiento local y corregir el contador de IDs en `SidebarComponent`.

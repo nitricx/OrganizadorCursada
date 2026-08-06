@@ -1,4 +1,5 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { COURSE_STATUS_LIST } from '../../constants/course-status.constants';
 
 @Component({
   selector: 'app-course-organizer-legend',
@@ -7,4 +8,6 @@ import { Component, ChangeDetectionStrategy } from '@angular/core';
   styleUrls: ['./course-organizer-legend.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CourseOrganizerLegendComponent {}
+export class CourseOrganizerLegendComponent {
+  readonly statusList = COURSE_STATUS_LIST;
+}

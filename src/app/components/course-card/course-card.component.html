@@ -9,11 +9,7 @@
   tabindex="0"
 >
   <span>{{ course().name }}</span>
-  @if (course().status === 'approved') {
-    <span class="tag">✓ aprobada</span>
-  } @else if (course().status === 'coursed') {
-    <span class="tag">● cursada</span>
-  } @else if (course().status === 'coursing') {
-    <span class="tag">◐ cursando</span>
+  @if (statusTag()) {
+    <span class="tag">{{ statusTag() }}</span>
   }
 </div>
