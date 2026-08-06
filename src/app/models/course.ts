@@ -27,12 +27,12 @@ export interface Lesson {
 }
 
 export interface Course {
-  id: string;
+  id: number;
   name: string;
   year: number;
   q: number; // Quarter: 1, 2, or 3
   status: CourseStatus;
-  cursarReq: string[]; // Requirements to take the course
-  aprobarReq: string[]; // Requirements to approve the course
+  cursarReqId: number[]; // Requirements to take the course
+  aprobarReqId: number[]; // Requirements to approve the course
   lessons: Lesson[]; // Multiple lessons per subject with different professors
 }

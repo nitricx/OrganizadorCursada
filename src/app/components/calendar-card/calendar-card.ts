@@ -52,8 +52,6 @@ export class CalendarCard {
       return;
     }
     const lesson = this.lesson();
-    const course = this.course();
-    console.log(`🖱️ Clicked: ${course.name} - ${lesson.id} (${lesson.status})`);
     this.courseService.toggleLessonStatus(lesson.id);
   }
 

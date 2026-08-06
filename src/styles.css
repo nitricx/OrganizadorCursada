@@ -8,6 +8,34 @@
   --color-background-secondary: #e8e7e0;
   --color-border-secondary: #c5c3bb;
   --color-border-tertiary: #ddd;
+
+  /* Centralized Status Colors */
+  --status-pending-bg: #e8e7e0;
+  --status-pending-color: #1a1a1a;
+  --status-pending-border: #888888;
+
+  --status-coursing-bg: #fff8e1;
+  --status-coursing-color: #5d4e06;
+  --status-coursing-border: #d4b856;
+
+  --status-coursed-bg: #e6f1fb;
+  --status-coursed-color: #042c53;
+  --status-coursed-border: #185fa5;
+
+  --status-approved-bg: #e1f5ee;
+  --status-approved-color: #04342c;
+  --status-approved-border: #0f6e56;
+
+  /* Highlight & Legend auxiliary colors */
+  --status-available-border: #185fa5;
+
+  --status-req-bg: #fac775;
+  --status-req-color: #412402;
+  --status-req-border: #ba7517;
+
+  --status-unlocks-bg: #9fe1cb;
+  --status-unlocks-color: #04342c;
+  --status-unlocks-border: #0f6e56;
 }
 
 .info-req {
@@ -140,27 +168,27 @@ h1 {
 }
 
 .materia.pending {
-  background: var(--color-background-secondary);
-  border-color: var(--color-border-secondary);
-  color: var(--color-text-primary);
+  background: var(--status-pending-bg);
+  border-color: var(--status-pending-border);
+  color: var(--status-pending-color);
 }
 
 .materia.coursing {
-  background: #fff8e1;
-  color: #5d4e06;
-  border-color: #d4b856;
+  background: var(--status-coursing-bg);
+  color: var(--status-coursing-color);
+  border-color: var(--status-coursing-border);
 }
 
 .materia.coursed {
-  background: #e6f1fb;
-  color: #042c53;
-  border-color: #185fa5;
+  background: var(--status-coursed-bg);
+  color: var(--status-coursed-color);
+  border-color: var(--status-coursed-border);
 }
 
 .materia.approved {
-  background: #e1f5ee;
-  color: #04342c;
-  border-color: #0f6e56;
+  background: var(--status-approved-bg);
+  color: var(--status-approved-color);
+  border-color: var(--status-approved-border);
 }
 
 .materia:focus,
@@ -173,15 +201,15 @@ h1 {
 }
 
 .materia.req-highlight {
-  background: #fac775 !important;
-  color: #412402 !important;
-  border-color: #ba7517 !important;
+  background: var(--status-req-bg) !important;
+  color: var(--status-req-color) !important;
+  border-color: var(--status-req-border) !important;
 }
 
 .materia.unlocks-highlight {
-  background: #9fe1cb !important;
-  color: #04342c !important;
-  border-color: #0f6e56 !important;
+  background: var(--status-unlocks-bg) !important;
+  color: var(--status-unlocks-color) !important;
+  border-color: var(--status-unlocks-border) !important;
 }
 
 .materia.hovered {

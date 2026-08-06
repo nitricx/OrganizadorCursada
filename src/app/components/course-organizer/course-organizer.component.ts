@@ -19,11 +19,11 @@ export class CourseOrganizerComponent {
   );
   readonly infoMessage = () => this.infoMessageSignal();
 
-  onCourseCardClicked(courseId: string): void {
+  onCourseCardClicked(courseId: number): void {
     this.courseService.toggleCourseStatus(courseId);
   }
 
-  onMouseEntered(courseId: string): void {
+  onMouseEntered(courseId: number): void {
     this.courseService.setHoveredCourseId(courseId);
     const course = this.courseService.getCourseById(courseId);
     if (course) {

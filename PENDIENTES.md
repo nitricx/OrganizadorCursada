@@ -37,15 +37,6 @@ Este archivo documenta las características pendientes, mejoras de experiencia d
 ## 🧹 Épica 3: Refactorización de Deuda Técnica y Code Smells
 > **Objetivo**: Mejorar la mantenibilidad, consistencia de estado y legibilidad del código.
 
-- [ ] **3.1 Consolidación de Fuentes de Verdad de Estado**
-  - Eliminar el desfasaje entre `courseStatusesSignal` y `lessonStatusesSignal`, creando una estructura reactiva unificada.
-- [ ] **3.2 Normalización de IDs al Mover Materias**
-  - Refactorizar `moveLessonToSemester()` en `CourseService` para evitar la generación de IDs sintéticos tipo `${id}-Y2Q1` que duplican materias en el mapa de correlatividades.
-- [ ] **3.3 Correlatividades por ID Único**
-  - Migrar `cursarReq` y `aprobarReq` para usar IDs de materia estables en lugar de coincidencia por strings de nombre plano.
-- [ ] **3.4 Desacoplamiento de Lógica de Grilla de Calendario**
-  - Extraer cálculos de solapamiento de horarios, conversión de tiempos y generación de franjas de `calendar.ts` hacia una utilidad pura `calendar-layout.utils.ts`.
-
 ---
 
 ## 🎨 Épica 4: Mejoras de UX, Accesibilidad y Feedback

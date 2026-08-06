@@ -45,13 +45,15 @@ export class AcademicCalendarComponent {
   private readonly router = inject(Router);
   private readonly toastService = inject(ToastService);
 
-  startingYear = signal<number>(new Date().getFullYear());
+  startingYear = computed(() => {
+    const id = this.currentRouteId();
+    return id ? this.planService.getStartingYear(id) : new Date().getFullYear();
+  });
   isEditingTitle = signal<boolean>(false);
   editableTitle = signal<string>('Calendario Académico');
   editablePlanId = signal<string | null>(null);
   editableStartingYear = signal<number>(new Date().getFullYear());
   editableSemesterDates = signal<Map<string, { startDate?: string; endDate?: string }>>(new Map());
-
 
   private readonly routeParamId = toSignal(this.route.paramMap.pipe());
 
@@ -76,11 +78,8 @@ export class AcademicCalendarComponent {
         this.isEditingTitle.set(false);
         this.courseService.setCurrentPlanId(id);
         this.planService.setSelectedPlanId(id);
-        this.startingYear.set(this.planService.getStartingYear(id));
         const stored = this.planService.getSemesterList(id);
-        if (stored.length > 0) {
-          this.semesterList.set(stored);
-        } else {
+        if (stored.length === 0) {
           const courses = this.courseService.courses();
           const years = Array.from(new Set(courses.map((c) => c.year))).sort((a, b) => a - b);
           const startingYear = this.planService.getStartingYear(id);
@@ -98,16 +97,16 @@ export class AcademicCalendarComponent {
               ...this.planService.getDefaultSemesterDates(startingYear, 2),
             },
           ]);
-          this.semesterList.set(base);
           this.planService.setSemesterList(id, base);
         }
       }
     });
   }
 
-  private readonly semesterList = signal<
-    { id: string; courseYear: number; courseQ: number; startDate?: string; endDate?: string }[]
-  >([]);
+  semesterList = computed(() => {
+    const id = this.currentRouteId();
+    return id ? this.planService.getSemesterList(id) : [];
+  });
 
   displaySemesters = computed<DisplaySemester[]>(() => {
     const list = this.semesterList();
@@ -153,7 +152,6 @@ export class AcademicCalendarComponent {
     }
     const planId = this.currentRouteId();
     if (planId && !isNaN(yearValue)) {
-      this.startingYear.set(yearValue);
       this.planService.setStartingYear(planId, yearValue);
     }
   }
@@ -184,21 +182,18 @@ export class AcademicCalendarComponent {
     }
 
     if (planId && newYear !== this.startingYear()) {
-      this.startingYear.set(newYear);
       this.planService.setStartingYear(planId, newYear);
     }
 
     // Update semester dates from editable map
     const dateMap = this.editableSemesterDates();
     if (dateMap.size > 0 && planId) {
-      this.semesterList.update((list) => {
-        const updated = list.map((sem) => {
-          const dates = dateMap.get(sem.id);
-          return dates ? { ...sem, startDate: dates.startDate, endDate: dates.endDate } : sem;
-        });
-        this.planService.setSemesterList(planId, updated);
-        return updated;
+      const currentList = this.semesterList();
+      const updated = currentList.map((sem) => {
+        const dates = dateMap.get(sem.id);
+        return dates ? { ...sem, startDate: dates.startDate, endDate: dates.endDate } : sem;
       });
+      this.planService.setSemesterList(planId, updated);
     }
 
     this.isEditingTitle.set(false);
@@ -280,34 +275,32 @@ export class AcademicCalendarComponent {
     const id1 = `extra-${ts}-1`;
     const id2 = `extra-${ts}-2`;
 
-    this.semesterList.update((list) => {
-      const maxVirtualYear = list
-        .filter((s) => s.courseYear >= 1000)
-        .reduce((max, s) => Math.max(max, s.courseYear), 999);
-      const virtualYear = maxVirtualYear + 1;
+    const list = this.semesterList();
+    const maxVirtualYear = list
+      .filter((s) => s.courseYear >= 1000)
+      .reduce((max, s) => Math.max(max, s.courseYear), 999);
+    const virtualYear = maxVirtualYear + 1;
 
-      const idx = list.findIndex((s) => s.id === id);
-      const insertAt = idx >= 0 ? idx + 1 : list.length;
-      const year = this.startingYear();
-      const updated = [
-        ...list.slice(0, insertAt),
-        {
-          id: id1,
-          courseYear: virtualYear,
-          courseQ: 1,
-          ...this.planService.getDefaultSemesterDates(year, 1),
-        },
-        {
-          id: id2,
-          courseYear: virtualYear,
-          courseQ: 2,
-          ...this.planService.getDefaultSemesterDates(year, 2),
-        },
-        ...list.slice(insertAt),
-      ];
-      this.planService.setSemesterList(planId, updated);
-      return updated;
-    });
+    const idx = list.findIndex((s) => s.id === id);
+    const insertAt = idx >= 0 ? idx + 1 : list.length;
+    const year = this.startingYear();
+    const updated = [
+      ...list.slice(0, insertAt),
+      {
+        id: id1,
+        courseYear: virtualYear,
+        courseQ: 1,
+        ...this.planService.getDefaultSemesterDates(year, 1),
+      },
+      {
+        id: id2,
+        courseYear: virtualYear,
+        courseQ: 2,
+        ...this.planService.getDefaultSemesterDates(year, 2),
+      },
+      ...list.slice(insertAt),
+    ];
+    this.planService.setSemesterList(planId, updated);
   }
 
   deletePlan(): void {

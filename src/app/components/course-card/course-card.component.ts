@@ -2,6 +2,7 @@ import { Component, input, output, ChangeDetectionStrategy, inject, computed } f
 import { CommonModule } from '@angular/common';
 import { Course } from '../../models/course';
 import { CourseService } from '../../services/course.service';
+import { getCourseStatusTag } from '../../constants/course-status.constants';
 
 @Component({
   selector: 'app-course-card',
@@ -13,13 +14,17 @@ import { CourseService } from '../../services/course.service';
 })
 export class CourseCardComponent {
   readonly course = input.required<Course>();
-  readonly selectedIds = input.required<Set<string>>();
+  readonly selectedIds = input.required<Set<number>>();
 
-  readonly cardClicked = output<string>();
-  readonly mouseEntered = output<string>();
+  readonly cardClicked = output<number>();
+  readonly mouseEntered = output<number>();
   readonly mouseLeft = output<void>();
 
   private readonly courseService = inject(CourseService);
+
+  statusTag = computed(() => {
+    return getCourseStatusTag(this.course().status);
+  });
 
   unlocks = computed(() => {
     const c = this.course();
@@ -36,17 +41,16 @@ export class CourseCardComponent {
   highlightClass = computed(() => {
     const currentCourse = this.course();
     const courseId = currentCourse.id;
-    const courseName = currentCourse.name;
 
     const hoveredId = this.courseService.hoveredCourseId();
 
-    if (hoveredId) {
-      if (hoveredId === courseId || hoveredId === courseName) {
+    if (hoveredId !== null) {
+      if (hoveredId === courseId) {
         return ' hovered';
       }
 
       const reqSet = this.courseService.hoveredRequiredSet();
-      if (reqSet.has(courseId) || reqSet.has(courseName)) {
+      if (reqSet.has(courseId)) {
         if (currentCourse.status === 'approved') {
           return '';
         }
@@ -54,7 +58,7 @@ export class CourseCardComponent {
       }
 
       const unlockSet = this.courseService.hoveredUnlockedSet();
-      if (unlockSet.has(courseId) || unlockSet.has(courseName)) {
+      if (unlockSet.has(courseId)) {
         return ' unlocks-highlight';
       }
 
@@ -65,11 +69,11 @@ export class CourseCardComponent {
 
     if (selectedIds.size === 0) return '';
 
-    if (selectedIds.has(courseId) || selectedIds.has(courseName)) {
+    if (selectedIds.has(courseId)) {
       return ' selected';
     }
 
-    const needsSet = new Set<string>();
+    const needsSet = new Set<number>();
     selectedIds.forEach((sid) => {
       const selectedCourse = this.courseService.getCourseById(sid);
       if (selectedCourse) {
@@ -79,7 +83,7 @@ export class CourseCardComponent {
       }
     });
 
-    if (needsSet.has(courseId) || needsSet.has(courseName)) {
+    if (needsSet.has(courseId)) {
       if (currentCourse.status === 'approved') {
         return '';
       }

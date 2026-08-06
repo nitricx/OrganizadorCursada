@@ -27,7 +27,6 @@ export class SidebarComponent {
   private readonly planService = inject(PlanService);
   private readonly courseService = inject(CourseService);
   private readonly router = inject(Router);
-  private planIdCounter = Math.max(...this.planService.plans().map((p) => Number(p.id)), 1);
 
   items = computed(() => [
     { label: 'Home', route: '/home' },
@@ -46,22 +45,12 @@ export class SidebarComponent {
   ]);
 
   addPlan(item: SidebarItem): void {
-    this.planIdCounter++;
-    const id = this.planIdCounter;
+    const existingIds = this.planService
+      .plans()
+      .map((p) => Number(p.id))
+      .filter((n) => !isNaN(n));
+    const nextId = existingIds.length > 0 ? Math.max(...existingIds) + 1 : 1;
     const labelNumber = this.planService.plans().length + 1;
-    const newChild: SidebarItem = {
-      label: `Plan de estudio ${labelNumber}`,
-      route: `/academicCalendar/plan/${id}`,
-      deletable: true,
-      id: id.toString(),
-    };
-    // Find the "Calendario Académico" item and add the new child
-    const currentItems = this.items();
-    const updatedItems = currentItems.map((i) =>
-      i.label === 'Calendario Académico'
-        ? { ...i, children: [...(i.children ?? []), newChild] }
-        : i,
-    );
-    this.planService.addPlan({ id: id.toString(), label: `Plan de estudio ${labelNumber}` });
+    this.planService.addPlan({ id: nextId.toString(), label: `Plan de estudio ${labelNumber}` });
   }
 }

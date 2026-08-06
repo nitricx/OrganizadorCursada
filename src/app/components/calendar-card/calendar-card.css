@@ -25,9 +25,9 @@
 
 /* Status: Pending (pendiente) */
 :host.status-pending {
-  background: #e8e7e0;
-  border-color: #888;
-  outline-color: #185fa5;
+  background: var(--status-pending-bg);
+  border-color: var(--status-pending-border);
+  outline-color: var(--status-available-border);
 }
 
 :host:focus-visible {
@@ -53,23 +53,23 @@
 
 /* Status: Coursing (cursando) */
 :host.status-coursing {
-  background: #fff8e1;
-  border-color: #d4b856;
-  outline-color: #d4b856;
+  background: var(--status-coursing-bg);
+  border-color: var(--status-coursing-border);
+  outline-color: var(--status-coursing-border);
 }
 
 /* Status: Planned (cursada) */
 :host.status-coursed {
-  background: #e6f1fb;
-  border-color: #185fa5;
-  outline-color: #185fa5;
+  background: var(--status-coursed-bg);
+  border-color: var(--status-coursed-border);
+  outline-color: var(--status-coursed-border);
 }
 
 /* Status: Finished (aprobada) */
 :host.status-approved {
-  background: #e1f5ee;
-  border-color: #0f6e56;
-  outline-color: #0f6e56;
+  background: var(--status-approved-bg);
+  border-color: var(--status-approved-border);
+  outline-color: var(--status-approved-border);
 }
 
 .calendar-card-content {

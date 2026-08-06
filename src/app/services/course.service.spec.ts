@@ -141,11 +141,11 @@ describe('CourseService - Lesson State Toggling', () => {
     });
   });
 
-  describe('downstream prerequisite locking', () => {
+  describe('downstream prerequisite locking with numeric IDs', () => {
     it('should block demoting a prerequisite if an active dependent course requires its current state', () => {
-      // Producción Audiovisual 1 & 2
-      const pa1 = service.courses().find((c) => c.id === 'Producción Audiovisual 1')!;
-      const pa2 = service.courses().find((c) => c.id === 'Producción Audiovisual 2')!;
+      // Producción Audiovisual 1 (id: 1) & Producción Audiovisual 2 (id: 12)
+      const pa1 = service.courses().find((c) => c.id === 1)!;
+      const pa2 = service.courses().find((c) => c.id === 12)!;
 
       // Approve PA1 first
       service.toggleCourseStatus(pa1.id); // coursing
@@ -187,10 +187,11 @@ describe('CourseService - Lesson State Toggling', () => {
     });
   });
 
-  describe('hover prerequisite and unlock visual sets', () => {
+  describe('hover prerequisite and unlock visual sets with numeric IDs', () => {
     it('should calculate hoveredRequiredSet and hoveredUnlockedSet when hovering a course', () => {
-      // Find a course with requirements (e.g. Postproducción Audiovisual 1 or Producción Audiovisual 2)
-      const pa2 = service.courses().find((c) => c.name === 'Producción Audiovisual 2')!;
+      const pa1 = service.courses().find((c) => c.id === 1)!;
+      const pa2 = service.courses().find((c) => c.id === 12)!;
+      expect(pa1).toBeDefined();
       expect(pa2).toBeDefined();
 
       service.setHoveredCourseId(pa2.id);
@@ -198,12 +199,130 @@ describe('CourseService - Lesson State Toggling', () => {
       const reqSet = service.hoveredRequiredSet();
       const unlockSet = service.hoveredUnlockedSet();
 
-      expect(reqSet.has('Producción Audiovisual 1')).toBe(true);
+      expect(reqSet.has(pa1.id)).toBe(true);
 
       // Clearing hover resets sets
       service.setHoveredCourseId(null);
       expect(service.hoveredRequiredSet().size).toBe(0);
       expect(service.hoveredUnlockedSet().size).toBe(0);
+    });
+
+    it('should correctly build unlockMap computed signal and return unlocked course IDs', () => {
+      const pa1Id = 1; // Producción Audiovisual 1
+      const pa2Id = 12; // Producción Audiovisual 2
+
+      const unlockMap = service.unlockMap();
+      expect(unlockMap).toBeDefined();
+      expect(unlockMap.has(pa1Id)).toBe(true);
+
+      const pa1Unlocks = unlockMap.get(pa1Id);
+      expect(pa1Unlocks?.has(pa2Id)).toBe(true);
+
+      const unlockedIds = service.getUnlockedCourseIds(pa1Id);
+      expect(unlockedIds).toContain(pa2Id);
+    });
+  });
+
+  describe('unified reactive state consolidation with numeric IDs', () => {
+    it('should update course status and all lesson statuses atomically when toggleCourseStatus is called', () => {
+      const course = service.courses()[0];
+      expect(course.status).toBe('pending');
+      expect(course.lessons.every((l) => l.status === 'pending')).toBe(true);
+
+      service.toggleCourseStatus(course.id);
+
+      const updatedCourse = service.getCourseById(course.id)!;
+      expect(updatedCourse.status).toBe('coursing');
+      expect(updatedCourse.lessons.every((l) => l.status === 'coursing')).toBe(true);
+    });
+
+    it('should sync course status when all lessons are toggled to the same status', () => {
+      const course = service.courses()[0];
+      course.lessons.forEach((lesson) => {
+        service.toggleLessonStatus(lesson.id);
+      });
+
+      const updatedCourse = service.getCourseById(course.id)!;
+      expect(updatedCourse.status).toBe('coursing');
+      expect(updatedCourse.lessons.every((l) => l.status === 'coursing')).toBe(true);
+    });
+
+    it('should migrate legacy separate courseStatuses and lessonStatuses from localStorage cleanly using numeric IDs', () => {
+      const legacyState = {
+        courseStatuses: {
+          'Producción Audiovisual 1': 'coursing',
+        },
+        lessonStatuses: {
+          'PA1-L1': 'coursing',
+          'PA1-L2': 'coursing',
+        },
+      };
+
+      const mockStore: Record<string, string> = {
+        'course-organizer-state': JSON.stringify(legacyState),
+      };
+
+      const mockLocalStorage = {
+        getItem: (key: string) => mockStore[key] || null,
+        setItem: (key: string, value: string) => {
+          mockStore[key] = value;
+        },
+        clear: () => {},
+        removeItem: () => {},
+      };
+
+      Object.defineProperty(globalThis, 'localStorage', {
+        value: mockLocalStorage,
+        configurable: true,
+        writable: true,
+      });
+
+      // Re-create service instance to trigger loadState()
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({});
+      const newService = TestBed.inject(CourseService);
+      const pa1 = newService.getCourseById(1);
+
+      expect(pa1?.status).toBe('coursing');
+      expect(pa1?.lessons[0].status).toBe('coursing');
+    });
+
+    it('should sanitize corrupted localStorage courseStates data without failing', () => {
+      const corruptedState = {
+        courseStates: {
+          '1': { status: 'invalid_status', lessonStatuses: { 'PA1-L1': 'bad_status' } },
+          'not_a_number': { status: 'approved' },
+          '12': null,
+        },
+      };
+
+      const mockStore: Record<string, string> = {
+        'course-organizer-state': JSON.stringify(corruptedState),
+      };
+
+      const mockLocalStorage = {
+        getItem: (key: string) => mockStore[key] || null,
+        setItem: (key: string, value: string) => {
+          mockStore[key] = value;
+        },
+        clear: () => {},
+        removeItem: () => {},
+      };
+
+      Object.defineProperty(globalThis, 'localStorage', {
+        value: mockLocalStorage,
+        configurable: true,
+        writable: true,
+      });
+
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({});
+      const newService = TestBed.inject(CourseService);
+      const pa1 = newService.getCourseById(1);
+      const pa2 = newService.getCourseById(12);
+
+      expect(pa1?.status).toBe('pending');
+      expect(pa2?.status).toBe('pending');
     });
   });
 });
