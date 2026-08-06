@@ -183,8 +183,18 @@ export class CourseService {
     }
 
     if (targetStatus === 'coursing' || targetStatus === 'coursed') {
-      // All cursarReq must be at least 'coursed'
-      return this.areRequirementsSatisfied(course.cursarReq, 'coursed');
+      // 1. Direct cursarReq must be at least 'coursed' or 'approved'
+      const cursarReqMet = this.areRequirementsSatisfied(course.cursarReq, 'coursed');
+      if (!cursarReqMet) return false;
+
+      // 2. Nested aprobarReq of prerequisites must be 'approved'
+      // (e.g. to course Math 3, Math 2 must be 'coursed' AND Math 1 [Math 2's aprobarReq] must be 'approved')
+      const courses = this.currentRawCourses();
+      return course.cursarReq.every((reqName) => {
+        const reqCourse = courses.find((c) => c.name === reqName);
+        if (!reqCourse) return true;
+        return this.areRequirementsSatisfied(reqCourse.aprobarReq, 'approved');
+      });
     }
 
     if (targetStatus === 'approved') {

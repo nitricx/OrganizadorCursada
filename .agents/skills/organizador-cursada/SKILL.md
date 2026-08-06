@@ -34,9 +34,11 @@ This skill provides context, rules, and guidelines for AI agents working on the 
    +-----------------------------------------------+
 ```
 1. **`pending` (Pendiente)**: Default state. Not yet enrolled or taken.
-2. **`coursing` (Cursando)**: Currently attending classes in the active term. Requires all `cursarReq` subjects to be at least `coursed` or `approved`.
-3. **`coursed` (Cursada / Regular)**: Passed the continuous assessment / attendance, pending final exam. Requires all `cursarReq` subjects to be at least `coursed` or `approved`.
-4. **`approved` (Aprobada / Promocionada / Final Aprobado)**: Subject completed and credited. Requires all `aprobarReq` subjects to be `approved`.
+2. **`coursing` (Cursando)**: Currently attending classes in the active term.
+   - Requires direct `cursarReq` subjects to be at least `coursed` or `approved`.
+   - Requires nested prior prerequisites (`aprobarReq` of direct `cursarReq` subjects) to be `approved` (e.g. to course Math 3, Math 2 must be `coursed` AND Math 1 must be `approved`).
+3. **`coursed` (Cursada / Regular)**: Passed continuous assessment / attendance, pending final exam. Same prerequisite constraints as `coursing`.
+4. **`approved` (Aprobada / Promocionada / Final Aprobado)**: Subject completed and credited. Requires direct `aprobarReq` subjects to be `approved`.
 
 ---
 

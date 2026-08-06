@@ -1,3 +1,11 @@
+/**
+ * Represents the academic completion state of a course or lesson session.
+ *
+ * - `'pending'` (Pendiente): Default state. Subject has not yet been enrolled or taken.
+ * - `'coursing'` (Cursando): Currently attending classes during the active term. Requires direct `cursarReq` prerequisites to be at least `'coursed'` and nested prior prerequisites (`aprobarReq` of those prerequisites) to be `'approved'`.
+ * - `'coursed'` (Cursada / Regular): Passed continuous assessment/attendance, pending final exam. Requires direct `cursarReq` prerequisites to be at least `'coursed'` and nested prior prerequisites to be `'approved'`.
+ * - `'approved'` (Aprobada / Promocionada): Subject fully completed and credited (final exam passed or promoted). Requires direct `aprobarReq` prerequisites to be `'approved'`.
+ */
 export type CourseStatus = 'pending' | 'coursing' | 'coursed' | 'approved';
 
 export enum DayOfWeek {
