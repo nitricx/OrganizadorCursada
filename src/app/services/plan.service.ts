@@ -1,4 +1,9 @@
 import { Injectable, signal } from '@angular/core';
+import {
+  sanitizePlans,
+  sanitizeSemesterSlots,
+  sanitizeStartingYear,
+} from '../utils/storage-sanitizer.utils';
 
 export interface Plan {
   id: string;
@@ -93,14 +98,12 @@ export class PlanService {
     const raw = this.safeGetItem(PlanService.PLANS_KEY);
     if (raw !== null) {
       try {
-        const parsed = JSON.parse(raw) as Plan[];
-        const deduplicated = parsed.filter(
-          (p, i, arr) => arr.findIndex((x) => x.id === p.id) === i,
-        );
-        if (deduplicated.length !== parsed.length) {
-          this.safeSetItem(PlanService.PLANS_KEY, JSON.stringify(deduplicated));
+        const parsed = JSON.parse(raw);
+        const sanitized = sanitizePlans(parsed, PlanService.DEFAULT_PLANS);
+        if (JSON.stringify(sanitized) !== raw) {
+          this.safeSetItem(PlanService.PLANS_KEY, JSON.stringify(sanitized));
         }
-        return deduplicated;
+        return sanitized;
       } catch {
         return PlanService.DEFAULT_PLANS;
       }
@@ -117,8 +120,9 @@ export class PlanService {
       const raw = this.safeGetItem(this.semesterListKey(plan.id));
       if (raw !== null) {
         try {
-          const slots = JSON.parse(raw) as SemesterSlot[];
-          map.set(plan.id, slots);
+          const parsed = JSON.parse(raw);
+          const sanitized = sanitizeSemesterSlots(parsed);
+          map.set(plan.id, sanitized);
         } catch {}
       }
     }
@@ -128,12 +132,14 @@ export class PlanService {
   private loadAllStartingYears(): Map<string, number> {
     const map = new Map<string, number>();
     const plans = this.plansSignal ? this.plansSignal() : this.loadPlans();
+    const defaultYear = new Date().getFullYear();
     for (const plan of plans) {
       const raw = this.safeGetItem(this.startingYearKey(plan.id));
       if (raw !== null) {
         try {
-          const year = JSON.parse(raw) as number;
-          map.set(plan.id, year);
+          const parsed = JSON.parse(raw);
+          const sanitized = sanitizeStartingYear(parsed, defaultYear);
+          map.set(plan.id, sanitized);
         } catch {}
       }
     }

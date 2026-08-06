@@ -51,7 +51,7 @@ Este archivo documenta las características pendientes, mejoras de experiencia d
   - Convertir la construcción del mapa de materias que habilita cada curso en un `computed()` signal en `CourseService`.
 - [x] **3.7 Centralización de Constantes de Estado y Colores**
   - Unificar las etiquetas en español y estilos CSS de los estados de cursada en un diccionario/configurador único.
-- [ ] **3.8 Sanitización y Guardas de Tipo para `localStorage`**
+- [x] **3.8 Sanitización y Guardas de Tipo para `localStorage`**
   - Validar estructuras parseadas desde almacenamiento local y corregir el contador de IDs en `SidebarComponent`.
 - [ ] **3.9 Limpieza de Console Logs de Depuración**
   - Remover llamadas a `console.log` en `CalendarCard` y otros componentes de UI.

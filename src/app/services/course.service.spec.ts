@@ -286,5 +286,43 @@ describe('CourseService - Lesson State Toggling', () => {
       expect(pa1?.status).toBe('coursing');
       expect(pa1?.lessons[0].status).toBe('coursing');
     });
+
+    it('should sanitize corrupted localStorage courseStates data without failing', () => {
+      const corruptedState = {
+        courseStates: {
+          '1': { status: 'invalid_status', lessonStatuses: { 'PA1-L1': 'bad_status' } },
+          'not_a_number': { status: 'approved' },
+          '12': null,
+        },
+      };
+
+      const mockStore: Record<string, string> = {
+        'course-organizer-state': JSON.stringify(corruptedState),
+      };
+
+      const mockLocalStorage = {
+        getItem: (key: string) => mockStore[key] || null,
+        setItem: (key: string, value: string) => {
+          mockStore[key] = value;
+        },
+        clear: () => {},
+        removeItem: () => {},
+      };
+
+      Object.defineProperty(globalThis, 'localStorage', {
+        value: mockLocalStorage,
+        configurable: true,
+        writable: true,
+      });
+
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({});
+      const newService = TestBed.inject(CourseService);
+      const pa1 = newService.getCourseById(1);
+      const pa2 = newService.getCourseById(12);
+
+      expect(pa1?.status).toBe('pending');
+      expect(pa2?.status).toBe('pending');
+    });
   });
 });

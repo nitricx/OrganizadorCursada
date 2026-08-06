@@ -2,6 +2,10 @@ import { Injectable, effect } from '@angular/core';
 import { signal, computed } from '@angular/core';
 import { Course, CourseStatus } from '../models/course';
 import { COURSES_DATA } from '../data/courses.data';
+import {
+  sanitizeCoursesByPlan,
+  sanitizeCourseStatesMap,
+} from '../utils/storage-sanitizer.utils';
 
 export interface CourseStateEntry {
   status: CourseStatus;
@@ -445,19 +449,17 @@ export class CourseService {
       if (!stored) return;
 
       const state = JSON.parse(stored);
+      if (typeof state !== 'object' || state === null) return;
 
       if (state.coursesByPlan) {
-        this.coursesByPlanSignal.set(this.deserializeCoursesByPlan(state.coursesByPlan));
+        const sanitizedByPlan = sanitizeCoursesByPlan(state.coursesByPlan);
+        if (sanitizedByPlan.size > 0) {
+          this.coursesByPlanSignal.set(sanitizedByPlan);
+        }
       }
 
       if (state.courseStates) {
-        const loadedMap = new Map<number, CourseStateEntry>();
-        Object.entries(state.courseStates).forEach(([k, v]) => {
-          const numericId = Number(k);
-          if (!isNaN(numericId)) {
-            loadedMap.set(numericId, v as CourseStateEntry);
-          }
-        });
+        const loadedMap = sanitizeCourseStatesMap(state.courseStates);
         this.courseStateSignal.set(loadedMap);
       } else if (state.courseStatuses || state.lessonStatuses) {
         // Legacy migration from separate courseStatuses and lessonStatuses
@@ -497,11 +499,7 @@ export class CourseService {
     return result;
   }
 
-  private deserializeCoursesByPlan(data: Record<string, Course[]>): Map<string, Course[]> {
-    const coursesByPlan = new Map<string, Course[]>();
-    Object.entries(data).forEach(([planId, courses]) => {
-      coursesByPlan.set(planId, courses as Course[]);
-    });
-    return coursesByPlan;
+  private deserializeCoursesByPlan(data: unknown): Map<string, Course[]> {
+    return sanitizeCoursesByPlan(data);
   }
 }

@@ -118,5 +118,16 @@ describe('PlanService', () => {
     expect(q2Dates.startDate).toBeTruthy();
     expect(q2Dates.endDate).toBeTruthy();
   });
+
+  it('should recover gracefully from corrupted localStorage plans data', () => {
+    try {
+      if (typeof localStorage !== 'undefined' && localStorage) {
+        localStorage.setItem('plans', JSON.stringify([{ invalid: 'data' }, 'corrupted']));
+      }
+    } catch {}
+
+    const newService = new PlanService();
+    expect(newService.plans()).toEqual([{ id: '1', label: 'Plan de estudio 1' }]);
+  });
 });
 
