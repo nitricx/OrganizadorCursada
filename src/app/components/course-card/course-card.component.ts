@@ -34,12 +34,40 @@ export class CourseCardComponent {
   });
 
   highlightClass = computed(() => {
-    const courseId = this.course().id;
+    const currentCourse = this.course();
+    const courseId = currentCourse.id;
+    const courseName = currentCourse.name;
+
+    const hoveredId = this.courseService.hoveredCourseId();
+
+    if (hoveredId) {
+      if (hoveredId === courseId || hoveredId === courseName) {
+        return ' hovered';
+      }
+
+      const reqSet = this.courseService.hoveredRequiredSet();
+      if (reqSet.has(courseId) || reqSet.has(courseName)) {
+        if (currentCourse.status === 'approved') {
+          return '';
+        }
+        return ' req-highlight';
+      }
+
+      const unlockSet = this.courseService.hoveredUnlockedSet();
+      if (unlockSet.has(courseId) || unlockSet.has(courseName)) {
+        return ' unlocks-highlight';
+      }
+
+      return ' dim';
+    }
+
     const selectedIds = this.selectedIds();
 
     if (selectedIds.size === 0) return '';
 
-    if (selectedIds.has(courseId)) return ' selected';
+    if (selectedIds.has(courseId) || selectedIds.has(courseName)) {
+      return ' selected';
+    }
 
     const needsSet = new Set<string>();
     selectedIds.forEach((sid) => {
@@ -51,11 +79,14 @@ export class CourseCardComponent {
       }
     });
 
-    if (needsSet.has(courseId)) {
+    if (needsSet.has(courseId) || needsSet.has(courseName)) {
+      if (currentCourse.status === 'approved') {
+        return '';
+      }
       return ' req-highlight';
     }
 
-    return '';
+    return ' dim';
   });
 
   onCardClick(): void {

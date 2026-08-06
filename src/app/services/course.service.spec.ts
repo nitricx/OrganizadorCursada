@@ -186,4 +186,24 @@ describe('CourseService - Lesson State Toggling', () => {
       expect(reset[1]?.lessons[0]?.status).toBe('pending');
     });
   });
+
+  describe('hover prerequisite and unlock visual sets', () => {
+    it('should calculate hoveredRequiredSet and hoveredUnlockedSet when hovering a course', () => {
+      // Find a course with requirements (e.g. Postproducción Audiovisual 1 or Producción Audiovisual 2)
+      const pa2 = service.courses().find((c) => c.name === 'Producción Audiovisual 2')!;
+      expect(pa2).toBeDefined();
+
+      service.setHoveredCourseId(pa2.id);
+
+      const reqSet = service.hoveredRequiredSet();
+      const unlockSet = service.hoveredUnlockedSet();
+
+      expect(reqSet.has('Producción Audiovisual 1')).toBe(true);
+
+      // Clearing hover resets sets
+      service.setHoveredCourseId(null);
+      expect(service.hoveredRequiredSet().size).toBe(0);
+      expect(service.hoveredUnlockedSet().size).toBe(0);
+    });
+  });
 });

@@ -40,6 +40,34 @@ export class CourseService {
   selectedIds = computed(() => this.selectedIdsSignal());
   hoveredCourseId = computed(() => this.hoveredCourseIdSignal());
 
+  readonly hoveredRequiredSet = computed(() => {
+    const hoveredId = this.hoveredCourseIdSignal();
+    if (!hoveredId) return new Set<string>();
+    const course = this.getCourseById(hoveredId);
+    if (!course) return new Set<string>();
+    const reqs = this.getRequiredCourseIds(course);
+    const set = new Set<string>(reqs);
+    reqs.forEach((reqName) => {
+      const match = this.courses().find((c) => c.name === reqName);
+      if (match) set.add(match.id);
+    });
+    return set;
+  });
+
+  readonly hoveredUnlockedSet = computed(() => {
+    const hoveredId = this.hoveredCourseIdSignal();
+    if (!hoveredId) return new Set<string>();
+    const unlockedIds = this.getUnlockedCourseIds(hoveredId);
+    const set = new Set<string>(unlockedIds);
+    unlockedIds.forEach((uId) => {
+      const course = this.getCourseById(uId);
+      if (course) {
+        set.add(course.name);
+      }
+    });
+    return set;
+  });
+
   private readonly rawCourseByIdMap = computed(() => {
     const map = new Map<string, Course>();
     const courses = this.coursesByPlanSignal().get(this.currentPlanIdSignal()) ?? [];
@@ -115,13 +143,15 @@ export class CourseService {
     const courses = this.currentRawCourses();
 
     courses.forEach((course) => {
-      map.set(course.id, new Set());
+      if (!map.has(course.id)) map.set(course.id, new Set());
+      if (!map.has(course.name)) map.set(course.name, new Set());
     });
 
     courses.forEach((target) => {
       const allReqs = [...new Set([...target.cursarReq, ...target.aprobarReq])];
-      allReqs.forEach((reqId) => {
-        map.get(reqId)?.add(target.id);
+      allReqs.forEach((req) => {
+        map.get(req)?.add(target.id);
+        map.get(req)?.add(target.name);
       });
     });
 
@@ -141,7 +171,13 @@ export class CourseService {
 
   getUnlockedCourseIds(courseId: string): string[] {
     const unlockMap = this.buildUnlockMap();
-    return Array.from(unlockMap.get(courseId) || []);
+    const course = this.getCourseById(courseId);
+    const byId = unlockMap.get(courseId);
+    const byName = course ? unlockMap.get(course.name) : undefined;
+    const combined = new Set<string>();
+    byId?.forEach((id) => combined.add(id));
+    byName?.forEach((id) => combined.add(id));
+    return Array.from(combined);
   }
 
   private areRequirementsSatisfied(

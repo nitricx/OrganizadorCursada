@@ -184,6 +184,13 @@ h1 {
   border-color: #0f6e56 !important;
 }
 
+.materia.hovered {
+  box-shadow: 0 0 0 3px #185fa5, 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+  z-index: 2;
+  opacity: 1;
+}
+
 .materia.selected {
   opacity: 1;
 }
