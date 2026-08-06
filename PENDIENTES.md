@@ -47,7 +47,7 @@ Este archivo documenta las características pendientes, mejoras de experiencia d
   - Extraer cálculos de solapamiento de horarios, conversión de tiempos y generación de franjas de `calendar.ts` hacia una utilidad pura `calendar-layout.utils.ts`.
 - [x] **3.5 Reactividad Completa en `PlanService`**
   - Migrar la lectura/escritura de listas de cuatrimestres y año inicial a Signals reactivas en `PlanService`.
-- [ ] **3.6 Memoización de Correlatividades y Unlocks (`buildUnlockMap`)**
+- [x] **3.6 Memoización de Correlatividades y Unlocks (`buildUnlockMap`)**
   - Convertir la construcción del mapa de materias que habilita cada curso en un `computed()` signal en `CourseService`.
 - [ ] **3.7 Centralización de Constantes de Estado y Colores**
   - Unificar las etiquetas en español y estilos CSS de los estados de cursada en un diccionario/configurador único.

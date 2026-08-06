@@ -56,10 +56,29 @@ export class CourseService {
     return new Set<number>(this.getRequiredCourseIds(course));
   });
 
+  readonly unlockMap = computed<Map<number, Set<number>>>(() => {
+    const map = new Map<number, Set<number>>();
+    const rawCourses = this.coursesByPlanSignal().get(this.currentPlanIdSignal()) ?? [];
+
+    rawCourses.forEach((course) => {
+      map.set(course.id, new Set());
+    });
+
+    rawCourses.forEach((target) => {
+      const allReqs = new Set([...target.cursarReqId, ...target.aprobarReqId]);
+      allReqs.forEach((reqId) => {
+        map.get(reqId)?.add(target.id);
+      });
+    });
+
+    return map;
+  });
+
   readonly hoveredUnlockedSet = computed(() => {
     const hoveredId = this.hoveredCourseIdSignal();
     if (hoveredId === null) return new Set<number>();
-    return new Set<number>(this.getUnlockedCourseIds(hoveredId));
+    const byId = this.unlockMap().get(hoveredId);
+    return byId ? new Set<number>(byId) : new Set<number>();
   });
 
   private readonly rawCourseByIdMap = computed(() => {
@@ -135,24 +154,6 @@ export class CourseService {
     return states;
   }
 
-  private buildUnlockMap(): Map<number, Set<number>> {
-    const map = new Map<number, Set<number>>();
-    const courses = this.currentRawCourses();
-
-    courses.forEach((course) => {
-      map.set(course.id, new Set());
-    });
-
-    courses.forEach((target) => {
-      const allReqs = [...new Set([...target.cursarReqId, ...target.aprobarReqId])];
-      allReqs.forEach((reqId) => {
-        map.get(reqId)?.add(target.id);
-      });
-    });
-
-    return map;
-  }
-
   getCourseById(id: number): Course | undefined {
     const raw = this.rawCourseByIdMap().get(id);
     if (!raw) return undefined;
@@ -173,8 +174,7 @@ export class CourseService {
   }
 
   getUnlockedCourseIds(courseId: number): number[] {
-    const unlockMap = this.buildUnlockMap();
-    const byId = unlockMap.get(courseId);
+    const byId = this.unlockMap().get(courseId);
     return byId ? Array.from(byId) : [];
   }
 

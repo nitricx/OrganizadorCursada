@@ -206,6 +206,21 @@ describe('CourseService - Lesson State Toggling', () => {
       expect(service.hoveredRequiredSet().size).toBe(0);
       expect(service.hoveredUnlockedSet().size).toBe(0);
     });
+
+    it('should correctly build unlockMap computed signal and return unlocked course IDs', () => {
+      const pa1Id = 1; // Producción Audiovisual 1
+      const pa2Id = 12; // Producción Audiovisual 2
+
+      const unlockMap = service.unlockMap();
+      expect(unlockMap).toBeDefined();
+      expect(unlockMap.has(pa1Id)).toBe(true);
+
+      const pa1Unlocks = unlockMap.get(pa1Id);
+      expect(pa1Unlocks?.has(pa2Id)).toBe(true);
+
+      const unlockedIds = service.getUnlockedCourseIds(pa1Id);
+      expect(unlockedIds).toContain(pa2Id);
+    });
   });
 
   describe('unified reactive state consolidation with numeric IDs', () => {
