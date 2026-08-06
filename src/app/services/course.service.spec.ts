@@ -206,4 +206,69 @@ describe('CourseService - Lesson State Toggling', () => {
       expect(service.hoveredUnlockedSet().size).toBe(0);
     });
   });
+
+  describe('unified reactive state consolidation', () => {
+    it('should update course status and all lesson statuses atomically when toggleCourseStatus is called', () => {
+      const course = service.courses()[0];
+      expect(course.status).toBe('pending');
+      expect(course.lessons.every((l) => l.status === 'pending')).toBe(true);
+
+      service.toggleCourseStatus(course.id);
+
+      const updatedCourse = service.getCourseById(course.id)!;
+      expect(updatedCourse.status).toBe('coursing');
+      expect(updatedCourse.lessons.every((l) => l.status === 'coursing')).toBe(true);
+    });
+
+    it('should sync course status when all lessons are toggled to the same status', () => {
+      const course = service.courses()[0];
+      course.lessons.forEach((lesson) => {
+        service.toggleLessonStatus(lesson.id);
+      });
+
+      const updatedCourse = service.getCourseById(course.id)!;
+      expect(updatedCourse.status).toBe('coursing');
+      expect(updatedCourse.lessons.every((l) => l.status === 'coursing')).toBe(true);
+    });
+
+    it('should migrate legacy separate courseStatuses and lessonStatuses from localStorage cleanly', () => {
+      const legacyState = {
+        courseStatuses: {
+          'Producción Audiovisual 1': 'coursing',
+        },
+        lessonStatuses: {
+          'PA1-L1': 'coursing',
+          'PA1-L2': 'coursing',
+        },
+      };
+
+      const mockStore: Record<string, string> = {
+        'course-organizer-state': JSON.stringify(legacyState),
+      };
+
+      const mockLocalStorage = {
+        getItem: (key: string) => mockStore[key] || null,
+        setItem: (key: string, value: string) => {
+          mockStore[key] = value;
+        },
+        clear: () => {},
+        removeItem: () => {},
+      };
+
+      Object.defineProperty(globalThis, 'localStorage', {
+        value: mockLocalStorage,
+        configurable: true,
+        writable: true,
+      });
+
+      // Re-create service instance to trigger loadState()
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({});
+      const newService = TestBed.inject(CourseService);
+      const pa1 = newService.getCourseById('Producción Audiovisual 1');
+
+      expect(pa1?.status).toBe('coursing');
+      expect(pa1?.lessons[0].status).toBe('coursing');
+    });
+  });
 });

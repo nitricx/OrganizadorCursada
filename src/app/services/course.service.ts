@@ -3,15 +3,19 @@ import { signal, computed } from '@angular/core';
 import { Course, CourseStatus } from '../models/course';
 import { COURSES_DATA } from '../data/courses.data';
 
+export interface CourseStateEntry {
+  status: CourseStatus;
+  lessonStatuses: Record<string, CourseStatus>;
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class CourseService {
   // Layout per plan (which semester each subject is placed in)
   private coursesByPlanSignal = signal<Map<string, Course[]>>(new Map());
-  // Single source of truth for statuses — shared across all views
-  private courseStatusesSignal = signal<Map<string, CourseStatus>>(new Map());
-  private lessonStatusesSignal = signal<Map<string, CourseStatus>>(new Map());
+  // Single unified source of truth for course & lesson statuses — shared across all views
+  private courseStateSignal = signal<Map<string, CourseStateEntry>>(new Map());
   private currentPlanIdSignal = signal<string>('1');
   private selectedIdsSignal = signal<Set<string>>(new Set());
   private hoveredCourseIdSignal = signal<string | null>(null);
@@ -22,19 +26,28 @@ export class CourseService {
     return this.getCoursesForPlan(this.currentPlanIdSignal());
   });
 
+  private getBaseCourseId(id: string): string {
+    return id.replace(/(-Y\d+Q\d+)+$/g, '');
+  }
+
   getCoursesForPlan(planId: string): Course[] {
     const rawCourses = this.coursesByPlanSignal().get(planId) ?? [];
-    const courseStatuses = this.courseStatusesSignal();
-    const lessonStatuses = this.lessonStatusesSignal();
+    const stateMap = this.courseStateSignal();
 
-    return rawCourses.map((course) => ({
-      ...course,
-      status: (courseStatuses.get(course.id) ?? 'pending') as CourseStatus,
-      lessons: course.lessons.map((lesson) => ({
-        ...lesson,
-        status: (lessonStatuses.get(lesson.id) ?? 'pending') as CourseStatus,
-      })),
-    }));
+    return rawCourses.map((course) => {
+      const baseId = this.getBaseCourseId(course.id);
+      const courseState = stateMap.get(baseId);
+      const courseStatus = courseState?.status ?? 'pending';
+
+      return {
+        ...course,
+        status: courseStatus,
+        lessons: course.lessons.map((lesson) => ({
+          ...lesson,
+          status: courseState?.lessonStatuses[lesson.id] ?? courseStatus,
+        })),
+      };
+    });
   }
 
   selectedIds = computed(() => this.selectedIdsSignal());
@@ -81,26 +94,33 @@ export class CourseService {
     const initialCourses = new Map<string, Course[]>();
     initialCourses.set('1', this.initializeCourses());
     this.coursesByPlanSignal.set(initialCourses);
-    this.courseStatusesSignal.set(this.initializeCourseStatuses());
-    this.lessonStatusesSignal.set(this.initializeLessonStatuses());
+    this.courseStateSignal.set(this.initializeCourseStates());
 
     this.loadState();
 
     effect(() => {
       this.coursesByPlanSignal();
-      this.courseStatusesSignal();
-      this.lessonStatusesSignal();
+      this.courseStateSignal();
       this.saveState();
     });
   }
 
   private currentRawCourses(): Course[] {
     const courses = this.coursesByPlanSignal().get(this.currentPlanIdSignal()) ?? [];
-    const courseStatuses = this.courseStatusesSignal();
-    return courses.map((c) => ({
-      ...c,
-      status: (courseStatuses.get(c.id) ?? 'pending') as CourseStatus,
-    }));
+    const stateMap = this.courseStateSignal();
+    return courses.map((c) => {
+      const baseId = this.getBaseCourseId(c.id);
+      const courseState = stateMap.get(baseId);
+      const courseStatus = courseState?.status ?? 'pending';
+      return {
+        ...c,
+        status: courseStatus,
+        lessons: c.lessons.map((lesson) => ({
+          ...lesson,
+          status: courseState?.lessonStatuses[lesson.id] ?? courseStatus,
+        })),
+      };
+    });
   }
 
   private setCurrentRawCourses(courses: Course[]): void {
@@ -120,22 +140,19 @@ export class CourseService {
     }));
   }
 
-  private initializeCourseStatuses(): Map<string, CourseStatus> {
-    const statuses = new Map<string, CourseStatus>();
+  private initializeCourseStates(): Map<string, CourseStateEntry> {
+    const states = new Map<string, CourseStateEntry>();
     COURSES_DATA.forEach((course) => {
-      statuses.set(course.id, 'pending');
-    });
-    return statuses;
-  }
-
-  private initializeLessonStatuses(): Map<string, CourseStatus> {
-    const statuses = new Map<string, CourseStatus>();
-    COURSES_DATA.forEach((course) => {
+      const lessonStatuses: Record<string, CourseStatus> = {};
       course.lessons.forEach((lesson) => {
-        statuses.set(lesson.id, 'pending');
+        lessonStatuses[lesson.id] = 'pending';
+      });
+      states.set(course.id, {
+        status: 'pending',
+        lessonStatuses,
       });
     });
-    return statuses;
+    return states;
   }
 
   private buildUnlockMap(): Map<string, Set<string>> {
@@ -161,8 +178,17 @@ export class CourseService {
   getCourseById(id: string): Course | undefined {
     const raw = this.rawCourseByIdMap().get(id);
     if (!raw) return undefined;
-    const status = (this.courseStatusesSignal().get(id) ?? 'pending') as CourseStatus;
-    return { ...raw, status };
+    const baseId = this.getBaseCourseId(id);
+    const courseState = this.courseStateSignal().get(baseId);
+    const status = courseState?.status ?? 'pending';
+    return {
+      ...raw,
+      status,
+      lessons: raw.lessons.map((lesson) => ({
+        ...lesson,
+        status: courseState?.lessonStatuses[lesson.id] ?? status,
+      })),
+    };
   }
 
   getRequiredCourseIds(course: Course): string[] {
@@ -264,6 +290,8 @@ export class CourseService {
     const course = this.getCourseById(courseId);
     if (!course) return;
 
+    const baseId = this.getBaseCourseId(course.id);
+
     let nextStatus: CourseStatus;
     if (course.status === 'pending') {
       nextStatus = 'coursing';
@@ -276,54 +304,64 @@ export class CourseService {
     }
 
     if (this.canChangeStatusTo(courseId, nextStatus)) {
-      const updatedCourseStatuses = new Map(this.courseStatusesSignal());
-      updatedCourseStatuses.set(courseId, nextStatus);
-      this.courseStatusesSignal.set(updatedCourseStatuses);
+      const stateMap = new Map(this.courseStateSignal());
+      const existing = stateMap.get(baseId);
 
-      const updatedLessonStatuses = new Map(this.lessonStatusesSignal());
+      const updatedLessonStatuses: Record<string, CourseStatus> = {
+        ...(existing?.lessonStatuses ?? {}),
+      };
       course.lessons.forEach((lesson) => {
-        updatedLessonStatuses.set(lesson.id, nextStatus);
+        updatedLessonStatuses[lesson.id] = nextStatus;
       });
-      this.lessonStatusesSignal.set(updatedLessonStatuses);
+
+      stateMap.set(baseId, {
+        status: nextStatus,
+        lessonStatuses: updatedLessonStatuses,
+      });
+      this.courseStateSignal.set(stateMap);
     }
   }
 
   toggleLessonStatus(lessonId: string): void {
-    const lessonStatuses = this.lessonStatusesSignal();
-    const oldStatus = lessonStatuses.get(lessonId) ?? 'pending';
-    let nextStatus: CourseStatus;
+    const courses = this.currentRawCourses();
+    const course = courses.find((c) => c.lessons.some((l) => l.id === lessonId));
+    if (!course) return;
 
-    if (oldStatus === 'pending') {
+    const baseId = this.getBaseCourseId(course.id);
+    const stateMap = new Map(this.courseStateSignal());
+    const existing = stateMap.get(baseId) ?? {
+      status: 'pending',
+      lessonStatuses: {},
+    };
+
+    const oldLessonStatus = existing.lessonStatuses[lessonId] ?? existing.status ?? 'pending';
+    let nextStatus: CourseStatus;
+    if (oldLessonStatus === 'pending') {
       nextStatus = 'coursing';
-    } else if (oldStatus === 'coursing') {
+    } else if (oldLessonStatus === 'coursing') {
       nextStatus = 'coursed';
-    } else if (oldStatus === 'coursed') {
+    } else if (oldLessonStatus === 'coursed') {
       nextStatus = 'approved';
     } else {
       nextStatus = 'pending';
     }
 
-    const updatedLessonStatuses = new Map(lessonStatuses);
-    updatedLessonStatuses.set(lessonId, nextStatus);
-    this.lessonStatusesSignal.set(updatedLessonStatuses);
+    const updatedLessonStatuses: Record<string, CourseStatus> = {
+      ...existing.lessonStatuses,
+      [lessonId]: nextStatus,
+    };
 
-    this.syncCourseStatusFromLessons(lessonId);
-  }
-
-  private syncCourseStatusFromLessons(lessonId: string): void {
-    const courses = this.currentRawCourses();
-    const course = courses.find((c) => c.lessons.some((l) => l.id === lessonId));
-    if (!course) return;
-
-    const lessonStatuses = this.lessonStatusesSignal();
-    const lessonStatusValues = course.lessons.map((l) => lessonStatuses.get(l.id) ?? 'pending');
+    const lessonStatusValues = course.lessons.map(
+      (l) => updatedLessonStatuses[l.id] ?? 'pending',
+    );
     const allSameStatus = lessonStatusValues.every((s) => s === lessonStatusValues[0]);
+    const newCourseStatus = allSameStatus ? lessonStatusValues[0] : existing.status;
 
-    if (allSameStatus) {
-      const updatedCourseStatuses = new Map(this.courseStatusesSignal());
-      updatedCourseStatuses.set(course.id, lessonStatusValues[0]);
-      this.courseStatusesSignal.set(updatedCourseStatuses);
-    }
+    stateMap.set(baseId, {
+      status: newCourseStatus,
+      lessonStatuses: updatedLessonStatuses,
+    });
+    this.courseStateSignal.set(stateMap);
   }
 
   toggleCourseSelection(courseId: string): void {
@@ -341,8 +379,7 @@ export class CourseService {
   }
 
   reset(): void {
-    this.courseStatusesSignal.set(this.initializeCourseStatuses());
-    this.lessonStatusesSignal.set(this.initializeLessonStatuses());
+    this.courseStateSignal.set(this.initializeCourseStates());
     this.setCurrentRawCourses(this.initializeCourses());
     this.selectedIdsSignal.set(new Set());
   }
@@ -397,7 +434,6 @@ export class CourseService {
   }
 
   moveLessonToSemester(lessonId: string, targetYear: number, targetQ: number): void {
-    // Find the course containing this lesson
     const courses = this.currentRawCourses();
     const currentCourse = courses.find((c) => c.lessons.some((l) => l.id === lessonId));
 
@@ -406,59 +442,26 @@ export class CourseService {
       return;
     }
 
-    // Avoid no-op
     if (currentCourse.year === targetYear && currentCourse.q === targetQ) {
       return;
     }
 
-    // Check if a target course for this slot already exists (from a previous move)
-    const duplicateId = `${currentCourse.id}-Y${targetYear}Q${targetQ}`;
-    const existingTarget = courses.find((c) => c.id === duplicateId);
-
-    // Build the moved course with all lessons from the source
-    const movedCourse: Course = existingTarget
-      ? {
-          ...existingTarget,
-          lessons: currentCourse.lessons.map((lesson) => ({
-            id: lesson.id,
-            professor: lesson.professor,
-            day: lesson.day,
-            startTime: lesson.startTime,
-            endTime: lesson.endTime,
-          })),
-        }
-      : {
-          id: duplicateId,
-          name: currentCourse.name,
-          year: targetYear,
-          q: targetQ,
-          status: 'pending',
-          cursarReq: [...currentCourse.cursarReq],
-          aprobarReq: [...currentCourse.aprobarReq],
-          lessons: currentCourse.lessons.map((lesson) => ({
-            id: lesson.id,
-            professor: lesson.professor,
-            day: lesson.day,
-            startTime: lesson.startTime,
-            endTime: lesson.endTime,
-          })),
-        };
-
-    // Lesson statuses are shared globally — no transfer needed.
-    // Replace source course with moved course; remove source entirely
-    const updatedCourses = courses
-      .filter((c) => c.id !== currentCourse.id && c.id !== duplicateId)
-      .concat(movedCourse);
+    const updatedCourses = courses.map((c) =>
+      c.id === currentCourse.id ? { ...c, year: targetYear, q: targetQ } : c,
+    );
     this.setCurrentRawCourses(updatedCourses);
   }
 
   private saveState(): void {
     try {
       if (typeof localStorage === 'undefined' || !localStorage) return;
+      const courseStatesObj: Record<string, CourseStateEntry> = {};
+      this.courseStateSignal().forEach((val, key) => {
+        courseStatesObj[key] = val;
+      });
       const state = {
         coursesByPlan: this.serializeCoursesByPlan(this.coursesByPlanSignal()),
-        courseStatuses: Object.fromEntries(this.courseStatusesSignal()),
-        lessonStatuses: Object.fromEntries(this.lessonStatusesSignal()),
+        courseStates: courseStatesObj,
       };
       localStorage.setItem(this.STORAGE_KEY, JSON.stringify(state));
     } catch (error) {
@@ -478,16 +481,34 @@ export class CourseService {
         this.coursesByPlanSignal.set(this.deserializeCoursesByPlan(state.coursesByPlan));
       }
 
-      if (state.courseStatuses) {
-        this.courseStatusesSignal.set(
-          new Map<string, CourseStatus>(Object.entries(state.courseStatuses)),
-        );
-      }
+      if (state.courseStates) {
+        const loadedMap = new Map<string, CourseStateEntry>();
+        Object.entries(state.courseStates).forEach(([k, v]) => {
+          loadedMap.set(k, v as CourseStateEntry);
+        });
+        this.courseStateSignal.set(loadedMap);
+      } else if (state.courseStatuses || state.lessonStatuses) {
+        // Legacy migration from separate courseStatuses and lessonStatuses
+        const migratedMap = this.initializeCourseStates();
+        const legacyCourseStatuses: Record<string, CourseStatus> = state.courseStatuses ?? {};
+        const legacyLessonStatuses: Record<string, CourseStatus> = state.lessonStatuses ?? {};
 
-      if (state.lessonStatuses) {
-        this.lessonStatusesSignal.set(
-          new Map<string, CourseStatus>(Object.entries(state.lessonStatuses)),
-        );
+        migratedMap.forEach((entry, courseId) => {
+          const cStatus = legacyCourseStatuses[courseId] ?? 'pending';
+          const lStatuses: Record<string, CourseStatus> = { ...entry.lessonStatuses };
+          Object.keys(lStatuses).forEach((lId) => {
+            if (legacyLessonStatuses[lId]) {
+              lStatuses[lId] = legacyLessonStatuses[lId];
+            } else {
+              lStatuses[lId] = cStatus;
+            }
+          });
+          migratedMap.set(courseId, {
+            status: cStatus,
+            lessonStatuses: lStatuses,
+          });
+        });
+        this.courseStateSignal.set(migratedMap);
       }
     } catch (error) {
       console.warn('Failed to load course state from localStorage:', error);
