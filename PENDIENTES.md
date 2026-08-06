@@ -7,17 +7,6 @@ Este archivo documenta las características pendientes, mejoras de experiencia d
 ## 🎯 Épica 1: Selección de Comisión / Docente por Materia
 > **Objetivo**: Evitar que al marcar una materia como `coursing` se activen todas sus comisiones/docentes en el calendario semanal. El usuario debe ver únicamente la comisión que eligió cursar.
 
-- [x] **1.1 Modelo y Estado en `CourseService`**
-  - Añadir soporte para comisión seleccionada por materia (`selectedLessonId` o mapeo `courseId -> lessonId`).
-  - Modificar `toggleCourseStatus` para que no fuerce todas las `lessons` a `coursing` de forma masiva.
-- [x] **1.2 Componente Selector de Comisión (UI)**
-  - Crear un modal / popover desplegable para elegir comisión cuando una materia tenga múltiples opciones de horario/docente.
-  - Permitir cambiar la comisión elegida en cualquier momento desde la ficha de la materia o desde el calendario.
-- [x] **1.3 Filtrado en "Mi Semana" (`/myWeek`)**
-  - Actualizar la vista del calendario semanal para mostrar **únicamente** la comisión activa seleccionada por el usuario.
-- [x] **1.4 Pruebas Unitarias**
-  - Añadir tests en `course.service.spec.ts` y `calendar.spec.ts` verificando la selección de comisión única.
-
 ---
 
 ## ⏸️ Épica 2: Gestión de Materias "En Pausa" / Postergadas
@@ -46,3 +35,21 @@ Este archivo documenta las características pendientes, mejoras de experiencia d
   - Migrar el arrastre manual por eventos de puntero en `CalendarCard` hacia Angular CDK DragDrop o HTML5 Drag API para mejorar soporte táctil y accesibilidad por teclado.
 - [x] **4.2 Servicio Centralizado de Notificaciones (Toasts)**
   - Reemplazar el manejo manual de `setTimeout` fuera de NgZone en `AcademicCalendarComponent` por un `ToastService` inyectable y reutilizable.
+
+---
+
+## 🎓 Épica 5: Soporte Multicarrera y Carga Dinámica vía JSON
+> **Objetivo**: Permitir cambiar de carrera y mostrar el nuevo conjunto de materias dinámicamente desde archivos `.json` sin recompilar la aplicación.
+
+- [x] **5.1 Modelo de Datos y Servicio de Carga (`CareerService`)**
+  - Crear modelo `CareerPlan` y `CareerService` utilizando Angular `HttpClient` para cargar planes desde `/assets/careers/` o archivos `.json` locales importados por el usuario.
+- [x] **5.2 Catálogo Inicial JSON**
+  - Migrar `courses.data.ts` a `public/careers/audiovisual.json` y crear el índice `careers.json`.
+- [x] **5.3 Reactividad en `CourseService` y `PlanService`**
+  - Asociar cada plan de estudio a una carrera activa y aislar el almacenamiento de `localStorage` por carrera/plan.
+- [x] **5.4 UI Selector de Carrera y Carga de Archivos**
+  - Implementar selector de carreras e importador de archivos `.json` en la interfaz.
+- [x] **5.5 Pruebas Unitarias**
+  - Añadir suite de pruebas en `career.service.spec.ts` y validar el cambio reactivo de materias.
+
+

@@ -1,0 +1,43 @@
+.career-selector-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 100%;
+}
+
+.career-select-field {
+  flex: 1;
+  min-width: 240px;
+  font-size: 0.9rem;
+}
+
+.career-option-content {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+  padding: 4px 0;
+}
+
+.career-option-name {
+  font-weight: 500;
+  color: var(--mat-sys-on-surface, #e1e2e5);
+}
+
+.career-option-univ {
+  font-size: 0.75rem;
+  color: var(--mat-sys-outline, #8e9099);
+}
+
+.import-btn {
+  color: var(--mat-sys-primary, #a8c7fa);
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.import-btn:hover {
+  transform: translateY(-1px);
+  color: #c2e7ff;
+}
+
+.hidden-file-input {
+  display: none !important;
+}

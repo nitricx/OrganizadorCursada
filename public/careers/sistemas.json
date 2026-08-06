@@ -1,0 +1,144 @@
+{
+  "id": "ing-sistemas",
+  "name": "Ingeniería en Sistemas de Información",
+  "university": "Universidad Tecnológica Nacional",
+  "version": "2023",
+  "courses": [
+    {
+      "id": 1,
+      "name": "Álgebra y Geometría Analítica",
+      "year": 1,
+      "q": 1,
+      "cursarReqId": [],
+      "aprobarReqId": [],
+      "lessons": [
+        {
+          "id": "AGA-L1",
+          "professor": "Prof. Ana Martinez",
+          "day": 0,
+          "startTime": "08:00",
+          "endTime": "12:00"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Análisis Matemático 1",
+      "year": 1,
+      "q": 1,
+      "cursarReqId": [],
+      "aprobarReqId": [],
+      "lessons": [
+        {
+          "id": "AM1-L1",
+          "professor": "Dr. Jorge Rossi",
+          "day": 1,
+          "startTime": "08:00",
+          "endTime": "12:00"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Algoritmos y Estructuras de Datos",
+      "year": 1,
+      "q": 1,
+      "cursarReqId": [],
+      "aprobarReqId": [],
+      "lessons": [
+        {
+          "id": "AED-L1",
+          "professor": "Ing. Martín Gomez",
+          "day": 2,
+          "startTime": "08:00",
+          "endTime": "12:00"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Sistemas y Organizaciones",
+      "year": 1,
+      "q": 1,
+      "cursarReqId": [],
+      "aprobarReqId": [],
+      "lessons": [
+        {
+          "id": "SyO-L1",
+          "professor": "Lic. Laura Diaz",
+          "day": 3,
+          "startTime": "08:00",
+          "endTime": "12:00"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "Análisis Matemático 2",
+      "year": 1,
+      "q": 2,
+      "cursarReqId": [2],
+      "aprobarReqId": [2],
+      "lessons": [
+        {
+          "id": "AM2-L1",
+          "professor": "Dr. Jorge Rossi",
+          "day": 1,
+          "startTime": "13:00",
+          "endTime": "17:00"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "name": "Sintaxis y Semántica de los Lenguajes",
+      "year": 1,
+      "q": 2,
+      "cursarReqId": [3],
+      "aprobarReqId": [3],
+      "lessons": [
+        {
+          "id": "SSL-L1",
+          "professor": "Ing. Martín Gomez",
+          "day": 2,
+          "startTime": "13:00",
+          "endTime": "17:00"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "name": "Paradigmas de Programación",
+      "year": 2,
+      "q": 1,
+      "cursarReqId": [3, 6],
+      "aprobarReqId": [3],
+      "lessons": [
+        {
+          "id": "PDP-L1",
+          "professor": "Ing. Carlos Paez",
+          "day": 0,
+          "startTime": "18:00",
+          "endTime": "22:00"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "name": "Diseño de Sistemas",
+      "year": 2,
+      "q": 2,
+      "cursarReqId": [4, 7],
+      "aprobarReqId": [3, 4],
+      "lessons": [
+        {
+          "id": "DDS-L1",
+          "professor": "Ing. Elena Castro",
+          "day": 3,
+          "startTime": "18:00",
+          "endTime": "22:00"
+        }
+      ]
+    }
+  ]
+}

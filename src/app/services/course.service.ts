@@ -1,7 +1,9 @@
-import { Injectable, effect } from '@angular/core';
+import { Injectable, effect, inject } from '@angular/core';
 import { signal, computed } from '@angular/core';
 import { Course, CourseStatus } from '../models/course';
 import { COURSES_DATA } from '../data/courses.data';
+import { CareerService } from './career.service';
+import { CareerPlan } from '../models/career.model';
 import {
   sanitizeCoursesByPlan,
   sanitizeCourseStatesMap,
@@ -17,15 +19,20 @@ export interface CourseStateEntry {
   providedIn: 'root',
 })
 export class CourseService {
+  private careerService = inject(CareerService, { optional: true });
+
   // Layout per plan (which semester each subject is placed in)
   private coursesByPlanSignal = signal<Map<string, Course[]>>(new Map());
   // Single unified source of truth for course & lesson statuses — shared across all views
   private courseStateSignal = signal<Map<number, CourseStateEntry>>(new Map());
   private currentPlanIdSignal = signal<string>('1');
+  private activeCareerIdSignal = signal<string>('lic-diseno-audiovisual');
   private selectedIdsSignal = signal<Set<number>>(new Set());
   private hoveredCourseIdSignal = signal<number | null>(null);
 
-  private readonly STORAGE_KEY = 'course-organizer-state';
+  private get storageKey(): string {
+    return `course-organizer-state-${this.activeCareerIdSignal()}`;
+  }
 
   courses = computed(() => {
     return this.getCoursesForPlan(this.currentPlanIdSignal());
@@ -105,12 +112,57 @@ export class CourseService {
 
     this.loadState();
 
+    if (this.careerService) {
+      effect(() => {
+        const activeCareer = this.careerService?.activeCareer();
+        if (activeCareer) {
+          this.setCareerPlan(activeCareer);
+        }
+      });
+    }
+
     effect(() => {
       this.coursesByPlanSignal();
       this.courseStateSignal();
       this.saveState();
     });
   }
+
+  setCareerPlan(careerPlan: CareerPlan): void {
+    this.activeCareerIdSignal.set(careerPlan.id);
+    const newCourses: Course[] = careerPlan.courses.map((c) => ({
+      id: c.id,
+      name: c.name,
+      year: c.year,
+      q: c.q,
+      status: 'pending' as CourseStatus,
+      cursarReqId: c.cursarReqId.slice(),
+      aprobarReqId: c.aprobarReqId.slice(),
+      lessons: c.lessons.map((l) => ({ ...l })),
+    }));
+
+    const updatedByPlan = new Map<string, Course[]>();
+    updatedByPlan.set(this.currentPlanIdSignal(), newCourses);
+    this.coursesByPlanSignal.set(updatedByPlan);
+
+    const initialStates = new Map<number, CourseStateEntry>();
+    newCourses.forEach((course) => {
+      const lessonStatuses: Record<string, CourseStatus> = {};
+      course.lessons.forEach((l) => {
+        lessonStatuses[l.id] = 'pending';
+      });
+      initialStates.set(course.id, {
+        status: 'pending',
+        lessonStatuses,
+        selectedLessonId: null,
+      });
+    });
+    this.courseStateSignal.set(initialStates);
+    this.selectedIdsSignal.set(new Set());
+
+    this.loadState();
+  }
+
 
   private currentRawCourses(): Course[] {
     const courses = this.coursesByPlanSignal().get(this.currentPlanIdSignal()) ?? [];
@@ -508,7 +560,7 @@ export class CourseService {
         coursesByPlan: this.serializeCoursesByPlan(this.coursesByPlanSignal()),
         courseStates: courseStatesObj,
       };
-      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(state));
+      localStorage.setItem(this.storageKey, JSON.stringify(state));
     } catch (error) {
       console.warn('Failed to save course state to localStorage:', error);
     }
@@ -517,11 +569,15 @@ export class CourseService {
   private loadState(): void {
     try {
       if (typeof localStorage === 'undefined' || !localStorage) return;
-      const stored = localStorage.getItem(this.STORAGE_KEY);
+      let stored = localStorage.getItem(this.storageKey);
+      if (!stored && this.activeCareerIdSignal() === 'lic-diseno-audiovisual') {
+        stored = localStorage.getItem('course-organizer-state');
+      }
       if (!stored) return;
 
       const state = JSON.parse(stored);
       if (typeof state !== 'object' || state === null) return;
+
 
       if (state.coursesByPlan) {
         const sanitizedByPlan = sanitizeCoursesByPlan(state.coursesByPlan);

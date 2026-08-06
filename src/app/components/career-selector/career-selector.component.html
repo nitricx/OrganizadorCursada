@@ -1,0 +1,39 @@
+<div class="career-selector-container">
+  <mat-form-field appearance="outline" class="career-select-field" subscriptSizing="dynamic">
+    <mat-label>Carrera / Plan de Estudio</mat-label>
+    <mat-select
+      [value]="careerService.selectedCareerId()"
+      (selectionChange)="onCareerChange($event.value)"
+      aria-label="Seleccionar carrera"
+    >
+      @for (career of careerService.careers(); track career.id) {
+        <mat-option [value]="career.id">
+          <div class="career-option-content">
+            <span class="career-option-name">{{ career.name }}</span>
+            @if (career.university) {
+              <span class="career-option-univ">({{ career.university }})</span>
+            }
+          </div>
+        </mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <button
+    mat-icon-button
+    class="import-btn"
+    matTooltip="Importar carrera desde archivo JSON"
+    (click)="triggerFileInput()"
+    aria-label="Importar plan de estudio en formato JSON"
+  >
+    <mat-icon>upload_file</mat-icon>
+  </button>
+
+  <input
+    #fileInput
+    type="file"
+    accept=".json"
+    class="hidden-file-input"
+    (change)="onFileSelected($event)"
+  />
+</div>
