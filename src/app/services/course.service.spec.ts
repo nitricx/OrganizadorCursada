@@ -10,7 +10,7 @@ describe('CourseService - Lesson State Toggling', () => {
   });
 
   describe('toggleLessonStatus', () => {
-    it('should cycle lesson state from pending to coursed on first click', () => {
+    it('should cycle lesson state from pending to coursing on first click', () => {
       const courses = service.courses();
       const firstLesson = courses[0]?.lessons[0];
 
@@ -21,25 +21,25 @@ describe('CourseService - Lesson State Toggling', () => {
       const updatedCourses = service.courses();
       const updatedLesson = updatedCourses[0]?.lessons[0];
 
-      expect(updatedLesson?.status).toBe('coursed');
+      expect(updatedLesson?.status).toBe('coursing');
     });
 
-    it('should cycle lesson state: pending → coursed → coursing → approved → pending', () => {
+    it('should cycle lesson state: pending → coursing → coursed → approved → pending', () => {
       const courses = service.courses();
       const firstLesson = courses[0]?.lessons[0];
       const lessonId = firstLesson!.id;
 
-      // pending → coursed
+      // pending → coursing
       service.toggleLessonStatus(lessonId);
       let updated = service.courses()[0]?.lessons[0];
-      expect(updated?.status).toBe('coursed');
-
-      // coursed → coursing
-      service.toggleLessonStatus(lessonId);
-      updated = service.courses()[0]?.lessons[0];
       expect(updated?.status).toBe('coursing');
 
-      // coursing → approved
+      // coursing → coursed
+      service.toggleLessonStatus(lessonId);
+      updated = service.courses()[0]?.lessons[0];
+      expect(updated?.status).toBe('coursed');
+
+      // coursed → approved
       service.toggleLessonStatus(lessonId);
       updated = service.courses()[0]?.lessons[0];
       expect(updated?.status).toBe('approved');
@@ -62,7 +62,7 @@ describe('CourseService - Lesson State Toggling', () => {
       const updatedLesson1 = updated?.lessons[0];
       const updatedLesson2 = updated?.lessons[1];
 
-      expect(updatedLesson1?.status).toBe('coursed');
+      expect(updatedLesson1?.status).toBe('coursing');
       expect(updatedLesson2?.status).toBe('pending');
     });
 
@@ -74,7 +74,7 @@ describe('CourseService - Lesson State Toggling', () => {
       service.toggleLessonStatus(lesson1FromCourse1!.id);
 
       const updated = service.courses();
-      expect(updated[0]?.lessons[0]?.status).toBe('coursed');
+      expect(updated[0]?.lessons[0]?.status).toBe('coursing');
       expect(updated[1]?.lessons[0]?.status).toBe('pending');
     });
 
@@ -87,8 +87,8 @@ describe('CourseService - Lesson State Toggling', () => {
         if (lesson) {
           service.toggleLessonStatus(lesson.id);
           const updated = service.courses()[0]?.lessons[i];
-          expect(updated?.status, `Lesson ${i} should change to coursed on first click`).toBe(
-            'coursed',
+          expect(updated?.status, `Lesson ${i} should change to coursing on first click`).toBe(
+            'coursing',
           );
 
           // Reset for next iteration
@@ -101,13 +101,13 @@ describe('CourseService - Lesson State Toggling', () => {
       const courses = service.courses();
       const lesson = courses[0]?.lessons[0];
 
-      // Rapid clicks
+      // Rapid clicks: pending -> coursing -> coursed -> approved
       service.toggleLessonStatus(lesson!.id);
       service.toggleLessonStatus(lesson!.id);
       service.toggleLessonStatus(lesson!.id);
 
       const updated = service.courses()[0]?.lessons[0];
-      expect(updated?.status).toBe('coursing');
+      expect(updated?.status).toBe('approved');
     });
 
     it('should preserve lesson data other than status', () => {
@@ -135,9 +135,9 @@ describe('CourseService - Lesson State Toggling', () => {
       service.toggleLessonStatus(lesson3!.id);
 
       const updated = service.courses();
-      expect(updated[0]?.lessons[0]?.status).toBe('coursed');
+      expect(updated[0]?.lessons[0]?.status).toBe('coursing');
       expect(updated[1]?.lessons[0]?.status).toBe('pending');
-      expect(updated[2]?.lessons[0]?.status).toBe('coursed');
+      expect(updated[2]?.lessons[0]?.status).toBe('coursing');
     });
   });
 

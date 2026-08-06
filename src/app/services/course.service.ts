@@ -395,6 +395,7 @@ export class CourseService {
 
   private saveState(): void {
     try {
+      if (typeof localStorage === 'undefined' || !localStorage) return;
       const state = {
         coursesByPlan: this.serializeCoursesByPlan(this.coursesByPlanSignal()),
         courseStatuses: Object.fromEntries(this.courseStatusesSignal()),
@@ -408,6 +409,7 @@ export class CourseService {
 
   private loadState(): void {
     try {
+      if (typeof localStorage === 'undefined' || !localStorage) return;
       const stored = localStorage.getItem(this.STORAGE_KEY);
       if (!stored) return;
 

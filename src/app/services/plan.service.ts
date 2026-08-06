@@ -21,10 +21,35 @@ export class PlanService {
 
   constructor() {}
 
+  private safeGetItem(key: string): string | null {
+    try {
+      if (typeof localStorage !== 'undefined' && localStorage) {
+        return localStorage.getItem(key);
+      }
+    } catch {}
+    return null;
+  }
+
+  private safeSetItem(key: string, value: string): void {
+    try {
+      if (typeof localStorage !== 'undefined' && localStorage) {
+        localStorage.setItem(key, value);
+      }
+    } catch {}
+  }
+
+  private safeRemoveItem(key: string): void {
+    try {
+      if (typeof localStorage !== 'undefined' && localStorage) {
+        localStorage.removeItem(key);
+      }
+    } catch {}
+  }
+
   addPlan(plan: Plan): void {
     this.plansSignal.update((plans) => {
       const updated = [...plans, plan];
-      localStorage.setItem(PlanService.PLANS_KEY, JSON.stringify(updated));
+      this.safeSetItem(PlanService.PLANS_KEY, JSON.stringify(updated));
       return updated;
     });
   }
@@ -32,14 +57,14 @@ export class PlanService {
   deletePlan(planId: string): void {
     this.plansSignal.update((plans) => {
       const updated = plans.filter((p) => p.id !== planId);
-      localStorage.setItem(PlanService.PLANS_KEY, JSON.stringify(updated));
+      this.safeSetItem(PlanService.PLANS_KEY, JSON.stringify(updated));
       return updated;
     });
-    localStorage.removeItem(this.semesterListKey(planId));
+    this.safeRemoveItem(this.semesterListKey(planId));
   }
 
   private loadPlans(): Plan[] {
-    const raw = localStorage.getItem(PlanService.PLANS_KEY);
+    const raw = this.safeGetItem(PlanService.PLANS_KEY);
     if (raw !== null) {
       try {
         const parsed = JSON.parse(raw) as Plan[];
@@ -47,7 +72,7 @@ export class PlanService {
           (p, i, arr) => arr.findIndex((x) => x.id === p.id) === i,
         );
         if (deduplicated.length !== parsed.length) {
-          localStorage.setItem(PlanService.PLANS_KEY, JSON.stringify(deduplicated));
+          this.safeSetItem(PlanService.PLANS_KEY, JSON.stringify(deduplicated));
         }
         return deduplicated;
       } catch {
@@ -55,7 +80,7 @@ export class PlanService {
       }
     }
     const plans = PlanService.DEFAULT_PLANS;
-    localStorage.setItem(PlanService.PLANS_KEY, JSON.stringify(plans));
+    this.safeSetItem(PlanService.PLANS_KEY, JSON.stringify(plans));
     return plans;
   }
 
@@ -66,7 +91,7 @@ export class PlanService {
   updatePlanLabel(id: string, newLabel: string): void {
     this.plansSignal.update((plans) => {
       const updated = plans.map((p) => (p.id === id ? { ...p, label: newLabel } : p));
-      localStorage.setItem(PlanService.PLANS_KEY, JSON.stringify(updated));
+      this.safeSetItem(PlanService.PLANS_KEY, JSON.stringify(updated));
       return updated;
     });
   }
@@ -82,7 +107,7 @@ export class PlanService {
   getSemesterList(
     planId: string,
   ): { id: string; courseYear: number; courseQ: number; startDate?: string; endDate?: string }[] {
-    const raw = localStorage.getItem(this.semesterListKey(planId));
+    const raw = this.safeGetItem(this.semesterListKey(planId));
     try {
       return raw !== null
         ? (JSON.parse(raw) as {
@@ -108,7 +133,7 @@ export class PlanService {
       endDate?: string;
     }[],
   ): void {
-    localStorage.setItem(this.semesterListKey(planId), JSON.stringify(slots));
+    this.safeSetItem(this.semesterListKey(planId), JSON.stringify(slots));
   }
 
   private startingYearKey(planId: string): string {
@@ -116,7 +141,7 @@ export class PlanService {
   }
 
   getStartingYear(planId: string): number {
-    const raw = localStorage.getItem(this.startingYearKey(planId));
+    const raw = this.safeGetItem(this.startingYearKey(planId));
     try {
       return raw !== null ? (JSON.parse(raw) as number) : new Date().getFullYear();
     } catch {
@@ -125,7 +150,7 @@ export class PlanService {
   }
 
   setStartingYear(planId: string, year: number): void {
-    localStorage.setItem(this.startingYearKey(planId), JSON.stringify(year));
+    this.safeSetItem(this.startingYearKey(planId), JSON.stringify(year));
   }
 
   private getClosestWeekday(
