@@ -8,6 +8,7 @@ import {
   output,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { DragDropModule, CdkDragEnd } from '@angular/cdk/drag-drop';
 import { CourseService } from '../../services/course.service';
 import { PlanService } from '../../services/plan.service';
 import { Course, DayOfWeek, Lesson } from '../../models/course';
@@ -21,11 +22,12 @@ interface CourseWithLesson {
 
 @Component({
   selector: 'app-calendar',
-  imports: [CalendarCard, CalendarLegendComponent, CommonModule],
+  imports: [CalendarCard, CalendarLegendComponent, CommonModule, DragDropModule],
   templateUrl: './calendar.html',
   styleUrl: './calendar.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
+
 export class Calendar {
   private readonly courseService = inject(CourseService);
   private readonly planService = inject(PlanService);
@@ -417,4 +419,51 @@ export class Calendar {
     const [h, m] = time.split(':').map(Number);
     return 2 + (h - this.startHour()) * 2 + m / 30;
   }
+
+  onCardDragStarted(cardComponent?: CalendarCard): void {
+    if (cardComponent) {
+      cardComponent.isDragging.set(true);
+    }
+  }
+
+  onCardDragEnded(
+    event: CdkDragEnd,
+    courseWithLesson: CourseWithLesson,
+    cardComponent?: CalendarCard,
+  ): void {
+    if (cardComponent) {
+      cardComponent.isDragging.set(false);
+    }
+
+    const cardElement = event.source.element.nativeElement;
+    const cardHeight = cardElement.offsetHeight;
+    const threshold = Math.max(25, cardHeight * 0.4);
+    const dy = event.distance.y;
+
+    if (Math.abs(dy) > 5 && cardComponent) {
+      cardComponent.markDragged();
+    }
+
+    const course = courseWithLesson.course;
+    const lesson = courseWithLesson.lesson;
+
+    if (dy > threshold) {
+      this.lessonMoveRequested.emit({
+        lessonId: lesson.id,
+        direction: 'next',
+        courseYear: course.year,
+        courseQ: course.q,
+      });
+    } else if (dy < -threshold) {
+      this.lessonMoveRequested.emit({
+        lessonId: lesson.id,
+        direction: 'prev',
+        courseYear: course.year,
+        courseQ: course.q,
+      });
+    }
+
+    event.source.reset();
+  }
 }
+

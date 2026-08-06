@@ -49,6 +49,12 @@
         track courseWithLesson.lesson.id
       ) {
         <app-calendar-card
+          #cardComp
+          cdkDrag
+          [cdkDragDisabled]="!isEditable()"
+          cdkDragLockAxis="y"
+          (cdkDragStarted)="onCardDragStarted(cardComp)"
+          (cdkDragEnded)="onCardDragEnded($event, courseWithLesson, cardComp)"
           [course]="courseWithLesson.course"
           [lesson]="courseWithLesson.lesson"
           [isReadOnly]="isReadOnly()"

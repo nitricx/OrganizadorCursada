@@ -6,7 +6,6 @@ import {
   inject,
   HostListener,
   signal,
-  ElementRef,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Course, Lesson } from '../../models/course';
@@ -19,9 +18,9 @@ import { CourseService } from '../../services/course.service';
   styleUrl: './calendar-card.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
-    '[style.transform]': '"translateY(" + dragY() + "px)"',
-    '[style.transition]':
-      'isDragging() ? "none" : "transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.2s ease"',
+    '[attr.tabindex]': 'isEditable() ? 0 : null',
+    '[attr.aria-label]':
+      'isEditable() ? course().name + ". Presione Alt + Flecha Abajo o Flecha Arriba para cambiar de cuatrimestre." : course().name',
     '[style.z-index]': 'isDragging() ? 100 : 1',
     '[style.cursor]': 'isEditable() ? (isDragging() ? "grabbing" : "grab") : "default"',
     '[class.is-dragging]': 'isDragging()',
@@ -40,11 +39,8 @@ export class CalendarCard {
     courseQ: number;
   }>();
   isDragging = signal(false);
-  dragY = signal(0);
 
   private readonly courseService = inject(CourseService);
-  private readonly el = inject(ElementRef);
-  private dragStartY = 0;
   private hasDragged = false;
 
   @HostListener('click')
@@ -61,56 +57,26 @@ export class CalendarCard {
     this.courseService.toggleLessonStatus(lesson.id);
   }
 
-  @HostListener('pointerdown', ['$event'])
-  onPointerDown(event: PointerEvent): void {
+  @HostListener('keydown', ['$event'])
+  onKeyDown(event: KeyboardEvent): void {
     if (!this.isEditable()) return;
-    const el = this.el.nativeElement as HTMLElement;
-    el.setPointerCapture(event.pointerId);
-    this.dragStartY = event.clientY;
-    this.hasDragged = false;
-    this.isDragging.set(true);
-  }
 
-  @HostListener('pointermove', ['$event'])
-  onPointerMove(event: PointerEvent): void {
-    if (!this.isDragging()) return;
-    const dy = event.clientY - this.dragStartY;
-    this.dragY.set(dy);
-    if (Math.abs(dy) > 3) {
-      this.hasDragged = true;
-    }
-  }
-
-  @HostListener('pointerup')
-  @HostListener('pointercancel')
-  onPointerUp(): void {
-    if (!this.isDragging()) return;
-
-    const el = this.el.nativeElement as HTMLElement;
-    const cardHeight = el.offsetHeight;
-    const threshold = cardHeight * 0.5;
-    const currentDragY = this.dragY();
-
-    const course = this.course();
-    const lesson = this.lesson();
-
-    if (currentDragY > threshold) {
+    if (event.altKey && (event.key === 'ArrowDown' || event.key === 'ArrowUp')) {
+      event.preventDefault();
+      const direction = event.key === 'ArrowDown' ? 'next' : 'prev';
+      const course = this.course();
+      const lesson = this.lesson();
       this.lessonMoveRequested.emit({
         lessonId: lesson.id,
-        direction: 'next',
-        courseYear: course.year,
-        courseQ: course.q,
-      });
-    } else if (currentDragY < -threshold) {
-      this.lessonMoveRequested.emit({
-        lessonId: lesson.id,
-        direction: 'prev',
+        direction,
         courseYear: course.year,
         courseQ: course.q,
       });
     }
+  }
 
-    this.isDragging.set(false);
-    this.dragY.set(0);
+  markDragged(): void {
+    this.hasDragged = true;
   }
 }
+
