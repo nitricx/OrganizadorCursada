@@ -37,25 +37,6 @@ Este archivo documenta las características pendientes, mejoras de experiencia d
 ## 🧹 Épica 3: Refactorización de Deuda Técnica y Code Smells
 > **Objetivo**: Mejorar la mantenibilidad, consistencia de estado y legibilidad del código.
 
-- [x] **3.1 Consolidación de Fuentes de Verdad de Estado**
-  - Eliminar el desfasaje entre `courseStatusesSignal` y `lessonStatusesSignal`, creando una estructura reactiva unificada.
-- [x] **3.2 Normalización de IDs al Mover Materias**
-  - Refactorizar `moveLessonToSemester()` en `CourseService` para evitar la generación de IDs sintéticos tipo `${id}-Y2Q1` que duplican materias en el mapa de correlatividades.
-- [x] **3.3 Correlatividades por ID Único**
-  - Migrar `cursarReq` y `aprobarReq` para usar IDs de materia estables en lugar de coincidencia por strings de nombre plano.
-- [x] **3.4 Desacoplamiento de Lógica de Grilla de Calendario**
-  - Extraer cálculos de solapamiento de horarios, conversión de tiempos y generación de franjas de `calendar.ts` hacia una utilidad pura `calendar-layout.utils.ts`.
-- [x] **3.5 Reactividad Completa en `PlanService`**
-  - Migrar la lectura/escritura de listas de cuatrimestres y año inicial a Signals reactivas en `PlanService`.
-- [x] **3.6 Memoización de Correlatividades y Unlocks (`buildUnlockMap`)**
-  - Convertir la construcción del mapa de materias que habilita cada curso en un `computed()` signal en `CourseService`.
-- [x] **3.7 Centralización de Constantes de Estado y Colores**
-  - Unificar las etiquetas en español y estilos CSS de los estados de cursada en un diccionario/configurador único.
-- [x] **3.8 Sanitización y Guardas de Tipo para `localStorage`**
-  - Validar estructuras parseadas desde almacenamiento local y corregir el contador de IDs en `SidebarComponent`.
-- [x] **3.9 Limpieza de Console Logs de Depuración**
-  - Remover llamadas a `console.log` en `CalendarCard` y otros componentes de UI.
-
 ---
 
 ## 🎨 Épica 4: Mejoras de UX, Accesibilidad y Feedback
