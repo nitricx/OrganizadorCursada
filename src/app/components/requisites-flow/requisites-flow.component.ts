@@ -491,8 +491,26 @@ export class RequisitesFlowComponent implements AfterViewInit, OnDestroy {
 
   resetLayout(): void {
     if (!this.cy) return;
-    const layout = this.cy.layout(this.getLayoutOptions());
-    layout.run();
+
+    const initialElements = this.buildElements(this.courseService.courses());
+
+    this.cy.batch(() => {
+      initialElements.forEach((ele) => {
+        if (ele.group === 'nodes' && ele.position && ele.data?.id) {
+          const node = this.cy?.getElementById(ele.data.id as string);
+          if (node) {
+            node.position(ele.position);
+          }
+        }
+      });
+    });
+
+    if (this.isCanvasSupported()) {
+      const layout = this.cy.layout(this.getLayoutOptions());
+      layout.run();
+    }
+
+    this.applyStatusFilterDimming();
     this.cy.fit(undefined, 35);
   }
 
