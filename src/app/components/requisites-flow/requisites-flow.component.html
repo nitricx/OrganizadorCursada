@@ -1,10 +1,116 @@
 <div class="requisites-flow-page">
   <div class="header-card">
-    <h1>Diagrama de Correlatividades</h1>
-    <p class="subtitle">Esquema visual de requisitos y correlatividades para cursar y aprobar las materias del plan</p>
+    <div class="header-main">
+      <div class="header-text">
+        <h1>Diagrama de Correlatividades Interactivo</h1>
+        <p class="subtitle">
+          Explora visualmente el flujo de correlatividades del plan de estudios. Arrastra materias con el mouse para reordenarlas, haz zoom y selecciona cualquier nodo para ver sus requisitos o actualizar su estado.
+        </p>
+      </div>
+
+      <div class="toolbar">
+        <div class="filter-group">
+          <label for="yearFilter">Año:</label>
+          <select id="yearFilter" [value]="selectedYear()" (change)="onYearFilterChange($event)">
+            <option value="all">Todos los años</option>
+            <option value="1">1º Año</option>
+            <option value="2">2º Año</option>
+            <option value="3">3º Año</option>
+            <option value="4">4º Año</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="statusFilter">Estado:</label>
+          <select id="statusFilter" [value]="selectedStatus()" (change)="onStatusFilterChange($event)">
+            <option value="all">Todos los estados</option>
+            <option *ngFor="let st of statusConfigList" [value]="st.key">
+              {{ st.label }}
+            </option>
+          </select>
+        </div>
+
+        <div class="btn-group">
+          <button type="button" class="btn-tool" (click)="fitDiagram()" title="Centrar diagrama">
+            🎯 Centrar
+          </button>
+          <button type="button" class="btn-tool" (click)="resetLayout()" title="Reorganizar vista">
+            🔄 Reorganizar
+          </button>
+          <button type="button" class="btn-tool" (click)="zoomIn()" title="Aumentar zoom">
+            ➕
+          </button>
+          <button type="button" class="btn-tool" (click)="zoomOut()" title="Disminuir zoom">
+            ➖
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
-  <div class="diagram-card">
-    <img src="correlatividades.png" alt="Diagrama de correlatividades" class="diagram-img" />
+
+  <div class="diagram-container-card">
+    <div #cyContainer class="cy-canvas"></div>
+  </div>
+
+  <!-- Detail Modal / Drawer when a node is selected -->
+  <div *ngIf="selectedCourse()" class="course-detail-overlay" (click)="closeDetail()">
+    <div class="course-detail-card" (click)="$event.stopPropagation()">
+      <div class="detail-header">
+        <div class="title-meta">
+          <span class="meta-tag">{{ selectedCourse()?.year }}º Año • Cuatrimestre {{ selectedCourse()?.q }}</span>
+          <h2>{{ selectedCourse()?.name }}</h2>
+        </div>
+        <button type="button" class="btn-close" (click)="closeDetail()">✕</button>
+      </div>
+
+      <div class="detail-body">
+        <div class="status-selector-section">
+          <span class="section-label">Cambiar estado de la materia:</span>
+          <div class="status-buttons">
+            <button
+              *ngFor="let st of statusConfigList"
+              type="button"
+              class="btn-status-option"
+              [class.active]="selectedCourse()?.status === st.key"
+              [style.backgroundColor]="selectedCourse()?.status === st.key ? st.bg : ''"
+              [style.color]="selectedCourse()?.status === st.key ? st.color : ''"
+              [style.borderColor]="st.borderColor"
+              (click)="changeStatus(selectedCourse()!.id, st.key)"
+            >
+              {{ st.label }}
+            </button>
+          </div>
+          <p *ngIf="statusErrorMessage()" class="error-msg">
+            ⚠️ {{ statusErrorMessage() }}
+          </p>
+        </div>
+
+        <div class="reqs-grid">
+          <div class="req-column">
+            <h4>Requisitos para Cursar:</h4>
+            <ul *ngIf="selectedCourse()?.cursarReqId?.length; else noCursarReqs" class="req-list">
+              <li *ngFor="let reqId of selectedCourse()?.cursarReqId">
+                <span class="req-name">✓ {{ getCourseNameById(reqId) }}</span>
+              </li>
+            </ul>
+            <ng-template #noCursarReqs>
+              <p class="empty-reqs">Ninguno (Materia de 1º nivel)</p>
+            </ng-template>
+          </div>
+
+          <div class="req-column">
+            <h4>Requisitos para Aprobar Final:</h4>
+            <ul *ngIf="selectedCourse()?.aprobarReqId?.length; else noAprobarReqs" class="req-list">
+              <li *ngFor="let reqId of selectedCourse()?.aprobarReqId">
+                <span class="req-name">✓ {{ getCourseNameById(reqId) }}</span>
+              </li>
+            </ul>
+            <ng-template #noAprobarReqs>
+              <p class="empty-reqs">Sin requisitos adicionales para el final</p>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
-

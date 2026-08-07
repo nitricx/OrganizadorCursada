@@ -403,6 +403,44 @@ export class CourseService {
     }
   }
 
+  setCourseStatus(courseId: number, targetStatus: CourseStatus): boolean {
+    const course = this.getCourseById(courseId);
+    if (!course) return false;
+
+    if (!this.canChangeStatusTo(courseId, targetStatus)) {
+      return false;
+    }
+
+    const stateMap = new Map(this.courseStateSignal());
+    const existing = stateMap.get(courseId);
+
+    let selectedLessonId = existing?.selectedLessonId ?? null;
+    if (targetStatus === 'coursing') {
+      if (!selectedLessonId && course.lessons.length > 0) {
+        selectedLessonId = course.lessons[0].id;
+      }
+    } else if (targetStatus === 'pending') {
+      selectedLessonId = null;
+    }
+
+    const updatedLessonStatuses: Record<string, CourseStatus> = {};
+    course.lessons.forEach((lesson) => {
+      if (targetStatus === 'coursing') {
+        updatedLessonStatuses[lesson.id] = lesson.id === selectedLessonId ? 'coursing' : 'pending';
+      } else {
+        updatedLessonStatuses[lesson.id] = targetStatus;
+      }
+    });
+
+    stateMap.set(courseId, {
+      status: targetStatus,
+      lessonStatuses: updatedLessonStatuses,
+      selectedLessonId,
+    });
+    this.courseStateSignal.set(stateMap);
+    return true;
+  }
+
   toggleLessonStatus(lessonId: string): void {
     const courses = this.currentRawCourses();
     const course = courses.find((c) => c.lessons.some((l) => l.id === lessonId));
