@@ -1,21 +1,40 @@
 <div class="calendar">
   @if (showHeader()) {
     <div class="calendar-header">
-      <h1>Mi Semana</h1>
-      <h2>{{ currentDate().toLocaleDateString('es-ES', { month: 'long', year: 'numeric' }) }}</h2>
-      <div class="plan-selector">
-        <label for="plan-select">Seleccionar Plan:</label>
-        <select
-          id="plan-select"
-          [value]="selectedPlanId()"
-          (change)="onPlanChange($any($event.target).value)"
+      <div class="title-group">
+        <h1>Mi Semana</h1>
+        <h2>{{ currentDate().toLocaleDateString('es-ES', { month: 'long', year: 'numeric' }) }}</h2>
+      </div>
+
+      <div class="header-actions">
+        <div class="plan-selector">
+          <label for="plan-select">Plan:</label>
+          <select
+            id="plan-select"
+            [value]="selectedPlanId()"
+            (change)="onPlanChange($any($event.target).value)"
+          >
+            @for (plan of availablePlans(); track plan.id) {
+              <option [value]="plan.id">{{ plan.label }}</option>
+            }
+          </select>
+        </div>
+
+        <button
+          type="button"
+          class="btn-export-trigger"
+          (click)="openExportModal()"
+          title="Exportar cuatrimestre actual a Google Calendar / iCal"
         >
-          @for (plan of availablePlans(); track plan.id) {
-            <option [value]="plan.id">{{ plan.label }}</option>
-          }
-        </select>
+          <mat-icon>event_available</mat-icon>
+          Exportar Calendario
+        </button>
       </div>
     </div>
+  }
+
+  @if (showExportModal()) {
+    <app-export-calendar-modal (close)="closeExportModal()" />
   }
   @if (!isReadOnly()) {
     <app-calendar-legend></app-calendar-legend>

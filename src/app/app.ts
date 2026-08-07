@@ -2,6 +2,7 @@ import { Component, ChangeDetectionStrategy, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { ToastContainerComponent } from './components/toast-container/toast-container.component';
+import { CareerSelectorComponent } from './components/career-selector/career-selector.component';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
@@ -16,6 +17,7 @@ import { MatIconModule } from '@angular/material/icon';
     RouterModule,
     SidebarComponent,
     ToastContainerComponent,
+    CareerSelectorComponent,
     MatSidenavModule,
     MatToolbarModule,
     MatButtonModule,
@@ -26,3 +28,4 @@ import { MatIconModule } from '@angular/material/icon';
 export class App {
   isOpen = signal(true);
 }
+

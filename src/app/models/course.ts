@@ -35,4 +35,5 @@ export interface Course {
   cursarReqId: number[]; // Requirements to take the course
   aprobarReqId: number[]; // Requirements to approve the course
   lessons: Lesson[]; // Multiple lessons per subject with different professors
+  selectedLessonId?: string | null;
 }

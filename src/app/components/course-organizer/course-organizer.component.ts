@@ -3,13 +3,15 @@ import { CommonModule } from '@angular/common';
 import { CourseService } from '../../services/course.service';
 import { CourseOrganizerLegendComponent } from '../course-organizer-legend/course-organizer-legend.component';
 import { CourseGridComponent } from '../course-grid/course-grid.component';
+import { LessonSelectorModalComponent } from '../lesson-selector-modal/lesson-selector-modal.component';
+import { Course } from '../../models/course';
 
 @Component({
   selector: 'app-course-organizer',
   templateUrl: './course-organizer.component.html',
   styleUrls: ['./course-organizer.component.css'],
   standalone: true,
-  imports: [CommonModule, CourseOrganizerLegendComponent, CourseGridComponent],
+  imports: [CommonModule, CourseOrganizerLegendComponent, CourseGridComponent, LessonSelectorModalComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CourseOrganizerComponent {
@@ -19,8 +21,44 @@ export class CourseOrganizerComponent {
   );
   readonly infoMessage = () => this.infoMessageSignal();
 
+  readonly selectedCourseForModal = signal<Course | null>(null);
+  readonly isModalOpen = signal<boolean>(false);
+
   onCourseCardClicked(courseId: number): void {
-    this.courseService.toggleCourseStatus(courseId);
+    const course = this.courseService.getCourseById(courseId);
+    if (!course) return;
+
+    if (course.status === 'pending' && course.lessons.length > 1 && this.courseService.canChangeStatusTo(courseId, 'coursing')) {
+      this.selectedCourseForModal.set(course);
+      this.isModalOpen.set(true);
+    } else {
+      this.courseService.toggleCourseStatus(courseId);
+    }
+  }
+
+  onChangeLessonRequested(courseId: number): void {
+    const course = this.courseService.getCourseById(courseId);
+    if (course) {
+      this.selectedCourseForModal.set(course);
+      this.isModalOpen.set(true);
+    }
+  }
+
+  onLessonSelected(event: { courseId: number; lessonId: string }): void {
+    const course = this.courseService.getCourseById(event.courseId);
+    if (!course) return;
+
+    if (course.status === 'pending') {
+      this.courseService.toggleCourseStatus(event.courseId, event.lessonId);
+    } else {
+      this.courseService.setSelectedLessonForCourse(event.courseId, event.lessonId);
+    }
+    this.closeModal();
+  }
+
+  closeModal(): void {
+    this.isModalOpen.set(false);
+    this.selectedCourseForModal.set(null);
   }
 
   onMouseEntered(courseId: number): void {

@@ -17,6 +17,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { Course } from '../../models/course';
 import { Calendar } from '../calendar/calendar';
+import { ExportCalendarModalComponent } from '../export-calendar-modal/export-calendar-modal.component';
 
 interface DisplaySemester {
   id: string;
@@ -35,7 +36,14 @@ interface DisplaySemester {
   templateUrl: './academic-calendar.component.html',
   styleUrl: './academic-calendar.component.css',
   standalone: true,
-  imports: [Calendar, CommonModule, MatIconModule, MatButtonModule, FormsModule],
+  imports: [
+    Calendar,
+    CommonModule,
+    MatIconModule,
+    MatButtonModule,
+    FormsModule,
+    ExportCalendarModalComponent,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AcademicCalendarComponent {
@@ -44,6 +52,16 @@ export class AcademicCalendarComponent {
   private readonly planService = inject(PlanService);
   private readonly router = inject(Router);
   private readonly toastService = inject(ToastService);
+
+  readonly showExportModal = signal<boolean>(false);
+
+  openExportModal(): void {
+    this.showExportModal.set(true);
+  }
+
+  closeExportModal(): void {
+    this.showExportModal.set(false);
+  }
 
   startingYear = computed(() => {
     const id = this.currentRouteId();

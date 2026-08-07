@@ -1,7 +1,9 @@
-import { Injectable, effect } from '@angular/core';
+import { Injectable, effect, inject } from '@angular/core';
 import { signal, computed } from '@angular/core';
 import { Course, CourseStatus } from '../models/course';
 import { COURSES_DATA } from '../data/courses.data';
+import { CareerService } from './career.service';
+import { CareerPlan } from '../models/career.model';
 import {
   sanitizeCoursesByPlan,
   sanitizeCourseStatesMap,
@@ -10,21 +12,27 @@ import {
 export interface CourseStateEntry {
   status: CourseStatus;
   lessonStatuses: Record<string, CourseStatus>;
+  selectedLessonId?: string | null;
 }
 
 @Injectable({
   providedIn: 'root',
 })
 export class CourseService {
+  private careerService = inject(CareerService, { optional: true });
+
   // Layout per plan (which semester each subject is placed in)
   private coursesByPlanSignal = signal<Map<string, Course[]>>(new Map());
   // Single unified source of truth for course & lesson statuses — shared across all views
   private courseStateSignal = signal<Map<number, CourseStateEntry>>(new Map());
   private currentPlanIdSignal = signal<string>('1');
+  private activeCareerIdSignal = signal<string>('lic-diseno-audiovisual');
   private selectedIdsSignal = signal<Set<number>>(new Set());
   private hoveredCourseIdSignal = signal<number | null>(null);
 
-  private readonly STORAGE_KEY = 'course-organizer-state';
+  private get storageKey(): string {
+    return `course-organizer-state-${this.activeCareerIdSignal()}`;
+  }
 
   courses = computed(() => {
     return this.getCoursesForPlan(this.currentPlanIdSignal());
@@ -37,10 +45,12 @@ export class CourseService {
     return rawCourses.map((course) => {
       const courseState = stateMap.get(course.id);
       const courseStatus = courseState?.status ?? 'pending';
+      const selectedLessonId = courseState?.selectedLessonId ?? null;
 
       return {
         ...course,
         status: courseStatus,
+        selectedLessonId,
         lessons: course.lessons.map((lesson) => ({
           ...lesson,
           status: courseState?.lessonStatuses[lesson.id] ?? courseStatus,
@@ -102,12 +112,57 @@ export class CourseService {
 
     this.loadState();
 
+    if (this.careerService) {
+      effect(() => {
+        const activeCareer = this.careerService?.activeCareer();
+        if (activeCareer) {
+          this.setCareerPlan(activeCareer);
+        }
+      });
+    }
+
     effect(() => {
       this.coursesByPlanSignal();
       this.courseStateSignal();
       this.saveState();
     });
   }
+
+  setCareerPlan(careerPlan: CareerPlan): void {
+    this.activeCareerIdSignal.set(careerPlan.id);
+    const newCourses: Course[] = careerPlan.courses.map((c) => ({
+      id: c.id,
+      name: c.name,
+      year: c.year,
+      q: c.q,
+      status: 'pending' as CourseStatus,
+      cursarReqId: c.cursarReqId.slice(),
+      aprobarReqId: c.aprobarReqId.slice(),
+      lessons: c.lessons.map((l) => ({ ...l })),
+    }));
+
+    const updatedByPlan = new Map<string, Course[]>();
+    updatedByPlan.set(this.currentPlanIdSignal(), newCourses);
+    this.coursesByPlanSignal.set(updatedByPlan);
+
+    const initialStates = new Map<number, CourseStateEntry>();
+    newCourses.forEach((course) => {
+      const lessonStatuses: Record<string, CourseStatus> = {};
+      course.lessons.forEach((l) => {
+        lessonStatuses[l.id] = 'pending';
+      });
+      initialStates.set(course.id, {
+        status: 'pending',
+        lessonStatuses,
+        selectedLessonId: null,
+      });
+    });
+    this.courseStateSignal.set(initialStates);
+    this.selectedIdsSignal.set(new Set());
+
+    this.loadState();
+  }
+
 
   private currentRawCourses(): Course[] {
     const courses = this.coursesByPlanSignal().get(this.currentPlanIdSignal()) ?? [];
@@ -153,6 +208,7 @@ export class CourseService {
       states.set(course.id, {
         status: 'pending',
         lessonStatuses,
+        selectedLessonId: null,
       });
     });
     return states;
@@ -163,9 +219,11 @@ export class CourseService {
     if (!raw) return undefined;
     const courseState = this.courseStateSignal().get(id);
     const status = courseState?.status ?? 'pending';
+    const selectedLessonId = courseState?.selectedLessonId ?? null;
     return {
       ...raw,
       status,
+      selectedLessonId,
       lessons: raw.lessons.map((lesson) => ({
         ...lesson,
         status: courseState?.lessonStatuses[lesson.id] ?? status,
@@ -262,7 +320,44 @@ export class CourseService {
     return this.canChangeStatusTo(course.id, 'coursing');
   }
 
-  toggleCourseStatus(courseId: number): void {
+  setSelectedLessonForCourse(courseId: number, lessonId: string | null): void {
+    const course = this.getCourseById(courseId);
+    if (!course) return;
+
+    const stateMap = new Map(this.courseStateSignal());
+    const existing = stateMap.get(courseId) ?? {
+      status: 'pending',
+      lessonStatuses: {},
+      selectedLessonId: null,
+    };
+
+    const updatedLessonStatuses: Record<string, CourseStatus> = { ...existing.lessonStatuses };
+
+    if (lessonId) {
+      const targetStatus = existing.status === 'pending' ? 'coursing' : existing.status;
+      course.lessons.forEach((l) => {
+        if (l.id === lessonId) {
+          updatedLessonStatuses[l.id] = targetStatus;
+        } else {
+          updatedLessonStatuses[l.id] = 'pending';
+        }
+      });
+    }
+
+    stateMap.set(courseId, {
+      ...existing,
+      selectedLessonId: lessonId,
+      lessonStatuses: updatedLessonStatuses,
+    });
+    this.courseStateSignal.set(stateMap);
+  }
+
+  getSelectedLessonId(courseId: number): string | null {
+    const entry = this.courseStateSignal().get(courseId);
+    return entry?.selectedLessonId ?? null;
+  }
+
+  toggleCourseStatus(courseId: number, targetLessonId?: string | null): void {
     const course = this.getCourseById(courseId);
     if (!course) return;
 
@@ -281,16 +376,28 @@ export class CourseService {
       const stateMap = new Map(this.courseStateSignal());
       const existing = stateMap.get(courseId);
 
-      const updatedLessonStatuses: Record<string, CourseStatus> = {
-        ...(existing?.lessonStatuses ?? {}),
-      };
+      let selectedLessonId = targetLessonId !== undefined ? targetLessonId : existing?.selectedLessonId ?? null;
+      if (nextStatus === 'coursing') {
+        if (!selectedLessonId && course.lessons.length > 0) {
+          selectedLessonId = course.lessons[0].id;
+        }
+      } else if (nextStatus === 'pending') {
+        selectedLessonId = null;
+      }
+
+      const updatedLessonStatuses: Record<string, CourseStatus> = {};
       course.lessons.forEach((lesson) => {
-        updatedLessonStatuses[lesson.id] = nextStatus;
+        if (nextStatus === 'coursing') {
+          updatedLessonStatuses[lesson.id] = lesson.id === selectedLessonId ? 'coursing' : 'pending';
+        } else {
+          updatedLessonStatuses[lesson.id] = nextStatus;
+        }
       });
 
       stateMap.set(courseId, {
         status: nextStatus,
         lessonStatuses: updatedLessonStatuses,
+        selectedLessonId,
       });
       this.courseStateSignal.set(stateMap);
     }
@@ -305,6 +412,7 @@ export class CourseService {
     const existing = stateMap.get(course.id) ?? {
       status: 'pending',
       lessonStatuses: {},
+      selectedLessonId: null,
     };
 
     const oldLessonStatus = existing.lessonStatuses[lessonId] ?? existing.status ?? 'pending';
@@ -324,15 +432,31 @@ export class CourseService {
       [lessonId]: nextStatus,
     };
 
+    let selectedLessonId = existing.selectedLessonId ?? null;
+    if (nextStatus === 'coursing') {
+      selectedLessonId = lessonId;
+      course.lessons.forEach((l) => {
+        if (l.id !== lessonId) {
+          updatedLessonStatuses[l.id] = 'pending';
+        }
+      });
+    }
+
     const lessonStatusValues = course.lessons.map(
       (l) => updatedLessonStatuses[l.id] ?? 'pending',
     );
+    const anyCoursing = lessonStatusValues.some((s) => s === 'coursing');
     const allSameStatus = lessonStatusValues.every((s) => s === lessonStatusValues[0]);
-    const newCourseStatus = allSameStatus ? lessonStatusValues[0] : existing.status;
+    const newCourseStatus = anyCoursing
+      ? 'coursing'
+      : allSameStatus
+        ? lessonStatusValues[0]
+        : existing.status;
 
     stateMap.set(course.id, {
       status: newCourseStatus,
       lessonStatuses: updatedLessonStatuses,
+      selectedLessonId,
     });
     this.courseStateSignal.set(stateMap);
   }
@@ -436,7 +560,7 @@ export class CourseService {
         coursesByPlan: this.serializeCoursesByPlan(this.coursesByPlanSignal()),
         courseStates: courseStatesObj,
       };
-      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(state));
+      localStorage.setItem(this.storageKey, JSON.stringify(state));
     } catch (error) {
       console.warn('Failed to save course state to localStorage:', error);
     }
@@ -445,11 +569,15 @@ export class CourseService {
   private loadState(): void {
     try {
       if (typeof localStorage === 'undefined' || !localStorage) return;
-      const stored = localStorage.getItem(this.STORAGE_KEY);
+      let stored = localStorage.getItem(this.storageKey);
+      if (!stored && this.activeCareerIdSignal() === 'lic-diseno-audiovisual') {
+        stored = localStorage.getItem('course-organizer-state');
+      }
       if (!stored) return;
 
       const state = JSON.parse(stored);
       if (typeof state !== 'object' || state === null) return;
+
 
       if (state.coursesByPlan) {
         const sanitizedByPlan = sanitizeCoursesByPlan(state.coursesByPlan);

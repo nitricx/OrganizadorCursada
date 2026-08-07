@@ -3,10 +3,12 @@
     <app-sidebar />
   </mat-sidenav>
   <mat-sidenav-content role="main">
-    <mat-toolbar>
+    <mat-toolbar class="main-toolbar">
       <button mat-icon-button (click)="isOpen.update(v => !v)" aria-label="Toggle navigation">
         <mat-icon>menu</mat-icon>
       </button>
+      <span class="toolbar-spacer"></span>
+      <app-career-selector />
     </mat-toolbar>
     <div class="wrap">
       <router-outlet />

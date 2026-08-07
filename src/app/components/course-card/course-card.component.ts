@@ -17,6 +17,7 @@ export class CourseCardComponent {
   readonly selectedIds = input.required<Set<number>>();
 
   readonly cardClicked = output<number>();
+  readonly changeLessonClicked = output<number>();
   readonly mouseEntered = output<number>();
   readonly mouseLeft = output<void>();
 
@@ -24,6 +25,13 @@ export class CourseCardComponent {
 
   statusTag = computed(() => {
     return getCourseStatusTag(this.course().status);
+  });
+
+  selectedLessonProf = computed(() => {
+    const c = this.course();
+    if (!c.selectedLessonId) return null;
+    const lesson = c.lessons.find((l) => l.id === c.selectedLessonId);
+    return lesson ? lesson.professor : null;
   });
 
   unlocks = computed(() => {
@@ -95,6 +103,11 @@ export class CourseCardComponent {
 
   onCardClick(): void {
     this.cardClicked.emit(this.course().id);
+  }
+
+  onChangeLesson(event: Event): void {
+    event.stopPropagation();
+    this.changeLessonClicked.emit(this.course().id);
   }
 
   onMouseEnter(): void {

@@ -1,0 +1,14 @@
+[
+  {
+    "id": "lic-diseno-audiovisual",
+    "name": "Licenciatura en Diseño Audiovisual",
+    "university": "Universidad Nacional de Río Negro",
+    "file": "audiovisual.json"
+  },
+  {
+    "id": "ing-sistemas",
+    "name": "Ingeniería en Sistemas de Información",
+    "university": "Universidad Tecnológica Nacional",
+    "file": "sistemas.json"
+  }
+]
