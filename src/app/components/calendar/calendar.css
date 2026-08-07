@@ -1,5 +1,5 @@
 .calendar-header {
-  margin-bottom: 14px;
+  margin-bottom: 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -11,39 +11,84 @@
   margin: 0;
   font-size: 24px;
   font-weight: 700;
+  color: var(--color-text-primary);
+  letter-spacing: -0.02em;
 }
 
 .calendar-header h2 {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   margin: 2px 0 0 0;
-  color: var(--color-text-secondary, #94a3b8);
+  color: var(--color-text-secondary);
 }
 
 .header-actions {
   display: flex;
   align-items: center;
   gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* View Toggle Button Group */
+.view-toggle {
+  display: flex;
+  align-items: center;
+  background: var(--color-background-primary);
+  border: 1px solid var(--color-border-secondary);
+  border-radius: var(--radius-md);
+  padding: 3px;
+  box-shadow: var(--shadow-sm);
+}
+
+.toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 10px;
+  border: none;
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.toggle-btn mat-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+}
+
+.toggle-btn:hover {
+  color: var(--color-text-primary);
+}
+
+.toggle-btn.active {
+  background: var(--brand-primary);
+  color: #ffffff;
+  box-shadow: var(--shadow-sm);
 }
 
 .btn-export-trigger {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  background: linear-gradient(135deg, var(--brand-accent), #1d4ed8);
   color: #ffffff;
   border: none;
-  border-radius: 8px;
-  padding: 8px 14px;
+  border-radius: var(--radius-md);
+  padding: 7px 14px;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
-  transition: all 0.2s ease;
+  transition: all var(--transition-fast);
 }
 
 .btn-export-trigger:hover {
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  background: linear-gradient(135deg, #3b82f6, var(--brand-accent));
   box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
   transform: translateY(-1px);
 }
@@ -54,28 +99,79 @@
   height: 18px;
 }
 
+.plan-selector {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.plan-selector label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.plan-selector select {
+  padding: 6px 10px;
+  border: 1px solid var(--color-border-secondary);
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 500;
+  background-color: var(--color-background-primary);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: border-color var(--transition-fast);
+}
+
+.plan-selector select:hover {
+  border-color: var(--brand-primary);
+}
+
+.plan-selector select:focus {
+  outline: none;
+  border-color: var(--brand-primary);
+  box-shadow: 0 0 0 3px var(--brand-primary-light);
+}
+
 /* Columns are set dynamically via style binding based on visible days and overlapping courses */
 .calendar-grid {
   display: grid;
+  background: var(--color-background-primary);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border-tertiary);
+  box-shadow: var(--shadow-md);
+  padding: 12px;
+  position: relative;
+  overflow-x: auto;
 }
 
 .time-gutter {
   grid-column: 1;
   grid-row: 1;
+  background: var(--color-background-primary);
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 .day-header {
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 12px;
+  font-weight: 700;
   color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
   text-align: center;
-  padding: 4px 0;
-  border-bottom: 1px solid var(--color-border-tertiary);
+  padding: 8px 4px;
+  background: var(--color-background-primary);
+  border-bottom: 2px solid var(--color-border-tertiary);
   display: flex;
   align-items: center;
   justify-content: center;
-  /* Borders between day columns for visual separation */
   border-right: 1px solid var(--color-border-tertiary);
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 .day-header:last-child {
@@ -85,6 +181,7 @@
 .time-label {
   grid-column: 1;
   font-size: 10px;
+  font-weight: 500;
   color: var(--color-text-tertiary);
   text-align: right;
   padding-right: 8px;
@@ -99,37 +196,70 @@
   background: var(--color-border-tertiary);
 }
 
-.plan-selector {
+/* Agenda List View Styles */
+.calendar-agenda {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.agenda-day-card {
+  background: var(--color-background-primary);
+  border: 1px solid var(--color-border-tertiary);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  box-shadow: var(--shadow-sm);
+}
+
+.agenda-day-header {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-top: 12px;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--color-border-tertiary);
+}
+
+.agenda-day-header h3 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.agenda-count-badge {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--brand-primary);
+  background: var(--brand-primary-light);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+}
+
+.agenda-lessons-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 10px;
+}
+
+.agenda-empty-state {
+  font-size: 12px;
+  color: var(--color-text-tertiary);
+  font-style: italic;
   padding: 8px 0;
 }
 
-.plan-selector label {
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--color-text-primary);
+@media (max-width: 640px) {
+  .btn-text {
+    display: none;
+  }
+
+  .header-actions {
+    gap: 6px;
+  }
+
+  .agenda-lessons-list {
+    grid-template-columns: 1fr;
+  }
 }
 
-.plan-selector select {
-  padding: 6px 12px;
-  border: 1px solid var(--color-border-secondary);
-  border-radius: 4px;
-  font-size: 14px;
-  background-color: var(--color-background-primary);
-  color: var(--color-text-primary);
-  cursor: pointer;
-  transition: border-color 0.2s;
-}
-
-.plan-selector select:hover {
-  border-color: var(--color-border-primary);
-}
-
-.plan-selector select:focus {
-  outline: none;
-  border-color: var(--color-accent);
-  box-shadow: 0 0 0 2px var(--color-accent-opacity);
-}

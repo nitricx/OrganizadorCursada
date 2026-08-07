@@ -55,6 +55,11 @@ export class Calendar {
   private readonly planService = inject(PlanService);
 
   readonly showExportModal = signal(false);
+  readonly viewMode = signal<'grid' | 'list'>('grid');
+
+  setViewMode(mode: 'grid' | 'list'): void {
+    this.viewMode.set(mode);
+  }
 
   openExportModal(): void {
     this.showExportModal.set(true);

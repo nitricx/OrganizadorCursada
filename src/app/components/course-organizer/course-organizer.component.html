@@ -1,9 +1,18 @@
 <div class="course-organizer">
   <div class="header">
-    <h2>
-      Tecnicatura en Edición Audiovisual
-      <button class="reset-btn" (click)="onReset()">Reiniciar</button>
-    </h2>
+    <div class="header-title-group">
+      <h1>Plan de Cursada</h1>
+      <p class="subtitle">Gestioná el estado de tus materias y consultá correlatividades</p>
+    </div>
+    <div class="header-actions">
+      <div class="progress-badge">
+        <span class="progress-text">Avance: {{ progressPercent() }}% ({{ approvedCount() }}/{{ totalCount() }} materias)</span>
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" [style.width.%]="progressPercent()"></div>
+        </div>
+      </div>
+      <button class="reset-btn" (click)="onReset()" title="Reiniciar progreso">Reiniciar</button>
+    </div>
   </div>
 
   <app-course-organizer-legend />
@@ -26,3 +35,4 @@
     (lessonSelected)="onLessonSelected($event)"
   />
 </div>
+

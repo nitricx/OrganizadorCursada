@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, signal, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, signal, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CourseService } from '../../services/course.service';
 import { CourseOrganizerLegendComponent } from '../course-organizer-legend/course-organizer-legend.component';
@@ -16,6 +16,20 @@ import { Course } from '../../models/course';
 })
 export class CourseOrganizerComponent {
   readonly courseService = inject(CourseService);
+
+  readonly approvedCount = computed(() => {
+    return this.courseService.courses().filter(c => c.status === 'approved').length;
+  });
+
+  readonly totalCount = computed(() => {
+    return this.courseService.courses().length;
+  });
+
+  readonly progressPercent = computed(() => {
+    const total = this.totalCount();
+    return total > 0 ? Math.round((this.approvedCount() / total) * 100) : 0;
+  });
+
   private infoMessageSignal = signal<string>(
     'Pasá el cursor sobre una materia para ver qué requiere y qué habilita.',
   );

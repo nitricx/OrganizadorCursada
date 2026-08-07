@@ -1,6 +1,6 @@
 :host {
-  border-radius: 6px;
-  padding: 6px 8px;
+  border-radius: var(--radius-md);
+  padding: 8px 10px;
   /* Reduced margin to prevent overflow when courses overlap */
   margin: 2px;
   font-size: 12px;
@@ -9,37 +9,42 @@
   gap: 2px;
   overflow: visible;
   z-index: 1;
-  outline: 2px dashed #185fa5;
+  outline: 2px dashed var(--brand-primary);
   outline-offset: -2px;
-  background: #e8e7e0;
-  border: 1px solid #888;
+  background: var(--status-pending-bg);
+  border: 1px solid var(--status-pending-border);
+  color: var(--status-pending-color);
   cursor: grab;
   position: relative;
   will-change: transform;
   user-select: none;
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), opacity var(--transition-fast);
 }
 
 :host:hover {
-  opacity: 0.9;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
 }
 
 /* Status: Pending (pendiente) */
 :host.status-pending {
   background: var(--status-pending-bg);
   border-color: var(--status-pending-border);
+  color: var(--status-pending-color);
   outline-color: var(--status-available-border);
 }
 
 :host:focus-visible {
-  outline: 3px solid #185fa5;
+  outline: 3px solid var(--brand-primary);
   outline-offset: 2px;
-  box-shadow: 0 0 0 4px rgba(24, 95, 165, 0.25);
+  box-shadow: 0 0 0 4px var(--brand-primary-light);
 }
 
 :host.is-dragging,
 :host.cdk-drag-preview {
-  opacity: 0.9;
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.3);
+  opacity: 0.92;
+  box-shadow: var(--shadow-lg);
   z-index: 1000 !important;
 }
 
@@ -55,6 +60,7 @@
 :host.status-coursing {
   background: var(--status-coursing-bg);
   border-color: var(--status-coursing-border);
+  color: var(--status-coursing-color);
   outline-color: var(--status-coursing-border);
 }
 
@@ -62,6 +68,7 @@
 :host.status-coursed {
   background: var(--status-coursed-bg);
   border-color: var(--status-coursed-border);
+  color: var(--status-coursed-color);
   outline-color: var(--status-coursed-border);
 }
 
@@ -69,6 +76,7 @@
 :host.status-approved {
   background: var(--status-approved-bg);
   border-color: var(--status-approved-border);
+  color: var(--status-approved-color);
   outline-color: var(--status-approved-border);
 }
 
@@ -97,7 +105,7 @@
 }
 
 .calendar-course-time {
-  color: var(--color-text-secondary);
+  opacity: 0.85;
   font-size: 11px;
 }
 
@@ -106,7 +114,7 @@
 }
 
 .calendar-course-professor {
-  color: var(--color-text-tertiary);
+  opacity: 0.75;
   font-size: 10px;
 }
 
@@ -153,3 +161,4 @@
   background: rgba(0, 0, 255, 0.2);
   border: 1px dashed rgba(0, 0, 255, 0.5);
 }
+

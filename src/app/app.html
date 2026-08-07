@@ -4,11 +4,21 @@
   </mat-sidenav>
   <mat-sidenav-content role="main">
     <mat-toolbar class="main-toolbar">
-      <button mat-icon-button (click)="isOpen.update(v => !v)" aria-label="Toggle navigation">
+      <button mat-icon-button (click)="isOpen.update(v => !v)" aria-label="Alternar menú de navegación">
         <mat-icon>menu</mat-icon>
       </button>
+      <span class="app-brand-title">OrganizadorCursada</span>
       <span class="toolbar-spacer"></span>
       <app-career-selector />
+      <button
+        mat-icon-button
+        class="theme-toggle-btn"
+        (click)="toggleDarkMode()"
+        [attr.aria-label]="isDarkMode() ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'"
+        [title]="isDarkMode() ? 'Modo Claro' : 'Modo Oscuro'"
+      >
+        <mat-icon>{{ isDarkMode() ? 'light_mode' : 'dark_mode' }}</mat-icon>
+      </button>
     </mat-toolbar>
     <div class="wrap">
       <router-outlet />

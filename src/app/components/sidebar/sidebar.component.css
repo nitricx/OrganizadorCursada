@@ -1,11 +1,38 @@
+:host {
+  display: block;
+  padding: 12px 8px;
+  background: var(--color-background-primary);
+  color: var(--color-text-primary);
+}
+
+a[mat-list-item] {
+  border-radius: var(--radius-md) !important;
+  margin: 2px 4px !important;
+  color: var(--color-text-secondary) !important;
+  transition: all var(--transition-fast);
+}
+
+a[mat-list-item]:hover {
+  background-color: var(--color-background-secondary) !important;
+  color: var(--color-text-primary) !important;
+}
+
 a.active-link {
-  background-color: var(--mat-sidenav-container-shape, rgba(0, 0, 0, 0.08));
+  background-color: var(--brand-primary-light) !important;
+  color: var(--brand-primary) !important;
+  font-weight: 600 !important;
+}
+
+[data-theme="dark"] a.active-link {
+  background-color: var(--brand-primary) !important;
+  color: #ffffff !important;
 }
 
 .sidebar-expansion-panel {
   box-shadow: none !important;
-  background: transparent;
-  border-radius: 0 !important;
+  background: transparent !important;
+  border-radius: var(--radius-md) !important;
+  margin: 2px 0 !important;
 }
 
 .nav-item-row {
@@ -20,24 +47,33 @@ a.active-link {
 .delete-plan-btn {
   flex-shrink: 0;
   margin-right: 4px;
+  opacity: 0.6;
+  transition: opacity var(--transition-fast);
+}
+
+.delete-plan-btn:hover {
+  opacity: 1;
 }
 
 .sidebar-expansion-panel .mat-expansion-panel-header {
-  padding: 0 16px;
-  height: 48px;
-  transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 0 12px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  transition: background-color var(--transition-fast);
+  color: var(--color-text-primary) !important;
 }
 
 .sidebar-expansion-panel .mat-expansion-panel-header:hover {
-  background-color: rgba(0, 0, 0, 0.04);
+  background-color: var(--color-background-secondary);
 }
 
 .nested-nav-list {
-  padding: 0;
+  padding: 4px 0;
 }
 
 .nested-nav-list a {
-  padding-left: 32px;
+  padding-left: 28px !important;
+  font-size: 13px;
 }
 
 .sidebar-expansion-panel mat-panel-title {
@@ -45,6 +81,9 @@ a.active-link {
   text-overflow: ellipsis;
   white-space: nowrap;
   max-width: 100%;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-primary);
 }
 
 [matListItemTitle] {
@@ -52,4 +91,6 @@ a.active-link {
   text-overflow: ellipsis;
   white-space: nowrap;
   max-width: 100%;
+  font-size: 13px;
 }
+

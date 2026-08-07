@@ -7,6 +7,29 @@
       </div>
 
       <div class="header-actions">
+        <div class="view-toggle" role="group" aria-label="Modo de vista del calendario">
+          <button
+            type="button"
+            class="toggle-btn"
+            [class.active]="viewMode() === 'grid'"
+            (click)="setViewMode('grid')"
+            title="Vista Grilla Semanal"
+          >
+            <mat-icon>grid_view</mat-icon>
+            <span class="btn-text">Grilla</span>
+          </button>
+          <button
+            type="button"
+            class="toggle-btn"
+            [class.active]="viewMode() === 'list'"
+            (click)="setViewMode('list')"
+            title="Vista Lista / Agenda"
+          >
+            <mat-icon>view_agenda</mat-icon>
+            <span class="btn-text">Agenda</span>
+          </button>
+        </div>
+
         <div class="plan-selector">
           <label for="plan-select">Plan:</label>
           <select
@@ -27,7 +50,7 @@
           title="Exportar cuatrimestre actual a Google Calendar / iCal"
         >
           <mat-icon>event_available</mat-icon>
-          Exportar Calendario
+          <span class="btn-text">Exportar</span>
         </button>
       </div>
     </div>
@@ -39,53 +62,89 @@
   @if (!isReadOnly()) {
     <app-calendar-legend></app-calendar-legend>
   }
-  <div
-    class="calendar-grid"
-    [style.grid-template-columns]="gridTemplateColumns()"
-    [style.grid-template-rows]="gridTemplateRows()"
-  >
-    <!-- Corner cell -->
-    <div class="time-gutter"></div>
-    <!-- Day headers (row 1) -->
-    @for (entry of days(); track entry.day) {
-      <div class="day-header" [style.grid-column]="'span ' + maxConcurrentCourses()">
-        {{ entry.label }}
-      </div>
-    }
-    <!-- Time labels and hour lines -->
-    @for (slot of timeSlots(); track slot.row) {
-      <div class="time-label" [style.grid-row]="slot.row">{{ slot.label }}</div>
-      <div
-        class="hour-line"
-        [style.grid-row]="slot.row"
-        [style.grid-column]="'2 / ' + hourLineEnd()"
-      ></div>
-    }
-    <!-- Courses positioned by time -->
-    @for (entry of days(); track entry.day) {
-      @for (
-        courseWithLesson of availableCoursesByDay().get(entry.day) ?? [];
-        track courseWithLesson.lesson.id
-      ) {
-        <app-calendar-card
-          #cardComp
-          cdkDrag
-          [cdkDragDisabled]="!isEditable()"
-          cdkDragLockAxis="y"
-          (cdkDragStarted)="onCardDragStarted(cardComp)"
-          (cdkDragEnded)="onCardDragEnded($event, courseWithLesson, cardComp)"
-          [course]="courseWithLesson.course"
-          [lesson]="courseWithLesson.lesson"
-          [isReadOnly]="isReadOnly()"
-          [isEditable]="isEditable()"
-          [clickTogglesStatus]="clickTogglesStatus()"
-          [style.grid-column]="getCourseColumn(courseWithLesson, days().indexOf(entry))"
-          [style.grid-row]="getCourseRows(courseWithLesson)"
-          [class.overlapping]="courseHasOverlap(courseWithLesson.lesson.id)"
-          [class]="'status-' + (courseWithLesson.lesson.status || 'pending')"
-          (lessonMoveRequested)="lessonMoveRequested.emit($event)"
-        />
+
+  @if (viewMode() === 'grid') {
+    <div
+      class="calendar-grid"
+      [style.grid-template-columns]="gridTemplateColumns()"
+      [style.grid-template-rows]="gridTemplateRows()"
+    >
+      <!-- Corner cell -->
+      <div class="time-gutter"></div>
+      <!-- Day headers (row 1, sticky) -->
+      @for (entry of days(); track entry.day) {
+        <div class="day-header" [style.grid-column]="'span ' + maxConcurrentCourses()">
+          {{ entry.label }}
+        </div>
       }
-    }
-  </div>
+      <!-- Time labels and hour lines -->
+      @for (slot of timeSlots(); track slot.row) {
+        <div class="time-label" [style.grid-row]="slot.row">{{ slot.label }}</div>
+        <div
+          class="hour-line"
+          [style.grid-row]="slot.row"
+          [style.grid-column]="'2 / ' + hourLineEnd()"
+        ></div>
+      }
+      <!-- Courses positioned by time -->
+      @for (entry of days(); track entry.day) {
+        @for (
+          courseWithLesson of availableCoursesByDay().get(entry.day) ?? [];
+          track courseWithLesson.lesson.id
+        ) {
+          <app-calendar-card
+            #cardComp
+            cdkDrag
+            [cdkDragDisabled]="!isEditable()"
+            cdkDragLockAxis="y"
+            (cdkDragStarted)="onCardDragStarted(cardComp)"
+            (cdkDragEnded)="onCardDragEnded($event, courseWithLesson, cardComp)"
+            [course]="courseWithLesson.course"
+            [lesson]="courseWithLesson.lesson"
+            [isReadOnly]="isReadOnly()"
+            [isEditable]="isEditable()"
+            [clickTogglesStatus]="clickTogglesStatus()"
+            [style.grid-column]="getCourseColumn(courseWithLesson, days().indexOf(entry))"
+            [style.grid-row]="getCourseRows(courseWithLesson)"
+            [class.overlapping]="courseHasOverlap(courseWithLesson.lesson.id)"
+            [class]="'status-' + (courseWithLesson.lesson.status || 'pending')"
+            (lessonMoveRequested)="lessonMoveRequested.emit($event)"
+          />
+        }
+      }
+    </div>
+  } @else {
+    <!-- Agenda List View -->
+    <div class="calendar-agenda">
+      @for (entry of days(); track entry.day) {
+        @let dayLessons = availableCoursesByDay().get(entry.day) ?? [];
+        <div class="agenda-day-card">
+          <div class="agenda-day-header">
+            <h3>{{ entry.label }}</h3>
+            <span class="agenda-count-badge">{{ dayLessons.length }} {{ dayLessons.length === 1 ? 'clase' : 'clases' }}</span>
+          </div>
+          @if (dayLessons.length > 0) {
+            <div class="agenda-lessons-list">
+              @for (courseWithLesson of dayLessons; track courseWithLesson.lesson.id) {
+                <app-calendar-card
+                  [course]="courseWithLesson.course"
+                  [lesson]="courseWithLesson.lesson"
+                  [isReadOnly]="isReadOnly()"
+                  [isEditable]="isEditable()"
+                  [clickTogglesStatus]="clickTogglesStatus()"
+                  [class]="'status-' + (courseWithLesson.lesson.status || 'pending')"
+                  (lessonMoveRequested)="lessonMoveRequested.emit($event)"
+                />
+              }
+            </div>
+          } @else {
+            <div class="agenda-empty-state">
+              <span>Sin clases agendadas</span>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
 </div>
+

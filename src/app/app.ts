@@ -27,5 +27,16 @@ import { MatIconModule } from '@angular/material/icon';
 })
 export class App {
   isOpen = signal(true);
+  isDarkMode = signal(false);
+
+  toggleDarkMode(): void {
+    const nextTheme = !this.isDarkMode();
+    this.isDarkMode.set(nextTheme);
+    if (nextTheme) {
+      document.body.setAttribute('data-theme', 'dark');
+    } else {
+      document.body.removeAttribute('data-theme');
+    }
+  }
 }
 
