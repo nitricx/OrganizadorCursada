@@ -39,7 +39,6 @@ export class RequisitesFlowComponent implements AfterViewInit, OnDestroy {
 
   cy: cytoscape.Core | null = null;
 
-  selectedYear = signal<string>('all');
   selectedStatus = signal<string>('all');
   selectedCourse = signal<Course | null>(null);
   statusErrorMessage = signal<string | null>(null);
@@ -49,13 +48,12 @@ export class RequisitesFlowComponent implements AfterViewInit, OnDestroy {
 
   constructor() {
     effect(() => {
-      // Trigger update when courses, year filter, or status filter change
+      // Trigger update when courses or status filter change
       const courses = this.courseService.courses();
-      const year = this.selectedYear();
       const status = this.selectedStatus();
 
       if (this.cy) {
-        this.updateCytoscapeGraph(courses, year, status);
+        this.updateCytoscapeGraph(courses, status);
       }
     });
   }
@@ -86,7 +84,6 @@ export class RequisitesFlowComponent implements AfterViewInit, OnDestroy {
 
     const elements = this.buildElements(
       this.courseService.courses(),
-      this.selectedYear(),
       this.selectedStatus(),
     );
 
@@ -107,12 +104,11 @@ export class RequisitesFlowComponent implements AfterViewInit, OnDestroy {
 
   private updateCytoscapeGraph(
     courses: Course[],
-    yearFilter: string,
     statusFilter: string,
   ): void {
     if (!this.cy) return;
 
-    const newElements = this.buildElements(courses, yearFilter, statusFilter);
+    const newElements = this.buildElements(courses, statusFilter);
 
     this.cy.batch(() => {
       this.cy?.elements().remove();
@@ -134,13 +130,9 @@ export class RequisitesFlowComponent implements AfterViewInit, OnDestroy {
 
   private buildElements(
     allCourses: Course[],
-    yearFilter: string,
     statusFilter: string,
   ): cytoscape.ElementDefinition[] {
     const filteredCourses = allCourses.filter((course) => {
-      if (yearFilter !== 'all' && course.year.toString() !== yearFilter) {
-        return false;
-      }
       if (statusFilter !== 'all' && course.status !== statusFilter) {
         return false;
       }
@@ -485,11 +477,6 @@ export class RequisitesFlowComponent implements AfterViewInit, OnDestroy {
     const layout = this.cy.layout(this.getLayoutOptions());
     layout.run();
     this.cy.fit(undefined, 35);
-  }
-
-  onYearFilterChange(event: Event): void {
-    const val = (event.target as HTMLSelectElement).value;
-    this.selectedYear.set(val);
   }
 
   onStatusFilterChange(event: Event): void {

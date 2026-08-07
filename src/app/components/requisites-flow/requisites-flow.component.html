@@ -10,17 +10,6 @@
 
       <div class="toolbar">
         <div class="filter-group">
-          <label for="yearFilter">Año:</label>
-          <select id="yearFilter" [value]="selectedYear()" (change)="onYearFilterChange($event)">
-            <option value="all">Todos los años</option>
-            <option value="1">1º Año</option>
-            <option value="2">2º Año</option>
-            <option value="3">3º Año</option>
-            <option value="4">4º Año</option>
-          </select>
-        </div>
-
-        <div class="filter-group">
           <label for="statusFilter">Estado:</label>
           <select id="statusFilter" [value]="selectedStatus()" (change)="onStatusFilterChange($event)">
             <option value="all">Todos los estados</option>

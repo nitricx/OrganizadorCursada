@@ -25,11 +25,6 @@ describe('RequisitesFlowComponent', () => {
     expect(component.cy).not.toBeNull();
   });
 
-  it('should filter by year signal', () => {
-    component.selectedYear.set('1');
-    expect(component.selectedYear()).toBe('1');
-  });
-
   it('should filter by status signal', () => {
     component.selectedStatus.set('approved');
     expect(component.selectedStatus()).toBe('approved');
