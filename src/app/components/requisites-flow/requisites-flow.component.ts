@@ -53,7 +53,8 @@ export class RequisitesFlowComponent implements AfterViewInit, OnDestroy {
       const status = this.selectedStatus();
 
       if (this.cy) {
-        this.updateCytoscapeGraph(courses, status);
+        this.updateCytoscapeGraph(courses);
+        this.applyStatusFilterDimming();
       }
     });
   }
@@ -82,10 +83,7 @@ export class RequisitesFlowComponent implements AfterViewInit, OnDestroy {
   private initCytoscape(): void {
     if (!this.cyContainer?.nativeElement) return;
 
-    const elements = this.buildElements(
-      this.courseService.courses(),
-      this.selectedStatus(),
-    );
+    const elements = this.buildElements(this.courseService.courses());
 
     const hasCanvas = this.isCanvasSupported();
 
@@ -100,15 +98,13 @@ export class RequisitesFlowComponent implements AfterViewInit, OnDestroy {
     });
 
     this.setupEvents();
+    this.applyStatusFilterDimming();
   }
 
-  private updateCytoscapeGraph(
-    courses: Course[],
-    statusFilter: string,
-  ): void {
+  private updateCytoscapeGraph(courses: Course[]): void {
     if (!this.cy) return;
 
-    const newElements = this.buildElements(courses, statusFilter);
+    const newElements = this.buildElements(courses);
 
     this.cy.batch(() => {
       this.cy?.elements().remove();
@@ -120,6 +116,8 @@ export class RequisitesFlowComponent implements AfterViewInit, OnDestroy {
       layout.run();
     }
 
+    this.applyStatusFilterDimming();
+
     // If currently selected course was updated, refresh its reference
     const currentSelected = this.selectedCourse();
     if (currentSelected) {
@@ -128,17 +126,29 @@ export class RequisitesFlowComponent implements AfterViewInit, OnDestroy {
     }
   }
 
-  private buildElements(
-    allCourses: Course[],
-    statusFilter: string,
-  ): cytoscape.ElementDefinition[] {
-    const filteredCourses = allCourses.filter((course) => {
-      if (statusFilter !== 'all' && course.status !== statusFilter) {
-        return false;
-      }
-      return true;
-    });
+  private applyStatusFilterDimming(): void {
+    if (!this.cy) return;
+    const status = this.selectedStatus();
 
+    this.cy.batch(() => {
+      if (status === 'all') {
+        this.cy?.elements().removeClass('status-dimmed');
+      } else {
+        const matchingNodes = this.cy?.nodes().filter((n) => n.data('status') === status);
+        const nonMatchingNodes = this.cy?.nodes().filter((n) => n.data('status') !== status);
+        const matchingEdges = matchingNodes?.connectedEdges();
+
+        nonMatchingNodes?.addClass('status-dimmed');
+        matchingNodes?.removeClass('status-dimmed');
+
+        this.cy?.edges().addClass('status-dimmed');
+        matchingEdges?.removeClass('status-dimmed');
+      }
+    });
+  }
+
+  private buildElements(allCourses: Course[]): cytoscape.ElementDefinition[] {
+    const filteredCourses = [...allCourses];
     const courseIdSet = new Set(filteredCourses.map((c) => c.id));
     const elements: cytoscape.ElementDefinition[] = [];
 
@@ -416,6 +426,12 @@ export class RequisitesFlowComponent implements AfterViewInit, OnDestroy {
           opacity: 0.18,
         },
       },
+      {
+        selector: '.status-dimmed',
+        style: {
+          opacity: 0.18,
+        },
+      },
     ];
   }
 
@@ -433,6 +449,7 @@ export class RequisitesFlowComponent implements AfterViewInit, OnDestroy {
 
     this.cy.on('mouseout', 'node', () => {
       this.cy?.elements().removeClass('highlighted').removeClass('dimmed');
+      this.applyStatusFilterDimming();
     });
 
     this.cy.on('tap', 'node', (evt) => {
@@ -482,6 +499,7 @@ export class RequisitesFlowComponent implements AfterViewInit, OnDestroy {
   onStatusFilterChange(event: Event): void {
     const val = (event.target as HTMLSelectElement).value;
     this.selectedStatus.set(val);
+    this.applyStatusFilterDimming();
   }
 
   changeStatus(courseId: number, targetStatus: CourseStatus): void {
