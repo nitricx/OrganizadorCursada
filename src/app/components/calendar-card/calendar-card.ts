@@ -13,6 +13,7 @@ import { CourseService } from '../../services/course.service';
 
 @Component({
   selector: 'app-calendar-card',
+  standalone: true,
   imports: [CommonModule],
   templateUrl: './calendar-card.html',
   styleUrl: './calendar-card.css',

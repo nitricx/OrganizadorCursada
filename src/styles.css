@@ -340,3 +340,17 @@ h1 {
   }
 }
 
+/* Google Account Menu Overlay Customization */
+.google-account-menu-panel {
+  border-radius: 28px !important;
+  background: transparent !important;
+  box-shadow: 0 6px 30px rgba(0, 0, 0, 0.2) !important;
+  overflow: hidden !important;
+}
+
+.google-account-menu-panel .mat-mdc-menu-content {
+  padding: 0 !important;
+  background: transparent !important;
+}
+
+

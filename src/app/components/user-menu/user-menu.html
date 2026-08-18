@@ -1,0 +1,103 @@
+@if (authService.loadingSignal()) {
+  <button mat-icon-button disabled class="avatar-trigger-btn" aria-label="Cargando cuenta">
+    <mat-icon class="spin-icon">sync</mat-icon>
+  </button>
+} @else if (authService.userSignal(); as user) {
+  <button
+    mat-icon-button
+    [matMenuTriggerFor]="googleUserMenu"
+    #menuTrigger="matMenuTrigger"
+    class="avatar-trigger-btn"
+    [matTooltip]="user.email || 'Cuenta de Google'"
+  >
+    @if (user.photoURL) {
+      <img [src]="user.photoURL" alt="Avatar" class="header-avatar-img" />
+    } @else {
+      <div class="header-avatar-circle">
+        {{ getInitial(user.displayName, user.email) }}
+      </div>
+    }
+  </button>
+
+  <mat-menu #googleUserMenu="matMenu" xPosition="before" class="google-account-menu-panel">
+    <div class="google-card-container" (click)="$event.stopPropagation()">
+      <!-- Top header bar: Email & Close X button -->
+      <div class="google-card-topbar">
+        <span class="google-user-email">{{ user.email }}</span>
+        <button mat-icon-button class="google-close-btn" (click)="menuTrigger.closeMenu()" aria-label="Cerrar">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+
+      <!-- Center section: Large Avatar + Greeting + Manage Account Pill Button -->
+      <div class="google-card-center">
+        <div class="google-large-avatar-wrapper">
+          @if (user.photoURL) {
+            <img [src]="user.photoURL" alt="Avatar de usuario" class="google-large-avatar-img" />
+          } @else {
+            <div class="google-large-avatar-circle">
+              {{ getInitial(user.displayName, user.email) }}
+            </div>
+          }
+          <div class="google-avatar-camera-badge" title="Cambiar imagen de perfil">
+            <mat-icon class="camera-icon">photo_camera</mat-icon>
+          </div>
+        </div>
+
+        <h2 class="google-greeting">
+          ¡Hola, {{ getFirstName(user.displayName, user.email) }}!
+        </h2>
+
+        <button mat-stroked-button class="google-manage-btn" (click)="openManageAccount()">
+          Gestionar tu cuenta de Google
+        </button>
+      </div>
+
+      <!-- Sync Status Badge Card -->
+      <div class="google-sync-card">
+        <mat-icon class="sync-badge-icon">cloud_done</mat-icon>
+        <div class="sync-card-text">
+          <span class="sync-title">Sincronización en la nube activa</span>
+          <span class="sync-subtitle">Tus cursadas se guardan entre tu celular y PC</span>
+        </div>
+      </div>
+
+      <!-- Bottom action: Sign out -->
+      <div class="google-card-footer">
+        <button mat-button class="google-signout-btn" (click)="logout()">
+          <mat-icon class="signout-icon">logout</mat-icon>
+          <span>Cerrar sesión</span>
+        </button>
+      </div>
+    </div>
+  </mat-menu>
+} @else {
+  <button
+    mat-stroked-button
+    class="google-login-btn"
+    (click)="loginWithGoogle()"
+    matTooltip="Guardar y sincronizar cursadas entre celular y PC"
+  >
+    <span class="btn-content">
+      <svg class="google-icon" viewBox="0 0 24 24" width="18" height="18">
+        <path
+          fill="#4285F4"
+          d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"
+        />
+        <path
+          fill="#34A853"
+          d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.29v3.14C3.26 21.3 7.31 24 12 24z"
+        />
+        <path
+          fill="#FBBC05"
+          d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.59H1.29C.47 8.22 0 10.05 0 12s.47 3.78 1.29 5.41l3.99-3.14z"
+        />
+        <path
+          fill="#EA4335"
+          d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.59l3.99 3.14c.95-2.83 3.6-4.98 6.72-4.98z"
+        />
+      </svg>
+      <span>Acceder</span>
+    </span>
+  </button>
+}

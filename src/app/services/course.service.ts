@@ -9,6 +9,9 @@ import {
   sanitizeCourseStatesMap,
 } from '../utils/storage-sanitizer.utils';
 
+import { AuthService } from './auth.service';
+import { FirestoreSyncService, UserCareerStateDoc } from './firestore-sync.service';
+
 export interface CourseStateEntry {
   status: CourseStatus;
   lessonStatuses: Record<string, CourseStatus>;
@@ -20,6 +23,8 @@ export interface CourseStateEntry {
 })
 export class CourseService {
   private careerService = inject(CareerService, { optional: true });
+  private authService = inject(AuthService, { optional: true });
+  private firestoreSync = inject(FirestoreSyncService, { optional: true });
 
   // Layout per plan (which semester each subject is placed in)
   private coursesByPlanSignal = signal<Map<string, Course[]>>(new Map());
@@ -126,6 +131,25 @@ export class CourseService {
       this.courseStateSignal();
       this.saveState();
     });
+
+    if (this.authService && this.firestoreSync) {
+      effect(() => {
+        const user = this.authService?.userSignal();
+        const careerId = this.activeCareerIdSignal();
+        if (user && this.firestoreSync) {
+          const sub = this.firestoreSync.getUserCareerData$(user.uid, careerId).subscribe((cloudDoc) => {
+            if (cloudDoc) {
+              this.applyCloudData(cloudDoc);
+            } else {
+              // First time login: push existing local state to cloud
+              this.syncToCloud(user.uid, careerId);
+            }
+          });
+          return () => sub.unsubscribe();
+        }
+        return;
+      });
+    }
   }
 
   setCareerPlan(careerPlan: CareerPlan): void {
@@ -587,9 +611,33 @@ export class CourseService {
     this.setCurrentRawCourses(updatedCourses);
   }
 
+  private syncToCloud(uid: string, careerId: string): void {
+    if (!this.firestoreSync) return;
+    const courseStatesObj: Record<string, CourseStateEntry> = {};
+    this.courseStateSignal().forEach((val, key) => {
+      courseStatesObj[key.toString()] = val;
+    });
+    this.firestoreSync.saveUserCareerData(uid, careerId, {
+      coursesByPlan: this.serializeCoursesByPlan(this.coursesByPlanSignal()),
+      courseStates: courseStatesObj,
+    });
+  }
+
+  private applyCloudData(data: UserCareerStateDoc): void {
+    if (data.coursesByPlan) {
+      const sanitizedByPlan = sanitizeCoursesByPlan(data.coursesByPlan);
+      if (sanitizedByPlan.size > 0) {
+        this.coursesByPlanSignal.set(sanitizedByPlan);
+      }
+    }
+    if (data.courseStates) {
+      const loadedMap = sanitizeCourseStatesMap(data.courseStates);
+      this.courseStateSignal.set(loadedMap);
+    }
+  }
+
   private saveState(): void {
     try {
-      if (typeof localStorage === 'undefined' || !localStorage) return;
       const courseStatesObj: Record<string, CourseStateEntry> = {};
       this.courseStateSignal().forEach((val, key) => {
         courseStatesObj[key.toString()] = val;
@@ -598,9 +646,17 @@ export class CourseService {
         coursesByPlan: this.serializeCoursesByPlan(this.coursesByPlanSignal()),
         courseStates: courseStatesObj,
       };
-      localStorage.setItem(this.storageKey, JSON.stringify(state));
+
+      if (typeof localStorage !== 'undefined' && localStorage) {
+        localStorage.setItem(this.storageKey, JSON.stringify(state));
+      }
+
+      const user = this.authService?.userSignal();
+      if (user && this.firestoreSync) {
+        this.syncToCloud(user.uid, this.activeCareerIdSignal());
+      }
     } catch (error) {
-      console.warn('Failed to save course state to localStorage:', error);
+      console.warn('Failed to save course state:', error);
     }
   }
 

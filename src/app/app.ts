@@ -8,6 +8,8 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
+import { UserMenuComponent } from './components/user-menu/user-menu';
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.html',
@@ -18,6 +20,7 @@ import { MatIconModule } from '@angular/material/icon';
     SidebarComponent,
     ToastContainerComponent,
     CareerSelectorComponent,
+    UserMenuComponent,
     MatSidenavModule,
     MatToolbarModule,
     MatButtonModule,

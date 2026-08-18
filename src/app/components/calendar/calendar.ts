@@ -37,6 +37,7 @@ export type { CourseWithLesson };
 
 @Component({
   selector: 'app-calendar',
+  standalone: true,
   imports: [
     CalendarCard,
     CalendarLegendComponent,
