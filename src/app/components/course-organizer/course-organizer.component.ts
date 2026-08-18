@@ -6,12 +6,26 @@ import { CourseGridComponent } from '../course-grid/course-grid.component';
 import { LessonSelectorModalComponent } from '../lesson-selector-modal/lesson-selector-modal.component';
 import { Course } from '../../models/course';
 
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatCardModule } from '@angular/material/card';
+
 @Component({
   selector: 'app-course-organizer',
   templateUrl: './course-organizer.component.html',
   styleUrls: ['./course-organizer.component.css'],
   standalone: true,
-  imports: [CommonModule, CourseOrganizerLegendComponent, CourseGridComponent, LessonSelectorModalComponent],
+  imports: [
+    CommonModule,
+    CourseOrganizerLegendComponent,
+    CourseGridComponent,
+    LessonSelectorModalComponent,
+    MatProgressBarModule,
+    MatButtonModule,
+    MatIconModule,
+    MatCardModule,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CourseOrganizerComponent {

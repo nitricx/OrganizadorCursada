@@ -66,3 +66,27 @@
   transition: width 0.4s ease;
 }
 
+.mat-progress-bar-custom {
+  border-radius: 4px;
+  height: 8px;
+}
+
+.info-bar-card {
+  border-radius: 12px;
+  margin-top: 8px;
+}
+
+.info-bar-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.info-icon {
+  color: var(--brand-primary, #3b82f6);
+  flex-shrink: 0;
+}
+
+

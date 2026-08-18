@@ -7,44 +7,38 @@
       </div>
 
       <div class="header-actions">
-        <div class="view-toggle" role="group" aria-label="Modo de vista del calendario">
-          <button
-            type="button"
-            class="toggle-btn"
-            [class.active]="viewMode() === 'grid'"
-            (click)="setViewMode('grid')"
-            title="Vista Grilla Semanal"
-          >
+        <mat-button-toggle-group
+          [value]="viewMode()"
+          (change)="setViewMode($event.value)"
+          aria-label="Modo de vista del calendario"
+          class="mat-view-toggle"
+        >
+          <mat-button-toggle value="grid" title="Vista Grilla Semanal">
             <mat-icon>grid_view</mat-icon>
             <span class="btn-text">Grilla</span>
-          </button>
-          <button
-            type="button"
-            class="toggle-btn"
-            [class.active]="viewMode() === 'list'"
-            (click)="setViewMode('list')"
-            title="Vista Lista / Agenda"
-          >
+          </mat-button-toggle>
+          <mat-button-toggle value="list" title="Vista Lista / Agenda">
             <mat-icon>view_agenda</mat-icon>
             <span class="btn-text">Agenda</span>
-          </button>
-        </div>
+          </mat-button-toggle>
+        </mat-button-toggle-group>
 
-        <div class="plan-selector">
-          <label for="plan-select">Plan:</label>
-          <select
-            id="plan-select"
+        <mat-form-field appearance="outline" class="plan-select-field" subscriptSizing="dynamic">
+          <mat-label>Plan de Estudio</mat-label>
+          <mat-select
             [value]="selectedPlanId()"
-            (change)="onPlanChange($any($event.target).value)"
+            (selectionChange)="onPlanChange($event.value)"
+            aria-label="Seleccionar plan"
           >
             @for (plan of availablePlans(); track plan.id) {
-              <option [value]="plan.id">{{ plan.label }}</option>
+              <mat-option [value]="plan.id">{{ plan.label }}</mat-option>
             }
-          </select>
-        </div>
+          </mat-select>
+        </mat-form-field>
 
         <button
-          type="button"
+          mat-flat-button
+          color="primary"
           class="btn-export-trigger"
           (click)="openExportModal()"
           title="Exportar cuatrimestre actual a Google Calendar / iCal"

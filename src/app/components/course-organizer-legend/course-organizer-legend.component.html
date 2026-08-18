@@ -1,30 +1,32 @@
 <div class="legend">
-  @for (item of statusList; track item.key) {
-    <div class="leg-item">
+  <mat-chip-set aria-label="Leyenda de estados de cursada" class="legend-chip-set">
+    @for (item of statusList; track item.key) {
+      <mat-chip class="leg-chip">
+        <div
+          class="leg-dot"
+          [style.background]="item.bg"
+          [style.border]="'1px solid ' + item.borderColor"
+        ></div>
+        <span>{{ item.label }}</span>
+      </mat-chip>
+    }
+    <mat-chip class="leg-chip">
       <div
         class="leg-dot"
-        [style.background]="item.bg"
-        [style.border]="'1px solid ' + item.borderColor"
+        style="outline: 2px dashed #185fa5; outline-offset: 1px; background: #e8e7e0"
       ></div>
-      <span>{{ item.label }}</span>
-    </div>
-  }
-  <div class="leg-item">
-    <div
-      class="leg-dot"
-      style="outline: 2px dashed #185fa5; outline-offset: 1px; background: #e8e7e0"
-    ></div>
-    <span>Disponible para cursar</span>
-  </div>
-  <div class="leg-item">
-    <div class="leg-dot" style="background: #fac775; border: 1px solid #ba7517"></div>
-    <span>Requisito</span>
-  </div>
-  <div class="leg-item">
-    <div class="leg-dot" style="background: #9fe1cb; border: 1px solid #0f6e56"></div>
-    <span>Desbloquea</span>
-  </div>
-  <span style="color: #aaa; font-style: italic">
+      <span>Disponible para cursar</span>
+    </mat-chip>
+    <mat-chip class="leg-chip">
+      <div class="leg-dot" style="background: #fac775; border: 1px solid #ba7517"></div>
+      <span>Requisito</span>
+    </mat-chip>
+    <mat-chip class="leg-chip">
+      <div class="leg-dot" style="background: #9fe1cb; border: 1px solid #0f6e56"></div>
+      <span>Desbloquea</span>
+    </mat-chip>
+  </mat-chip-set>
+  <span class="legend-hint">
     · Clic: cambia estado &nbsp;· Hover: ver correlativas y materias que habilita
   </span>
 </div>

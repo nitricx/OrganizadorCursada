@@ -7,11 +7,12 @@
     <div class="header-actions">
       <div class="progress-badge">
         <span class="progress-text">Avance: {{ progressPercent() }}% ({{ approvedCount() }}/{{ totalCount() }} materias)</span>
-        <div class="progress-bar-bg">
-          <div class="progress-bar-fill" [style.width.%]="progressPercent()"></div>
-        </div>
+        <mat-progress-bar mode="determinate" [value]="progressPercent()" class="mat-progress-bar-custom"></mat-progress-bar>
       </div>
-      <button class="reset-btn" (click)="onReset()" title="Reiniciar progreso">Reiniciar</button>
+      <button mat-stroked-button color="warn" class="reset-btn" (click)="onReset()" title="Reiniciar progreso">
+        <mat-icon>refresh</mat-icon>
+        <span>Reiniciar</span>
+      </button>
     </div>
   </div>
 
@@ -26,7 +27,12 @@
     (mouseLeft)="onMouseLeft()"
   />
 
-  <div class="info-bar" [innerHTML]="infoMessage()"></div>
+  <mat-card appearance="outlined" class="info-bar-card">
+    <mat-card-content class="info-bar-content">
+      <mat-icon class="info-icon">info</mat-icon>
+      <span [innerHTML]="infoMessage()"></span>
+    </mat-card-content>
+  </mat-card>
 
   <app-lesson-selector-modal
     [course]="selectedCourseForModal()"

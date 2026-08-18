@@ -43,6 +43,8 @@
       </h1>
 
       <button
+        mat-flat-button
+        color="primary"
         type="button"
         class="btn-export-trigger"
         (click)="openExportModal()"
@@ -57,32 +59,40 @@
         @if (!isEditingTitle()) {
           <h2 class="plan-title">{{ planId() }}</h2>
         } @else {
-          <input
-            type="text"
-            [(ngModel)]="editablePlanId"
-            placeholder="Subtítulo"
-            class="editable-plan-title"
-          />
+          <mat-form-field appearance="outline" subscriptSizing="dynamic" class="editable-plan-field">
+            <mat-label>Título del Plan</mat-label>
+            <input
+              matInput
+              type="text"
+              [(ngModel)]="editablePlanId"
+              placeholder="Subtítulo"
+            />
+          </mat-form-field>
         }
         <div class="year-selector">
-          <label for="starting-year">Año inicial:</label>
           @if (!isEditingTitle()) {
-            <input
-              id="starting-year"
-              type="number"
-              [value]="startingYear()"
-              [disabled]="true"
-              min="1900"
-              max="2100"
-            />
+            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="year-input-field">
+              <mat-label>Año Inicial</mat-label>
+              <input
+                matInput
+                type="number"
+                [value]="startingYear()"
+                [disabled]="true"
+                min="1900"
+                max="2100"
+              />
+            </mat-form-field>
           } @else {
-            <input
-              id="starting-year"
-              type="number"
-              [(ngModel)]="editableStartingYear"
-              min="1900"
-              max="2100"
-            />
+            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="year-input-field">
+              <mat-label>Año Inicial</mat-label>
+              <input
+                matInput
+                type="number"
+                [(ngModel)]="editableStartingYear"
+                min="1900"
+                max="2100"
+              />
+            </mat-form-field>
           }
         </div>
       </div>
@@ -94,30 +104,28 @@
         <h2 class="semester-title">{{ item.label }}</h2>
         @if (isEditingTitle() && isEditable()) {
           <div class="semester-date-inputs">
-            <div class="date-input-group">
-              <label for="start-{{ item.id }}">Inicio:</label>
+            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="sem-date-field">
+              <mat-label>Inicio</mat-label>
               <input
-                [id]="'start-' + item.id"
+                matInput
                 type="text"
                 placeholder="DD/MM"
                 [ngModel]="getEditableSemesterDates(item.id).startDate"
                 (ngModelChange)="updateSemesterDate(item.id, 'startDate', $event)"
-                class="date-input"
                 maxlength="5"
               />
-            </div>
-            <div class="date-input-group">
-              <label for="end-{{ item.id }}">Fin:</label>
+            </mat-form-field>
+            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="sem-date-field">
+              <mat-label>Fin</mat-label>
               <input
-                [id]="'end-' + item.id"
+                matInput
                 type="text"
                 placeholder="DD/MM"
                 [ngModel]="getEditableSemesterDates(item.id).endDate"
                 (ngModelChange)="updateSemesterDate(item.id, 'endDate', $event)"
-                class="date-input"
                 maxlength="5"
               />
-            </div>
+            </mat-form-field>
           </div>
         }
       </div>
@@ -132,6 +140,8 @@
     @if (isEditable() && (i + 1) % 2 === 0) {
       <div class="add-semester-divider">
         <button
+          mat-mini-fab
+          color="primary"
           type="button"
           class="add-semester-btn"
           (click)="addCalendarAfter(item.id)"

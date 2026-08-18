@@ -11,6 +11,9 @@ import { CommonModule } from '@angular/common';
 import { DragDropModule, CdkDragEnd } from '@angular/cdk/drag-drop';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { CourseService } from '../../services/course.service';
 import { PlanService } from '../../services/plan.service';
 import { Course, DayOfWeek } from '../../models/course';
@@ -46,6 +49,9 @@ export type { CourseWithLesson };
     ExportCalendarModalComponent,
     MatIconModule,
     MatButtonModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatButtonToggleModule,
   ],
   templateUrl: './calendar.html',
   styleUrl: './calendar.css',

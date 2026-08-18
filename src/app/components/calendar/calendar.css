@@ -30,15 +30,31 @@
 }
 
 /* View Toggle Button Group */
-.view-toggle {
-  display: flex;
+.mat-view-toggle {
+  height: 38px;
   align-items: center;
-  background: var(--color-background-primary);
-  border: 1px solid var(--color-border-secondary);
-  border-radius: var(--radius-md);
-  padding: 3px;
-  box-shadow: var(--shadow-sm);
+  border-radius: var(--radius-md, 8px);
 }
+
+.mat-view-toggle mat-button-toggle {
+  display: inline-flex;
+  align-items: center;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.mat-view-toggle mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  margin-right: 4px;
+}
+
+.plan-select-field {
+  min-width: 200px;
+  font-size: 13px;
+}
+
 
 .toggle-btn {
   display: inline-flex;

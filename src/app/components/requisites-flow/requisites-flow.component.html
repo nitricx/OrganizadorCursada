@@ -9,18 +9,19 @@
       </div>
 
       <div class="toolbar">
-        <div class="filter-group">
-          <label for="statusFilter">Estado:</label>
-          <select id="statusFilter" [value]="selectedStatus()" (change)="onStatusFilterChange($event)">
-            <option value="all">Todos los estados</option>
-            <option *ngFor="let st of statusConfigList" [value]="st.key">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="status-filter-field">
+          <mat-label>Filtrar Estado</mat-label>
+          <mat-select [value]="selectedStatus()" (selectionChange)="onStatusSelectValueChange($event.value)" aria-label="Filtrar por estado">
+            <mat-option value="all">Todos los estados</mat-option>
+            <mat-option *ngFor="let st of statusConfigList" [value]="st.key">
               {{ st.label }}
-            </option>
-          </select>
-        </div>
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
 
         <div class="btn-group">
           <button
+            mat-stroked-button
             type="button"
             class="btn-tool"
             (click)="fitDiagram()"
@@ -31,6 +32,7 @@
             <span>Centrar</span>
           </button>
           <button
+            mat-stroked-button
             type="button"
             class="btn-tool"
             (click)="resetLayout()"
@@ -41,22 +43,22 @@
             <span>Reorganizar</span>
           </button>
           <button
+            mat-icon-button
             type="button"
-            class="btn-tool"
             (click)="zoomIn()"
             title="Aumentar zoom"
             aria-label="Aumentar zoom"
           >
-            <mat-icon class="btn-icon">add</mat-icon>
+            <mat-icon>add</mat-icon>
           </button>
           <button
+            mat-icon-button
             type="button"
-            class="btn-tool"
             (click)="zoomOut()"
             title="Disminuir zoom"
             aria-label="Disminuir zoom"
           >
-            <mat-icon class="btn-icon">remove</mat-icon>
+            <mat-icon>remove</mat-icon>
           </button>
         </div>
       </div>
@@ -81,7 +83,7 @@
           <span class="meta-tag">{{ selectedCourse()?.year }}º Año • Cuatrimestre {{ selectedCourse()?.q }}</span>
           <h2 [id]="'detail-title-' + selectedCourse()?.id">{{ selectedCourse()?.name }}</h2>
         </div>
-        <button type="button" class="btn-close" (click)="closeDetail()" aria-label="Cerrar detalles de la materia">
+        <button mat-icon-button type="button" (click)="closeDetail()" aria-label="Cerrar detalles de la materia">
           <mat-icon>close</mat-icon>
         </button>
       </div>

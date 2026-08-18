@@ -2,10 +2,23 @@ import { Component, input, output, ChangeDetectionStrategy, signal } from '@angu
 import { CommonModule } from '@angular/common';
 import { Course, Lesson, DayOfWeek } from '../../models/course';
 
+import { MatRadioModule } from '@angular/material/radio';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatCardModule } from '@angular/material/card';
+
 @Component({
   selector: 'app-lesson-selector-modal',
   standalone: true,
-  imports: [CommonModule],
+  imports: [
+    CommonModule,
+    MatRadioModule,
+    MatButtonModule,
+    MatIconModule,
+    MatChipsModule,
+    MatCardModule,
+  ],
   templateUrl: './lesson-selector-modal.component.html',
   styleUrls: ['./lesson-selector-modal.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,

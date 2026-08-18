@@ -1,12 +1,14 @@
 @if (isOpen() && course()) {
   <div class="modal-backdrop" (click)="closeModal()">
-    <div class="modal-card" (click)="$event.stopPropagation()" role="dialog" aria-modal="true" [attr.aria-labelledby]="'modal-title-' + course()?.id">
+    <div class="modal-card mat-elevation-z8" (click)="$event.stopPropagation()" role="dialog" aria-modal="true" [attr.aria-labelledby]="'modal-title-' + course()?.id">
       <header class="modal-header">
         <div>
           <span class="modal-subtitle">Selección de Comisión</span>
           <h2 class="modal-title" [id]="'modal-title-' + course()?.id">{{ course()?.name }}</h2>
         </div>
-        <button type="button" class="btn-close" (click)="closeModal()" aria-label="Cerrar modal">&times;</button>
+        <button mat-icon-button type="button" (click)="closeModal()" aria-label="Cerrar modal">
+          <mat-icon>close</mat-icon>
+        </button>
       </header>
 
       <div class="modal-body">
@@ -27,32 +29,26 @@
               (keydown.space)="selectLesson(lesson.id)"
             >
               <div class="lesson-radio">
-                <input
-                  type="radio"
+                <mat-radio-button
                   [name]="'lesson-opt-' + course()?.id"
                   [id]="'opt-' + lesson.id"
                   [checked]="isCurrentSelected"
                   (change)="selectLesson(lesson.id)"
-                />
+                  (click)="$event.stopPropagation()"
+                ></mat-radio-button>
               </div>
               <div class="lesson-details">
                 <div class="lesson-prof">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="12" cy="7" r="4"></circle>
-                  </svg>
+                  <mat-icon class="meta-icon">person</mat-icon>
                   <span>{{ lesson.professor }}</span>
                 </div>
                 <div class="lesson-time">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <polyline points="12 6 12 12 16 14"></polyline>
-                  </svg>
+                  <mat-icon class="meta-icon">schedule</mat-icon>
                   <span><strong>{{ getDayName(lesson.day) }}</strong> {{ lesson.startTime }} - {{ lesson.endTime }} hs</span>
                 </div>
               </div>
               @if (isCurrentSelected) {
-                <span class="badge-active">Seleccionada</span>
+                <mat-chip class="badge-active-chip" highlighted color="primary">Seleccionada</mat-chip>
               }
             </div>
           }
@@ -60,8 +56,8 @@
       </div>
 
       <footer class="modal-footer">
-        <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancelar</button>
-        <button type="button" class="btn btn-primary" (click)="confirmSelection()">Confirmar Selección</button>
+        <button mat-button type="button" (click)="closeModal()">Cancelar</button>
+        <button mat-flat-button color="primary" type="button" (click)="confirmSelection()">Confirmar Selección</button>
       </footer>
     </div>
   </div>

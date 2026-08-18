@@ -11,6 +11,10 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatChipsModule } from '@angular/material/chips';
 import { CalendarExportService } from '../../services/calendar-export.service';
 import { ToastService } from '../../services/toast.service';
 import { CalendarEventItem } from '../../models/calendar-sync.model';
@@ -19,7 +23,16 @@ import { ICAL_DAY_MAP } from '../../utils/calendar-export.utils';
 @Component({
   selector: 'app-export-calendar-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatIconModule, MatButtonModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatIconModule,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatCheckboxModule,
+    MatChipsModule,
+  ],
   templateUrl: './export-calendar-modal.component.html',
   styleUrl: './export-calendar-modal.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
