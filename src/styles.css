@@ -110,6 +110,19 @@
   color: #0a5c3f;
 }
 
+[data-theme="dark"] .info-req {
+  color: #fbbf24;
+}
+
+[data-theme="dark"] .info-unlocks {
+  color: #34d399;
+}
+
+:focus-visible {
+  outline: 2px solid var(--brand-primary);
+  outline-offset: 2px;
+}
+
 html,
 body {
   margin: 0;

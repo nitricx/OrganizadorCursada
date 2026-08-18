@@ -23,8 +23,8 @@ export const COURSE_STATUS_CONFIG: Record<CourseStatus, CourseStatusConfig> = {
   coursing: {
     key: 'coursing',
     label: 'Cursando',
-    tag: '◐ cursando',
-    symbol: '◐',
+    tag: 'cursando',
+    symbol: '',
     bg: '#fff8e1',
     color: '#5d4e06',
     borderColor: '#d4b856',
@@ -32,8 +32,8 @@ export const COURSE_STATUS_CONFIG: Record<CourseStatus, CourseStatusConfig> = {
   coursed: {
     key: 'coursed',
     label: 'Cursada',
-    tag: '● cursada',
-    symbol: '●',
+    tag: 'cursada',
+    symbol: '',
     bg: '#e6f1fb',
     color: '#042c53',
     borderColor: '#185fa5',
@@ -41,8 +41,8 @@ export const COURSE_STATUS_CONFIG: Record<CourseStatus, CourseStatusConfig> = {
   approved: {
     key: 'approved',
     label: 'Aprobada',
-    tag: '✓ aprobada',
-    symbol: '✓',
+    tag: 'aprobada',
+    symbol: '',
     bg: '#e1f5ee',
     color: '#04342c',
     borderColor: '#0f6e56',

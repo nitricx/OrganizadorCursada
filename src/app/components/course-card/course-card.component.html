@@ -3,18 +3,27 @@
   [attr.id]="'mat-' + course().id"
   [class.available]="allRequirementsMet() && course().status === 'pending'"
   (click)="onCardClick()"
+  (keydown)="onKeyDown($event)"
   (mouseenter)="onMouseEnter()"
   (mouseleave)="onMouseLeave()"
   role="button"
   tabindex="0"
+  [attr.aria-label]="ariaLabel()"
 >
   <span>{{ course().name }}</span>
   @if (statusTag()) {
     <span class="tag">{{ statusTag() }}</span>
   }
   @if (course().status === 'coursing' && course().lessons.length > 1) {
-    <button type="button" class="btn-commission-badge" (click)="onChangeLesson($event)" title="Cambiar comisión">
-      ⚙️ {{ selectedLessonProf() || 'Comisión' }}
+    <button
+      type="button"
+      class="btn-commission-badge"
+      (click)="onChangeLesson($event)"
+      title="Cambiar comisión"
+      aria-label="Cambiar comisión de cursada"
+    >
+      <mat-icon class="badge-icon">settings</mat-icon>
+      <span>{{ selectedLessonProf() || 'Comisión' }}</span>
     </button>
   }
 </div>

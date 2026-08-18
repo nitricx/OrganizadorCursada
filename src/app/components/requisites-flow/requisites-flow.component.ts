@@ -8,9 +8,11 @@ import {
   inject,
   signal,
   effect,
+  HostListener,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
 import cytoscape from 'cytoscape';
 import dagre from 'cytoscape-dagre';
 
@@ -27,7 +29,7 @@ cytoscape.use(dagre);
 @Component({
   selector: 'app-requisites-flow',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, MatIconModule],
   templateUrl: './requisites-flow.component.html',
   styleUrl: './requisites-flow.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -533,6 +535,7 @@ export class RequisitesFlowComponent implements AfterViewInit, OnDestroy {
     }
   }
 
+  @HostListener('window:keydown.escape')
   closeDetail(): void {
     this.selectedCourse.set(null);
     this.statusErrorMessage.set(null);

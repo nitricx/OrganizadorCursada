@@ -1,5 +1,6 @@
 import { Component, input, output, ChangeDetectionStrategy, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { MatIconModule } from '@angular/material/icon';
 import { Course } from '../../models/course';
 import { CourseService } from '../../services/course.service';
 import { getCourseStatusTag } from '../../constants/course-status.constants';
@@ -7,7 +8,7 @@ import { getCourseStatusTag } from '../../constants/course-status.constants';
 @Component({
   selector: 'app-course-card',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, MatIconModule],
   templateUrl: './course-card.component.html',
   styleUrls: ['./course-card.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -44,6 +45,13 @@ export class CourseCardComponent {
 
   allRequirementsMet = computed(() => {
     return this.courseService.areAllRequirementsMet(this.course());
+  });
+
+  ariaLabel = computed(() => {
+    const c = this.course();
+    const tag = this.statusTag();
+    const statusText = tag ? `Estado: ${tag}` : `Estado: ${c.status}`;
+    return `${c.name}. ${statusText}. Presione enter o espacio para cambiar estado.`;
   });
 
   highlightClass = computed(() => {
@@ -103,6 +111,13 @@ export class CourseCardComponent {
 
   onCardClick(): void {
     this.cardClicked.emit(this.course().id);
+  }
+
+  onKeyDown(event: KeyboardEvent): void {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      this.onCardClick();
+    }
   }
 
   onChangeLesson(event: Event): void {

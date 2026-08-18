@@ -20,17 +20,43 @@
         </div>
 
         <div class="btn-group">
-          <button type="button" class="btn-tool" (click)="fitDiagram()" title="Centrar diagrama">
-            🎯 Centrar
+          <button
+            type="button"
+            class="btn-tool"
+            (click)="fitDiagram()"
+            title="Centrar diagrama"
+            aria-label="Centrar diagrama de correlatividades"
+          >
+            <mat-icon class="btn-icon">center_focus_strong</mat-icon>
+            <span>Centrar</span>
           </button>
-          <button type="button" class="btn-tool" (click)="resetLayout()" title="Reorganizar vista">
-            🔄 Reorganizar
+          <button
+            type="button"
+            class="btn-tool"
+            (click)="resetLayout()"
+            title="Reorganizar vista"
+            aria-label="Reorganizar vista del diagrama"
+          >
+            <mat-icon class="btn-icon">refresh</mat-icon>
+            <span>Reorganizar</span>
           </button>
-          <button type="button" class="btn-tool" (click)="zoomIn()" title="Aumentar zoom">
-            ➕
+          <button
+            type="button"
+            class="btn-tool"
+            (click)="zoomIn()"
+            title="Aumentar zoom"
+            aria-label="Aumentar zoom"
+          >
+            <mat-icon class="btn-icon">add</mat-icon>
           </button>
-          <button type="button" class="btn-tool" (click)="zoomOut()" title="Disminuir zoom">
-            ➖
+          <button
+            type="button"
+            class="btn-tool"
+            (click)="zoomOut()"
+            title="Disminuir zoom"
+            aria-label="Disminuir zoom"
+          >
+            <mat-icon class="btn-icon">remove</mat-icon>
           </button>
         </div>
       </div>
@@ -38,18 +64,26 @@
   </div>
 
   <div class="diagram-container-card">
-    <div #cyContainer class="cy-canvas"></div>
+    <div #cyContainer class="cy-canvas" role="img" aria-label="Diagrama interactivo de correlatividades de materias"></div>
   </div>
 
   <!-- Detail Modal / Drawer when a node is selected -->
   <div *ngIf="selectedCourse()" class="course-detail-overlay" (click)="closeDetail()">
-    <div class="course-detail-card" (click)="$event.stopPropagation()">
+    <div
+      class="course-detail-card"
+      (click)="$event.stopPropagation()"
+      role="dialog"
+      aria-modal="true"
+      [attr.aria-labelledby]="'detail-title-' + selectedCourse()?.id"
+    >
       <div class="detail-header">
         <div class="title-meta">
           <span class="meta-tag">{{ selectedCourse()?.year }}º Año • Cuatrimestre {{ selectedCourse()?.q }}</span>
-          <h2>{{ selectedCourse()?.name }}</h2>
+          <h2 [id]="'detail-title-' + selectedCourse()?.id">{{ selectedCourse()?.name }}</h2>
         </div>
-        <button type="button" class="btn-close" (click)="closeDetail()">✕</button>
+        <button type="button" class="btn-close" (click)="closeDetail()" aria-label="Cerrar detalles de la materia">
+          <mat-icon>close</mat-icon>
+        </button>
       </div>
 
       <div class="detail-body">
@@ -70,7 +104,8 @@
             </button>
           </div>
           <p *ngIf="statusErrorMessage()" class="error-msg">
-            ⚠️ {{ statusErrorMessage() }}
+            <mat-icon class="error-icon">error_outline</mat-icon>
+            <span>{{ statusErrorMessage() }}</span>
           </p>
         </div>
 
@@ -79,7 +114,10 @@
             <h4>Requisitos para Cursar:</h4>
             <ul *ngIf="selectedCourse()?.cursarReqId?.length; else noCursarReqs" class="req-list">
               <li *ngFor="let reqId of selectedCourse()?.cursarReqId">
-                <span class="req-name">✓ {{ getCourseNameById(reqId) }}</span>
+                <span class="req-name">
+                  <mat-icon class="check-icon">check</mat-icon>
+                  {{ getCourseNameById(reqId) }}
+                </span>
               </li>
             </ul>
             <ng-template #noCursarReqs>
@@ -91,7 +129,10 @@
             <h4>Requisitos para Aprobar Final:</h4>
             <ul *ngIf="selectedCourse()?.aprobarReqId?.length; else noAprobarReqs" class="req-list">
               <li *ngFor="let reqId of selectedCourse()?.aprobarReqId">
-                <span class="req-name">✓ {{ getCourseNameById(reqId) }}</span>
+                <span class="req-name">
+                  <mat-icon class="check-icon">check</mat-icon>
+                  {{ getCourseNameById(reqId) }}
+                </span>
               </li>
             </ul>
             <ng-template #noAprobarReqs>

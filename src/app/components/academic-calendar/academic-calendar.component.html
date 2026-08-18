@@ -4,18 +4,41 @@
       <h1>
         Calendario Académico
         @if (!isEditingTitle() && isEditable()) {
-          <mat-icon (click)="toggleEditTitle()">edit</mat-icon>
           <button
             mat-icon-button
+            type="button"
+            class="edit-title-btn"
+            aria-label="Editar título y fechas del calendario"
+            (click)="toggleEditTitle()"
+          >
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button
+            mat-icon-button
+            type="button"
             class="delete-plan-btn"
-            aria-label="Eliminar plan"
+            aria-label="Eliminar plan de estudio"
             (click)="deletePlan()"
           >
             <mat-icon>delete</mat-icon>
           </button>
         } @else if (isEditingTitle()) {
-          <mat-icon (click)="confirmEditTitle()">check_circle</mat-icon>
-          <mat-icon (click)="cancelEditTitle()">cancel</mat-icon>
+          <button
+            mat-icon-button
+            type="button"
+            aria-label="Guardar cambios"
+            (click)="confirmEditTitle()"
+          >
+            <mat-icon>check_circle</mat-icon>
+          </button>
+          <button
+            mat-icon-button
+            type="button"
+            aria-label="Cancelar edición"
+            (click)="cancelEditTitle()"
+          >
+            <mat-icon>cancel</mat-icon>
+          </button>
         }
       </h1>
 
@@ -109,11 +132,12 @@
     @if (isEditable() && (i + 1) % 2 === 0) {
       <div class="add-semester-divider">
         <button
+          type="button"
           class="add-semester-btn"
           (click)="addCalendarAfter(item.id)"
           aria-label="Agregar semestres"
         >
-          <span>+</span>
+          <mat-icon>add</mat-icon>
         </button>
       </div>
     }

@@ -5,6 +5,7 @@ import {
   signal,
   computed,
   output,
+  HostListener,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -134,6 +135,7 @@ export class ExportCalendarModalComponent {
     }
   }
 
+  @HostListener('window:keydown.escape')
   onClose(): void {
     this.close.emit();
   }

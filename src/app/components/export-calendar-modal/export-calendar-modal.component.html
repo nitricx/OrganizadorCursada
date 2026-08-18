@@ -1,12 +1,18 @@
 <div class="modal-backdrop" (click)="onClose()">
-  <div class="modal-card glass-panel" (click)="$event.stopPropagation()">
+  <div
+    class="modal-card glass-panel"
+    (click)="$event.stopPropagation()"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="export-modal-title"
+  >
     <!-- Header -->
     <header class="modal-header">
       <div class="header-title">
         <mat-icon class="header-icon">event_available</mat-icon>
-        <h2>Exportar Cuatrimestre a Calendario</h2>
+        <h2 id="export-modal-title">Exportar Cuatrimestre a Calendario</h2>
       </div>
-      <button mat-icon-button type="button" class="close-btn" (click)="onClose()" title="Cerrar">
+      <button mat-icon-button type="button" class="close-btn" (click)="onClose()" title="Cerrar" aria-label="Cerrar modal">
         <mat-icon>close</mat-icon>
       </button>
     </header>
