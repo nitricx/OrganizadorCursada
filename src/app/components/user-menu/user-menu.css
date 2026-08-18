@@ -3,6 +3,21 @@
   align-items: center;
 }
 
+/* Angular Material Menu Overrides for Google Account Card */
+::ng-deep .google-account-menu-panel.mat-mdc-menu-panel {
+  max-width: none !important;
+  min-width: 340px !important;
+  border-radius: 28px !important;
+  background: transparent !important;
+  box-shadow: var(--shadow-lg, 0 10px 30px rgba(0, 0, 0, 0.18)) !important;
+  overflow: visible !important;
+}
+
+::ng-deep .google-account-menu-panel .mat-mdc-menu-content {
+  padding: 0 !important;
+  background: transparent !important;
+}
+
 /* Unauthenticated Google Sign in Button */
 .btn-content {
   display: inline-flex;
@@ -41,6 +56,25 @@
   padding: 0;
   border-radius: 50%;
   overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.guest-avatar-btn {
+  color: var(--color-text-secondary, #64748b);
+  transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+.guest-avatar-btn:hover {
+  color: var(--brand-primary, #3b82f6);
+  background-color: var(--color-background-secondary, rgba(0,0,0,0.04));
+}
+
+.guest-account-icon {
+  font-size: 32px;
+  width: 32px;
+  height: 32px;
 }
 
 .header-avatar-img {
@@ -67,6 +101,7 @@
 /* Google Account Card Popup Container */
 .google-card-container {
   width: 340px;
+  max-width: calc(100vw - 32px);
   padding: 16px 20px 20px;
   background-color: var(--google-card-bg, #e9f0f8);
   color: var(--color-text-primary, #1f1f1f);
@@ -128,6 +163,42 @@
   align-items: center;
   text-align: center;
   gap: 12px;
+}
+
+.guest-avatar-large mat-icon {
+  font-size: 64px;
+  width: 64px;
+  height: 64px;
+  color: var(--color-text-tertiary, #94a3b8);
+}
+
+.guest-subtitle {
+  margin: 0;
+  font-size: 0.825rem;
+  color: var(--color-text-secondary, #64748b);
+  line-height: 1.35;
+}
+
+.google-login-menu-btn {
+  height: 40px;
+  border-radius: 20px;
+  background-color: var(--brand-primary, #3b82f6) !important;
+  color: #ffffff !important;
+  padding: 0 20px;
+  font-weight: 500;
+}
+
+.google-login-menu-btn .btn-content {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.google-login-menu-btn .btn-content svg {
+  background: #ffffff;
+  border-radius: 50%;
+  padding: 2px;
+  flex-shrink: 0;
 }
 
 .google-large-avatar-wrapper {
@@ -260,6 +331,65 @@
 
 [data-theme='dark'] .sync-subtitle {
   color: #a8aa9f;
+}
+
+/* Theme Switcher Row */
+.user-menu-theme-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background-color: var(--color-background-primary, #ffffff);
+  border-radius: 16px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  gap: 8px;
+}
+
+[data-theme='dark'] .user-menu-theme-row {
+  background-color: #1f2326;
+}
+
+.theme-row-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+
+.theme-row-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  color: var(--color-text-secondary, #5f6368);
+  flex-shrink: 0;
+}
+
+[data-theme='dark'] .theme-row-icon {
+  color: #fbbf24;
+}
+
+.theme-row-label {
+  font-size: 0.825rem;
+  font-weight: 500;
+  color: var(--color-text-primary, #1f1f1f);
+  white-space: nowrap;
+}
+
+[data-theme='dark'] .theme-row-label {
+  color: #e3e2e6;
+}
+
+.theme-toggle-menu-btn {
+  font-size: 0.75rem;
+  height: 32px;
+  line-height: 32px;
+  padding: 0 12px !important;
+  border-radius: 16px !important;
+  color: var(--brand-primary, #3b82f6) !important;
+  background-color: var(--color-background-secondary, rgba(59, 130, 246, 0.08)) !important;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 /* Footer: Sign out button */

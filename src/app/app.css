@@ -41,18 +41,16 @@ mat-sidenav {
   margin-left: 4px;
 }
 
+.breadcrumb-separator {
+  color: var(--color-text-tertiary, #94a3b8);
+  font-size: 16px;
+  font-weight: 400;
+  user-select: none;
+  margin: 0 2px;
+}
+
 .toolbar-spacer {
   flex: 1;
-}
-
-.theme-toggle-btn {
-  color: var(--color-text-secondary);
-  transition: color var(--transition-fast), transform var(--transition-fast);
-}
-
-.theme-toggle-btn:hover {
-  color: var(--brand-primary);
-  transform: rotate(15deg);
 }
 
 

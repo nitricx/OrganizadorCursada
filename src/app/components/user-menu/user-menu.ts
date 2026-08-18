@@ -7,6 +7,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDividerModule } from '@angular/material/divider';
 import { AuthService } from '../../services/auth.service';
 import { ToastService } from '../../services/toast.service';
+import { ThemeService } from '../../services/theme.service';
 
 @Component({
   selector: 'app-user-menu',
@@ -24,6 +25,7 @@ import { ToastService } from '../../services/toast.service';
 })
 export class UserMenuComponent {
   authService = inject(AuthService);
+  themeService = inject(ThemeService);
   private toastService = inject(ToastService, { optional: true });
 
   getFirstName(displayName: string | null | undefined, email: string | null | undefined): string {

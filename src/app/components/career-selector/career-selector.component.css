@@ -1,43 +1,92 @@
 .career-selector-container {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 8px;
-  max-width: 100%;
 }
 
-.career-select-field {
-  flex: 1;
-  min-width: 240px;
-  font-size: 0.9rem;
-}
-
-.career-option-content {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.2;
-  padding: 4px 0;
-}
-
-.career-option-name {
+.career-chip-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 34px;
+  padding: 0 10px 0 12px !important;
+  border-radius: 18px !important;
+  background-color: var(--color-background-secondary, rgba(0, 0, 0, 0.04)) !important;
+  color: var(--color-text-primary) !important;
+  font-size: 14px;
   font-weight: 500;
-  color: var(--mat-sys-on-surface, #e1e2e5);
+  border: 1px solid var(--color-border-secondary, transparent) !important;
+  transition: all var(--transition-fast, 0.15s ease);
 }
 
-.career-option-univ {
-  font-size: 0.75rem;
-  color: var(--mat-sys-outline, #8e9099);
+.career-chip-btn:hover {
+  background-color: var(--color-background-tertiary, rgba(0, 0, 0, 0.08)) !important;
+  border-color: var(--brand-primary, #3b82f6) !important;
 }
 
-.import-btn {
-  color: var(--mat-sys-primary, #a8c7fa);
-  transition: transform 0.2s ease, color 0.2s ease;
+.career-chip-text {
+  max-width: 260px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.import-btn:hover {
-  transform: translateY(-1px);
-  color: #c2e7ff;
+.career-chip-arrow {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  color: var(--color-text-secondary);
 }
 
 .hidden-file-input {
-  display: none !important;
+  display: none;
+}
+
+/* Dropdown Menu styling overrides */
+::ng-deep .career-selector-menu {
+  min-width: 260px !important;
+  max-width: 360px !important;
+  border-radius: 12px !important;
+  padding: 6px 0 !important;
+}
+
+::ng-deep .career-selector-menu .menu-header-title {
+  padding: 8px 16px 4px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-tertiary, #94a3b8);
+}
+
+::ng-deep .career-selector-menu .career-option-details {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+  margin-left: 8px;
+}
+
+::ng-deep .career-selector-menu .career-option-name {
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+::ng-deep .career-selector-menu .career-option-univ {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+
+::ng-deep .career-selector-menu .active-career-item {
+  background-color: var(--color-background-secondary, rgba(59, 130, 246, 0.08));
+}
+
+::ng-deep .career-selector-menu .active-career-item .career-check-icon {
+  color: var(--brand-primary, #3b82f6);
+}
+
+::ng-deep .career-selector-menu .import-menu-item {
+  color: var(--brand-primary, #3b82f6);
+}
+
+::ng-deep .career-selector-menu .import-icon {
+  color: var(--brand-primary, #3b82f6);
 }
