@@ -16,32 +16,6 @@ export interface WorkshopEntry {
   manifest: PlanManifest;
 }
 
-import { SISTEMAS_CAREER_PLAN, AUDIOVISUAL_CAREER_PLAN } from '../../data/default-careers.data';
-
-const sampleWorkshopCatalog: WorkshopEntry[] = [
-  {
-    id: SISTEMAS_CAREER_PLAN.id,
-    name: SISTEMAS_CAREER_PLAN.name,
-    university: SISTEMAS_CAREER_PLAN.university || 'UTN',
-    faculty: 'Facultad Regional Buenos Aires',
-    subscribersRange: '50-100',
-    version: SISTEMAS_CAREER_PLAN.version || '2023',
-    updatedAt: '2026-08-19',
-    manifest: SISTEMAS_CAREER_PLAN as any,
-  },
-  {
-    id: AUDIOVISUAL_CAREER_PLAN.id,
-    name: AUDIOVISUAL_CAREER_PLAN.name,
-    university: AUDIOVISUAL_CAREER_PLAN.university || 'UNRN',
-    faculty: 'Escuela de Artes y Medios',
-    subscribersRange: '100+',
-    version: AUDIOVISUAL_CAREER_PLAN.version || '2023',
-    updatedAt: '2026-08-19',
-    manifest: AUDIOVISUAL_CAREER_PLAN as any,
-  },
-];
-
-
 import { CareerService } from '../../services/career.service';
 
 @Component({
@@ -60,7 +34,7 @@ export class WorkshopHubComponent implements OnInit {
   private careerService = inject(CareerService);
 
   searchQuery = '';
-  catalog: WorkshopEntry[] = sampleWorkshopCatalog;
+  catalog: WorkshopEntry[] = [];
 
   isSubscribed(item: WorkshopEntry): boolean {
     return this.careerService.careers().some((c) => c.id === item.id);

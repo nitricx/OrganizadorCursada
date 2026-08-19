@@ -111,12 +111,15 @@ describe('CareerService', () => {
   });
 
   it('should remove a career and switch selected career to remaining career', () => {
-    service.selectCareer('lic-diseno-audiovisual');
-    expect(service.selectedCareerId()).toBe('lic-diseno-audiovisual');
+    service.addCareerFromManifest({ id: 'c1', name: 'Carrera 1', courses: [] });
+    service.addCareerFromManifest({ id: 'c2', name: 'Carrera 2', courses: [] });
 
-    service.removeCareer('lic-diseno-audiovisual');
-    expect(service.careers().some((c) => c.id === 'lic-diseno-audiovisual')).toBe(false);
-    expect(service.selectedCareerId()).toBe('ing-sistemas');
+    service.selectCareer('c1');
+    expect(service.selectedCareerId()).toBe('c1');
+
+    service.removeCareer('c1');
+    expect(service.careers().some((c) => c.id === 'c1')).toBe(false);
+    expect(service.selectedCareerId()).toBe('c2');
   });
 
   it('should clear selected career when all careers are removed', () => {

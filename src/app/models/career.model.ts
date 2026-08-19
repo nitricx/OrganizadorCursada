@@ -27,6 +27,9 @@ export interface CareerPlan {
   id: string;
   name: string;
   university?: string;
+  faculty?: string;
+  subscribersRange?: string;
+  updatedAt?: string;
   version?: string;
   courses: RawCourseData[];
 }

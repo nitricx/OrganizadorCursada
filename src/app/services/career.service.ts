@@ -2,22 +2,8 @@ import { Injectable, inject, signal, Injector } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CareerIndexEntry, CareerPlan, RawCourseData, EMPTY_CAREER_PLAN } from '../models/career.model';
 import { Firestore, collection, getDocs, doc, getDoc } from '@angular/fire/firestore';
-import { DEFAULT_CAREER_PLANS_MAP } from '../data/default-careers.data';
 
 import { PlanService } from './plan.service';
-
-const DEFAULT_CAREER_INDEX: CareerIndexEntry[] = [
-  {
-    id: 'lic-diseno-audiovisual',
-    name: 'Licenciatura en Diseño Audiovisual',
-    university: 'Universidad Nacional de Río Negro',
-  },
-  {
-    id: 'ing-sistemas',
-    name: 'Ingeniería en Sistemas de Información',
-    university: 'Universidad Tecnológica Nacional',
-  },
-];
 
 @Injectable({
   providedIn: 'root',
@@ -76,7 +62,7 @@ export class CareerService {
       } catch {}
     }
 
-    return DEFAULT_CAREER_PLANS_MAP.get(selectedId) ?? EMPTY_CAREER_PLAN;
+    return EMPTY_CAREER_PLAN;
   }
 
   private safeGetItem(key: string): string | null {
@@ -146,45 +132,18 @@ export class CareerService {
   private loadInitialCareerIndex(): CareerIndexEntry[] {
     const removed = new Set(this.loadRemovedCareerIds());
     const custom = this.loadCustomIndex();
-    const map = new Map<string, CareerIndexEntry>();
-    DEFAULT_CAREER_INDEX.forEach((c) => {
-      if (!removed.has(c.id)) map.set(c.id, c);
-    });
-    custom.forEach((c) => {
-      if (!removed.has(c.id)) map.set(c.id, c);
-    });
-    return Array.from(map.values());
+    return custom.filter((c) => !removed.has(c.id));
   }
 
   private async fetchRemoteIndex(): Promise<void> {
     const removed = new Set(this.loadRemovedCareerIds());
     const map = new Map<string, CareerIndexEntry>();
-    DEFAULT_CAREER_INDEX.forEach((c) => {
-      if (!removed.has(c.id)) map.set(c.id, c);
-    });
-
-    if (this.firestore) {
-      try {
-        const snap = await getDocs(collection(this.firestore, 'workshop_plans'));
-        if (!snap.empty) {
-          snap.docs.forEach((docSnap) => {
-            if (!removed.has(docSnap.id)) {
-              const data = docSnap.data();
-              map.set(docSnap.id, {
-                id: docSnap.id,
-                name: data['name'] || docSnap.id,
-                university: data['university'] || 'Universidad',
-              });
-            }
-          });
-        }
-      } catch {}
-    }
-
+    
     const custom = this.loadCustomIndex();
     custom.forEach((c) => {
       if (!removed.has(c.id)) map.set(c.id, c);
     });
+
     this.careersSignal.set(Array.from(map.values()));
   }
 
@@ -329,15 +288,7 @@ export class CareerService {
       } catch {}
     }
 
-    // 3. Check default bundled plans map
-    const defaultPlan = DEFAULT_CAREER_PLANS_MAP.get(careerId);
-    if (defaultPlan) {
-      this.activeCareerSignal.set(defaultPlan);
-      this.isLoadingSignal.set(false);
-      return;
-    }
-
-    // 4. Check Firestore workshop_plans document
+    // 3. Check Firestore workshop_plans document
     if (this.firestore) {
       try {
         const docRef = doc(this.firestore, 'workshop_plans', careerId);
@@ -345,6 +296,11 @@ export class CareerService {
         if (snap.exists()) {
           const planData = snap.data() as CareerPlan;
           if (this.validateCareerPlan(planData)) {
+            // Cache to localStorage for offline access
+            const customKey = `${CareerService.CUSTOM_CAREER_PREFIX}${careerId}`;
+            this.safeSetItem(customKey, JSON.stringify(planData));
+            this.customPlansMapSignal.update((m) => new Map(m).set(careerId, planData));
+
             this.activeCareerSignal.set(planData);
             this.isLoadingSignal.set(false);
             return;
@@ -353,7 +309,7 @@ export class CareerService {
       } catch {}
     }
 
-    // 5. Fallback if not found in Firestore or custom
+    // 4. Fallback if not found in Firestore or custom
     this.errorSignal.set('No se pudo cargar la carrera especificada.');
     this.isLoadingSignal.set(false);
   }
