@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { PlanManifest } from '../../models/plan-manifest.model';
 import { ToastService } from '../../services/toast.service';
 import { Firestore, collection, getDocs } from '@angular/fire/firestore';
+import { normalizeString } from '../../utils/string.utils';
 
 import sistemasPlan from '../../../../scripts/seed-data/sistemas.json';
 import audiovisualPlan from '../../../../scripts/seed-data/audiovisual.json';
@@ -128,12 +129,12 @@ export class WorkshopHubComponent implements OnInit {
   get filteredAndSortedCatalog(): WorkshopEntry[] {
     let list = this.catalog;
     if (this.searchQuery.trim()) {
-      const q = this.searchQuery.toLowerCase().trim();
+      const q = normalizeString(this.searchQuery);
       list = list.filter(
         c =>
-          c.name.toLowerCase().includes(q) ||
-          c.university.toLowerCase().includes(q) ||
-          c.faculty.toLowerCase().includes(q)
+          normalizeString(c.name).includes(q) ||
+          normalizeString(c.university).includes(q) ||
+          normalizeString(c.faculty).includes(q)
       );
     }
 

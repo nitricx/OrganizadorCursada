@@ -38,6 +38,30 @@ describe('WorkshopHubComponent', () => {
     )).toBe(true);
   });
 
+  it('debe filtrar de forma insensible a tildes y diacríticos (ej: tecnologica encuentra Tecnológica)', () => {
+    component.catalog = [
+      ...component.catalog,
+      {
+        id: 'test-tecnologica',
+        name: 'Ingeniería Tecnológica',
+        university: 'Universidad Tecnológica Nacional',
+        faculty: 'Facultad Regional',
+        subscribersRange: '10-50',
+        version: '1.0.0',
+        updatedAt: '2026-08-19',
+        manifest: { id: 'test-tecnologica', name: 'Ingeniería Tecnológica', university: 'UTN', faculty: 'FR', version: '1.0.0', courses: [] }
+      }
+    ];
+
+    component.searchQuery = 'tecnologica';
+    let result = component.filteredAndSortedCatalog;
+    expect(result.some((item) => item.id === 'test-tecnologica')).toBe(true);
+
+    component.searchQuery = 'Tecnológica';
+    result = component.filteredAndSortedCatalog;
+    expect(result.some((item) => item.id === 'test-tecnologica')).toBe(true);
+  });
+
   it('debe ordenar por nombre de carrera (name) en orden ascendente y descendente', () => {
     component.sortColumn = 'name';
     component.sortDirection = 'asc';
