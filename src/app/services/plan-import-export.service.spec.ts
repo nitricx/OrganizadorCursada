@@ -7,8 +7,8 @@ describe('PlanImportExportService', () => {
 
   const sampleManifest: PlanManifest = {
     id: 'p1',
-    name: 'Biotecnología',
-    university: 'UNSAM',
+    name: 'Diseño Audiovisual',
+    university: 'UNRN',
     version: '1.0.0',
     courses: [
       { id: 'c1', name: 'Química 1', year: 1, q: 1, cursarReq: [], aprobarReq: [] }

@@ -1,9 +1,8 @@
 import { Injectable, effect, inject } from '@angular/core';
 import { signal, computed } from '@angular/core';
 import { Course, CourseStatus } from '../models/course';
-import { DEFAULT_CAREER_PLAN, parseCareerPlanToCourses } from '../data/courses.data';
 import { CareerService } from './career.service';
-import { CareerPlan } from '../models/career.model';
+import { CareerPlan, parseCareerPlanToCourses, EMPTY_CAREER_PLAN } from '../models/career.model';
 import {
   sanitizeCoursesByPlan,
   sanitizeCourseStatesMap,
@@ -217,7 +216,7 @@ export class CourseService {
     return (
       this.activeCareerPlanSignal() ??
       this.careerService?.activeCareer() ??
-      DEFAULT_CAREER_PLAN
+      EMPTY_CAREER_PLAN
     );
   }
 

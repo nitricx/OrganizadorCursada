@@ -20,9 +20,9 @@ describe('Air-Gap Architectural Boundary Verification', () => {
     };
 
     const rawManifest: PlanManifest = {
-      id: 'urn:orgcursada:unsam:bio:v1',
-      name: 'Biotecnología',
-      university: 'UNSAM',
+      id: 'urn:orgcursada:unrn:audio:v1',
+      name: 'Diseño Audiovisual',
+      university: 'UNRN',
       version: '1.0.0',
       courses: [
         { id: 'mat101', name: 'Matemática I', year: 1, q: 1, cursarReq: [], aprobarReq: [] }

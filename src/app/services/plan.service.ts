@@ -91,12 +91,30 @@ export class PlanService {
       this.safeSetItem(PlanService.PLANS_KEY, JSON.stringify(updated));
       return updated;
     });
+    this.setSelectedPlanId(plan.id);
+  }
+
+  resetToNewUser(): void {
+    const currentPlans = this.plansSignal();
+    for (const plan of currentPlans) {
+      this.safeRemoveItem(this.semesterListKey(plan.id));
+      this.safeRemoveItem(this.startingYearKey(plan.id));
+      this.courseService?.deletePlan(plan.id);
+    }
+    this.safeRemoveItem(PlanService.PLANS_KEY);
+    this.safeRemoveItem('selected-career-id');
+    this.plansSignal.set([]);
+    this.semesterListsSignal.set(new Map());
+    this.startingYearsSignal.set(new Map());
   }
 
   deletePlan(planId: string): void {
     this.plansSignal.update((plans) => {
       const updated = plans.filter((p) => p.id !== planId);
       this.safeSetItem(PlanService.PLANS_KEY, JSON.stringify(updated));
+      if (updated.length > 0 && this.selectedPlanIdSignal() === planId) {
+        this.selectedPlanIdSignal.set(updated[0].id);
+      }
       return updated;
     });
     this.semesterListsSignal.update((map) => {
@@ -119,18 +137,16 @@ export class PlanService {
     if (raw !== null) {
       try {
         const parsed = JSON.parse(raw);
-        const sanitized = sanitizePlans(parsed, PlanService.DEFAULT_PLANS);
+        const sanitized = sanitizePlans(parsed, []);
         if (JSON.stringify(sanitized) !== raw) {
           this.safeSetItem(PlanService.PLANS_KEY, JSON.stringify(sanitized));
         }
         return sanitized;
       } catch {
-        return PlanService.DEFAULT_PLANS;
+        return [];
       }
     }
-    const plans = PlanService.DEFAULT_PLANS;
-    this.safeSetItem(PlanService.PLANS_KEY, JSON.stringify(plans));
-    return plans;
+    return [];
   }
 
   private loadAllSemesterLists(plans: Plan[]): Map<string, SemesterSlot[]> {

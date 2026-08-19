@@ -20,6 +20,8 @@ import { ToastService } from './services/toast.service';
 import { decodePlanFromUrlHash } from './utils/hash-serializer.util';
 import { PlanManifest } from './models/plan-manifest.model';
 
+import { OnboardingWelcomeComponent } from './components/onboarding-welcome/onboarding-welcome.component';
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.html',
@@ -35,6 +37,7 @@ import { PlanManifest } from './models/plan-manifest.model';
     WorkshopHubComponent,
     PlanPublisherModalComponent,
     PlanDiffViewerComponent,
+    OnboardingWelcomeComponent,
     MatSidenavModule,
     MatToolbarModule,
     MatButtonModule,
@@ -44,7 +47,7 @@ import { PlanManifest } from './models/plan-manifest.model';
 })
 export class App implements OnInit {
   themeService = inject(ThemeService);
-  private planService = inject(PlanService);
+  planService = inject(PlanService);
   private courseService = inject(CourseService);
   private toast = inject(ToastService);
 
@@ -52,6 +55,8 @@ export class App implements OnInit {
   showWorkshop = signal(false);
   showPublisher = signal(false);
   showDiffViewer = signal(false);
+
+  plans = this.planService.plans;
 
   currentPlanToPublish = signal<any>(null);
 
@@ -88,6 +93,21 @@ export class App implements OnInit {
   handleSubscribePlan(manifest: PlanManifest): void {
     const nextId = String(Date.now());
     this.planService.addPlan({ id: nextId, label: manifest.name });
-    this.toast.show(`Plan "${manifest.name}" añadido a sus planes de estudio.`, 'success');
+    this.toast.show(`Plan "${manifest.name}" añadido a tus planes de estudio.`, 'success');
+  }
+
+  handleLoadDemoPlan(): void {
+    const demoId = String(Date.now());
+    this.planService.addPlan({ id: demoId, label: 'Licenciatura en Diseño Audiovisual (Demo)' });
+    this.toast.show('¡Plan de demostración cargado correctamente!', 'success');
+  }
+
+  handleImportPlan(): void {
+    this.showWorkshop.set(true);
+  }
+
+  resetToNewUser(): void {
+    this.planService.resetToNewUser();
+    this.toast.show('Sesión reiniciada. Se activó el modo de nuevo usuario.', 'info');
   }
 }

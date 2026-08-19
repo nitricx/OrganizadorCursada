@@ -6,7 +6,7 @@ import { CourseStatus, DayOfWeek } from './course';
  * Stripped of all user lifecycle states (status, grades, user notes, semester moves).
  */
 export interface CourseManifest {
-  id: string; // Canonical course ID (e.g. 'urn:course:unsam:biotech:mat101' or 'mat101')
+  id: string; // Canonical course ID (e.g. 'urn:course:unrn:audiovisual:pa1' or 'pa1')
   name: string;
   year: number;
   q: number; // Quarter/Semester: 1, 2, or 3
@@ -15,10 +15,10 @@ export interface CourseManifest {
 }
 
 export interface PlanManifest {
-  id: string; // Canonical URN/UUID (e.g. 'urn:orgcursada:unsam:biotech:v1')
-  name: string; // e.g. "Licenciatura en Biotecnología"
-  university: string; // e.g. "UNSAM"
-  faculty?: string; // e.g. "Escuela de Ciencia y Tecnología"
+  id: string; // Canonical URN/UUID (e.g. 'urn:orgcursada:unrn:audiovisual:v1')
+  name: string; // e.g. "Licenciatura en Diseño Audiovisual"
+  university: string; // e.g. "UNRN"
+  faculty?: string; // e.g. "Escuela de Artes y Medios"
   version: string; // e.g. "1.2.0"
   forkOf?: string; // Optional URN of parent manifest if this is a custom fork
   courses: CourseManifest[];
@@ -37,7 +37,7 @@ export interface LessonSchedule {
 }
 
 export interface CommissionPack {
-  id: string; // e.g. 'comm_unsam_biotech_2024_q1'
+  id: string; // e.g. 'comm_unrn_audiovisual_2024_q1'
   planId: string; // Associated PlanManifest URN
   term: string; // e.g. "2024-Q1"
   professors: Record<string, string[]>; // courseId -> professor names list

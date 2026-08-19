@@ -9,8 +9,8 @@ describe('StaticBundleFetcherService', () => {
 
   const mockManifest: PlanManifest = {
     id: 'module_8492',
-    name: 'Biotecnología',
-    university: 'UNSAM',
+    name: 'Diseño Audiovisual',
+    university: 'UNRN',
     version: '1.0.0',
     courses: []
   };
@@ -45,7 +45,7 @@ describe('StaticBundleFetcherService', () => {
 
     const bundle = await fetchPromise;
     expect(bundle.facultyKey).toBe('unsam_exactas');
-    expect(bundle.modules['module_8492'].name).toBe('Biotecnología');
+    expect(bundle.modules['module_8492'].name).toBe('Diseño Audiovisual');
   });
 
   it('should query 4-character hex prefix bucket and extract target module in-memory', async () => {
@@ -68,6 +68,6 @@ describe('StaticBundleFetcherService', () => {
 
     const result = await fetchPromise;
     expect(result).not.toBeNull();
-    expect(result?.name).toBe('Biotecnología');
+    expect(result?.name).toBe('Diseño Audiovisual');
   });
 });

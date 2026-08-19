@@ -7,6 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
+    "db:seed": "node scripts/seed-firestore.js",
     "docker:up": "docker compose up",
     "docker:down": "docker compose down",
     "docker:build": "docker compose build"

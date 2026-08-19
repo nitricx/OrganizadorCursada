@@ -30,6 +30,8 @@ describe('SidebarComponent', () => {
   });
 
   it('should render items computed from planService plans', () => {
+    planService.addPlan({ id: '1', label: 'Plan de estudio 1' });
+    fixture.detectChanges();
     const items = component.items();
     expect(items.length).toBe(6);
     const academicItem = items.find((i) => i.label === 'Calendario Académico');
@@ -39,6 +41,7 @@ describe('SidebarComponent', () => {
   });
 
   it('should dynamically calculate next plan ID when addPlan is called', () => {
+    planService.addPlan({ id: '1', label: 'Plan 1' });
     component.addPlan({ label: 'Calendario Académico' });
 
     const plans = planService.plans();
@@ -52,6 +55,7 @@ describe('SidebarComponent', () => {
   });
 
   it('should handle non-numeric or deleted plan IDs gracefully when calculating next ID', () => {
+    planService.addPlan({ id: '1', label: 'Plan 1' });
     // Delete plan 1 and add custom plan
     planService.deletePlan('1');
     planService.addPlan({ id: '10', label: 'Custom Plan 10' });

@@ -28,7 +28,11 @@ export class CareerSelectorComponent {
   private readonly toastService = inject(ToastService);
 
   readonly activeCareerName = computed(() => {
-    return this.careerService.activeCareer()?.name || 'Seleccionar Carrera';
+    const active = this.careerService.activeCareer();
+    if (!active || !this.careerService.selectedCareerId() || active.id === 'empty-plan') {
+      return 'Sin Plan Seleccionado';
+    }
+    return active.name;
   });
 
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;

@@ -32,8 +32,8 @@ describe('EntropyScorerService (Exhaustive Test Suite)', () => {
   it('should detect high risk level when plan contains 4+ electives and multi-campus indicators', () => {
     const manifest: PlanManifest = {
       id: 'niche1',
-      name: 'Biotecnología Niche',
-      university: 'UNSAM',
+      name: 'Diseño Audiovisual Niche',
+      university: 'UNRN',
       version: '1.0.0',
       courses: [
         { id: 'c1', name: 'Materia Electiva 1 Sede San Martín', year: 1, q: 1, cursarReq: [], aprobarReq: [] },

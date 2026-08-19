@@ -8,8 +8,10 @@
         <mat-icon>menu</mat-icon>
       </button>
       <span class="app-brand-title">OrganizadorCursada</span>
-      <span class="breadcrumb-separator">/</span>
-      <app-career-selector />
+      @if (plans().length > 0) {
+        <span class="breadcrumb-separator">/</span>
+        <app-career-selector />
+      }
 
       <span class="toolbar-spacer"></span>
 
@@ -26,7 +28,15 @@
       <app-user-menu />
     </mat-toolbar>
     <div class="wrap">
-      <router-outlet />
+      @if (plans().length === 0) {
+        <app-onboarding-welcome
+          (onOpenWorkshop)="showWorkshop.set(true)"
+          (onImportPlan)="handleImportPlan()"
+          (onLoadDemoPlan)="handleLoadDemoPlan()"
+        />
+      } @else {
+        <router-outlet />
+      }
     </div>
   </mat-sidenav-content>
 </mat-sidenav-container>

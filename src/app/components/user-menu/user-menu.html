@@ -139,6 +139,21 @@
           {{ themeService.isDarkMode() ? 'Cambiar a Claro' : 'Cambiar a Oscuro' }}
         </button>
       </div>
+
+      <!-- Reset New User Session -->
+      <div class="user-menu-theme-row">
+        <div class="theme-row-info">
+          <mat-icon class="theme-row-icon">restart_alt</mat-icon>
+          <span class="theme-row-label">Modo Nuevo Usuario</span>
+        </div>
+        <button
+          mat-button
+          class="theme-toggle-menu-btn"
+          (click)="resetNewUserSession(); guestMenuTrigger.closeMenu()"
+        >
+          Reiniciar
+        </button>
+      </div>
     </div>
   </mat-menu>
 }

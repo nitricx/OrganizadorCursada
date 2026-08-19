@@ -1,23 +1,18 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { CareerIndexEntry, CareerPlan, RawCourseData } from '../models/career.model';
-import {
-  DEFAULT_CAREER_PLAN,
-  getBuiltinCareerPlan,
-} from '../data/courses.data';
+import { CareerIndexEntry, CareerPlan, RawCourseData, EMPTY_CAREER_PLAN } from '../models/career.model';
+import { Firestore, collection, getDocs, doc, getDoc } from '@angular/fire/firestore';
 
 const DEFAULT_CAREER_INDEX: CareerIndexEntry[] = [
   {
     id: 'lic-diseno-audiovisual',
     name: 'Licenciatura en Diseño Audiovisual',
     university: 'Universidad Nacional de Río Negro',
-    file: 'audiovisual.json',
   },
   {
     id: 'ing-sistemas',
     name: 'Ingeniería en Sistemas de Información',
     university: 'Universidad Tecnológica Nacional',
-    file: 'sistemas.json',
   },
 ];
 
@@ -26,6 +21,7 @@ const DEFAULT_CAREER_INDEX: CareerIndexEntry[] = [
 })
 export class CareerService {
   private http = inject(HttpClient, { optional: true });
+  private firestore = inject(Firestore, { optional: true });
 
   private static readonly SELECTED_CAREER_KEY = 'selected-career-id';
   private static readonly CUSTOM_CAREERS_INDEX_KEY = 'custom-careers-index';
@@ -33,7 +29,7 @@ export class CareerService {
 
   private readonly careersSignal = signal<CareerIndexEntry[]>(this.loadInitialCareerIndex());
   private readonly selectedCareerIdSignal = signal<string>(this.loadSelectedCareerId());
-  private readonly activeCareerSignal = signal<CareerPlan>(DEFAULT_CAREER_PLAN);
+  private readonly activeCareerSignal = signal<CareerPlan>(EMPTY_CAREER_PLAN);
   private readonly isLoadingSignal = signal<boolean>(false);
   private readonly errorSignal = signal<string | null>(null);
 
@@ -68,7 +64,7 @@ export class CareerService {
   }
 
   private loadSelectedCareerId(): string {
-    return this.safeGetItem(CareerService.SELECTED_CAREER_KEY) ?? 'lic-diseno-audiovisual';
+    return this.safeGetItem(CareerService.SELECTED_CAREER_KEY) ?? '';
   }
 
   private loadCustomIndex(): CareerIndexEntry[] {
@@ -83,29 +79,30 @@ export class CareerService {
   }
 
   private loadInitialCareerIndex(): CareerIndexEntry[] {
-    const custom = this.loadCustomIndex();
-    const map = new Map<string, CareerIndexEntry>();
-    DEFAULT_CAREER_INDEX.forEach((c) => map.set(c.id, c));
-    custom.forEach((c) => map.set(c.id, c));
-    return Array.from(map.values());
+    return this.loadCustomIndex();
   }
 
-  private fetchRemoteIndex(): void {
-    if (!this.http) return;
-    this.http.get<CareerIndexEntry[]>('/careers/careers.json').subscribe({
-      next: (remoteIndex) => {
-        if (Array.isArray(remoteIndex)) {
-          const custom = this.loadCustomIndex();
-          const map = new Map<string, CareerIndexEntry>();
-          remoteIndex.forEach((c) => map.set(c.id, c));
-          custom.forEach((c) => map.set(c.id, c));
-          this.careersSignal.set(Array.from(map.values()));
-        }
-      },
-      error: () => {
-        // Keep initial index if remote fetch fails
-      },
-    });
+  private async fetchRemoteIndex(): Promise<void> {
+    if (!this.firestore) return;
+    try {
+      const snap = await getDocs(collection(this.firestore, 'workshop_plans'));
+      if (!snap.empty) {
+        const remoteEntries: CareerIndexEntry[] = snap.docs.map((docSnap) => {
+          const data = docSnap.data();
+          return {
+            id: docSnap.id,
+            name: data['name'] || docSnap.id,
+            university: data['university'] || 'Universidad',
+          };
+        });
+
+        const custom = this.loadCustomIndex();
+        const map = new Map<string, CareerIndexEntry>();
+        remoteEntries.forEach((c) => map.set(c.id, c));
+        custom.forEach((c) => map.set(c.id, c));
+        this.careersSignal.set(Array.from(map.values()));
+      }
+    } catch {}
   }
 
   selectCareer(careerId: string): void {
@@ -114,9 +111,15 @@ export class CareerService {
     this.loadCareerById(careerId);
   }
 
-  loadCareerById(careerId: string): void {
+  async loadCareerById(careerId: string): Promise<void> {
     this.isLoadingSignal.set(true);
     this.errorSignal.set(null);
+
+    if (!careerId) {
+      this.activeCareerSignal.set(EMPTY_CAREER_PLAN);
+      this.isLoadingSignal.set(false);
+      return;
+    }
 
     // 1. Check in-memory custom imported plans
     const memoryPlan = this.customPlansMapSignal().get(careerId);
@@ -140,38 +143,25 @@ export class CareerService {
       } catch {}
     }
 
-    // 3. Default fallbacks for built-in careers
-    const builtinPlan = getBuiltinCareerPlan(careerId);
-    if (builtinPlan) {
-      this.activeCareerSignal.set(builtinPlan);
-      this.isLoadingSignal.set(false);
-      return;
+    // 3. Check Firestore workshop_plans document
+    if (this.firestore) {
+      try {
+        const docRef = doc(this.firestore, 'workshop_plans', careerId);
+        const snap = await getDoc(docRef);
+        if (snap.exists()) {
+          const planData = snap.data() as CareerPlan;
+          if (this.validateCareerPlan(planData)) {
+            this.activeCareerSignal.set(planData);
+            this.isLoadingSignal.set(false);
+            return;
+          }
+        }
+      } catch {}
     }
 
-    // 4. Attempt HTTP fetch for remote career file
-    const indexEntry = this.careersSignal().find((c) => c.id === careerId);
-    const fileName = indexEntry?.file ?? `${careerId}.json`;
-
-    if (this.http) {
-      this.http.get<CareerPlan>(`/careers/${fileName}`).subscribe({
-        next: (plan) => {
-          if (this.validateCareerPlan(plan)) {
-            this.activeCareerSignal.set(plan);
-          } else if (!getBuiltinCareerPlan(careerId)) {
-            this.errorSignal.set('El plan de estudio recibido no es válido.');
-          }
-          this.isLoadingSignal.set(false);
-        },
-        error: (err) => {
-          if (!getBuiltinCareerPlan(careerId)) {
-            this.errorSignal.set(`No se pudo cargar la carrera (${err.statusText || 'Error de red'})`);
-          }
-          this.isLoadingSignal.set(false);
-        },
-      });
-    } else {
-      this.isLoadingSignal.set(false);
-    }
+    // 4. Fallback if not found in Firestore or custom
+    this.errorSignal.set('No se pudo cargar la carrera especificada.');
+    this.isLoadingSignal.set(false);
   }
 
   importCareerFromJson(jsonString: string): { success: boolean; error?: string; careerId?: string } {

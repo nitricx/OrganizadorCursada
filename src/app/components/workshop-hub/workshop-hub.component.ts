@@ -1,8 +1,9 @@
-import { Component, Output, EventEmitter, inject } from '@angular/core';
+import { Component, Output, EventEmitter, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PlanManifest } from '../../models/plan-manifest.model';
 import { ToastService } from '../../services/toast.service';
+import { Firestore, collection, getDocs } from '@angular/fire/firestore';
 
 export interface WorkshopEntry {
   id: string;
@@ -17,46 +18,25 @@ export interface WorkshopEntry {
 
 const sampleWorkshopCatalog: WorkshopEntry[] = [
   {
-    id: 'urn:orgcursada:unsam:biotech:v1',
-    name: 'Licenciatura en Biotecnología',
-    university: 'UNSAM',
-    faculty: 'Escuela de Ciencia y Tecnología',
-    subscribersRange: '100+',
-    version: '1.2.0',
-    updatedAt: '2026-08-15',
-    manifest: {
-      id: 'urn:orgcursada:unsam:biotech:v1',
-      name: 'Licenciatura en Biotecnología',
-      university: 'UNSAM',
-      faculty: 'Escuela de Ciencia y Tecnología',
-      version: '1.2.0',
-      courses: [
-        { id: 'quim101', name: 'Química General I', year: 1, q: 1, cursarReq: [], aprobarReq: [] },
-        { id: 'mat101', name: 'Matemática I', year: 1, q: 1, cursarReq: [], aprobarReq: [] },
-        { id: 'biol101', name: 'Biología Celular', year: 1, q: 2, cursarReq: ['quim101'], aprobarReq: ['quim101'] }
-      ]
-    }
-  },
-  {
-    id: 'urn:orgcursada:unsam:sistemas:v1',
+    id: 'ing-sistemas',
     name: 'Ingeniería en Sistemas de Información',
-    university: 'UNSAM',
-    faculty: 'Escuela de Ciencia y Tecnología',
+    university: 'Universidad Tecnológica Nacional',
+    faculty: 'Facultad Regional Buenos Aires',
     subscribersRange: '50-100',
-    version: '1.0.0',
-    updatedAt: '2026-08-10',
+    version: '2023',
+    updatedAt: '2026-08-19',
     manifest: {
-      id: 'urn:orgcursada:unsam:sistemas:v1',
+      id: 'ing-sistemas',
       name: 'Ingeniería en Sistemas de Información',
-      university: 'UNSAM',
-      faculty: 'Escuela de Ciencia y Tecnología',
-      version: '1.0.0',
+      university: 'Universidad Tecnológica Nacional',
+      faculty: 'Facultad Regional Buenos Aires',
+      version: '2023',
       courses: [
-        { id: 'an1', name: 'Análisis Matemático I', year: 1, q: 1, cursarReq: [], aprobarReq: [] },
-        { id: 'algo1', name: 'Algoritmos y Programación', year: 1, q: 1, cursarReq: [], aprobarReq: [] }
-      ]
-    }
-  }
+        { id: '1', name: 'Análisis Matemático I', year: 1, q: 3, cursarReq: [], aprobarReq: [] },
+        { id: '2', name: 'Álgebra y Geometría Analítica', year: 1, q: 3, cursarReq: [], aprobarReq: [] },
+      ],
+    },
+  },
 ];
 
 @Component({
@@ -151,14 +131,45 @@ const sampleWorkshopCatalog: WorkshopEntry[] = [
     .btn-secondary { background: #313244; color: #cdd6f4; border: none; padding: 8px 18px; border-radius: 10px; font-weight: 600; cursor: pointer; }
   `]
 })
-export class WorkshopHubComponent {
+export class WorkshopHubComponent implements OnInit {
   @Output() onClose = new EventEmitter<void>();
   @Output() onSubscribe = new EventEmitter<PlanManifest>();
 
   private toast = inject(ToastService);
+  private firestore = inject(Firestore, { optional: true });
 
   searchQuery = '';
   catalog: WorkshopEntry[] = sampleWorkshopCatalog;
+
+  async ngOnInit(): Promise<void> {
+    if (!this.firestore) return;
+    try {
+      const snap = await getDocs(collection(this.firestore, 'workshop_plans'));
+      if (!snap.empty) {
+        const remoteEntries: WorkshopEntry[] = snap.docs.map((dSnap) => {
+          const data = dSnap.data();
+          return {
+            id: dSnap.id,
+            name: data['name'] || dSnap.id,
+            university: data['university'] || 'Universidad',
+            faculty: data['faculty'] || 'Facultad',
+            subscribersRange: data['subscribersRange'] || '10-50',
+            version: data['version'] || '1.0.0',
+            updatedAt: data['updatedAt'] || '2026-08-19',
+            manifest: {
+              id: dSnap.id,
+              name: data['name'] || dSnap.id,
+              university: data['university'],
+              faculty: data['faculty'],
+              version: data['version'],
+              courses: data['courses'] || []
+            }
+          };
+        });
+        this.catalog = remoteEntries;
+      }
+    } catch {}
+  }
 
   get filteredCatalog(): WorkshopEntry[] {
     if (!this.searchQuery.trim()) return this.catalog;

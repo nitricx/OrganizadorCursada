@@ -33,20 +33,20 @@ describe('PlanService', () => {
     } catch {}
   });
 
-  it('should initialize with default plans signal', () => {
+  it('should initialize with clean canvas (empty plans) for new user', () => {
     const plans = service.plans();
-    expect(plans.length).toBeGreaterThan(0);
-    expect(plans[0].id).toBe('1');
+    expect(plans.length).toBe(0);
   });
 
   it('should add a plan reactively', () => {
-    service.addPlan({ id: '2', label: 'Plan de estudio 2' });
+    service.addPlan({ id: '1', label: 'Plan de estudio 1' });
     const plans = service.plans();
-    expect(plans.length).toBe(2);
-    expect(plans.find((p) => p.id === '2')?.label).toBe('Plan de estudio 2');
+    expect(plans.length).toBe(1);
+    expect(plans.find((p) => p.id === '1')?.label).toBe('Plan de estudio 1');
   });
 
   it('should update plan label reactively', () => {
+    service.addPlan({ id: '1', label: 'Plan Inicial' });
     service.updatePlanLabel('1', 'Plan Modificado');
     expect(service.getPlanLabel('1')).toBe('Plan Modificado');
   });
@@ -109,6 +109,14 @@ describe('PlanService', () => {
     expect(safeGetItem('plan-starting-year-2')).toBeNull();
   });
 
+  it('should reset state to new user', () => {
+    service.addPlan({ id: '1', label: 'Plan 1' });
+    expect(service.plans().length).toBe(1);
+
+    service.resetToNewUser();
+    expect(service.plans().length).toBe(0);
+  });
+
   it('should compute default semester dates for Q1 and Q2', () => {
     const q1Dates = service.getDefaultSemesterDates(2026, 1);
     expect(q1Dates.startDate).toBeTruthy();
@@ -127,7 +135,7 @@ describe('PlanService', () => {
     } catch {}
 
     const newService = new PlanService();
-    expect(newService.plans()).toEqual([{ id: '1', label: 'Plan de estudio 1' }]);
+    expect(newService.plans()).toEqual([]);
   });
 });
 

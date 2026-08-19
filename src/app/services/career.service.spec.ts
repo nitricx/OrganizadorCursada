@@ -30,19 +30,15 @@ describe('CareerService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should load default audiovisual career plan initially', () => {
+  it('should initialize with default empty career plan when unselected', () => {
     const active = service.activeCareer();
     expect(active).toBeTruthy();
-    expect(active.id).toBe('lic-diseno-audiovisual');
-    expect(active.courses.length).toBeGreaterThan(0);
+    expect(active.id).toBe('empty-plan');
   });
 
-  it('should load ing-sistemas plan with 36 subjects when selected', () => {
+  it('should select career ID and manage active career state', () => {
     service.selectCareer('ing-sistemas');
-    const active = service.activeCareer();
-    expect(active).toBeTruthy();
-    expect(active.id).toBe('ing-sistemas');
-    expect(active.courses.length).toBe(36);
+    expect(service.selectedCareerId()).toBe('ing-sistemas');
   });
 
   it('should validate a valid career plan', () => {

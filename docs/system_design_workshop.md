@@ -25,7 +25,7 @@ Unlike video game mods or game levels, university study plans contain highly ide
 ## 2. Key Challenges & Architectural Questions
 
 ### 2.1 The "Niche Fingerprint" Intersection Vulnerability
-- **The Problem:** If a user uploads or subscribes to a highly specific study plan (e.g., *"Licenciatura en Biotecnología - Orientación Genómica - Cohorte 2024 - Sede San Martín"*), there might only be 5-10 people in the world matching that exact description. Even if the uploader is completely anonymous (no account, pseudonymized hash), their identity can be inferred by cohort size and timing.
+- **The Problem:** If a user uploads or subscribes to a highly specific study plan (e.g., *"Licenciatura en Diseño Audiovisual - Orientación Guión - Cohorte 2024 - Sede Bariloche"*), there might only be 5-10 people in the world matching that exact description. Even if the uploader is completely anonymous (no account, pseudonymized hash), their identity can be inferred by cohort size and timing.
 - **Context & Argentine Reality:** In the majority of Argentine university programs (*carreras*), curricula are largely fixed and standardized across cohorts. Typically, only **2 to 5 courses** are electives (*optativas/electivas*). Furthermore, students sometimes need to attend a different campus branch (*sede*) or even another faculty/university location to take specific electives. As a result, the primary fingerprint risk comes from cross-campus elective combinations or specific schedule/commission selections rather than massive degree branching.
 - **❓ Core Question:** How does your system prevent deanonymization through **rare subject combinations / cohort intersection attacks**? Should the system restrict or generalize metadata before publishing?
 
@@ -64,12 +64,12 @@ Unlike video game mods or game levels, university study plans contain highly ide
 To eliminate cohort intersection vulnerabilities and prevent deanonymization via rare subject combinations, the system adopts a 5-pillar technical defense model:
 
 #### Pillar 1: Modular "Lego Brick" Architecture (Primary Defense)
-Instead of allowing users to upload monolithic, end-to-end personal study plans (*"Lic. en Biotecnología - Genómica 2024 - Sede San Martín"*), the system enforces a **decoupled modular model**. A complete student schedule is composed client-side from 3 independent public layers:
+Instead of allowing users to upload monolithic, end-to-end personal study plans (*"Lic. en Diseño Audiovisual - Guión 2024 - Sede Bariloche"*), the system enforces a **decoupled modular model**. A complete student schedule is composed client-side from 3 independent public layers:
 
 ```mermaid
 flowchart TD
     subgraph Client-Side Local Assembly
-        A["Base Plan Module<br/>(e.g., UNSAM - Lic. en Biotecnología)<br/>Shared by 500+ students"] 
+        A["Base Plan Module<br/>(e.g., UNRN - Lic. en Diseño Audiovisual)<br/>Shared by 500+ students"] 
         B["Orientation / Elective Pack<br/>(e.g., 2-5 Elective Subjects)<br/>Shared by 50+ students"]
         C["Timetable/Commission Pack<br/>(e.g., Q1 2024 Commissions)<br/>Shared by 100+ students"]
         
@@ -119,8 +119,8 @@ The client application runs an automated privacy audit before generating a share
 
 #### Pillar 4: Blind Broadcast / Bucket-Based Update Distribution
 Querying updates for hyper-specific plan IDs directly reveals subscriber IP addresses and timetable correlation to network observers.
-* **Coarse Topic Subscription:** Clients do NOT check for updates on hyper-specific plan hashes. Instead, clients subscribe to **macro topic buckets** (e.g., `UNSAM_BIOTECH_ALL`).
-* The update manifest returned for `UNSAM_BIOTECH_ALL` contains static diffs for *all* sub-modules of that degree. The client filters relevant updates locally, hiding individual subscriber choices within large client fetch pools.
+* **Coarse Topic Subscription:** Clients do NOT check for updates on hyper-specific plan hashes. Instead, clients subscribe to **macro topic buckets** (e.g., `UNRN_AUDIOVISUAL_ALL`).
+* The update manifest returned for `UNRN_AUDIOVISUAL_ALL` contains static diffs for *all* sub-modules of that degree. The client filters relevant updates locally, hiding individual subscriber choices within large client fetch pools.
 
 #### Pillar 5: Coarse-Grained Metrics & Differential Privacy
 To prevent deanonymization via real-time subscriber counts (e.g., an attacker monitoring a plan's subscriber count increase from 1 to 2):
@@ -296,7 +296,7 @@ flowchart TD
 ```
 
 #### Pillar 1: Stable Canonical Entity Identifiers (ID vs. Attribute Decoupling)
-* **UUID / URN Keying:** Courses inside a `PlanManifest` are identified by immutable canonical IDs (e.g., `urn:orgcursada:unsam:biotech:mat101` or UUID v4), rather than mutable display names or fragile array indices.
+* **UUID / URN Keying:** Courses inside a `PlanManifest` are identified by immutable canonical IDs (e.g., `urn:orgcursada:unrn:audiovisual:pa1` or UUID v4), rather than mutable display names or fragile array indices.
 * **Typo & Name Patching:** If upstream v2 corrects `"Matematica 1"` to `"Matemática I"`, the underlying `course_id` remains unchanged.
 * **Zero-Touch Progress Guarantee:** Since `UserProgressOverlay.courseStatuses` keys progress by `course_id` (`mat101 => 'approved'`), updating display strings or descriptions upstream updates the UI label instantaneously with zero impact on completion status.
 
@@ -463,7 +463,7 @@ To filter broken or malicious uploads automatically without human moderation tea
 To prevent fragmenting the community into thousands of near-identical micro-forks while preserving the ability for students to customize their path, the system implements a **Dual-Layer Lineage & Community Consensus Architecture**:
 
 #### Pillar 1: Dual-Layer Ecosystem (Canonical Hub Registry vs. Direct Share Forks)
-* **Layer A: Canonical Index (Searchable Public Workshop):** Serves as the single, community-maintained source of truth per university degree (e.g. `UNSAM - Licenciatura en Biotecnología`). Search index results highlight only verified canonical plans to prevent search fragmentation.
+* **Layer A: Canonical Index (Searchable Public Workshop):** Serves as the single, community-maintained source of truth per university degree (e.g. `UNRN - Licenciatura en Diseño Audiovisual`). Search index results highlight only verified canonical plans to prevent search fragmentation.
 * **Layer B: Custom Student Forks (Direct P2P Link Sharing):** Personal variations or niche elective combinations exist as lightweight forks shared directly via URL fragment or messaging apps (WhatsApp/Telegram). They do not clutter the global search index unless submitted for canonical review.
 
 #### Pillar 2: Semantic Parent Lineage Tracking (`forkOf` Attestation)
@@ -471,12 +471,12 @@ Every fork retains cryptographic lineage metadata referencing its parent plan:
 ```json
 {
   "id": "plan_fork_9921",
-  "forkOf": "urn:orgcursada:unsam:biotech:v1",
+  "forkOf": "urn:orgcursada:unrn:audiovisual:v1",
   "upstreamVersion": "1.2.0",
-  "modifiedFields": ["added_elective_bio401", "custom_prereq_math102"]
+  "modifiedFields": ["added_elective_audio401", "custom_prereq_pa102"]
 }
 ```
-* **UI Lineage Indicators:** When viewing a forked plan, the UI clearly displays: *"Forked from UNSAM Lic. en Biotecnología (v1.2.0) [Compare Changes]"*.
+* **UI Lineage Indicators:** When viewing a forked plan, the UI clearly displays: *"Forked from UNRN Lic. en Diseño Audiovisual (v1.2.0) [Compare Changes]"*.
 
 #### Pillar 3: Crowdsourced Consensus & Community Merge Suggestions
 * **Automated Suggestion Aggregation:** If multiple students submit identical prerequisite corrections to a canonical plan, the Gateway flags these diffs for maintaining contributors.

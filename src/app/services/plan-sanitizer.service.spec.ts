@@ -12,8 +12,8 @@ describe('PlanSanitizerService (Exhaustive Test Suite)', () => {
   it('should strip banned user progress keys and high-cardinality metadata', () => {
     const dangerousPayload = {
       id: 'plan1',
-      name: 'Biotecnología',
-      university: 'UNSAM',
+      name: 'Diseño Audiovisual',
+      university: 'UNRN',
       cohort_year: 2024,
       classroom: 'Aula 4B',
       user_id: 'user_123',
@@ -33,7 +33,7 @@ describe('PlanSanitizerService (Exhaustive Test Suite)', () => {
 
     const sanitized = service.sanitizeForPublishing(dangerousPayload);
 
-    expect(sanitized.name).toBe('Biotecnología');
+    expect(sanitized.name).toBe('Diseño Audiovisual');
     expect(sanitized.courses.length).toBe(1);
     expect((sanitized.courses[0] as any).status).toBeUndefined();
     expect((sanitized.courses[0] as any).user_notes).toBeUndefined();

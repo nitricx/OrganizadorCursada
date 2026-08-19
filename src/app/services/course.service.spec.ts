@@ -1,6 +1,69 @@
 import { TestBed } from '@angular/core/testing';
 import { CourseService } from './course.service';
-import { BUILTIN_CAREER_PLANS } from '../data/courses.data';
+import { CareerPlan } from '../models/career.model';
+
+const TEST_CAREER_PLAN: CareerPlan = {
+  id: 'lic-diseno-audiovisual',
+  name: 'Carrera de Prueba',
+  courses: [
+    {
+      id: 1,
+      name: 'Producción Audiovisual 1',
+      year: 1,
+      q: 1,
+      cursarReqId: [],
+      aprobarReqId: [],
+      lessons: [
+        { id: 'PA1-L1', professor: 'Prof. A', day: 0, startTime: '08:00', endTime: '12:00' },
+        { id: 'PA1-L2', professor: 'Prof. A', day: 1, startTime: '13:00', endTime: '17:00' },
+      ],
+    },
+    {
+      id: 2,
+      name: 'Escritura Audiovisual 1',
+      year: 1,
+      q: 1,
+      cursarReqId: [],
+      aprobarReqId: [],
+      lessons: [
+        { id: 'EA1-L1', professor: 'Prof. B', day: 1, startTime: '08:00', endTime: '12:00' },
+      ],
+    },
+    {
+      id: 3,
+      name: 'Software en Edición',
+      year: 1,
+      q: 1,
+      cursarReqId: [],
+      aprobarReqId: [],
+      lessons: [
+        { id: 'SEA-L1', professor: 'Prof. C', day: 2, startTime: '08:00', endTime: '12:00' },
+      ],
+    },
+    {
+      id: 4,
+      name: 'Iluminación y Cámara 1',
+      year: 1,
+      q: 2,
+      cursarReqId: [],
+      aprobarReqId: [],
+      lessons: [
+        { id: 'IyC1-L1', professor: 'Prof. D', day: 3, startTime: '08:00', endTime: '12:00' },
+      ],
+    },
+    {
+      id: 12,
+      name: 'Producción Audiovisual 2',
+      year: 2,
+      q: 1,
+      cursarReqId: [1],
+      aprobarReqId: [1],
+      lessons: [
+        { id: 'PA2-L1', professor: 'Prof. A', day: 1, startTime: '08:00', endTime: '12:00' },
+      ],
+    },
+  ],
+};
 
 describe('CourseService - Lesson State Toggling', () => {
   let service: CourseService;
@@ -8,6 +71,7 @@ describe('CourseService - Lesson State Toggling', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({});
     service = TestBed.inject(CourseService);
+    service.setCareerPlan(TEST_CAREER_PLAN);
   });
 
   describe('toggleLessonStatus', () => {
@@ -188,12 +252,25 @@ describe('CourseService - Lesson State Toggling', () => {
     });
 
     it('should reset subjects of the active career plan instead of reverting to default career', () => {
-      const sistemasPlan = BUILTIN_CAREER_PLANS['ing-sistemas'];
-      expect(sistemasPlan).toBeDefined();
+      const mockSistemasPlan: CareerPlan = {
+        id: 'ing-sistemas',
+        name: 'Ingeniería en Sistemas de Información',
+        courses: [
+          {
+            id: 1,
+            name: 'Análisis Matemático I',
+            year: 1,
+            q: 1,
+            cursarReqId: [],
+            aprobarReqId: [],
+            lessons: [{ id: 'L1', professor: 'Prof. X', day: 1, startTime: '08:00', endTime: '12:00' }],
+          },
+        ],
+      };
 
-      service.setCareerPlan(sistemasPlan);
-      expect(service.courses().length).toBe(sistemasPlan.courses.length);
-      expect(service.courses()[0].name).toBe(sistemasPlan.courses[0].name);
+      service.setCareerPlan(mockSistemasPlan);
+      expect(service.courses().length).toBe(mockSistemasPlan.courses.length);
+      expect(service.courses()[0].name).toBe(mockSistemasPlan.courses[0].name);
 
       // Change status of first course
       const firstCourseId = service.courses()[0].id;
@@ -203,9 +280,8 @@ describe('CourseService - Lesson State Toggling', () => {
       // Perform reset
       service.reset();
 
-      // Courses should still belong to sistemasPlan and be reset to pending
-      expect(service.courses().length).toBe(sistemasPlan.courses.length);
-      expect(service.courses()[0].name).toBe(sistemasPlan.courses[0].name);
+      // Courses should still belong to mockSistemasPlan and be reset to pending
+      expect(service.courses().length).toBe(mockSistemasPlan.courses.length);
       expect(service.courses()[0].status).toBe('pending');
     });
   });
@@ -302,6 +378,7 @@ describe('CourseService - Lesson State Toggling', () => {
 
       const mockStore: Record<string, string> = {
         'course-organizer-state': JSON.stringify(legacyState),
+        'course-organizer-state-test-career': JSON.stringify(legacyState),
       };
 
       const mockLocalStorage = {
@@ -323,6 +400,8 @@ describe('CourseService - Lesson State Toggling', () => {
       TestBed.resetTestingModule();
       TestBed.configureTestingModule({});
       const newService = TestBed.inject(CourseService);
+      newService.setCareerPlan(TEST_CAREER_PLAN);
+      (newService as any).loadState(TEST_CAREER_PLAN);
       const pa1 = newService.getCourseById(1);
 
       expect(pa1?.status).toBe('coursing');
@@ -360,6 +439,7 @@ describe('CourseService - Lesson State Toggling', () => {
       TestBed.resetTestingModule();
       TestBed.configureTestingModule({});
       const newService = TestBed.inject(CourseService);
+      newService.setCareerPlan(TEST_CAREER_PLAN);
       const pa1 = newService.getCourseById(1);
       const pa2 = newService.getCourseById(12);
 

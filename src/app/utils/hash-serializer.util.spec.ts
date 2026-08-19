@@ -3,12 +3,12 @@ import { encodePlanToUrlHash, decodePlanFromUrlHash } from './hash-serializer.ut
 
 describe('hash-serializer.util', () => {
   const sampleManifest: PlanManifest = {
-    id: 'urn:orgcursada:unsam:bio:v1',
-    name: 'Biotecnología',
-    university: 'UNSAM',
+    id: 'urn:orgcursada:unrn:audio:v1',
+    name: 'Diseño Audiovisual',
+    university: 'UNRN',
     version: '1.0.0',
     courses: [
-      { id: 'c1', name: 'Química General', year: 1, q: 1, cursarReq: [], aprobarReq: [] }
+      { id: 'c1', name: 'Producción Audiovisual 1', year: 1, q: 1, cursarReq: [], aprobarReq: [] }
     ]
   };
 
@@ -18,8 +18,8 @@ describe('hash-serializer.util', () => {
     expect(encoded.length).toBeGreaterThan(0);
 
     const decoded = decodePlanFromUrlHash(encoded);
-    expect(decoded.name).toBe('Biotecnología');
+    expect(decoded.name).toBe('Diseño Audiovisual');
     expect(decoded.courses.length).toBe(1);
-    expect(decoded.courses[0].name).toBe('Química General');
+    expect(decoded.courses[0].name).toBe('Producción Audiovisual 1');
   });
 });

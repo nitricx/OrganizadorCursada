@@ -9,6 +9,8 @@ import { AuthService } from '../../services/auth.service';
 import { ToastService } from '../../services/toast.service';
 import { ThemeService } from '../../services/theme.service';
 
+import { PlanService } from '../../services/plan.service';
+
 @Component({
   selector: 'app-user-menu',
   standalone: true,
@@ -26,6 +28,7 @@ import { ThemeService } from '../../services/theme.service';
 export class UserMenuComponent {
   authService = inject(AuthService);
   themeService = inject(ThemeService);
+  private planService = inject(PlanService);
   private toastService = inject(ToastService, { optional: true });
 
   getFirstName(displayName: string | null | undefined, email: string | null | undefined): string {
@@ -45,6 +48,11 @@ export class UserMenuComponent {
 
   openManageAccount(): void {
     window.open('https://myaccount.google.com/', '_blank');
+  }
+
+  resetNewUserSession(): void {
+    this.planService.resetToNewUser();
+    this.toastService?.info('Sesión reiniciada. Se activó la pantalla de nuevo usuario.');
   }
 
   async loginWithGoogle(): Promise<void> {
