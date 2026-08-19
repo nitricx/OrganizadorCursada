@@ -13,6 +13,7 @@ export interface Toast {
   providedIn: 'root',
 })
 export class ToastService {
+  private static readonly MAX_VISIBLE_TOASTS = 5;
   readonly toasts = signal<Toast[]>([]);
   private readonly timeouts = new Map<string, ReturnType<typeof setTimeout>>();
 
@@ -20,7 +21,20 @@ export class ToastService {
     const id = `toast-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
     const toast: Toast = { id, message, type, durationMs };
 
-    this.toasts.update((current) => [...current, toast]);
+    this.toasts.update((current) => {
+      const updated = [...current, toast];
+      if (updated.length > ToastService.MAX_VISIBLE_TOASTS) {
+        const removed = updated.shift();
+        if (removed) {
+          const timeoutId = this.timeouts.get(removed.id);
+          if (timeoutId !== undefined) {
+            clearTimeout(timeoutId);
+            this.timeouts.delete(removed.id);
+          }
+        }
+      }
+      return updated;
+    });
 
     if (durationMs > 0) {
       const timeoutId = setTimeout(() => {

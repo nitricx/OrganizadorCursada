@@ -1,4 +1,5 @@
 import { Injectable, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Auth, user } from '@angular/fire/auth';
 import { GoogleAuthProvider, User, signInWithPopup, signOut } from 'firebase/auth';
 import { Subscription } from 'rxjs';
@@ -17,16 +18,18 @@ export class AuthService {
   constructor() {
     if (this.auth) {
       this.loadingSignal.set(true);
-      this.authSubscription = user(this.auth).subscribe({
-        next: (userState) => {
-          this.userSignal.set(userState);
-          this.loadingSignal.set(false);
-        },
-        error: (err) => {
-          console.error('Error listening to auth state changes:', err);
-          this.loadingSignal.set(false);
-        },
-      });
+      this.authSubscription = user(this.auth)
+        .pipe(takeUntilDestroyed())
+        .subscribe({
+          next: (userState) => {
+            this.userSignal.set(userState);
+            this.loadingSignal.set(false);
+          },
+          error: (err) => {
+            console.error('Error listening to auth state changes:', err);
+            this.loadingSignal.set(false);
+          },
+        });
     }
   }
 

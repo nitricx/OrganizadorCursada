@@ -221,11 +221,17 @@ export class CareerService {
     return data.courses.every(
       (c: any) =>
         typeof c.id === 'number' &&
+        !isNaN(c.id) &&
         typeof c.name === 'string' &&
+        c.name.trim() !== '' &&
         typeof c.year === 'number' &&
+        !isNaN(c.year) &&
         typeof c.q === 'number' &&
+        !isNaN(c.q) &&
         Array.isArray(c.cursarReqId) &&
+        c.cursarReqId.every((id: any) => typeof id === 'number' && !isNaN(id)) &&
         Array.isArray(c.aprobarReqId) &&
+        c.aprobarReqId.every((id: any) => typeof id === 'number' && !isNaN(id)) &&
         Array.isArray(c.lessons),
     );
   }

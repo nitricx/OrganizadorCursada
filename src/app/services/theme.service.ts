@@ -1,62 +1,51 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, effect, signal } from '@angular/core';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ThemeService {
-  readonly isDarkMode = signal<boolean>(false);
+  private static readonly THEME_KEY = 'organizador-cursada-theme';
+  readonly isDarkMode = signal<boolean>(this.loadInitialTheme());
 
   constructor() {
-    this.initTheme();
+    effect(() => {
+      const isDark = this.isDarkMode();
+      if (typeof document !== 'undefined') {
+        if (isDark) {
+          document.body.setAttribute('data-theme', 'dark');
+          document.documentElement.style.setProperty('color-scheme', 'dark');
+        } else {
+          document.body.removeAttribute('data-theme');
+          document.documentElement.style.setProperty('color-scheme', 'light');
+        }
+      }
+      try {
+        if (typeof localStorage !== 'undefined') {
+          localStorage.setItem(ThemeService.THEME_KEY, isDark ? 'dark' : 'light');
+        }
+      } catch {}
+    });
   }
 
-  private initTheme(): void {
+  private loadInitialTheme(): boolean {
     let savedTheme: string | null = null;
     try {
       if (typeof localStorage !== 'undefined') {
-        savedTheme = localStorage.getItem('organizador-cursada-theme');
+        savedTheme = localStorage.getItem(ThemeService.THEME_KEY);
       }
-    } catch {
-      // Ignore storage errors
-    }
+    } catch {}
 
-    let isDark = false;
-    if (savedTheme === 'dark') {
-      isDark = true;
-    } else if (savedTheme === 'light') {
-      isDark = false;
-    } else {
-      isDark =
-        typeof window !== 'undefined' &&
-        window.matchMedia &&
-        window.matchMedia('(prefers-color-scheme: dark)').matches;
-    }
+    if (savedTheme === 'dark') return true;
+    if (savedTheme === 'light') return false;
 
-    this.applyTheme(isDark);
+    return (
+      typeof window !== 'undefined' &&
+      window.matchMedia &&
+      window.matchMedia('(prefers-color-scheme: dark)').matches
+    );
   }
 
   toggleDarkMode(): void {
-    const nextTheme = !this.isDarkMode();
-    this.applyTheme(nextTheme);
-    try {
-      if (typeof localStorage !== 'undefined') {
-        localStorage.setItem('organizador-cursada-theme', nextTheme ? 'dark' : 'light');
-      }
-    } catch {
-      // Ignore storage errors
-    }
-  }
-
-  private applyTheme(isDark: boolean): void {
-    this.isDarkMode.set(isDark);
-    if (typeof document !== 'undefined') {
-      if (isDark) {
-        document.body.setAttribute('data-theme', 'dark');
-        document.documentElement.style.setProperty('color-scheme', 'dark');
-      } else {
-        document.body.removeAttribute('data-theme');
-        document.documentElement.style.setProperty('color-scheme', 'light');
-      }
-    }
+    this.isDarkMode.update((current) => !current);
   }
 }

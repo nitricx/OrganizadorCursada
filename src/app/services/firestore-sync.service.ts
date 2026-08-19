@@ -1,13 +1,16 @@
 import { Injectable, inject } from '@angular/core';
 import { Firestore, doc, docData, setDoc, getDoc } from '@angular/fire/firestore';
 import { Observable, of } from 'rxjs';
+import { Course } from '../models/course';
+import { CourseStateEntry } from './course.service';
+import { Plan, SemesterSlot } from './plan.service';
 
 export interface UserCareerStateDoc {
   updatedAt?: string;
-  coursesByPlan?: Record<string, any[]>;
-  courseStates?: Record<string, any>;
-  plans?: any[];
-  semesterLists?: Record<string, any[]>;
+  coursesByPlan?: Record<string, Course[]>;
+  courseStates?: Record<string, CourseStateEntry>;
+  plans?: Plan[];
+  semesterLists?: Record<string, SemesterSlot[]>;
   startingYears?: Record<string, number>;
 }
 
@@ -40,17 +43,19 @@ export class FirestoreSyncService {
     }
   }
 
-  async saveUserCareerData(uid: string, careerId: string, data: Partial<UserCareerStateDoc>): Promise<void> {
+  async saveUserCareerData(uid: string, careerId: string, data: Partial<UserCareerStateDoc>): Promise<boolean> {
     try {
       const docRef = this.getDocRef(uid, careerId);
-      if (!docRef) return;
+      if (!docRef) return false;
       const payload: UserCareerStateDoc = {
         ...data,
         updatedAt: new Date().toISOString(),
       };
       await setDoc(docRef, payload, { merge: true });
+      return true;
     } catch (err) {
       console.error('Error saving user data to Firestore:', err);
+      return false;
     }
   }
 }

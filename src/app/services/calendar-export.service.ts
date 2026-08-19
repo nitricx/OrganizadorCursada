@@ -56,18 +56,33 @@ export class CalendarExportService {
   /**
    * Retrieves active semester dates from PlanService or computes reasonable defaults.
    */
-  getSemesterDates(): { startDate: string; endDate: string } {
+  getSemesterDates(events?: CalendarEventItem[]): { startDate: string; endDate: string } {
     const planId = this.planService.selectedPlanId() || '1';
     const semesterList = this.planService.getSemesterList(planId);
     const startingYear = this.planService.getStartingYear(planId);
 
-    // Try to find the first semester with configured dates
+    const activeList = events || this.activeCoursingEvents();
+    if (activeList.length > 0) {
+      const firstCourse = activeList[0].course;
+      const targetYear = firstCourse.year;
+      const targetQ = firstCourse.q;
+
+      const matchedSlot = semesterList.find(
+        (s) => s.courseYear === targetYear && s.courseQ === targetQ && s.startDate && s.endDate,
+      );
+      if (matchedSlot && matchedSlot.startDate && matchedSlot.endDate) {
+        return { startDate: matchedSlot.startDate, endDate: matchedSlot.endDate };
+      }
+
+      const calculatedYear = startingYear + (targetYear - 1);
+      return this.planService.getDefaultSemesterDates(calculatedYear, targetQ);
+    }
+
     const configured = semesterList.find((s) => s.startDate && s.endDate);
     if (configured && configured.startDate && configured.endDate) {
       return { startDate: configured.startDate, endDate: configured.endDate };
     }
 
-    // Default to Q1 of current starting year
     return this.planService.getDefaultSemesterDates(startingYear, 1);
   }
 
@@ -83,7 +98,7 @@ export class CalendarExportService {
     }
 
     const { id, label } = this.getPlanInfo();
-    const defaultDates = this.getSemesterDates();
+    const defaultDates = this.getSemesterDates(events);
 
     const options: ExportCalendarOptions = {
       planId: id,
@@ -110,7 +125,7 @@ export class CalendarExportService {
     endDate?: string,
   ): Array<{ courseName: string; lessonId: string; url: string }> {
     const list = events || this.activeCoursingEvents();
-    const dates = this.getSemesterDates();
+    const dates = this.getSemesterDates(list);
     const sDate = startDate || dates.startDate;
     const eDate = endDate || dates.endDate;
     const { label } = this.getPlanInfo();

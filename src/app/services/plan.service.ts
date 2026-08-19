@@ -1,4 +1,5 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, inject, signal, WritableSignal } from '@angular/core';
+import { CourseService } from './course.service';
 import {
   sanitizePlans,
   sanitizeSemesterSlots,
@@ -25,21 +26,37 @@ export class PlanService {
   private static readonly PLANS_KEY = 'plans';
   private static readonly DEFAULT_PLANS: Plan[] = [{ id: '1', label: 'Plan de estudio 1' }];
 
-  private readonly plansSignal = signal<Plan[]>(this.loadPlans());
+  private readonly courseService = (() => {
+    try {
+      return inject(CourseService, { optional: true });
+    } catch {
+      return null;
+    }
+  })();
+
+  private readonly plansSignal: WritableSignal<Plan[]>;
   private readonly selectedPlanIdSignal = signal<string>('1');
-  private readonly semesterListsSignal = signal<Map<string, SemesterSlot[]>>(
-    this.loadAllSemesterLists(),
-  );
-  private readonly startingYearsSignal = signal<Map<string, number>>(
-    this.loadAllStartingYears(),
-  );
+  private readonly semesterListsSignal: WritableSignal<Map<string, SemesterSlot[]>>;
+  private readonly startingYearsSignal: WritableSignal<Map<string, number>>;
 
-  plans = this.plansSignal.asReadonly();
-  selectedPlanId = this.selectedPlanIdSignal.asReadonly();
-  semesterLists = this.semesterListsSignal.asReadonly();
-  startingYears = this.startingYearsSignal.asReadonly();
+  readonly plans;
+  readonly selectedPlanId = this.selectedPlanIdSignal.asReadonly();
+  readonly semesterLists;
+  readonly startingYears;
 
-  constructor() {}
+  constructor() {
+    const loadedPlans = this.loadPlans();
+    this.plansSignal = signal<Plan[]>(loadedPlans);
+    this.plans = this.plansSignal.asReadonly();
+
+    const loadedSemesters = this.loadAllSemesterLists(loadedPlans);
+    this.semesterListsSignal = signal<Map<string, SemesterSlot[]>>(loadedSemesters);
+    this.semesterLists = this.semesterListsSignal.asReadonly();
+
+    const loadedYears = this.loadAllStartingYears(loadedPlans);
+    this.startingYearsSignal = signal<Map<string, number>>(loadedYears);
+    this.startingYears = this.startingYearsSignal.asReadonly();
+  }
 
   private safeGetItem(key: string): string | null {
     try {
@@ -67,7 +84,9 @@ export class PlanService {
   }
 
   addPlan(plan: Plan): void {
+    if (!plan || !plan.id) return;
     this.plansSignal.update((plans) => {
+      if (plans.some((p) => p.id === plan.id)) return plans;
       const updated = [...plans, plan];
       this.safeSetItem(PlanService.PLANS_KEY, JSON.stringify(updated));
       return updated;
@@ -92,6 +111,7 @@ export class PlanService {
     });
     this.safeRemoveItem(this.semesterListKey(planId));
     this.safeRemoveItem(this.startingYearKey(planId));
+    this.courseService?.deletePlan(planId);
   }
 
   private loadPlans(): Plan[] {
@@ -113,9 +133,8 @@ export class PlanService {
     return plans;
   }
 
-  private loadAllSemesterLists(): Map<string, SemesterSlot[]> {
+  private loadAllSemesterLists(plans: Plan[]): Map<string, SemesterSlot[]> {
     const map = new Map<string, SemesterSlot[]>();
-    const plans = this.plansSignal ? this.plansSignal() : this.loadPlans();
     for (const plan of plans) {
       const raw = this.safeGetItem(this.semesterListKey(plan.id));
       if (raw !== null) {
@@ -129,9 +148,8 @@ export class PlanService {
     return map;
   }
 
-  private loadAllStartingYears(): Map<string, number> {
+  private loadAllStartingYears(plans: Plan[]): Map<string, number> {
     const map = new Map<string, number>();
-    const plans = this.plansSignal ? this.plansSignal() : this.loadPlans();
     const defaultYear = new Date().getFullYear();
     for (const plan of plans) {
       const raw = this.safeGetItem(this.startingYearKey(plan.id));

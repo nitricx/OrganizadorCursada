@@ -134,7 +134,7 @@ export class CourseService {
     });
 
     if (this.authService && this.firestoreSync) {
-      effect(() => {
+      effect((onCleanup) => {
         const user = this.authService?.userSignal();
         const careerId = this.activeCareerIdSignal();
         if (user && this.firestoreSync) {
@@ -146,9 +146,8 @@ export class CourseService {
               this.syncToCloud(user.uid, careerId);
             }
           });
-          return () => sub.unsubscribe();
+          onCleanup(() => sub.unsubscribe());
         }
-        return;
       });
     }
   }
@@ -574,23 +573,23 @@ export class CourseService {
     const currentCourse = courses.find((c) => c.lessons.some((l) => l.id === lessonId));
     if (!currentCourse) return null;
 
-    // Block if any dependent (course that requires this one) is already at the target year
+    // Block if any dependent (course that requires this one) is at or before the target year
     const overlappingDependent = courses.find(
       (c) =>
-        c.year === targetYear &&
+        c.year <= targetYear &&
         (c.cursarReqId.includes(currentCourse.id) || c.aprobarReqId.includes(currentCourse.id)),
     );
     if (overlappingDependent) {
-      return `No se puede mover "${currentCourse.name}" porque "${overlappingDependent.name}" la requiere y está en el mismo año`;
+      return `No se puede mover "${currentCourse.name}" porque "${overlappingDependent.name}" la requiere y está en el año ${overlappingDependent.year}`;
     }
 
-    // Block if any prerequisite of this course is already at the target year
+    // Block if any prerequisite of this course is at or after the target year
     const allReqIds = [...new Set([...currentCourse.cursarReqId, ...currentCourse.aprobarReqId])];
     const overlappingPrereq = courses.find(
-      (c) => c.year === targetYear && allReqIds.includes(c.id),
+      (c) => c.year >= targetYear && allReqIds.includes(c.id),
     );
     if (overlappingPrereq) {
-      return `No se puede mover "${currentCourse.name}" porque su requisito "${overlappingPrereq.name}" está en el mismo año`;
+      return `No se puede mover "${currentCourse.name}" porque su requisito "${overlappingPrereq.name}" está en el año ${overlappingPrereq.year}`;
     }
 
     return null;

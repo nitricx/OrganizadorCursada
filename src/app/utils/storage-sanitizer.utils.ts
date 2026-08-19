@@ -87,9 +87,9 @@ export function isValidCourse(val: unknown): val is Course {
   const validQ = typeof c.q === 'number' && !isNaN(c.q);
   const validStatus = isValidCourseStatus(c.status);
   const validCursarReq =
-    Array.isArray(c.cursarReqId) && c.cursarReqId.every((id) => typeof id === 'number');
+    Array.isArray(c.cursarReqId) && c.cursarReqId.every((id) => typeof id === 'number' && !isNaN(id));
   const validAprobarReq =
-    Array.isArray(c.aprobarReqId) && c.aprobarReqId.every((id) => typeof id === 'number');
+    Array.isArray(c.aprobarReqId) && c.aprobarReqId.every((id) => typeof id === 'number' && !isNaN(id));
   const validLessons = Array.isArray(c.lessons) && c.lessons.every(isValidLesson);
   return (
     validId &&
