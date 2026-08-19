@@ -33,7 +33,7 @@ describe('SidebarComponent', () => {
     planService.addPlan({ id: '1', label: 'Plan de estudio 1' });
     fixture.detectChanges();
     const items = component.items();
-    expect(items.length).toBe(6);
+    expect(items.length).toBe(5);
     const academicItem = items.find((i) => i.label === 'Calendario Académico');
     expect(academicItem).toBeDefined();
     expect(academicItem?.children?.length).toBe(1);

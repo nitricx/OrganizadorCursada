@@ -49,7 +49,6 @@ export class SidebarComponent {
       })),
       addButton: true,
     },
-    { label: 'Plan Hub (Workshop)', action: 'open_workshop', icon: 'storefront' },
     { label: 'Compartir Plan', action: 'open_publisher', icon: 'ios_share' }
   ]);
 
