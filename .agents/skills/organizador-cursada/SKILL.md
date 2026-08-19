@@ -1,87 +1,144 @@
 ---
 name: organizador-cursada
-description: Architecture guidelines, domain conventions, and state management rules for the OrganizadorCursada project. Trigger when adding features, modifying course models, adjusting prerequisite rules, or updating university study plans.
+description: Architecture guidelines, domain conventions, multi-career models, and state management rules for the OrganizadorCursada project. Trigger when adding features, modifying course/career models, adjusting prerequisite rules, updating study plans, or working on the Workshop privacy layer.
 ---
 
 # OrganizadorCursada Agent Skill & Architecture Guide
 
-This skill provides context, rules, and guidelines for AI agents working on the **OrganizadorCursada** codebase.
+This skill provides complete, up-to-date technical context, domain models, architecture patterns, and guidelines for AI agents working on the **OrganizadorCursada** codebase.
 
-## 1. Domain Model & Terminology
+---
 
-### Course & Lesson Entity Definitions
-- **`Course`** (`src/app/models/course.ts`): Represents a university subject (e.g. *Introducción al Lenguaje Audiovisual*).
-  - `id`: Unique identifier (string).
-  - `name`: Human readable subject title used in prerequisite matching (`cursarReq` / `aprobarReq`).
-  - `year`: Academic year (1, 2, 3, etc.).
-  - `q`: Semester / Quarter (1 = 1st Semester, 2 = 2nd Semester, 3 = Annual/Special).
-  - `cursarReq`: String array of course names required to *enroll/course* this subject.
-  - `aprobarReq`: String array of course names required to *pass the final exam / approve* this subject.
-  - `status`: State of the course (`'pending' | 'coursing' | 'coursed' | 'approved'`).
-  - `lessons`: Array of scheduled class sessions (`Lesson[]`).
+## 1. Domain Models & Data Structures
 
-- **`Lesson`**: Represents a specific commission / schedule slot for a course.
-  - `id`: E.g., `'PA1-L1'`, `'PA1-L2'`.
-  - `professor`: Instructor name.
-  - `day`: Day of week (`DayOfWeek`: `0 = Monday` through `5 = Saturday`).
-  - `startTime` / `endTime`: Time format string (`"HH:MM"`).
-  - `status`: Individual status override for this lesson session.
+### Course & Lesson Entity Definitions (`src/app/models/course.ts`)
+- **`CourseStatus`**: `'pending' | 'coursing' | 'coursed' | 'approved'`
+- **`DayOfWeek`**: Enum (`Monday = 0` through `Saturday = 5`)
+- **`Lesson`**: Commission schedule slot.
+  - `id`: Unique lesson identifier string (e.g., `'PA1-L1'`).
+  - `professor`: Instructor / professor name.
+  - `day`: `DayOfWeek` numeric enum.
+  - `startTime` / `endTime`: String in `"HH:MM"` format.
+  - `status?`: Optional individual lesson status override (`CourseStatus`).
+- **`Course`**: Represents an academic subject.
+  - `id`: Unique **numeric** ID (e.g. `101`, `1`).
+  - `name`: Subject title (string).
+  - `year`: Academic year (`1, 2, 3, ...`).
+  - `q`: Quarter / Semester (`1` = 1st Semester, `2` = 2nd Semester, `3` = Annual/Special).
+  - `status`: Active `CourseStatus`.
+  - `cursarReqId`: `number[]` array of course IDs required to *enroll/course* this subject.
+  - `aprobarReqId`: `number[]` array of course IDs required to *pass final exam / approve* this subject.
+  - `lessons`: Array of `Lesson` objects (available commission choices).
+  - `selectedLessonId?: string | null`: Selected commission ID for the student's schedule.
 
-### Course Status Lifecycle State Machine
+### Multi-Career Models (`src/app/models/career.model.ts`)
+- **`CareerIndexEntry`**: Metadata entry in career catalogs (`id`, `name`, `university`, `file`).
+- **`RawCourseData`**: Serialized JSON structure for course definitions (`cursarReqId: number[]`, `aprobarReqId: number[]`).
+- **`CareerPlan`**: Full study plan container (`id`, `name`, `university`, `faculty`, `version`, `courses: RawCourseData[]`).
+- **`parseCareerPlanToCourses(plan: CareerPlan): Course[]`**: Utility converting raw plan JSON into operational `Course[]` models initialized with `'pending'` status.
+
+### Decentralized Workshop & Privacy Models (`src/app/models/plan-manifest.model.ts`)
+- **`PlanManifest`**: Public, immutable base degree module stripped of personal user progress (`id` URN, `name`, `university`, `faculty`, `version`, `courses: CourseManifest[]`).
+- **`CourseManifest`**: Minimal subject definition in public manifests (`id`, `name`, `year`, `q`, `cursarReq: string[]`, `aprobarReq: string[]`).
+- **`CommissionPack`**: Independent public schedule pack (`planId`, `term`, `professors`, `lessons`).
+- **`UserProgressOverlay`**: Private local-only progress overlay (`courseStatuses`, `semesterOverrides`, `selectedLessons`, `userNotes`, `customPrereqDeltas`). Stored exclusively in `localStorage` and NEVER transmitted across network boundaries.
+- **`RebaseConflict`**: Conflict descriptor when updating upstream plan manifests (`courseId`, `type`, `description`).
+
+---
+
+## 2. Course Status Lifecycle & Prerequisite Rules
+
+### Status Machine Progression
 ```
 [pending] ---> [coursing] ---> [coursed] ---> [approved]
    ^                                               |
    +-----------------------------------------------+
 ```
-1. **`pending` (Pendiente)**: Default state. Not yet enrolled or taken.
+1. **`pending` (Pendiente)**: Default state. Subject not yet taken.
 2. **`coursing` (Cursando)**: Currently attending classes in the active term.
-   - Requires direct `cursarReq` subjects to be at least `coursed` or `approved`.
-   - Requires nested prior prerequisites (`aprobarReq` of direct `cursarReq` subjects) to be `approved` (e.g. to course Math 3, Math 2 must be `coursed` AND Math 1 must be `approved`).
-3. **`coursed` (Cursada / Regular)**: Passed continuous assessment / attendance, pending final exam. Same prerequisite constraints as `coursing`.
-4. **`approved` (Aprobada / Promocionada / Final Aprobado)**: Subject completed and credited. Requires direct `aprobarReq` subjects to be `approved`.
+   - Requires direct `cursarReqId` subjects to be at least `coursed` or `approved`.
+   - Requires nested prior prerequisites (`aprobarReqId` of direct `cursarReqId` subjects) to be `approved`.
+3. **`coursed` (Cursada / Regular)**: Passed continuous assessment, pending final exam. Same prerequisite requirements as `coursing`.
+4. **`approved` (Aprobada / Promocionada / Final Aprobado)**: Subject credited. Requires direct `aprobarReqId` subjects to be `approved`.
 
-### Downstream Prerequisite Locking Rule
-A prerequisite subject (e.g. `Math 1`) **cannot be demoted or changed to a lower state** if an active downstream dependent subject (e.g. `Math 2` marked as `approved` or `coursing`) requires `Math 1` to remain in its current state. Users must demote or reset the dependent subject (`Math 2`) first before modifying `Math 1`.
-
----
-
-## 2. State Management & Architecture Rules
-
-### Angular Signals Pattern
-- **Service as Store**: All state logic resides inside injectable root services (`CourseService`, `PlanService`).
-- Components consume state via **`computed()`** signals or `asReadonly()` properties.
-- State updates MUST go through service methods (e.g., `toggleCourseStatus`, `toggleLessonStatus`, `moveLessonToSemester`).
-
-### Persistence Layer
-- All user selections, status choices, moved semesters, and custom study plans are stored in **`localStorage`**:
-  - `course-organizer-state`: Serialized courses by plan ID, course statuses map, lesson statuses map.
-  - `plans`: Array of active academic plans (`Plan[]`).
-  - `plan-semesters-{planId}`: Semester list date definitions per plan.
-
-### Rules for Modifying Data & Prerequisites
-- **Subject Name Matching**: Prerequisites (`cursarReq`, `aprobarReq`) reference target courses by **exact string name** matching `Course.name`. Do not alter course names in `courses.data.ts` without updating requirement lists.
-- **Drag & Drop Placement Rules**: When moving a course to another semester slot (`moveLessonToSemester`), validate placement using `canMoveLessonToSemester()` to ensure prerequisite ordering constraints are preserved.
+### Downstream Lock Safety Rule
+A prerequisite subject (e.g. *Math 1*) **cannot be demoted to a lower state** if an active downstream dependent subject (e.g. *Math 2* marked as `approved` or `coursing`) relies on *Math 1* remaining in its current state. Users must demote dependent subjects first.
 
 ---
 
-## 3. Directory Structure
+## 3. Reactive State Management & Store Architecture
 
-- `src/app/models/`: Domain TypeScript interfaces (`course.ts`).
-- `src/app/services/`: Core reactive state management (`course.service.ts`, `plan.service.ts`).
-- `src/app/data/`: Default study plan dataset (`courses.data.ts`).
-- `src/app/components/`: Feature components (`course-organizer`, `calendar`, `academic-calendar`, `requisites-flow`, `sidebar`).
+### Angular Signals Pattern (`@injectable({ providedIn: 'root' })`)
+All application state is managed via reactive Signal Stores in `src/app/services/`:
+
+1. **`CourseService` (`src/app/services/course.service.ts`)**:
+   - Manages active plan's `Course[]` list, subject status map (`courseStatusesSignal`), selected commission IDs, and drag-and-drop semester moves.
+   - Enforces prerequisite validation (`canChangeStatusTo`, `canMoveLessonToSemester`).
+   - Exposes readonly signals: `courses`, `activePlanCourses`, `coursingLessons`, etc.
+
+2. **`PlanService` (`src/app/services/plan.service.ts`)**:
+   - Manages user-created plans, plan cloning, renaming, deletion, and semester date range definitions (`plan-semesters-{planId}`).
+
+3. **`CareerService` (`src/app/services/career.service.ts`)**:
+   - Multi-career catalog switcher. Reads local bundles (`audiovisual.json`, `sistemas.json`), custom user plans from `localStorage`, and remote community plans via Firebase Firestore.
+
+4. **`FirestoreSyncService` & `PlanImportExportService`**:
+   - Handles community workshop publication, remote plan fetching, and local plan JSON import/export.
+
+5. **Quality, Privacy & Security Services**:
+   - **`PlanSanitizerService`**: Strips identifying metadata ($k$-anonymity enforcement) before publishing plans.
+   - **`PlanLinterService`**: Audits study plan schemas for circular prerequisites and structural errors.
+   - **`AntiSybilService` / `VotingNullifierService` / `OhttpClientService`**: Enables anonymous zero-knowledge community rating and voting on workshop plans.
+
+6. **Utility Services**:
+   - **`CalendarExportService`**: Generates iCal (`.ics`) files and Google Calendar import links from `coursingLessons`.
+   - **`ThemeService` & `ToastService`**: UI theme state and toast notification handling.
 
 ---
 
-## 4. Key Guidelines for AI Code Generation
+## 4. UI Components Catalog (22 Standalone Components)
 
-1. **Standalone Components**: Always use Angular standalone components (`standalone: true` or standard Angular 19/21 component declarations).
-2. **Control Flow Syntax**: Use modern `@if`, `@for`, `@switch` control flow blocks in component HTML templates.
-3. **Immutability**: When updating Signals containing Maps or Sets, create new instances:
+The codebase is organized under `src/app/components/`:
+
+- **Main Dashboard Views**:
+  - `course-organizer`: Main dashboard `/home`. Host for course grid, search, and plan header controls.
+  - `course-grid`: Semester-based grid container for rendering `course-card` components.
+  - `course-card`: Interactive subject card displaying status toggle buttons, prerequisite alerts, and commission info.
+  - `course-organizer-legend`: Visual legend for subject statuses.
+- **Weekly Schedule (`/myWeek`)**:
+  - `calendar`: Weekly timetable matrix mapping Monday - Saturday classes.
+  - `calendar-card`: Session card placed on time grid with professor/room details.
+  - `calendar-legend`: Schedule filter legend.
+  - `lesson-selector-modal`: Modal dialog for selecting specific commissions/teachers per course.
+  - `export-calendar-modal`: Modal for exporting schedule to iCal / Google Calendar.
+- **Prerequisites Flow (`/requisites`)**:
+  - `requisites-flow`: Cytoscape.js & Dagre directional dependency graph visualization.
+- **Academic Calendar (`/academicCalendar`)**:
+  - `academic-calendar`: Date range timeline for academic terms.
+- **Workshop Hub (`/workshop`)**:
+  - `workshop-hub`: Steam-Workshop-like community catalog for browsing and subscribing to study plans.
+  - `plan-publisher-modal`: Modal for sanitizing and publishing local custom plans.
+  - `plan-diff-viewer`: Structural visual diff tool for comparing upstream plan versions.
+  - `career-selector`: Header dropdown selector for switching between careers.
+- **Global & Layout Components**:
+  - `sidebar`: Main app navigation sidebar.
+  - `user-menu`: User authentication / profile menu.
+  - `toast-container`: Global toast alert renderer.
+  - `advisory-badge`, `lineage-indicator`, `no-plan-selected`, `onboarding-welcome`.
+
+---
+
+## 5. Key Rules for AI Code Generation
+
+1. **Standalone Components**: All components MUST be Angular standalone (`standalone: true` or standard Angular 21 component declarations).
+2. **Modern Control Flow**: Use `@if`, `@for`, `@switch` control flow blocks in HTML templates.
+3. **Signal Mutability**: When updating Signals holding `Map` or `Set` instances, assign a new copy to trigger reactivity:
    ```ts
    this.courseStatusesSignal.set(new Map(updatedMap));
    ```
-4. **Testing**: Run unit tests after making changes:
+4. **Id-Based Prerequisite Check**: Always use `cursarReqId` and `aprobarReqId` numeric array matching instead of course names.
+5. **Privacy Airgap**: User progress data (`CourseStatus`, personal notes, selected lessons) MUST remain strictly in `localStorage` and never be uploaded to remote services.
+6. **Testing**: Run Vitest suite before concluding tasks:
    ```bash
    npx ng test --watch=false
    ```

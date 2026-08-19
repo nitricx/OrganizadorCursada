@@ -4,8 +4,12 @@ Este archivo documenta las características pendientes, mejoras de experiencia d
 
 ---
 
-## 🎯 Épica 1: Selección de Comisión / Docente por Materia
+## ✅ Épica 1: Selección de Comisión / Docente por Materia (COMPLETADA)
 > **Objetivo**: Evitar que al marcar una materia como `coursing` se activen todas sus comisiones/docentes en el calendario semanal. El usuario debe ver únicamente la comisión que eligió cursar.
+
+- [x] **1.1 Modelo de Datos**: Campo `selectedLessonId?: string | null` en `Course` (`src/app/models/course.ts`).
+- [x] **1.2 Modal de Selección**: Componente `lesson-selector-modal` para elegir comisión/docente al cursar.
+- [x] **1.3 Integración con Calendario**: Filtrado en `CalendarService`/`CourseService` para proyectar únicamente la comisión seleccionada en el horario semanal (`/myWeek`).
 
 ---
 
@@ -23,4 +27,10 @@ Este archivo documenta las características pendientes, mejoras de experiencia d
 
 ---
 
+## 🛒 Épica 3: Mejoras en Workshop Hub & Visualización de Cambios (Plan Diff Viewer)
+> **Objetivo**: Mejorar la experiencia de suscripción a planes comunitarios y resolución de conflictos al actualizar planes upstream.
 
+- [ ] **3.1 Visualizador de Diferencias (Plan Diff Viewer)**
+  - Mejorar componente `plan-diff-viewer` para resaltar diferencias entre versiones de un mismo plan (nuevas materias, cambios de correlatividades o cuatrimestre).
+- [ ] **3.2 Filtro y Búsqueda Avanzada en Workshop**
+  - Filtrado por Universidad, Facultad y popularidad/calificaciones anónimas.
