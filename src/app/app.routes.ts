@@ -1,8 +1,8 @@
 import { Routes } from '@angular/router';
-import { CourseOrganizerComponent } from './components/course-organizer/course-organizer.component';
-import { Calendar } from './components/calendar/calendar';
-import { AcademicCalendarComponent } from './components/academic-calendar/academic-calendar.component';
-import { RequisitesFlowComponent } from './components/requisites-flow/requisites-flow.component';
+import { CourseOrganizerComponent } from './features/dashboard/course-organizer/course-organizer.component';
+import { Calendar } from './features/schedule/calendar/calendar';
+import { AcademicCalendarComponent } from './features/academic-calendar/academic-calendar/academic-calendar.component';
+import { RequisitesFlowComponent } from './features/prerequisites/requisites-flow/requisites-flow.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },

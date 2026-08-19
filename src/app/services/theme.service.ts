@@ -38,10 +38,10 @@ export class ThemeService {
     if (savedTheme === 'dark') return true;
     if (savedTheme === 'light') return false;
 
-    return (
+    return Boolean(
       typeof window !== 'undefined' &&
       window.matchMedia &&
-      window.matchMedia('(prefers-color-scheme: dark)').matches
+      window.matchMedia('(prefers-color-scheme: dark)')?.matches
     );
   }
 

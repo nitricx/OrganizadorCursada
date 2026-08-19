@@ -1,20 +1,18 @@
 import { Component, ChangeDetectionStrategy, inject, signal, computed, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
-import { SidebarComponent } from './components/sidebar/sidebar.component';
-import { ToastContainerComponent } from './components/toast-container/toast-container.component';
-import { CareerSelectorComponent } from './components/career-selector/career-selector.component';
-import { WorkshopHubComponent } from './components/workshop-hub/workshop-hub.component';
-import { PlanPublisherModalComponent } from './components/plan-publisher-modal/plan-publisher-modal.component';
-import { PlanDiffViewerComponent } from './components/plan-diff-viewer/plan-diff-viewer.component';
+import { RouterModule, Router } from '@angular/router';
+import { SidebarComponent } from './shared/components/sidebar/sidebar.component';
+import { ToastContainerComponent } from './shared/components/toast-container/toast-container.component';
+import { CareerSelectorComponent } from './features/workshop/career-selector/career-selector.component';
+import { WorkshopHubComponent } from './features/workshop/workshop-hub/workshop-hub.component';
+import { PlanPublisherModalComponent } from './features/workshop/plan-publisher-modal/plan-publisher-modal.component';
+import { PlanDiffViewerComponent } from './features/workshop/plan-diff-viewer/plan-diff-viewer.component';
+import { UserMenuComponent } from './shared/components/user-menu/user-menu';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
-import { Router } from '@angular/router';
-
-import { UserMenuComponent } from './components/user-menu/user-menu';
 import { ThemeService } from './services/theme.service';
 import { PlanService } from './services/plan.service';
 import { CourseService } from './services/course.service';
@@ -61,7 +59,7 @@ export class App implements OnInit {
 
   plans = this.planService.plans;
 
-  currentPlanToPublish = signal<any>(null);
+  currentPlanToPublish = signal<unknown>(null);
 
   ngOnInit(): void {
     // URL Hash Fragment Listener for 1-Click P2P Link Import (#import=...)
@@ -76,7 +74,7 @@ export class App implements OnInit {
           // Clear hash
           history.replaceState(null, '', window.location.pathname);
         }
-      } catch (err: any) {
+      } catch {
         this.toast.show('Error al importar el plan desde el enlace.', 'error');
       }
     }

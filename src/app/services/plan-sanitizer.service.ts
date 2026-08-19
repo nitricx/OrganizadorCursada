@@ -32,36 +32,37 @@ export class PlanSanitizerService {
    * Strips all private student lifecycle progress, high-cardinality cohort identifiers,
    * classroom physical location details, and PII before export/upload to public Workshop.
    */
-  public sanitizeForPublishing(rawPayload: any): PlanManifest {
+  public sanitizeForPublishing(rawPayload: unknown): PlanManifest {
     if (!rawPayload || typeof rawPayload !== 'object') {
       throw new Error('Invalid plan payload provided for sanitization.');
     }
 
-    const rawCourses = Array.isArray(rawPayload.courses) ? rawPayload.courses : [];
+    const payload = rawPayload as Record<string, unknown>;
+    const rawCourses = Array.isArray(payload['courses']) ? (payload['courses'] as Array<Record<string, unknown>>) : [];
 
-    const sanitizedCourses: CourseManifest[] = rawCourses.map((c: any) => {
+    const sanitizedCourses: CourseManifest[] = rawCourses.map((c) => {
       const cleanCourse: CourseManifest = {
-        id: String(c.id || c.name || ''),
-        name: this.sanitizeString(String(c.name || '')),
-        year: Number(c.year) || 1,
-        q: Number(c.q) || 1,
-        cursarReq: Array.isArray(c.cursarReq) 
-          ? c.cursarReq.map((r: any) => String(r)) 
-          : (Array.isArray(c.cursarReqId) ? c.cursarReqId.map((r: any) => String(r)) : []),
-        aprobarReq: Array.isArray(c.aprobarReq) 
-          ? c.aprobarReq.map((r: any) => String(r)) 
-          : (Array.isArray(c.aprobarReqId) ? c.aprobarReqId.map((r: any) => String(r)) : [])
+        id: String(c['id'] || c['name'] || ''),
+        name: this.sanitizeString(String(c['name'] || '')),
+        year: Number(c['year']) || 1,
+        q: Number(c['q']) || 1,
+        cursarReq: Array.isArray(c['cursarReq']) 
+          ? (c['cursarReq'] as unknown[]).map((r) => String(r)) 
+          : (Array.isArray(c['cursarReqId']) ? (c['cursarReqId'] as unknown[]).map((r) => String(r)) : []),
+        aprobarReq: Array.isArray(c['aprobarReq']) 
+          ? (c['aprobarReq'] as unknown[]).map((r) => String(r)) 
+          : (Array.isArray(c['aprobarReqId']) ? (c['aprobarReqId'] as unknown[]).map((r) => String(r)) : [])
       };
       return cleanCourse;
     });
 
     const sanitizedManifest: PlanManifest = {
-      id: String(rawPayload.id || `urn:orgcursada:plan:${Date.now()}`),
-      name: this.sanitizeString(String(rawPayload.name || 'Carrera sin nombre')),
-      university: this.sanitizeString(String(rawPayload.university || 'Universidad General')),
-      faculty: rawPayload.faculty ? this.sanitizeString(String(rawPayload.faculty)) : undefined,
-      version: String(rawPayload.version || '1.0.0'),
-      forkOf: rawPayload.forkOf ? String(rawPayload.forkOf) : undefined,
+      id: String(payload['id'] || `urn:orgcursada:plan:${Date.now()}`),
+      name: this.sanitizeString(String(payload['name'] || 'Carrera sin nombre')),
+      university: this.sanitizeString(String(payload['university'] || 'Universidad General')),
+      faculty: payload['faculty'] ? this.sanitizeString(String(payload['faculty'])) : undefined,
+      version: String(payload['version'] || '1.0.0'),
+      forkOf: payload['forkOf'] ? String(payload['forkOf']) : undefined,
       courses: sanitizedCourses
     };
 
@@ -114,7 +115,7 @@ export class PlanSanitizerService {
       .trim();
   }
 
-  private assertZeroBannedKeys(obj: any): void {
+  private assertZeroBannedKeys(obj: unknown): void {
     const jsonString = JSON.stringify(obj).toLowerCase();
     for (const key of this.BANNED_KEYS) {
       if (jsonString.includes(`"${key.toLowerCase()}":`)) {

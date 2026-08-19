@@ -1,9 +1,0 @@
-<div *ngIf="forkOf" class="lineage-container">
-  <span class="fork-icon">🔀</span>
-  <span class="lineage-label">
-    Plan derivado de: <strong>{{ parentName || forkOf }}</strong>
-  </span>
-  <button class="btn-compare" (click)="onCompare.emit()">
-    Ver diferencias con el original
-  </button>
-</div>

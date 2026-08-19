@@ -1,0 +1,11 @@
+@if (conflictCount() > 0) {
+  <div class="advisory-badge-container">
+    <span class="badge-icon">⚠️</span>
+    <span class="badge-text">
+      Actualización de plan disponible ({{ conflictCount() }} aviso{{ conflictCount() > 1 ? 's' : '' }})
+    </span>
+    <button class="btn-inspect" (click)="onInspect.emit()">
+      Revisar Cambios
+    </button>
+  </div>
+}

@@ -68,7 +68,7 @@ export class PlanImportExportService {
     manifest: PlanManifest;
     overlay?: UserProgressOverlay;
   } {
-    let parsed: any;
+    let parsed: Record<string, unknown>;
     try {
       parsed = JSON.parse(jsonString);
     } catch {
@@ -76,18 +76,18 @@ export class PlanImportExportService {
     }
 
     // Safety check: Reject private state packages in Workshop upload context
-    if (isWorkshopUploadContext && parsed.formatMarker === 'ORG_CURSADA_PRIVATE_USER_STATE_V1') {
+    if (isWorkshopUploadContext && parsed['formatMarker'] === 'ORG_CURSADA_PRIVATE_USER_STATE_V1') {
       throw new Error('RECHAZADO: Este archivo contiene su avance personal privado y no puede subirse al Workshop público.');
     }
 
-    if (parsed.formatMarker === 'ORG_CURSADA_PRIVATE_USER_STATE_V1') {
+    if (parsed['formatMarker'] === 'ORG_CURSADA_PRIVATE_USER_STATE_V1') {
       return {
-        manifest: parsed.manifest,
-        overlay: parsed.overlay
+        manifest: parsed['manifest'] as PlanManifest,
+        overlay: parsed['overlay'] as UserProgressOverlay
       };
     }
 
-    const manifestCandidate = parsed.manifest || parsed;
+    const manifestCandidate = (parsed['manifest'] || parsed) as PlanManifest;
     const sanitized = this.sanitizer.sanitizeForPublishing(manifestCandidate);
     const lintRes = this.linter.lintPlanManifest(sanitized);
 
