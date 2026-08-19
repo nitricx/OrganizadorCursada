@@ -1,159 +1,167 @@
 <div class="academic-calendar">
-  <div class="page-header">
-    <div class="title-row">
-      <h1>
-        Calendario Académico
-        @if (!isEditingTitle() && isEditable()) {
-          <button
-            mat-icon-button
-            type="button"
-            class="edit-title-btn"
-            aria-label="Editar título y fechas del calendario"
-            (click)="toggleEditTitle()"
-          >
-            <mat-icon>edit</mat-icon>
-          </button>
-          <button
-            mat-icon-button
-            type="button"
-            class="delete-plan-btn"
-            aria-label="Eliminar plan de estudio"
-            (click)="deletePlan()"
-          >
-            <mat-icon>delete</mat-icon>
-          </button>
-        } @else if (isEditingTitle()) {
-          <button
-            mat-icon-button
-            type="button"
-            aria-label="Guardar cambios"
-            (click)="confirmEditTitle()"
-          >
-            <mat-icon>check_circle</mat-icon>
-          </button>
-          <button
-            mat-icon-button
-            type="button"
-            aria-label="Cancelar edición"
-            (click)="cancelEditTitle()"
-          >
-            <mat-icon>cancel</mat-icon>
-          </button>
-        }
-      </h1>
+  @if (!hasSelectedPlan()) {
+    <app-no-plan-selected
+      title="Calendario Académico no disponible"
+      description="Seleccioná o cargá un plan de estudio para visualizar y personalizar tu calendario académico por semestres."
+      icon="date_range"
+    />
+  } @else {
+    <div class="page-header">
+      <div class="title-row">
+        <h1>
+          Calendario Académico
+          @if (!isEditingTitle() && isEditable()) {
+            <button
+              mat-icon-button
+              type="button"
+              class="edit-title-btn"
+              aria-label="Editar título y fechas del calendario"
+              (click)="toggleEditTitle()"
+            >
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button
+              mat-icon-button
+              type="button"
+              class="delete-plan-btn"
+              aria-label="Eliminar plan de estudio"
+              (click)="deletePlan()"
+            >
+              <mat-icon>delete</mat-icon>
+            </button>
+          } @else if (isEditingTitle()) {
+            <button
+              mat-icon-button
+              type="button"
+              aria-label="Guardar cambios"
+              (click)="confirmEditTitle()"
+            >
+              <mat-icon>check_circle</mat-icon>
+            </button>
+            <button
+              mat-icon-button
+              type="button"
+              aria-label="Cancelar edición"
+              (click)="cancelEditTitle()"
+            >
+              <mat-icon>cancel</mat-icon>
+            </button>
+          }
+        </h1>
 
-      <button
-        mat-flat-button
-        color="primary"
-        type="button"
-        class="btn-export-trigger"
-        (click)="openExportModal()"
-        title="Exportar cuatrimestre a Google Calendar / iCal"
-      >
-        <mat-icon>event_available</mat-icon>
-        Exportar Calendario
-      </button>
-    </div>
-    @if (planId()) {
-      <div class="plan-header-row">
-        @if (!isEditingTitle()) {
-          <h2 class="plan-title">{{ planId() }}</h2>
-        } @else {
-          <mat-form-field appearance="outline" subscriptSizing="dynamic" class="editable-plan-field">
-            <mat-label>Título del Plan</mat-label>
-            <input
-              matInput
-              type="text"
-              [(ngModel)]="editablePlanId"
-              placeholder="Subtítulo"
-            />
-          </mat-form-field>
-        }
-        <div class="year-selector">
+        <button
+          mat-flat-button
+          color="primary"
+          type="button"
+          class="btn-export-trigger"
+          (click)="openExportModal()"
+          title="Exportar cuatrimestre a Google Calendar / iCal"
+        >
+          <mat-icon>event_available</mat-icon>
+          Exportar Calendario
+        </button>
+      </div>
+      @if (planId()) {
+        <div class="plan-header-row">
           @if (!isEditingTitle()) {
-            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="year-input-field">
-              <mat-label>Año Inicial</mat-label>
-              <input
-                matInput
-                type="number"
-                [value]="startingYear()"
-                [disabled]="true"
-                min="1900"
-                max="2100"
-              />
-            </mat-form-field>
+            <h2 class="plan-title">{{ planId() }}</h2>
           } @else {
-            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="year-input-field">
-              <mat-label>Año Inicial</mat-label>
+            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="editable-plan-field">
+              <mat-label>Título del Plan</mat-label>
               <input
                 matInput
-                type="number"
-                [(ngModel)]="editableStartingYear"
-                min="1900"
-                max="2100"
+                type="text"
+                [(ngModel)]="editablePlanId"
+                placeholder="Subtítulo"
               />
             </mat-form-field>
           }
-        </div>
-      </div>
-    }
-  </div>
-  @for (item of displaySemesters(); track item.id; let i = $index; let last = $last) {
-    <section class="semester-section">
-      <div class="semester-header">
-        <h2 class="semester-title">{{ item.label }}</h2>
-        @if (isEditingTitle() && isEditable()) {
-          <div class="semester-date-inputs">
-            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="sem-date-field">
-              <mat-label>Inicio</mat-label>
-              <input
-                matInput
-                type="text"
-                placeholder="DD/MM"
-                [ngModel]="getEditableSemesterDates(item.id).startDate"
-                (ngModelChange)="updateSemesterDate(item.id, 'startDate', $event)"
-                maxlength="5"
-              />
-            </mat-form-field>
-            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="sem-date-field">
-              <mat-label>Fin</mat-label>
-              <input
-                matInput
-                type="text"
-                placeholder="DD/MM"
-                [ngModel]="getEditableSemesterDates(item.id).endDate"
-                (ngModelChange)="updateSemesterDate(item.id, 'endDate', $event)"
-                maxlength="5"
-              />
-            </mat-form-field>
+          <div class="year-selector">
+            @if (!isEditingTitle()) {
+              <mat-form-field appearance="outline" subscriptSizing="dynamic" class="year-input-field">
+                <mat-label>Año Inicial</mat-label>
+                <input
+                  matInput
+                  type="number"
+                  [value]="startingYear()"
+                  [disabled]="true"
+                  min="1900"
+                  max="2100"
+                />
+              </mat-form-field>
+            } @else {
+              <mat-form-field appearance="outline" subscriptSizing="dynamic" class="year-input-field">
+                <mat-label>Año Inicial</mat-label>
+                <input
+                  matInput
+                  type="number"
+                  [(ngModel)]="editableStartingYear"
+                  min="1900"
+                  max="2100"
+                />
+              </mat-form-field>
+            }
           </div>
-        }
-      </div>
-      <app-calendar
-        [coursesOverride]="item.courses"
-        [showHeader]="false"
-        [isEditable]="isEditable()"
-        [clickTogglesStatus]="false"
-        (lessonMoveRequested)="onLessonMoveRequested($event, i)"
-      />
-    </section>
-    @if (isEditable() && (i + 1) % 2 === 0) {
-      <div class="add-semester-divider">
-        <button
-          mat-mini-fab
-          color="primary"
-          type="button"
-          class="add-semester-btn"
-          (click)="addCalendarAfter(item.id)"
-          aria-label="Agregar semestres"
-        >
-          <mat-icon>add</mat-icon>
-        </button>
-      </div>
+        </div>
+      }
+    </div>
+    @for (item of displaySemesters(); track item.id; let i = $index; let last = $last) {
+      <section class="semester-section">
+        <div class="semester-header">
+          <h2 class="semester-title">{{ item.label }}</h2>
+          @if (isEditingTitle() && isEditable()) {
+            <div class="semester-date-inputs">
+              <mat-form-field appearance="outline" subscriptSizing="dynamic" class="sem-date-field">
+                <mat-label>Inicio</mat-label>
+                <input
+                  matInput
+                  type="text"
+                  placeholder="DD/MM"
+                  [ngModel]="getEditableSemesterDates(item.id).startDate"
+                  (ngModelChange)="updateSemesterDate(item.id, 'startDate', $event)"
+                  maxlength="5"
+                />
+              </mat-form-field>
+              <mat-form-field appearance="outline" subscriptSizing="dynamic" class="sem-date-field">
+                <mat-label>Fin</mat-label>
+                <input
+                  matInput
+                  type="text"
+                  placeholder="DD/MM"
+                  [ngModel]="getEditableSemesterDates(item.id).endDate"
+                  (ngModelChange)="updateSemesterDate(item.id, 'endDate', $event)"
+                  maxlength="5"
+                />
+              </mat-form-field>
+            </div>
+          }
+        </div>
+        <app-calendar
+          [coursesOverride]="item.courses"
+          [showHeader]="false"
+          [isEditable]="isEditable()"
+          [clickTogglesStatus]="false"
+          (lessonMoveRequested)="onLessonMoveRequested($event, i)"
+        />
+      </section>
+      @if (isEditable() && (i + 1) % 2 === 0) {
+        <div class="add-semester-divider">
+          <button
+            mat-mini-fab
+            color="primary"
+            type="button"
+            class="add-semester-btn"
+            (click)="addCalendarAfter(item.id)"
+            aria-label="Agregar semestres"
+          >
+            <mat-icon>add</mat-icon>
+          </button>
+        </div>
+      }
     }
-  }
 
-  @if (showExportModal()) {
-    <app-export-calendar-modal (close)="closeExportModal()" />
+    @if (showExportModal()) {
+      <app-export-calendar-modal (close)="closeExportModal()" />
+    }
   }
 </div>

@@ -55,11 +55,14 @@ class MockCourseService {
   courses = this._courses.asReadonly();
   selectedIds = computed(() => new Set<number>());
   hoveredCourseId = computed(() => null as number | null);
+  hasSelectedPlan = computed(() => true);
 
   // Controls returned by tests
   blockReason: string | null = null;
 
   setCurrentPlanId(_id: string): void {}
+
+  deletePlan(_planId: string): void {}
 
   getCoursesForPlan(_planId: string): Course[] {
     return this._courses();

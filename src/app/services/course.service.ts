@@ -580,6 +580,17 @@ export class CourseService {
     const updatedCoursesByPlan = new Map(this.coursesByPlanSignal());
     updatedCoursesByPlan.delete(planId);
     this.coursesByPlanSignal.set(updatedCoursesByPlan);
+    if (this.currentPlanIdSignal() === planId) {
+      const remainingKeys = Array.from(updatedCoursesByPlan.keys());
+      this.currentPlanIdSignal.set(remainingKeys.length > 0 ? remainingKeys[0] : '1');
+    }
+    try {
+      if (typeof localStorage !== 'undefined' && localStorage) {
+        localStorage.removeItem(`course-organizer-state-${planId}`);
+        localStorage.removeItem(`plan-semesters-${planId}`);
+        localStorage.removeItem(`plan-starting-year-${planId}`);
+      }
+    } catch {}
   }
 
   getMoveBlockReason(lessonId: string, targetYear: number): string | null {

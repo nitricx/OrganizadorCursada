@@ -10,6 +10,7 @@ import {
   sanitizeCourseStateEntry,
   sanitizeCourseStatesMap,
   sanitizeCoursesByPlan,
+  cleanupOrphanedStorageKeys,
 } from './storage-sanitizer.utils';
 import { Plan, SemesterSlot } from '../services/plan.service';
 
@@ -165,6 +166,31 @@ describe('storage-sanitizer.utils', () => {
     it('should return empty map for non-object inputs', () => {
       expect(sanitizeCoursesByPlan(null).size).toBe(0);
       expect(sanitizeCoursesByPlan('string').size).toBe(0);
+    });
+  });
+
+  describe('cleanupOrphanedStorageKeys', () => {
+    it('should remove orphaned plan and career keys from localStorage', () => {
+      try {
+        if (typeof localStorage !== 'undefined' && localStorage) {
+          localStorage.setItem('plan-semesters-active1', '[]');
+          localStorage.setItem('plan-semesters-orphan1', '[]');
+          localStorage.setItem('plan-starting-year-active1', '2026');
+          localStorage.setItem('plan-starting-year-orphan1', '2026');
+          localStorage.setItem('course-organizer-state-orphanCareer', '{}');
+          localStorage.setItem('unrelated-key', 'keep');
+
+          cleanupOrphanedStorageKeys(['active1'], []);
+
+          expect(localStorage.getItem('plan-semesters-active1')).toBe('[]');
+          expect(localStorage.getItem('plan-starting-year-active1')).toBe('2026');
+          expect(localStorage.getItem('unrelated-key')).toBe('keep');
+
+          expect(localStorage.getItem('plan-semesters-orphan1')).toBeNull();
+          expect(localStorage.getItem('plan-starting-year-orphan1')).toBeNull();
+          expect(localStorage.getItem('course-organizer-state-orphanCareer')).toBeNull();
+        }
+      } catch {}
     });
   });
 });

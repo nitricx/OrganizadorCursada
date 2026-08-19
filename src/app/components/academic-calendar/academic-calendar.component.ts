@@ -5,6 +5,7 @@ import {
   computed,
   effect,
   signal,
+  untracked,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -20,6 +21,7 @@ import { MatInputModule } from '@angular/material/input';
 import { Course } from '../../models/course';
 import { Calendar } from '../calendar/calendar';
 import { ExportCalendarModalComponent } from '../export-calendar-modal/export-calendar-modal.component';
+import { NoPlanSelectedComponent } from '../no-plan-selected/no-plan-selected.component';
 
 interface DisplaySemester {
   id: string;
@@ -47,6 +49,7 @@ interface DisplaySemester {
     MatInputModule,
     FormsModule,
     ExportCalendarModalComponent,
+    NoPlanSelectedComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -91,20 +94,37 @@ export class AcademicCalendarComponent {
     return id !== null && id !== undefined && id !== '1';
   });
 
+  readonly hasSelectedPlan = computed(() => {
+    const id = this.currentRouteId();
+    if (!id) return false;
+    const plans = this.planService.plans();
+    if (plans.length > 0) {
+      return plans.some((p) => p.id === id);
+    }
+    return this.courseService.hasSelectedPlan() || this.courseService.getCoursesForPlan(id).length > 0;
+  });
+
   constructor() {
     // Set the current plan ID and initialize semester list when route changes
     effect(() => {
       const id = this.currentRouteId();
+      const plans = this.planService.plans();
+      if (!id && plans.length > 0) {
+        void this.router.navigateByUrl(`/academicCalendar/plan/${plans[0].id}`, { replaceUrl: true });
+        return;
+      }
       if (id) {
         // Cancel edit mode when route changes
         this.isEditingTitle.set(false);
-        this.courseService.setCurrentPlanId(id);
-        this.planService.setSelectedPlanId(id);
+        untracked(() => {
+          this.courseService.setCurrentPlanId(id);
+          this.planService.setSelectedPlanId(id);
+        });
         const stored = this.planService.getSemesterList(id);
         if (stored.length === 0) {
-          const courses = this.courseService.courses();
+          const courses: Course[] = untracked(() => this.courseService.getCoursesForPlan(id));
           const years = Array.from(new Set(courses.map((c) => c.year))).sort((a, b) => a - b);
-          const startingYear = this.planService.getStartingYear(id);
+          const startingYear = untracked(() => this.planService.getStartingYear(id));
           const base = years.flatMap((year) => [
             {
               id: `Y${year}Q1`,
@@ -333,7 +353,7 @@ export class AcademicCalendarComponent {
     this.planService.deletePlan(planId);
 
     const remaining = this.planService.plans();
-    const fallback = remaining.length > 0 ? `/academicCalendar/plan/${remaining[0].id}` : '/home';
+    const fallback = remaining.length > 0 ? `/academicCalendar/plan/${remaining[0].id}` : '/academicCalendar';
     void this.router.navigateByUrl(fallback);
   }
 }

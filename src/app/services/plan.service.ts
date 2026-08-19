@@ -5,6 +5,7 @@ import {
   sanitizePlans,
   sanitizeSemesterSlots,
   sanitizeStartingYear,
+  cleanupOrphanedStorageKeys,
 } from '../utils/storage-sanitizer.utils';
 
 export interface Plan {
@@ -143,6 +144,9 @@ export class PlanService {
     this.safeRemoveItem('selected-career-id');
     this.safeRemoveItem('removed-career-ids');
     this.safeRemoveItem('custom-careers-index');
+    this.safeRemoveItem('course-organizer-state');
+    this.safeRemoveItem('course-organizer-state-lic-diseno-audiovisual');
+    cleanupOrphanedStorageKeys([], []);
     this.plansSignal.set([]);
     this.semesterListsSignal.set(new Map());
     this.startingYearsSignal.set(new Map());
@@ -154,7 +158,13 @@ export class PlanService {
       this.safeSetItem(PlanService.PLANS_KEY, JSON.stringify(updated));
       if (updated.length > 0 && this.selectedPlanIdSignal() === planId) {
         this.selectedPlanIdSignal.set(updated[0].id);
+      } else if (updated.length === 0) {
+        this.selectedPlanIdSignal.set('');
       }
+      cleanupOrphanedStorageKeys(
+        updated.map((p) => p.id),
+        this.careerService?.careers().map((c) => c.id) ?? [],
+      );
       return updated;
     });
     this.semesterListsSignal.update((map) => {

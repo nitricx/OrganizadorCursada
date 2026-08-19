@@ -40,6 +40,7 @@ export class SidebarComponent {
     { label: 'Correlatividades', route: '/requisites', icon: 'alt_route' },
     {
       label: 'Calendario Académico',
+      route: '/academicCalendar',
       icon: 'date_range',
       children: this.planService.plans().map((p) => ({
         label: p.label,

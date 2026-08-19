@@ -152,3 +152,38 @@ export function sanitizeCoursesByPlan(parsed: unknown): Map<string, Course[]> {
   });
   return map;
 }
+
+export function cleanupOrphanedStorageKeys(activePlanIds: string[], activeCareerIds: string[]): void {
+  try {
+    if (typeof localStorage === 'undefined' || !localStorage) return;
+
+    const validPlanIds = new Set(activePlanIds);
+    const validCareerIds = new Set(['lic-diseno-audiovisual', ...activeCareerIds]);
+
+    const keysToRemove: string[] = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (!key) continue;
+
+      if (key.startsWith('plan-semesters-')) {
+        const planId = key.replace('plan-semesters-', '');
+        if (!validPlanIds.has(planId)) keysToRemove.push(key);
+      } else if (key.startsWith('plan-starting-year-')) {
+        const planId = key.replace('plan-starting-year-', '');
+        if (!validPlanIds.has(planId)) keysToRemove.push(key);
+      } else if (key.startsWith('course-organizer-state-')) {
+        const careerId = key.replace('course-organizer-state-', '');
+        if (!validCareerIds.has(careerId)) keysToRemove.push(key);
+      } else if (key.startsWith('custom-career-')) {
+        const careerId = key.replace('custom-career-', '');
+        if (!validCareerIds.has(careerId)) keysToRemove.push(key);
+      }
+    }
+
+    keysToRemove.forEach((k) => {
+      try {
+        localStorage.removeItem(k);
+      } catch {}
+    });
+  } catch {}
+}
