@@ -180,6 +180,9 @@
 }
 
 .google-login-menu-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   height: 40px;
   border-radius: 20px;
   background-color: var(--brand-primary, #3b82f6) !important;
@@ -188,17 +191,35 @@
   font-weight: 500;
 }
 
+.google-login-menu-btn ::ng-deep .mdc-button__label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
 .google-login-menu-btn .btn-content {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 10px;
+  line-height: 1;
 }
 
 .google-login-menu-btn .btn-content svg {
   background: #ffffff;
   border-radius: 50%;
   padding: 2px;
+  box-sizing: border-box;
+  width: 20px;
+  height: 20px;
+  display: block;
   flex-shrink: 0;
+}
+
+.google-login-menu-btn .btn-content span {
+  display: inline-block;
+  line-height: 1;
 }
 
 .google-large-avatar-wrapper {

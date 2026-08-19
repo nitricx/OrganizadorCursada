@@ -60,7 +60,9 @@
   --status-approved-border: #0f6e56;
 
   /* Highlight & Legend auxiliary colors */
-  --status-available-border: var(--brand-primary);
+  --status-available-bg: #e6f0fa;
+  --status-available-color: #042c53;
+  --status-available-border: #185fa5;
 
   --status-req-bg: #fac775;
   --status-req-color: #412402;
@@ -88,6 +90,10 @@
   --status-pending-bg: #2d3748;
   --status-pending-color: #e2e8f0;
   --status-pending-border: #4a5568;
+
+  --status-available-bg: #032b45;
+  --status-available-color: #90caf9;
+  --status-available-border: #38bdf8;
 
   --status-coursing-bg: #3b2d04;
   --status-coursing-color: #fef08a;

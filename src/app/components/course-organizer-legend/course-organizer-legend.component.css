@@ -6,6 +6,38 @@
   margin-bottom: 16px;
 }
 
+.legend-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.legend-divider {
+  width: 1px;
+  height: 22px;
+  background: var(--color-border-secondary, #d1d5db);
+  margin: 0 4px;
+}
+
+.legend-group-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-secondary, #6b7280);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.legend-group-label .hover-icon {
+  font-size: 14px;
+  width: 14px;
+  height: 14px;
+  color: var(--color-text-tertiary, #9ca3af);
+}
+
 .legend-chip-set {
   display: flex;
   flex-wrap: wrap;
@@ -14,11 +46,13 @@
 }
 
 .leg-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
   font-size: 0.825rem;
   font-weight: 500;
+}
+
+.leg-chip ::ng-deep .mat-mdc-chip-action-label {
+  display: inline-flex;
+  align-items: center;
 }
 
 .leg-dot {
@@ -27,10 +61,13 @@
   border-radius: 50%;
   flex-shrink: 0;
   display: inline-block;
+  margin-right: 8px;
 }
 
 .legend-hint {
-  color: var(--text-muted, #888);
+  width: 100%;
+  color: var(--color-text-secondary, #888);
   font-size: 0.8rem;
   font-style: italic;
+  margin-top: 2px;
 }

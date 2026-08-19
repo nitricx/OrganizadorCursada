@@ -1,7 +1,7 @@
 .available {
-  outline: 2px dashed #185fa5;
-  outline-offset: 1px;
-  background: #e8e7e0;
+  background: var(--status-available-bg, #e6f0fa) !important;
+  color: var(--status-available-color, #042c53) !important;
+  border-color: var(--status-available-border, #185fa5) !important;
 }
 
 .btn-commission-badge {
