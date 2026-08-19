@@ -53,4 +53,29 @@ mat-sidenav {
   flex: 1;
 }
 
+.toolbar-action-btn {
+  color: var(--color-text-secondary) !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  border-radius: var(--radius-md) !important;
+  padding: 0 10px !important;
+  height: 36px !important;
+  line-height: 36px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  transition: all var(--transition-fast) !important;
+}
 
+.toolbar-action-btn:hover {
+  background-color: var(--color-background-secondary) !important;
+  color: var(--color-text-primary) !important;
+}
+
+.toolbar-action-btn .btn-icon {
+  font-size: 18px !important;
+  width: 18px !important;
+  height: 18px !important;
+  margin-right: 4px;
+  vertical-align: middle;
+}

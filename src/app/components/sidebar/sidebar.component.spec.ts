@@ -31,7 +31,7 @@ describe('SidebarComponent', () => {
 
   it('should render items computed from planService plans', () => {
     const items = component.items();
-    expect(items.length).toBe(4);
+    expect(items.length).toBe(6);
     const academicItem = items.find((i) => i.label === 'Calendario Académico');
     expect(academicItem).toBeDefined();
     expect(academicItem?.children?.length).toBe(1);

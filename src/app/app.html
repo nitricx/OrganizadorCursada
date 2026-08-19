@@ -1,6 +1,6 @@
 <mat-sidenav-container class="app-container">
   <mat-sidenav mode="side" [opened]="isOpen()" role="navigation">
-    <app-sidebar />
+    <app-sidebar (onOpenWorkshop)="showWorkshop.set(true)" (onOpenPublisher)="openPublisher()" />
   </mat-sidenav>
   <mat-sidenav-content role="main">
     <mat-toolbar class="main-toolbar">
@@ -10,7 +10,19 @@
       <span class="app-brand-title">OrganizadorCursada</span>
       <span class="breadcrumb-separator">/</span>
       <app-career-selector />
+
       <span class="toolbar-spacer"></span>
+
+      <button mat-button class="toolbar-action-btn" (click)="showWorkshop.set(true)" aria-label="Abrir Plan Hub Workshop">
+        <mat-icon class="btn-icon">storefront</mat-icon>
+        <span>Plan Hub</span>
+      </button>
+
+      <button mat-button class="toolbar-action-btn" (click)="openPublisher()" aria-label="Compartir o Publicar Plan">
+        <mat-icon class="btn-icon">ios_share</mat-icon>
+        <span>Compartir</span>
+      </button>
+
       <app-user-menu />
     </mat-toolbar>
     <div class="wrap">
@@ -20,3 +32,26 @@
 </mat-sidenav-container>
 <app-toast-container />
 
+<!-- Workshop Hub Modal -->
+@if (showWorkshop()) {
+  <app-workshop-hub
+    (onClose)="showWorkshop.set(false)"
+    (onSubscribe)="handleSubscribePlan($event)"
+  />
+}
+
+<!-- Plan Publisher Modal -->
+@if (showPublisher()) {
+  <app-plan-publisher-modal
+    [rawPlan]="currentPlanToPublish()"
+    (onClose)="showPublisher.set(false)"
+  />
+}
+
+<!-- Plan Diff Viewer Modal -->
+@if (showDiffViewer()) {
+  <app-plan-diff-viewer
+    (onClose)="showDiffViewer.set(false)"
+    (onApply)="showDiffViewer.set(false)"
+  />
+}

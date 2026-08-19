@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, signal, inject, computed } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal, computed, Output, EventEmitter } from '@angular/core';
 import { RouterModule, Router } from '@angular/router';
 import { MatListModule } from '@angular/material/list';
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -14,6 +14,8 @@ export interface SidebarItem {
   addButton?: boolean;
   deletable?: boolean;
   id?: string;
+  action?: string;
+  icon?: string;
 }
 
 @Component({
@@ -21,6 +23,7 @@ export interface SidebarItem {
   templateUrl: './sidebar.html',
   styleUrl: './sidebar.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [RouterModule, MatListModule, MatExpansionModule, MatIconModule, MatButtonModule],
 })
 export class SidebarComponent {
@@ -28,12 +31,16 @@ export class SidebarComponent {
   private readonly courseService = inject(CourseService);
   private readonly router = inject(Router);
 
+  @Output() onOpenWorkshop = new EventEmitter<void>();
+  @Output() onOpenPublisher = new EventEmitter<void>();
+
   items = computed(() => [
-    { label: 'Home', route: '/home' },
-    { label: 'Mi Semana', route: '/myWeek' },
-    { label: 'Correlatividades', route: '/requisites' },
+    { label: 'Home', route: '/home', icon: 'home' },
+    { label: 'Mi Semana', route: '/myWeek', icon: 'calendar_view_week' },
+    { label: 'Correlatividades', route: '/requisites', icon: 'alt_route' },
     {
       label: 'Calendario Académico',
+      icon: 'date_range',
       children: this.planService.plans().map((p) => ({
         label: p.label,
         route: `/academicCalendar/plan/${p.id}`,
@@ -42,6 +49,8 @@ export class SidebarComponent {
       })),
       addButton: true,
     },
+    { label: 'Plan Hub (Workshop)', action: 'open_workshop', icon: 'storefront' },
+    { label: 'Compartir Plan', action: 'open_publisher', icon: 'ios_share' }
   ]);
 
   addPlan(item: SidebarItem): void {
@@ -52,5 +61,13 @@ export class SidebarComponent {
     const nextId = existingIds.length > 0 ? Math.max(...existingIds) + 1 : 1;
     const labelNumber = this.planService.plans().length + 1;
     this.planService.addPlan({ id: nextId.toString(), label: `Plan de estudio ${labelNumber}` });
+  }
+
+  handleAction(item: SidebarItem): void {
+    if (item.action === 'open_workshop') {
+      this.onOpenWorkshop.emit();
+    } else if (item.action === 'open_publisher') {
+      this.onOpenPublisher.emit();
+    }
   }
 }

@@ -5,14 +5,18 @@
   color: var(--color-text-primary);
 }
 
-a[mat-list-item] {
+a[mat-list-item], button[mat-list-item] {
   border-radius: var(--radius-md) !important;
   margin: 2px 4px !important;
   color: var(--color-text-secondary) !important;
   transition: all var(--transition-fast);
+  background: transparent !important;
+  border: none !important;
+  width: calc(100% - 8px) !important;
+  text-align: left;
 }
 
-a[mat-list-item]:hover {
+a[mat-list-item]:hover, button[mat-list-item]:hover {
   background-color: var(--color-background-secondary) !important;
   color: var(--color-text-primary) !important;
 }
@@ -93,4 +97,3 @@ a.active-link {
   max-width: 100%;
   font-size: 13px;
 }
-
