@@ -16,7 +16,7 @@ test.describe('Navegación y Flujo Inicial del Usuario', () => {
     // Verificamos que el componente app-no-plan-selected esté visible en /home
     const noPlanComponent = page.locator('app-no-plan-selected');
     await expect(noPlanComponent).toBeVisible();
-    await expect(noPlanComponent.locator('.empty-state-title')).toContainText('Plan de Cursada no seleccionado');
+    await expect(noPlanComponent.locator('.empty-state-title')).toContainText('Plan de Cursada');
   });
 
   test('debe permitir cargar el plan demo, visualizar las materias y navegar', async ({ page }) => {

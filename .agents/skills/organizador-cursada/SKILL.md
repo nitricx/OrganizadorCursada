@@ -142,3 +142,4 @@ The codebase is organized under `src/app/components/`:
    ```bash
    npx ng test --watch=false
    ```
+7. **Strict No-Fake-Data & Full Real Catalog Rule**: NEVER insert fake or dummy placeholder careers (e.g. Abogacía, Medicina, etc.), artificial version numbers in user UI, or truncated 2-course snippets. Always load full real career JSON files (`scripts/seed-data/sistemas.json` and `scripts/seed-data/audiovisual.json`).

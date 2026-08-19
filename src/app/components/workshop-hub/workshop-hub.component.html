@@ -15,34 +15,57 @@
           class="search-input"
           placeholder="Buscar por universidad, carrera o facultad..."
           [(ngModel)]="searchQuery"
+          data-testid="search-input"
         />
       </div>
 
-      <div class="catalog-list">
-        <div *ngFor="let item of filteredCatalog" class="workshop-card">
-          <div class="card-main">
-            <div class="card-title-row">
-              <h4>{{ item.name }}</h4>
-              <span class="badge-subscribers">👥 {{ item.subscribersRange }} estudiantes</span>
-            </div>
-            <p class="university-info">🏫 {{ item.university }} — {{ item.faculty }}</p>
-            <div class="version-info">
-              <span>Versión {{ item.version }}</span> • <span>Actualizado: {{ item.updatedAt }}</span>
-            </div>
-          </div>
-
-          <div class="card-actions">
-            @if (isSubscribed(item)) {
-              <button class="btn btn-secondary btn-unsubscribe" (click)="unsubscribePlan(item, $event)">
-                Desuscribirse
-              </button>
-            } @else {
-              <button class="btn btn-subscribe" (click)="subscribePlan(item)">
-                Suscribirse al Plan
-              </button>
+      <div class="table-container">
+        <table class="workshop-table" data-testid="workshop-table">
+          <thead>
+            <tr>
+              <th class="sortable" (click)="toggleSort('name')" data-testid="sort-name">
+                Carrera <span class="sort-icon">{{ getSortIcon('name') }}</span>
+              </th>
+              <th class="sortable" (click)="toggleSort('faculty')" data-testid="sort-faculty">
+                Facultad <span class="sort-icon">{{ getSortIcon('faculty') }}</span>
+              </th>
+              <th class="sortable" (click)="toggleSort('university')" data-testid="sort-university">
+                Universidad <span class="sort-icon">{{ getSortIcon('university') }}</span>
+              </th>
+              <th class="text-right">Acción</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of filteredAndSortedCatalog" data-testid="plan-row">
+              <td class="col-name">
+                <div class="plan-name-cell">
+                  <span class="plan-title">{{ item.name }}</span>
+                  <span class="badge-subscribers">👥 {{ item.subscribersRange }}</span>
+                </div>
+              </td>
+              <td class="col-faculty">{{ item.faculty }}</td>
+              <td class="col-university">{{ item.university }}</td>
+              <td class="col-actions text-right">
+                @if (isSubscribed(item)) {
+                  <button class="btn btn-secondary btn-unsubscribe" (click)="unsubscribePlan(item, $event)">
+                    Desuscribirse
+                  </button>
+                } @else {
+                  <button class="btn btn-subscribe" (click)="subscribePlan(item)">
+                    Suscribirse
+                  </button>
+                }
+              </td>
+            </tr>
+            @if (filteredAndSortedCatalog.length === 0) {
+              <tr class="empty-row">
+                <td colspan="4" class="empty-message">
+                  No se encontraron planes de estudio que coincidan con la búsqueda.
+                </td>
+              </tr>
             }
-          </div>
-        </div>
+          </tbody>
+        </table>
       </div>
     </section>
 

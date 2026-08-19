@@ -182,6 +182,9 @@ export class CourseService {
 
     const updatedByPlan = new Map<string, Course[]>();
     updatedByPlan.set(this.currentPlanIdSignal(), newCourses);
+    if (careerPlan.id) {
+      updatedByPlan.set(careerPlan.id, newCourses);
+    }
     this.coursesByPlanSignal.set(updatedByPlan);
 
     const initialStates = new Map<number, CourseStateEntry>();

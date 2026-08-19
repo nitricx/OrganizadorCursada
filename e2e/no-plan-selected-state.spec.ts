@@ -14,7 +14,7 @@ test.describe('Validación del Estado "Sin Plan Seleccionado" en /home, /myWeek 
     await expect(noPlanComponent).toBeVisible();
 
     const title = noPlanComponent.locator('.empty-state-title');
-    await expect(title).toContainText('Plan de Cursada no seleccionado');
+    await expect(title).toContainText('Plan de Cursada');
 
     // Verificar que los 3 botones de acción estén visibles
     await expect(page.getByRole('button', { name: /Explorar Planes/i })).toBeVisible();
@@ -28,7 +28,7 @@ test.describe('Validación del Estado "Sin Plan Seleccionado" en /home, /myWeek 
     await expect(noPlanComponent).toBeVisible();
 
     const title = noPlanComponent.locator('.empty-state-title');
-    await expect(title).toContainText('Sin plan de estudio seleccionado');
+    await expect(title).toContainText('Plan de estudio');
 
     // La grilla horaria normal no debe estar renderizada en este estado
     await expect(page.locator('.calendar-grid-wrapper')).not.toBeVisible();

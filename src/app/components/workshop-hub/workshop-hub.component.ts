@@ -5,6 +5,9 @@ import { PlanManifest } from '../../models/plan-manifest.model';
 import { ToastService } from '../../services/toast.service';
 import { Firestore, collection, getDocs } from '@angular/fire/firestore';
 
+import sistemasPlan from '../../../../scripts/seed-data/sistemas.json';
+import audiovisualPlan from '../../../../scripts/seed-data/audiovisual.json';
+
 export interface WorkshopEntry {
   id: string;
   name: string;
@@ -15,6 +18,32 @@ export interface WorkshopEntry {
   updatedAt: string;
   manifest: PlanManifest;
 }
+
+export type SortColumn = 'name' | 'faculty' | 'university';
+export type SortDirection = 'asc' | 'desc';
+
+const DEFAULT_CATALOG: WorkshopEntry[] = [
+  {
+    id: audiovisualPlan.id,
+    name: audiovisualPlan.name,
+    university: audiovisualPlan.university,
+    faculty: audiovisualPlan.faculty,
+    subscribersRange: (audiovisualPlan as any).subscribersRange || '100+',
+    version: audiovisualPlan.version,
+    updatedAt: audiovisualPlan.updatedAt,
+    manifest: audiovisualPlan as any
+  },
+  {
+    id: sistemasPlan.id,
+    name: sistemasPlan.name,
+    university: sistemasPlan.university,
+    faculty: sistemasPlan.faculty,
+    subscribersRange: (sistemasPlan as any).subscribersRange || '50-100',
+    version: sistemasPlan.version,
+    updatedAt: sistemasPlan.updatedAt,
+    manifest: sistemasPlan as any
+  }
+];
 
 import { CareerService } from '../../services/career.service';
 
@@ -34,7 +63,9 @@ export class WorkshopHubComponent implements OnInit {
   private careerService = inject(CareerService);
 
   searchQuery = '';
-  catalog: WorkshopEntry[] = [];
+  catalog: WorkshopEntry[] = [...DEFAULT_CATALOG];
+  sortColumn: SortColumn = 'name';
+  sortDirection: SortDirection = 'asc';
 
   isSubscribed(item: WorkshopEntry): boolean {
     return this.careerService.careers().some((c) => c.id === item.id);
@@ -71,19 +102,49 @@ export class WorkshopHubComponent implements OnInit {
             }
           };
         });
-        this.catalog = remoteEntries;
+
+        // Merge remote with default without duplicates
+        const remoteIds = new Set(remoteEntries.map(e => e.id));
+        const nonDuplicateDefaults = DEFAULT_CATALOG.filter(e => !remoteIds.has(e.id));
+        this.catalog = [...remoteEntries, ...nonDuplicateDefaults];
       }
     } catch {}
   }
 
-  get filteredCatalog(): WorkshopEntry[] {
-    if (!this.searchQuery.trim()) return this.catalog;
-    const q = this.searchQuery.toLowerCase();
-    return this.catalog.filter(c =>
-      c.name.toLowerCase().includes(q) ||
-      c.university.toLowerCase().includes(q) ||
-      c.faculty.toLowerCase().includes(q)
-    );
+  toggleSort(column: SortColumn): void {
+    if (this.sortColumn === column) {
+      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortColumn = column;
+      this.sortDirection = 'asc';
+    }
+  }
+
+  getSortIcon(column: SortColumn): string {
+    if (this.sortColumn !== column) return '↕️';
+    return this.sortDirection === 'asc' ? '▲' : '▼';
+  }
+
+  get filteredAndSortedCatalog(): WorkshopEntry[] {
+    let list = this.catalog;
+    if (this.searchQuery.trim()) {
+      const q = this.searchQuery.toLowerCase().trim();
+      list = list.filter(
+        c =>
+          c.name.toLowerCase().includes(q) ||
+          c.university.toLowerCase().includes(q) ||
+          c.faculty.toLowerCase().includes(q)
+      );
+    }
+
+    const col = this.sortColumn;
+    const dirMultiplier = this.sortDirection === 'asc' ? 1 : -1;
+
+    return [...list].sort((a, b) => {
+      const valA = (a[col] || '').toLowerCase();
+      const valB = (b[col] || '').toLowerCase();
+      return valA.localeCompare(valB, 'es', { sensitivity: 'base' }) * dirMultiplier;
+    });
   }
 
   subscribePlan(item: WorkshopEntry): void {

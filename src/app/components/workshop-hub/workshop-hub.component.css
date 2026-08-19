@@ -7,7 +7,7 @@
 .glass-panel {
   background: #181825; border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 16px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-  color: #cdd6f4; width: 100%; max-width: 720px; max-height: 85vh;
+  color: #cdd6f4; width: 100%; max-width: 900px; max-height: 85vh;
   display: flex; flex-direction: column;
 }
 .modal-header { padding: 16px 20px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); display: flex; justify-content: space-between; align-items: center; }
@@ -20,19 +20,101 @@
   border-radius: 10px; color: #cdd6f4; font-size: 0.9rem; outline: none; box-sizing: border-box;
 }
 .search-input:focus { border-color: #89b4fa; }
-.catalog-list { display: flex; flex-direction: column; gap: 12px; }
-.workshop-card {
-  background: #1e1e2e; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px;
-  padding: 14px 18px; display: flex; justify-content: space-between; align-items: center;
+
+.table-container {
+  overflow-x: auto;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  background: #1e1e2e;
 }
-.card-title-row { display: flex; align-items: center; gap: 12px; }
-.card-title-row h4 { margin: 0; font-size: 1.05rem; color: #cdd6f4; }
-.badge-subscribers { font-size: 0.72rem; padding: 2px 8px; background: rgba(137, 180, 250, 0.15); color: #89b4fa; border-radius: 10px; }
-.university-info { margin: 4px 0; font-size: 0.83rem; color: #a6adc8; }
-.version-info { font-size: 0.75rem; color: #6c7086; }
-.btn-subscribe { background: #89b4fa; color: #11111b; border: none; padding: 8px 16px; border-radius: 10px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; }
+.workshop-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.88rem;
+}
+.workshop-table th {
+  background: #11111b;
+  color: #a6adc8;
+  padding: 12px 14px;
+  font-weight: 600;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  white-space: nowrap;
+}
+.workshop-table th.sortable {
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.15s ease, background-color 0.15s ease;
+}
+.workshop-table th.sortable:hover {
+  color: #89b4fa;
+  background: #181825;
+}
+.sort-icon {
+  font-size: 0.75rem;
+  margin-left: 4px;
+  opacity: 0.8;
+}
+.workshop-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  color: #cdd6f4;
+  vertical-align: middle;
+}
+.workshop-table tbody tr:last-child td {
+  border-bottom: none;
+}
+.workshop-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.plan-name-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.plan-title {
+  font-weight: 600;
+  color: #f5e0dc;
+}
+.badge-subscribers {
+  font-size: 0.72rem;
+  padding: 2px 6px;
+  background: rgba(137, 180, 250, 0.15);
+  color: #89b4fa;
+  border-radius: 10px;
+  width: fit-content;
+}
+
+.col-faculty, .col-university {
+  color: #a6adc8;
+}
+.version-tag {
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 6px;
+  color: #9399b2;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.btn-subscribe {
+  background: #89b4fa; color: #11111b; border: none; padding: 6px 14px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; font-size: 0.82rem;
+}
 .btn-subscribe:hover { opacity: 0.9; transform: translateY(-1px); }
+
 .modal-footer { padding: 16px 20px; border-top: 1px solid rgba(255, 255, 255, 0.08); display: flex; justify-content: flex-end; }
 .btn-secondary { background: #313244; color: #cdd6f4; border: none; padding: 8px 18px; border-radius: 10px; font-weight: 600; cursor: pointer; }
-.btn-unsubscribe { background: rgba(243, 139, 168, 0.15); color: #f38ba8; border: 1px solid rgba(243, 139, 168, 0.3); }
+.btn-unsubscribe { background: rgba(243, 139, 168, 0.15); color: #f38ba8; border: 1px solid rgba(243, 139, 168, 0.3); padding: 6px 14px; border-radius: 8px; font-size: 0.82rem; }
 .btn-unsubscribe:hover { background: rgba(243, 139, 168, 0.25); color: #f38ba8; }
+
+.empty-row td {
+  text-align: center;
+  padding: 24px;
+  color: #6c7086;
+  font-style: italic;
+}
+

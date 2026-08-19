@@ -3,6 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { CareerIndexEntry, CareerPlan, RawCourseData, EMPTY_CAREER_PLAN } from '../models/career.model';
 import { Firestore, collection, getDocs, doc, getDoc } from '@angular/fire/firestore';
 
+import sistemasPlan from '../../../scripts/seed-data/sistemas.json';
+import audiovisualPlan from '../../../scripts/seed-data/audiovisual.json';
+
 import { PlanService } from './plan.service';
 
 @Injectable({
@@ -60,6 +63,13 @@ export class CareerService {
           return parsed;
         }
       } catch {}
+    }
+
+    if (selectedId === 'lic-diseno-audiovisual') {
+      return audiovisualPlan as unknown as CareerPlan;
+    }
+    if (selectedId === 'ing-sistemas') {
+      return sistemasPlan as unknown as CareerPlan;
     }
 
     return EMPTY_CAREER_PLAN;
@@ -288,19 +298,14 @@ export class CareerService {
       } catch {}
     }
 
-    // 3. Fallback for built-in demo career
+    // 3. Fallback for built-in demo careers
     if (careerId === 'lic-diseno-audiovisual') {
-      const defaultDemoPlan: CareerPlan = {
-        id: 'lic-diseno-audiovisual',
-        name: 'Licenciatura en Diseño Audiovisual',
-        university: 'Universidad Nacional',
-        version: '1.0.0',
-        courses: [
-          { id: 1, name: 'Introducción al Lenguaje Audiovisual', year: 1, q: 1, cursarReqId: [], aprobarReqId: [], lessons: [] },
-          { id: 2, name: 'Taller de Realización 1', year: 1, q: 1, cursarReqId: [], aprobarReqId: [], lessons: [] },
-        ],
-      };
-      this.activeCareerSignal.set(defaultDemoPlan);
+      this.activeCareerSignal.set(audiovisualPlan as unknown as CareerPlan);
+      this.isLoadingSignal.set(false);
+      return;
+    }
+    if (careerId === 'ing-sistemas') {
+      this.activeCareerSignal.set(sistemasPlan as unknown as CareerPlan);
       this.isLoadingSignal.set(false);
       return;
     }
