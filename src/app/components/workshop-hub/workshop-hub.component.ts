@@ -42,6 +42,8 @@ const sampleWorkshopCatalog: WorkshopEntry[] = [
 ];
 
 
+import { CareerService } from '../../services/career.service';
+
 @Component({
   selector: 'app-workshop-hub',
   standalone: true,
@@ -55,9 +57,20 @@ export class WorkshopHubComponent implements OnInit {
 
   private toast = inject(ToastService);
   private firestore = inject(Firestore, { optional: true });
+  private careerService = inject(CareerService);
 
   searchQuery = '';
   catalog: WorkshopEntry[] = sampleWorkshopCatalog;
+
+  isSubscribed(item: WorkshopEntry): boolean {
+    return this.careerService.careers().some((c) => c.id === item.id);
+  }
+
+  unsubscribePlan(item: WorkshopEntry, event: Event): void {
+    event.stopPropagation();
+    this.careerService.removeCareer(item.id);
+    this.toast.show(`Te has desuscrito del plan "${item.name}".`, 'info');
+  }
 
   async ngOnInit(): Promise<void> {
     if (!this.firestore) return;

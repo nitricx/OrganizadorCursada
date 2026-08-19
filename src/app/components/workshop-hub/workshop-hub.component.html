@@ -32,9 +32,15 @@
           </div>
 
           <div class="card-actions">
-            <button class="btn btn-subscribe" (click)="subscribePlan(item)">
-              Suscribirse al Plan
-            </button>
+            @if (isSubscribed(item)) {
+              <button class="btn btn-secondary btn-unsubscribe" (click)="unsubscribePlan(item, $event)">
+                Desuscribirse
+              </button>
+            } @else {
+              <button class="btn btn-subscribe" (click)="subscribePlan(item)">
+                Suscribirse al Plan
+              </button>
+            }
           </div>
         </div>
       </div>

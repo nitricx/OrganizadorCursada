@@ -63,16 +63,25 @@
   flex-direction: column;
   line-height: 1.2;
   margin-left: 8px;
+  overflow: hidden;
 }
 
 ::ng-deep .career-selector-menu .career-option-name {
   font-weight: 500;
   color: var(--color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 220px;
 }
 
 ::ng-deep .career-selector-menu .career-option-univ {
   font-size: 12px;
   color: var(--color-text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 220px;
 }
 
 ::ng-deep .career-selector-menu .active-career-item {
@@ -89,4 +98,135 @@
 
 ::ng-deep .career-selector-menu .import-icon {
   color: var(--brand-primary, #3b82f6);
+}
+
+::ng-deep .career-selector-menu .career-menu-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-right: 8px;
+}
+
+::ng-deep .career-selector-menu .career-menu-item-btn {
+  flex: 1;
+}
+
+::ng-deep .career-selector-menu .career-delete-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 32px !important;
+  height: 32px !important;
+  padding: 0 !important;
+  min-width: 32px !important;
+  opacity: 0.6;
+  transition: opacity 0.2s ease, color 0.2s ease, background-color 0.2s ease;
+}
+
+::ng-deep .career-selector-menu .career-delete-btn:hover {
+  opacity: 1;
+  color: #ef4444 !important;
+  background-color: rgba(239, 68, 68, 0.1) !important;
+}
+
+::ng-deep .career-selector-menu .career-delete-btn .mat-icon,
+::ng-deep .career-selector-menu .delete-icon {
+  font-size: 18px !important;
+  width: 18px !important;
+  height: 18px !important;
+  line-height: 18px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 0 !important;
+}
+
+/* Confirmation Modal Overlay */
+.confirm-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.confirm-modal-card {
+  background: var(--color-background-elevated, #ffffff);
+  color: var(--color-text-primary, #1e293b);
+  border-radius: 16px;
+  padding: 24px;
+  max-width: 440px;
+  width: calc(100vw - 32px);
+  box-sizing: border-box;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  animation: modalFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.confirm-modal-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.confirm-modal-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.warn-icon {
+  color: #f59e0b;
+  font-size: 28px;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+}
+
+.confirm-modal-body p {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  line-height: 1.5;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.confirm-modal-body strong {
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.warn-text {
+  color: var(--color-text-secondary, #64748b);
+  font-size: 13px !important;
+}
+
+.confirm-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
 }

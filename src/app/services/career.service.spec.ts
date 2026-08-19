@@ -110,4 +110,21 @@ describe('CareerService', () => {
     expect(result.error).toContain('Error');
   });
 
+  it('should remove a career and switch selected career to remaining career', () => {
+    service.selectCareer('lic-diseno-audiovisual');
+    expect(service.selectedCareerId()).toBe('lic-diseno-audiovisual');
+
+    service.removeCareer('lic-diseno-audiovisual');
+    expect(service.careers().some((c) => c.id === 'lic-diseno-audiovisual')).toBe(false);
+    expect(service.selectedCareerId()).toBe('ing-sistemas');
+  });
+
+  it('should clear selected career when all careers are removed', () => {
+    const initialCareers = [...service.careers()];
+    initialCareers.forEach((c) => service.removeCareer(c.id));
+
+    expect(service.careers().length).toBe(0);
+    expect(service.selectedCareerId()).toBe('');
+    expect(service.activeCareer().id).toBe('empty-plan');
+  });
 });

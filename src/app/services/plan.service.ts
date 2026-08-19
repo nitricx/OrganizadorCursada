@@ -103,6 +103,8 @@ export class PlanService {
     }
     this.safeRemoveItem(PlanService.PLANS_KEY);
     this.safeRemoveItem('selected-career-id');
+    this.safeRemoveItem('removed-career-ids');
+    this.safeRemoveItem('custom-careers-index');
     this.plansSignal.set([]);
     this.semesterListsSignal.set(new Map());
     this.startingYearsSignal.set(new Map());

@@ -1,8 +1,10 @@
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, inject, signal, Injector } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CareerIndexEntry, CareerPlan, RawCourseData, EMPTY_CAREER_PLAN } from '../models/career.model';
 import { Firestore, collection, getDocs, doc, getDoc } from '@angular/fire/firestore';
 import { DEFAULT_CAREER_PLANS_MAP } from '../data/default-careers.data';
+
+import { PlanService } from './plan.service';
 
 const DEFAULT_CAREER_INDEX: CareerIndexEntry[] = [
   {
@@ -23,10 +25,20 @@ const DEFAULT_CAREER_INDEX: CareerIndexEntry[] = [
 export class CareerService {
   private http = inject(HttpClient, { optional: true });
   private firestore = inject(Firestore, { optional: true });
+  private injector = inject(Injector, { optional: true });
+
+  private getPlanService(): PlanService | null {
+    try {
+      return this.injector?.get(PlanService, null) ?? null;
+    } catch {
+      return null;
+    }
+  }
 
   private static readonly SELECTED_CAREER_KEY = 'selected-career-id';
   private static readonly CUSTOM_CAREERS_INDEX_KEY = 'custom-careers-index';
   private static readonly CUSTOM_CAREER_PREFIX = 'custom-career-';
+  private static readonly REMOVED_CAREERS_KEY = 'removed-career-ids';
 
   private readonly careersSignal = signal<CareerIndexEntry[]>(this.loadInitialCareerIndex());
   private readonly selectedCareerIdSignal = signal<string>(this.loadSelectedCareerId());
@@ -84,6 +96,38 @@ export class CareerService {
     } catch {}
   }
 
+  private safeRemoveItem(key: string): void {
+    try {
+      if (typeof localStorage !== 'undefined' && localStorage) {
+        localStorage.removeItem(key);
+      }
+    } catch {}
+  }
+
+  private loadRemovedCareerIds(): string[] {
+    const raw = this.safeGetItem(CareerService.REMOVED_CAREERS_KEY);
+    if (!raw) return [];
+    try {
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  }
+
+  private markCareerAsRemoved(careerId: string): void {
+    const removed = this.loadRemovedCareerIds();
+    if (!removed.includes(careerId)) {
+      removed.push(careerId);
+      this.safeSetItem(CareerService.REMOVED_CAREERS_KEY, JSON.stringify(removed));
+    }
+  }
+
+  private unmarkCareerAsRemoved(careerId: string): void {
+    const removed = this.loadRemovedCareerIds().filter((id) => id !== careerId);
+    this.safeSetItem(CareerService.REMOVED_CAREERS_KEY, JSON.stringify(removed));
+  }
+
   private loadSelectedCareerId(): string {
     return this.safeGetItem(CareerService.SELECTED_CAREER_KEY) ?? '';
   }
@@ -100,35 +144,47 @@ export class CareerService {
   }
 
   private loadInitialCareerIndex(): CareerIndexEntry[] {
+    const removed = new Set(this.loadRemovedCareerIds());
     const custom = this.loadCustomIndex();
     const map = new Map<string, CareerIndexEntry>();
-    DEFAULT_CAREER_INDEX.forEach((c) => map.set(c.id, c));
-    custom.forEach((c) => map.set(c.id, c));
+    DEFAULT_CAREER_INDEX.forEach((c) => {
+      if (!removed.has(c.id)) map.set(c.id, c);
+    });
+    custom.forEach((c) => {
+      if (!removed.has(c.id)) map.set(c.id, c);
+    });
     return Array.from(map.values());
   }
 
   private async fetchRemoteIndex(): Promise<void> {
+    const removed = new Set(this.loadRemovedCareerIds());
     const map = new Map<string, CareerIndexEntry>();
-    DEFAULT_CAREER_INDEX.forEach((c) => map.set(c.id, c));
+    DEFAULT_CAREER_INDEX.forEach((c) => {
+      if (!removed.has(c.id)) map.set(c.id, c);
+    });
 
     if (this.firestore) {
       try {
         const snap = await getDocs(collection(this.firestore, 'workshop_plans'));
         if (!snap.empty) {
           snap.docs.forEach((docSnap) => {
-            const data = docSnap.data();
-            map.set(docSnap.id, {
-              id: docSnap.id,
-              name: data['name'] || docSnap.id,
-              university: data['university'] || 'Universidad',
-            });
+            if (!removed.has(docSnap.id)) {
+              const data = docSnap.data();
+              map.set(docSnap.id, {
+                id: docSnap.id,
+                name: data['name'] || docSnap.id,
+                university: data['university'] || 'Universidad',
+              });
+            }
           });
         }
       } catch {}
     }
 
     const custom = this.loadCustomIndex();
-    custom.forEach((c) => map.set(c.id, c));
+    custom.forEach((c) => {
+      if (!removed.has(c.id)) map.set(c.id, c);
+    });
     this.careersSignal.set(Array.from(map.values()));
   }
 
@@ -136,6 +192,42 @@ export class CareerService {
     this.selectedCareerIdSignal.set(careerId);
     this.safeSetItem(CareerService.SELECTED_CAREER_KEY, careerId);
     this.loadCareerById(careerId);
+  }
+
+  removeCareer(careerId: string): void {
+    if (!careerId) return;
+
+    this.markCareerAsRemoved(careerId);
+
+    this.customPlansMapSignal.update((m) => {
+      const next = new Map(m);
+      next.delete(careerId);
+      return next;
+    });
+
+    const customIndex = this.loadCustomIndex().filter((c) => c.id !== careerId);
+    this.safeSetItem(CareerService.CUSTOM_CAREERS_INDEX_KEY, JSON.stringify(customIndex));
+
+    this.safeRemoveItem(`${CareerService.CUSTOM_CAREER_PREFIX}${careerId}`);
+    this.safeRemoveItem(`course-organizer-state-${careerId}`);
+
+    const updatedCareers = this.careersSignal().filter((c) => c.id !== careerId);
+    this.careersSignal.set(updatedCareers);
+
+    const planService = this.getPlanService();
+    if (planService) {
+      planService.deletePlan(careerId);
+    }
+
+    if (this.selectedCareerIdSignal() === careerId) {
+      if (updatedCareers.length > 0) {
+        this.selectCareer(updatedCareers[0].id);
+      } else {
+        this.selectedCareerIdSignal.set('');
+        this.safeRemoveItem(CareerService.SELECTED_CAREER_KEY);
+        this.activeCareerSignal.set(EMPTY_CAREER_PLAN);
+      }
+    }
   }
 
   addCareerFromManifest(manifest: any): string {
@@ -183,6 +275,7 @@ export class CareerService {
       courses: rawCourses
     };
 
+    this.unmarkCareerAsRemoved(planId);
     this.customPlansMapSignal.update((m) => new Map(m).set(planId, careerPlan));
     const customKey = `${CareerService.CUSTOM_CAREER_PREFIX}${planId}`;
     this.safeSetItem(customKey, JSON.stringify(careerPlan));
@@ -277,6 +370,7 @@ export class CareerService {
       }
 
       const plan: CareerPlan = parsed;
+      this.unmarkCareerAsRemoved(plan.id);
       this.customPlansMapSignal.update((map) => new Map(map).set(plan.id, plan));
 
       const customKey = `${CareerService.CUSTOM_CAREER_PREFIX}${plan.id}`;

@@ -34,3 +34,5 @@
 .btn-subscribe:hover { opacity: 0.9; transform: translateY(-1px); }
 .modal-footer { padding: 16px 20px; border-top: 1px solid rgba(255, 255, 255, 0.08); display: flex; justify-content: flex-end; }
 .btn-secondary { background: #313244; color: #cdd6f4; border: none; padding: 8px 18px; border-radius: 10px; font-weight: 600; cursor: pointer; }
+.btn-unsubscribe { background: rgba(243, 139, 168, 0.15); color: #f38ba8; border: 1px solid rgba(243, 139, 168, 0.3); }
+.btn-unsubscribe:hover { background: rgba(243, 139, 168, 0.25); color: #f38ba8; }

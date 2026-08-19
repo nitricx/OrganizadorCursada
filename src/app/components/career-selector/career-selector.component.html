@@ -12,21 +12,33 @@
   <mat-menu #careerMenu="matMenu" class="career-selector-menu" xPosition="after">
     <div class="menu-header-title">Planes de Estudio</div>
     @for (career of careerService.careers(); track career.id) {
-      <button
-        mat-menu-item
-        [class.active-career-item]="career.id === careerService.selectedCareerId()"
-        (click)="onCareerChange(career.id)"
-      >
-        <mat-icon class="career-check-icon">
-          {{ career.id === careerService.selectedCareerId() ? 'radio_button_checked' : 'radio_button_unchecked' }}
-        </mat-icon>
-        <div class="career-option-details">
-          <span class="career-option-name">{{ career.name }}</span>
-          @if (career.university) {
-            <span class="career-option-univ">{{ career.university }}</span>
-          }
-        </div>
-      </button>
+      <div class="career-menu-row">
+        <button
+          mat-menu-item
+          class="career-menu-item-btn"
+          [class.active-career-item]="career.id === careerService.selectedCareerId()"
+          (click)="onCareerChange(career.id)"
+        >
+          <mat-icon class="career-check-icon">
+            {{ career.id === careerService.selectedCareerId() ? 'radio_button_checked' : 'radio_button_unchecked' }}
+          </mat-icon>
+          <div class="career-option-details">
+            <span class="career-option-name">{{ career.name }}</span>
+            @if (career.university) {
+              <span class="career-option-univ">{{ career.university }}</span>
+            }
+          </div>
+        </button>
+        <button
+          mat-icon-button
+          class="career-delete-btn"
+          matTooltip="Borrar / Desuscribir carrera"
+          (click)="confirmDeleteCareer(career, $event)"
+          aria-label="Borrar carrera"
+        >
+          <mat-icon class="delete-icon">delete_outline</mat-icon>
+        </button>
+      </div>
     }
     <mat-divider></mat-divider>
     <button mat-menu-item (click)="triggerFileInput()" class="import-menu-item">
@@ -34,6 +46,25 @@
       <span>Importar plan desde JSON...</span>
     </button>
   </mat-menu>
+
+  @if (careerToDelete()) {
+    <div class="confirm-modal-backdrop" (click)="cancelDelete()">
+      <div class="confirm-modal-card" (click)="$event.stopPropagation()">
+        <div class="confirm-modal-header">
+          <mat-icon class="warn-icon">warning_amber</mat-icon>
+          <h3>Desuscribir carrera</h3>
+        </div>
+        <div class="confirm-modal-body">
+          <p>¿Estás seguro de que deseas desuscribirte de la carrera <strong>"{{ careerToDelete()?.name }}"</strong>?</p>
+          <p class="warn-text">Se perderán la selección de materias y los avances guardados en este plan.</p>
+        </div>
+        <div class="confirm-modal-actions">
+          <button mat-button (click)="cancelDelete()">Cancelar</button>
+          <button mat-flat-button color="warn" (click)="executeDelete()">Desuscribirse</button>
+        </div>
+      </div>
+    </div>
+  }
 
   <input
     #fileInput
