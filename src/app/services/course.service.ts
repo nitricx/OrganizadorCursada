@@ -750,6 +750,7 @@ export class CourseService {
           reconciledCourses.push({
             ...stored,
             name: canonical.name,
+            q: canonical.q,
             cursarReqId: canonical.cursarReqId.slice(),
             aprobarReqId: canonical.aprobarReqId.slice(),
             lessons: canonical.lessons.map((l) => ({ ...l })),

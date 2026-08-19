@@ -185,7 +185,9 @@ export class RequisitesFlowComponent implements AfterViewInit, OnDestroy {
     // Initial assignment: sort each year by q, then name
     sortedYears.forEach((yearVal) => {
       const yearCourses = coursesByYearMap.get(yearVal)!;
-      yearCourses.sort((a, b) => (a.q !== b.q ? a.q - b.q : a.name.localeCompare(b.name)));
+      yearCourses.sort((a, b) =>
+        a.q !== b.q ? (a.q === 3 ? 0 : a.q) - (b.q === 3 ? 0 : b.q) : a.name.localeCompare(b.name),
+      );
       yearCourses.forEach((c, idx) => courseYIndexMap.set(c.id, idx));
     });
 
@@ -213,7 +215,7 @@ export class RequisitesFlowComponent implements AfterViewInit, OnDestroy {
             return avgY_A - avgY_B;
           }
           if (a.q !== b.q) {
-            return a.q - b.q;
+            return (a.q === 3 ? 0 : a.q) - (b.q === 3 ? 0 : b.q);
           }
           return a.name.localeCompare(b.name);
         });
@@ -249,7 +251,7 @@ export class RequisitesFlowComponent implements AfterViewInit, OnDestroy {
             return avgY_A - avgY_B;
           }
           if (a.q !== b.q) {
-            return a.q - b.q;
+            return (a.q === 3 ? 0 : a.q) - (b.q === 3 ? 0 : b.q);
           }
           return a.name.localeCompare(b.name);
         });

@@ -21,7 +21,7 @@ import { CourseService } from '../../services/course.service';
   host: {
     '[attr.tabindex]': 'isEditable() ? 0 : null',
     '[attr.aria-label]':
-      'isEditable() ? course().name + ". Presione Alt + Flecha Abajo o Flecha Arriba para cambiar de cuatrimestre." : course().name',
+      'isEditable() ? course().name + (course().q === 3 ? ". Presione Alt + Flecha Abajo o Flecha Arriba para cambiar de año." : ". Presione Alt + Flecha Abajo o Flecha Arriba para cambiar de cuatrimestre.") : course().name',
     '[style.z-index]': 'isDragging() ? 100 : 1',
     '[style.cursor]': 'isEditable() ? (isDragging() ? "grabbing" : "grab") : "default"',
     '[class.is-dragging]': 'isDragging()',

@@ -80,7 +80,7 @@
     >
       <div class="detail-header">
         <div class="title-meta">
-          <span class="meta-tag">{{ selectedCourse()?.year }}º Año • Cuatrimestre {{ selectedCourse()?.q }}</span>
+          <span class="meta-tag">{{ selectedCourse()?.year }}º Año • {{ selectedCourse()?.q === 3 ? 'Anual' : 'Cuatrimestre ' + selectedCourse()?.q }}</span>
           <h2 [id]="'detail-title-' + selectedCourse()?.id">{{ selectedCourse()?.name }}</h2>
         </div>
         <button mat-icon-button type="button" (click)="closeDetail()" aria-label="Cerrar detalles de la materia">
