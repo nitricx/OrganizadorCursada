@@ -147,6 +147,9 @@ The codebase is organized under `src/app/components/`:
 9. **Readonly Service Signals**: Services must expose internal WritableSignal state using `.asReadonly()` to enforce unidirectional data flow.
 10. **Strict TypeScript (No `any`)**: Do NOT use `any`. Always use explicit interfaces, types, or `unknown` with type guards.
 11. **RxJS Cleanup**: Use `takeUntilDestroyed()` from `@angular/core/rxjs-interop` or template `async` pipe to clean up subscriptions.
-12. **Strict No-Fake-Data & Full Real Catalog Rule**: NEVER insert fake or dummy placeholder careers (e.g. Abogacía, Medicina, etc.), artificial version numbers in user UI, or truncated 2-course snippets. Always load full real career JSON files (`scripts/seed-data/sistemas.json` and `scripts/seed-data/audiovisual.json`).
+12. **Feature-Based Project Organization**: Do NOT place new UI components flat inside `src/app/components/`. All new components must be categorized into feature/domain directories (`features/<domain>/` or `shared/` if global). Organize services into clear layers (`domain`, `sync`, `security`, `utils`).
+13. **Strict No-Fake-Data & Full Real Catalog Rule**: NEVER insert fake or dummy placeholder careers (e.g. Abogacía, Medicina, etc.), artificial version numbers in user UI, or truncated 2-course snippets. Always load full real career JSON files (`scripts/seed-data/sistemas.json` and `scripts/seed-data/audiovisual.json`).
+
+
 
 
