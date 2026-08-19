@@ -1,11 +1,20 @@
 export const environment = {
   production: false,
+  useEmulators: true,
   firebase: {
-    apiKey: "YOUR_FIREBASE_API_KEY",
-    authDomain: "YOUR_FIREBASE_AUTH_DOMAIN",
-    projectId: "YOUR_FIREBASE_PROJECT_ID",
-    storageBucket: "YOUR_FIREBASE_STORAGE_BUCKET",
-    messagingSenderId: "YOUR_FIREBASE_MESSAGING_SENDER_ID",
-    appId: "YOUR_FIREBASE_APP_ID"
+    apiKey: "demo-api-key",
+    authDomain: "demo-project.firebaseapp.com",
+    projectId: "organizador-cursada-demo",
+    storageBucket: "demo-project.appspot.com",
+    messagingSenderId: "123456789",
+    appId: "1:123456789:web:123456"
+  },
+  emulatorHosts: {
+    auth: 'http://localhost:9099',
+    firestore: {
+      host: 'localhost',
+      port: 8080
+    }
   }
 };
+
