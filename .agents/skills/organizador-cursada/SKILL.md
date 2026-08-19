@@ -138,8 +138,15 @@ The codebase is organized under `src/app/components/`:
    ```
 4. **Id-Based Prerequisite Check**: Always use `cursarReqId` and `aprobarReqId` numeric array matching instead of course names.
 5. **Privacy Airgap**: User progress data (`CourseStatus`, personal notes, selected lessons) MUST remain strictly in `localStorage` and never be uploaded to remote services.
-6. **Testing**: Run Vitest suite before concluding tasks:
+6. **Lean Components & Service Unit Tests**: UI Components (`src/app/components/`) MUST contain minimal logic, acting strictly as presentation layers that delegate state and business logic to Services (`src/app/services/`). Because domain logic resides in Services, every new feature or modification in a Service file MUST include its corresponding unit test (`*.spec.ts`). UI Components do NOT require unit tests. Always run the Vitest suite before concluding tasks:
    ```bash
    npx ng test --watch=false
    ```
-7. **Strict No-Fake-Data & Full Real Catalog Rule**: NEVER insert fake or dummy placeholder careers (e.g. Abogacía, Medicina, etc.), artificial version numbers in user UI, or truncated 2-course snippets. Always load full real career JSON files (`scripts/seed-data/sistemas.json` and `scripts/seed-data/audiovisual.json`).
+7. **Modern Dependency Injection**: Always use `private service = inject(Service);` instead of constructor parameter injection.
+8. **Signal-Based Inputs & Outputs**: Use `input()` / `input.required()` and `output()` functional APIs instead of `@Input()` and `@Output()` decorators.
+9. **Readonly Service Signals**: Services must expose internal WritableSignal state using `.asReadonly()` to enforce unidirectional data flow.
+10. **Strict TypeScript (No `any`)**: Do NOT use `any`. Always use explicit interfaces, types, or `unknown` with type guards.
+11. **RxJS Cleanup**: Use `takeUntilDestroyed()` from `@angular/core/rxjs-interop` or template `async` pipe to clean up subscriptions.
+12. **Strict No-Fake-Data & Full Real Catalog Rule**: NEVER insert fake or dummy placeholder careers (e.g. Abogacía, Medicina, etc.), artificial version numbers in user UI, or truncated 2-course snippets. Always load full real career JSON files (`scripts/seed-data/sistemas.json` and `scripts/seed-data/audiovisual.json`).
+
+
