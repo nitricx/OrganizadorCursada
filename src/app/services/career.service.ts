@@ -288,7 +288,24 @@ export class CareerService {
       } catch {}
     }
 
-    // 3. Check Firestore workshop_plans document
+    // 3. Fallback for built-in demo career
+    if (careerId === 'lic-diseno-audiovisual') {
+      const defaultDemoPlan: CareerPlan = {
+        id: 'lic-diseno-audiovisual',
+        name: 'Licenciatura en Diseño Audiovisual',
+        university: 'Universidad Nacional',
+        version: '1.0.0',
+        courses: [
+          { id: 1, name: 'Introducción al Lenguaje Audiovisual', year: 1, q: 1, cursarReqId: [], aprobarReqId: [], lessons: [] },
+          { id: 2, name: 'Taller de Realización 1', year: 1, q: 1, cursarReqId: [], aprobarReqId: [], lessons: [] },
+        ],
+      };
+      this.activeCareerSignal.set(defaultDemoPlan);
+      this.isLoadingSignal.set(false);
+      return;
+    }
+
+    // 4. Check Firestore workshop_plans document
     if (this.firestore) {
       try {
         const docRef = doc(this.firestore, 'workshop_plans', careerId);
@@ -309,7 +326,7 @@ export class CareerService {
       } catch {}
     }
 
-    // 4. Fallback if not found in Firestore or custom
+    // 5. Fallback if not found in Firestore or custom
     this.errorSignal.set('No se pudo cargar la carrera especificada.');
     this.isLoadingSignal.set(false);
   }

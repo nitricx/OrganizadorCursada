@@ -1,44 +1,53 @@
 <div class="course-organizer">
-  <div class="header">
-    <div class="header-title-group">
-      <h1>Plan de Cursada</h1>
-      <p class="subtitle">Gestioná el estado de tus materias y consultá correlatividades</p>
-    </div>
-    <div class="header-actions">
-      <div class="progress-badge">
-        <span class="progress-text">Avance: {{ progressPercent() }}% ({{ approvedCount() }}/{{ totalCount() }} materias)</span>
-        <mat-progress-bar mode="determinate" [value]="progressPercent()" class="mat-progress-bar-custom"></mat-progress-bar>
+  @if (!courseService.hasSelectedPlan()) {
+    <app-no-plan-selected
+      title="Plan de Cursada no disponible"
+      description="Seleccioná un plan de estudio del catálogo o cargá un plan de demostración para organizar tus materias, registrar tu avance académico y consultar correlatividades."
+      icon="school"
+    />
+  } @else {
+    <div class="header">
+      <div class="header-title-group">
+        <h1>Plan de Cursada</h1>
+        <p class="subtitle">Gestioná el estado de tus materias y consultá correlatividades</p>
       </div>
-      <button mat-stroked-button color="warn" class="reset-btn" (click)="onReset()" title="Reiniciar progreso">
-        <mat-icon>refresh</mat-icon>
-        <span>Reiniciar</span>
-      </button>
+      <div class="header-actions">
+        <div class="progress-badge">
+          <span class="progress-text">Avance: {{ progressPercent() }}% ({{ approvedCount() }}/{{ totalCount() }} materias)</span>
+          <mat-progress-bar mode="determinate" [value]="progressPercent()" class="mat-progress-bar-custom"></mat-progress-bar>
+        </div>
+        <button mat-stroked-button color="warn" class="reset-btn" (click)="onReset()" title="Reiniciar progreso">
+          <mat-icon>refresh</mat-icon>
+          <span>Reiniciar</span>
+        </button>
+      </div>
     </div>
-  </div>
 
-  <app-course-organizer-legend />
+    <app-course-organizer-legend />
 
-  <app-course-grid
-    [courses]="courseService.courses()"
-    [selectedIds]="courseService.selectedIds()"
-    (cardClicked)="onCourseCardClicked($event)"
-    (changeLessonClicked)="onChangeLessonRequested($event)"
-    (mouseEntered)="onMouseEntered($event)"
-    (mouseLeft)="onMouseLeft()"
-  />
+    <app-course-grid
+      [courses]="courseService.courses()"
+      [selectedIds]="courseService.selectedIds()"
+      (cardClicked)="onCourseCardClicked($event)"
+      (changeLessonClicked)="onChangeLessonRequested($event)"
+      (mouseEntered)="onMouseEntered($event)"
+      (mouseLeft)="onMouseLeft()"
+    />
 
-  <mat-card appearance="outlined" class="info-bar-card">
-    <mat-card-content class="info-bar-content">
-      <mat-icon class="info-icon">info</mat-icon>
-      <span [innerHTML]="infoMessage()"></span>
-    </mat-card-content>
-  </mat-card>
+    <mat-card appearance="outlined" class="info-bar-card">
+      <mat-card-content class="info-bar-content">
+        <mat-icon class="info-icon">info</mat-icon>
+        <span [innerHTML]="infoMessage()"></span>
+      </mat-card-content>
+    </mat-card>
 
-  <app-lesson-selector-modal
-    [course]="selectedCourseForModal()"
-    [isOpen]="isModalOpen()"
-    (closed)="closeModal()"
-    (lessonSelected)="onLessonSelected($event)"
-  />
+    <app-lesson-selector-modal
+      [course]="selectedCourseForModal()"
+      [isOpen]="isModalOpen()"
+      (closed)="closeModal()"
+      (lessonSelected)="onLessonSelected($event)"
+    />
+  }
 </div>
+
 

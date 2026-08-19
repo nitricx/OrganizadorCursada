@@ -1,148 +1,156 @@
 <div class="requisites-flow-page">
-  <div class="header-card">
-    <div class="header-main">
-      <div class="header-text">
-        <h1>Diagrama de Correlatividades Interactivo</h1>
-        <p class="subtitle">
-          Explora visualmente el flujo de correlatividades del plan de estudios. Arrastra materias con el mouse para reordenarlas, haz zoom y selecciona cualquier nodo para ver sus requisitos o actualizar su estado.
-        </p>
-      </div>
-
-      <div class="toolbar">
-        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="status-filter-field">
-          <mat-label>Filtrar Estado</mat-label>
-          <mat-select [value]="selectedStatus()" (selectionChange)="onStatusSelectValueChange($event.value)" aria-label="Filtrar por estado">
-            <mat-option value="all">Todos los estados</mat-option>
-            <mat-option *ngFor="let st of statusConfigList" [value]="st.key">
-              {{ st.label }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-
-        <div class="btn-group">
-          <button
-            mat-stroked-button
-            type="button"
-            class="btn-tool"
-            (click)="fitDiagram()"
-            title="Centrar diagrama"
-            aria-label="Centrar diagrama de correlatividades"
-          >
-            <mat-icon class="btn-icon">center_focus_strong</mat-icon>
-            <span>Centrar</span>
-          </button>
-          <button
-            mat-stroked-button
-            type="button"
-            class="btn-tool"
-            (click)="resetLayout()"
-            title="Reorganizar vista"
-            aria-label="Reorganizar vista del diagrama"
-          >
-            <mat-icon class="btn-icon">refresh</mat-icon>
-            <span>Reorganizar</span>
-          </button>
-          <button
-            mat-icon-button
-            type="button"
-            (click)="zoomIn()"
-            title="Aumentar zoom"
-            aria-label="Aumentar zoom"
-          >
-            <mat-icon>add</mat-icon>
-          </button>
-          <button
-            mat-icon-button
-            type="button"
-            (click)="zoomOut()"
-            title="Disminuir zoom"
-            aria-label="Disminuir zoom"
-          >
-            <mat-icon>remove</mat-icon>
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="diagram-container-card">
-    <div #cyContainer class="cy-canvas" role="img" aria-label="Diagrama interactivo de correlatividades de materias"></div>
-  </div>
-
-  <!-- Detail Modal / Drawer when a node is selected -->
-  <div *ngIf="selectedCourse()" class="course-detail-overlay" (click)="closeDetail()">
-    <div
-      class="course-detail-card"
-      (click)="$event.stopPropagation()"
-      role="dialog"
-      aria-modal="true"
-      [attr.aria-labelledby]="'detail-title-' + selectedCourse()?.id"
-    >
-      <div class="detail-header">
-        <div class="title-meta">
-          <span class="meta-tag">{{ selectedCourse()?.year }}º Año • {{ selectedCourse()?.q === 3 ? 'Anual' : 'Cuatrimestre ' + selectedCourse()?.q }}</span>
-          <h2 [id]="'detail-title-' + selectedCourse()?.id">{{ selectedCourse()?.name }}</h2>
-        </div>
-        <button mat-icon-button type="button" (click)="closeDetail()" aria-label="Cerrar detalles de la materia">
-          <mat-icon>close</mat-icon>
-        </button>
-      </div>
-
-      <div class="detail-body">
-        <div class="status-selector-section">
-          <span class="section-label">Cambiar estado de la materia:</span>
-          <div class="status-buttons">
-            <button
-              *ngFor="let st of statusConfigList"
-              type="button"
-              class="btn-status-option"
-              [class.active]="selectedCourse()?.status === st.key"
-              [style.backgroundColor]="selectedCourse()?.status === st.key ? st.bg : ''"
-              [style.color]="selectedCourse()?.status === st.key ? st.color : ''"
-              [style.borderColor]="st.borderColor"
-              (click)="changeStatus(selectedCourse()!.id, st.key)"
-            >
-              {{ st.label }}
-            </button>
-          </div>
-          <p *ngIf="statusErrorMessage()" class="error-msg">
-            <mat-icon class="error-icon">error_outline</mat-icon>
-            <span>{{ statusErrorMessage() }}</span>
+  @if (!courseService.hasSelectedPlan()) {
+    <app-no-plan-selected
+      title="Flujo de Correlatividades no disponible"
+      description="Seleccioná o cargá un plan de estudio para generar y explorar el gráfico interactivo de correlatividades y requisitos de tu carrera."
+      icon="alt_route"
+    />
+  } @else {
+    <div class="header-card">
+      <div class="header-main">
+        <div class="header-text">
+          <h1>Diagrama de Correlatividades Interactivo</h1>
+          <p class="subtitle">
+            Explora visualmente el flujo de correlatividades del plan de estudios. Arrastra materias con el mouse para reordenarlas, haz zoom y selecciona cualquier nodo para ver sus requisitos o actualizar su estado.
           </p>
         </div>
 
-        <div class="reqs-grid">
-          <div class="req-column">
-            <h4>Requisitos para Cursar:</h4>
-            <ul *ngIf="selectedCourse()?.cursarReqId?.length; else noCursarReqs" class="req-list">
-              <li *ngFor="let reqId of selectedCourse()?.cursarReqId">
-                <span class="req-name">
-                  <mat-icon class="check-icon">check</mat-icon>
-                  {{ getCourseNameById(reqId) }}
-                </span>
-              </li>
-            </ul>
-            <ng-template #noCursarReqs>
-              <p class="empty-reqs">Ninguno (Materia de 1º nivel)</p>
-            </ng-template>
-          </div>
+        <div class="toolbar">
+          <mat-form-field appearance="outline" subscriptSizing="dynamic" class="status-filter-field">
+            <mat-label>Filtrar Estado</mat-label>
+            <mat-select [value]="selectedStatus()" (selectionChange)="onStatusSelectValueChange($event.value)" aria-label="Filtrar por estado">
+              <mat-option value="all">Todos los estados</mat-option>
+              <mat-option *ngFor="let st of statusConfigList" [value]="st.key">
+                {{ st.label }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
 
-          <div class="req-column">
-            <h4>Requisitos para Aprobar Final:</h4>
-            <ul *ngIf="selectedCourse()?.aprobarReqId?.length; else noAprobarReqs" class="req-list">
-              <li *ngFor="let reqId of selectedCourse()?.aprobarReqId">
-                <span class="req-name">
-                  <mat-icon class="check-icon">check</mat-icon>
-                  {{ getCourseNameById(reqId) }}
-                </span>
-              </li>
-            </ul>
-            <ng-template #noAprobarReqs>
-              <p class="empty-reqs">Sin requisitos adicionales para el final</p>
-            </ng-template>
+          <div class="btn-group">
+            <button
+              mat-stroked-button
+              type="button"
+              class="btn-tool"
+              (click)="fitDiagram()"
+              title="Centrar diagrama"
+              aria-label="Centrar diagrama de correlatividades"
+            >
+              <mat-icon class="btn-icon">center_focus_strong</mat-icon>
+              <span>Centrar</span>
+            </button>
+            <button
+              mat-stroked-button
+              type="button"
+              class="btn-tool"
+              (click)="resetLayout()"
+              title="Reorganizar vista"
+              aria-label="Reorganizar vista del diagrama"
+            >
+              <mat-icon class="btn-icon">refresh</mat-icon>
+              <span>Reorganizar</span>
+            </button>
+            <button
+              mat-icon-button
+              type="button"
+              (click)="zoomIn()"
+              title="Aumentar zoom"
+              aria-label="Aumentar zoom"
+            >
+              <mat-icon>add</mat-icon>
+            </button>
+            <button
+              mat-icon-button
+              type="button"
+              (click)="zoomOut()"
+              title="Disminuir zoom"
+              aria-label="Disminuir zoom"
+            >
+              <mat-icon>remove</mat-icon>
+            </button>
           </div>
         </div>
       </div>
     </div>
-  </div>
+
+    <div class="diagram-container-card">
+      <div #cyContainer class="cy-canvas" role="img" aria-label="Diagrama interactivo de correlatividades de materias"></div>
+    </div>
+
+    <!-- Detail Modal / Drawer when a node is selected -->
+    <div *ngIf="selectedCourse()" class="course-detail-overlay" (click)="closeDetail()">
+      <div
+        class="course-detail-card"
+        (click)="$event.stopPropagation()"
+        role="dialog"
+        aria-modal="true"
+        [attr.aria-labelledby]="'detail-title-' + selectedCourse()?.id"
+      >
+        <div class="detail-header">
+          <div class="title-meta">
+            <span class="meta-tag">{{ selectedCourse()?.year }}º Año • {{ selectedCourse()?.q === 3 ? 'Anual' : 'Cuatrimestre ' + selectedCourse()?.q }}</span>
+            <h2 [id]="'detail-title-' + selectedCourse()?.id">{{ selectedCourse()?.name }}</h2>
+          </div>
+          <button mat-icon-button type="button" (click)="closeDetail()" aria-label="Cerrar detalles de la materia">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+
+        <div class="detail-body">
+          <div class="status-selector-section">
+            <span class="section-label">Cambiar estado de la materia:</span>
+            <div class="status-buttons">
+              <button
+                *ngFor="let st of statusConfigList"
+                type="button"
+                class="btn-status-option"
+                [class.active]="selectedCourse()?.status === st.key"
+                [style.backgroundColor]="selectedCourse()?.status === st.key ? st.bg : ''"
+                [style.color]="selectedCourse()?.status === st.key ? st.color : ''"
+                [style.borderColor]="st.borderColor"
+                (click)="changeStatus(selectedCourse()!.id, st.key)"
+              >
+                {{ st.label }}
+              </button>
+            </div>
+            <p *ngIf="statusErrorMessage()" class="error-msg">
+              <mat-icon class="error-icon">error_outline</mat-icon>
+              <span>{{ statusErrorMessage() }}</span>
+            </p>
+          </div>
+
+          <div class="reqs-grid">
+            <div class="req-column">
+              <h4>Requisitos para Cursar:</h4>
+              <ul *ngIf="selectedCourse()?.cursarReqId?.length; else noCursarReqs" class="req-list">
+                <li *ngFor="let reqId of selectedCourse()?.cursarReqId">
+                  <span class="req-name">
+                    <mat-icon class="check-icon">check</mat-icon>
+                    {{ getCourseNameById(reqId) }}
+                  </span>
+                </li>
+              </ul>
+              <ng-template #noCursarReqs>
+                <p class="empty-reqs">Ninguno (Materia de 1º nivel)</p>
+              </ng-template>
+            </div>
+
+            <div class="req-column">
+              <h4>Requisitos para Aprobar Final:</h4>
+              <ul *ngIf="selectedCourse()?.aprobarReqId?.length; else noAprobarReqs" class="req-list">
+                <li *ngFor="let reqId of selectedCourse()?.aprobarReqId">
+                  <span class="req-name">
+                    <mat-icon class="check-icon">check</mat-icon>
+                    {{ getCourseNameById(reqId) }}
+                  </span>
+                </li>
+              </ul>
+              <ng-template #noAprobarReqs>
+                <p class="empty-reqs">Sin requisitos adicionales para el final</p>
+              </ng-template>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
 </div>

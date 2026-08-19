@@ -1,5 +1,6 @@
-import { Injectable, inject, signal, WritableSignal } from '@angular/core';
+import { Injectable, inject, signal, WritableSignal, Injector } from '@angular/core';
 import { CourseService } from './course.service';
+import { CareerService } from './career.service';
 import {
   sanitizePlans,
   sanitizeSemesterSlots,
@@ -26,6 +27,14 @@ export class PlanService {
   private static readonly PLANS_KEY = 'plans';
   private static readonly DEFAULT_PLANS: Plan[] = [{ id: '1', label: 'Plan de estudio 1' }];
 
+  private readonly careerService = (() => {
+    try {
+      return inject(CareerService, { optional: true });
+    } catch {
+      return null;
+    }
+  })();
+
   private readonly courseService = (() => {
     try {
       return inject(CourseService, { optional: true });
@@ -33,6 +42,35 @@ export class PlanService {
       return null;
     }
   })();
+
+  private getCareerService(): CareerService | null {
+    return this.careerService;
+  }
+
+  private getCourseService(): CourseService | null {
+    return this.courseService;
+  }
+
+  private readonly isWorkshopOpenSignal = signal<boolean>(false);
+  readonly isWorkshopOpen = this.isWorkshopOpenSignal.asReadonly();
+
+  openWorkshop(): void {
+    this.isWorkshopOpenSignal.set(true);
+  }
+
+  closeWorkshop(): void {
+    this.isWorkshopOpenSignal.set(false);
+  }
+
+  loadDemoPlan(): void {
+    const careerService = this.getCareerService();
+    if (careerService) {
+      careerService.selectCareer('lic-diseno-audiovisual');
+    }
+    if (this.plansSignal().length === 0) {
+      this.addPlan({ id: '1', label: 'Licenciatura en Diseño Audiovisual' });
+    }
+  }
 
   private readonly plansSignal: WritableSignal<Plan[]>;
   private readonly selectedPlanIdSignal = signal<string>('1');
@@ -99,7 +137,7 @@ export class PlanService {
     for (const plan of currentPlans) {
       this.safeRemoveItem(this.semesterListKey(plan.id));
       this.safeRemoveItem(this.startingYearKey(plan.id));
-      this.courseService?.deletePlan(plan.id);
+      this.getCourseService()?.deletePlan(plan.id);
     }
     this.safeRemoveItem(PlanService.PLANS_KEY);
     this.safeRemoveItem('selected-career-id');
@@ -131,7 +169,7 @@ export class PlanService {
     });
     this.safeRemoveItem(this.semesterListKey(planId));
     this.safeRemoveItem(this.startingYearKey(planId));
-    this.courseService?.deletePlan(planId);
+    this.getCourseService()?.deletePlan(planId);
   }
 
   private loadPlans(): Plan[] {
@@ -196,6 +234,7 @@ export class PlanService {
 
   setSelectedPlanId(id: string): void {
     this.selectedPlanIdSignal.set(id);
+    this.getCourseService()?.setCurrentPlanId(id);
   }
 
   private semesterListKey(planId: string): string {

@@ -22,6 +22,7 @@ import dagre from 'cytoscape-dagre';
 
 import { CourseService } from '../../services/course.service';
 import { Course, CourseStatus } from '../../models/course';
+import { NoPlanSelectedComponent } from '../no-plan-selected/no-plan-selected.component';
 import {
   COURSE_STATUS_CONFIG,
   COURSE_STATUS_LIST,
@@ -36,6 +37,7 @@ cytoscape.use(dagre);
   imports: [
     CommonModule,
     FormsModule,
+    NoPlanSelectedComponent,
     MatIconModule,
     MatFormFieldModule,
     MatSelectModule,
@@ -49,7 +51,7 @@ cytoscape.use(dagre);
 export class RequisitesFlowComponent implements AfterViewInit, OnDestroy {
   @ViewChild('cyContainer') cyContainer!: ElementRef<HTMLDivElement>;
 
-  private courseService = inject(CourseService);
+  readonly courseService = inject(CourseService);
 
   cy: cytoscape.Core | null = null;
 

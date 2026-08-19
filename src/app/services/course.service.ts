@@ -43,8 +43,23 @@ export class CourseService {
     return this.getCoursesForPlan(this.currentPlanIdSignal());
   });
 
+  readonly hasSelectedPlan = computed(() => {
+    const courses = this.courses();
+    if (courses.length === 0) return false;
+    const active = this.careerService?.activeCareer();
+    const selectedId = this.careerService?.selectedCareerId();
+    if (selectedId === '' || (active && active.id === 'empty-plan')) {
+      return false;
+    }
+    return true;
+  });
+
   getCoursesForPlan(planId: string): Course[] {
-    const rawCourses = this.coursesByPlanSignal().get(planId) ?? [];
+    let rawCourses = this.coursesByPlanSignal().get(planId);
+    if ((!rawCourses || rawCourses.length === 0) && (this.activeCareerIdSignal() === 'lic-diseno-audiovisual' || this.careerService?.selectedCareerId() === 'lic-diseno-audiovisual')) {
+      rawCourses = this.initializeCourses();
+    }
+    rawCourses = rawCourses ?? [];
     const stateMap = this.courseStateSignal();
 
     return rawCourses.map((course) => {

@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, signal, OnInit } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal, computed, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
@@ -23,8 +23,6 @@ import { ToastService } from './services/toast.service';
 import { decodePlanFromUrlHash } from './utils/hash-serializer.util';
 import { PlanManifest } from './models/plan-manifest.model';
 
-import { OnboardingWelcomeComponent } from './components/onboarding-welcome/onboarding-welcome.component';
-
 @Component({
   selector: 'app-root',
   templateUrl: './app.html',
@@ -40,7 +38,6 @@ import { OnboardingWelcomeComponent } from './components/onboarding-welcome/onbo
     WorkshopHubComponent,
     PlanPublisherModalComponent,
     PlanDiffViewerComponent,
-    OnboardingWelcomeComponent,
     MatSidenavModule,
     MatToolbarModule,
     MatButtonModule,
@@ -57,7 +54,8 @@ export class App implements OnInit {
   private router = inject(Router);
 
   isOpen = signal(true);
-  showWorkshop = signal(false);
+  private internalWorkshopSignal = signal(false);
+  showWorkshop = computed(() => this.internalWorkshopSignal() || this.planService.isWorkshopOpen());
   showPublisher = signal(false);
   showDiffViewer = signal(false);
 
@@ -113,7 +111,17 @@ export class App implements OnInit {
   }
 
   handleImportPlan(): void {
-    this.showWorkshop.set(true);
+    this.openWorkshop();
+  }
+
+  openWorkshop(): void {
+    this.planService.openWorkshop();
+    this.internalWorkshopSignal.set(true);
+  }
+
+  closeWorkshop(): void {
+    this.planService.closeWorkshop();
+    this.internalWorkshopSignal.set(false);
   }
 
   resetToNewUser(): void {

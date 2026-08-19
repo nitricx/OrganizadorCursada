@@ -20,6 +20,7 @@ import { Course, DayOfWeek } from '../../models/course';
 import { CalendarCard } from '../calendar-card/calendar-card';
 import { CalendarLegendComponent } from '../calendar-legend/calendar-legend.component';
 import { ExportCalendarModalComponent } from '../export-calendar-modal/export-calendar-modal.component';
+import { NoPlanSelectedComponent } from '../no-plan-selected/no-plan-selected.component';
 import {
   CourseWithLesson,
   computeCourseColumnMap,
@@ -47,6 +48,7 @@ export type { CourseWithLesson };
     CommonModule,
     DragDropModule,
     ExportCalendarModalComponent,
+    NoPlanSelectedComponent,
     MatIconModule,
     MatButtonModule,
     MatFormFieldModule,
@@ -58,7 +60,7 @@ export type { CourseWithLesson };
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Calendar {
-  private readonly courseService = inject(CourseService);
+  readonly courseService = inject(CourseService);
   private readonly planService = inject(PlanService);
 
   readonly showExportModal = signal(false);

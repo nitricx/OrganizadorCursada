@@ -4,6 +4,7 @@ import { CourseService } from '../../services/course.service';
 import { CourseOrganizerLegendComponent } from '../course-organizer-legend/course-organizer-legend.component';
 import { CourseGridComponent } from '../course-grid/course-grid.component';
 import { LessonSelectorModalComponent } from '../lesson-selector-modal/lesson-selector-modal.component';
+import { NoPlanSelectedComponent } from '../no-plan-selected/no-plan-selected.component';
 import { Course } from '../../models/course';
 
 import { MatProgressBarModule } from '@angular/material/progress-bar';
@@ -21,6 +22,7 @@ import { MatCardModule } from '@angular/material/card';
     CourseOrganizerLegendComponent,
     CourseGridComponent,
     LessonSelectorModalComponent,
+    NoPlanSelectedComponent,
     MatProgressBarModule,
     MatButtonModule,
     MatIconModule,

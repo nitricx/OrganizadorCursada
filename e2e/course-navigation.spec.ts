@@ -8,14 +8,15 @@ test.describe('Navegación y Flujo Inicial del Usuario', () => {
     await page.reload();
   });
 
-  test('debe mostrar la pantalla de bienvenida al entrar por primera vez', async ({ page }) => {
+  test('debe mostrar el estado sin plan seleccionado al entrar por primera vez', async ({ page }) => {
     // Verificamos título principal de la barra de navegación
     const brandTitle = page.locator('.app-brand-title');
     await expect(brandTitle).toHaveText('OrganizadorCursada');
 
-    // Verificamos que la tarjeta de bienvenida de onboarding esté visible
-    const welcomeTitle = page.locator('.welcome-title');
-    await expect(welcomeTitle).toContainText('Bienvenido/a a OrganizadorCursada');
+    // Verificamos que el componente app-no-plan-selected esté visible en /home
+    const noPlanComponent = page.locator('app-no-plan-selected');
+    await expect(noPlanComponent).toBeVisible();
+    await expect(noPlanComponent.locator('.empty-state-title')).toContainText('Plan de Cursada no seleccionado');
   });
 
   test('debe permitir cargar el plan demo, visualizar las materias y navegar', async ({ page }) => {
@@ -24,8 +25,8 @@ test.describe('Navegación y Flujo Inicial del Usuario', () => {
     await expect(loadDemoBtn).toBeVisible();
     await loadDemoBtn.click();
 
-    // 2. La pantalla de bienvenida se oculta al cargar un plan
-    await expect(page.locator('.welcome-title')).not.toBeVisible();
+    // 2. El estado sin plan se oculta al cargar un plan
+    await expect(page.locator('app-no-plan-selected')).not.toBeVisible();
 
     // 3. Al cargar el demo, la barra de navegación debe mostrar el selector de carrera
     await expect(page.locator('app-career-selector')).toBeVisible();
