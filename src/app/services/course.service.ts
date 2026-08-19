@@ -1,7 +1,7 @@
 import { Injectable, effect, inject } from '@angular/core';
 import { signal, computed } from '@angular/core';
 import { Course, CourseStatus } from '../models/course';
-import { AUDIOVISUAL_COURSES_DATA } from '../data/courses.data';
+import { DEFAULT_CAREER_PLAN, parseCareerPlanToCourses } from '../data/courses.data';
 import { CareerService } from './career.service';
 import { CareerPlan } from '../models/career.model';
 import {
@@ -213,18 +213,13 @@ export class CourseService {
   }
 
   private initializeCourses(): Course[] {
-    return AUDIOVISUAL_COURSES_DATA.map((course) => ({
-      ...course,
-      status: 'pending' as CourseStatus,
-      cursarReqId: course.cursarReqId.slice(),
-      aprobarReqId: course.aprobarReqId.slice(),
-      lessons: course.lessons.map((lesson) => ({ ...lesson })),
-    }));
+    return parseCareerPlanToCourses(DEFAULT_CAREER_PLAN);
   }
 
   private initializeCourseStates(): Map<number, CourseStateEntry> {
     const states = new Map<number, CourseStateEntry>();
-    AUDIOVISUAL_COURSES_DATA.forEach((course) => {
+    const defaultCourses = parseCareerPlanToCourses(DEFAULT_CAREER_PLAN);
+    defaultCourses.forEach((course) => {
       const lessonStatuses: Record<string, CourseStatus> = {};
       course.lessons.forEach((lesson) => {
         lessonStatuses[lesson.id] = 'pending';
@@ -710,8 +705,9 @@ export class CourseService {
         const legacyCourseStatuses: Record<string, CourseStatus> = state.courseStatuses ?? {};
         const legacyLessonStatuses: Record<string, CourseStatus> = state.lessonStatuses ?? {};
 
+        const defaultCourses = parseCareerPlanToCourses(DEFAULT_CAREER_PLAN);
         migratedMap.forEach((entry, courseId) => {
-          const targetCourse = AUDIOVISUAL_COURSES_DATA.find((c) => c.id === courseId);
+          const targetCourse = defaultCourses.find((c) => c.id === courseId);
           const legacyKey = targetCourse ? targetCourse.name : courseId.toString();
           const cStatus = legacyCourseStatuses[legacyKey] ?? 'pending';
           const lStatuses: Record<string, CourseStatus> = { ...entry.lessonStatuses };
