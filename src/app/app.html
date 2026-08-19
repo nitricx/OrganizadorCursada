@@ -34,9 +34,10 @@
           (onImportPlan)="handleImportPlan()"
           (onLoadDemoPlan)="handleLoadDemoPlan()"
         />
-      } @else {
-        <router-outlet />
       }
+      <div [style.display]="plans().length === 0 ? 'none' : 'block'">
+        <router-outlet />
+      </div>
     </div>
   </mat-sidenav-content>
 </mat-sidenav-container>

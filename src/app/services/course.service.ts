@@ -644,6 +644,9 @@ export class CourseService {
 
   private saveState(): void {
     try {
+      const currentCourses = this.coursesByPlanSignal().get(this.currentPlanIdSignal()) ?? [];
+      if (currentCourses.length === 0) return;
+
       const courseStatesObj: Record<string, CourseStateEntry> = {};
       this.courseStateSignal().forEach((val, key) => {
         courseStatesObj[key.toString()] = val;
@@ -682,7 +685,8 @@ export class CourseService {
 
       if (state.coursesByPlan) {
         const sanitizedByPlan = sanitizeCoursesByPlan(state.coursesByPlan);
-        if (sanitizedByPlan.size > 0) {
+        const storedPlanCourses = sanitizedByPlan.get(this.currentPlanIdSignal());
+        if (sanitizedByPlan.size > 0 && storedPlanCourses && storedPlanCourses.length > 0) {
           if (planToUse && Array.isArray(planToUse.courses)) {
             const reconciled = this.reconcileCoursesByPlan(sanitizedByPlan, planToUse.courses);
             this.coursesByPlanSignal.set(reconciled);

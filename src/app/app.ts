@@ -12,6 +12,8 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
+import { Router } from '@angular/router';
+
 import { UserMenuComponent } from './components/user-menu/user-menu';
 import { ThemeService } from './services/theme.service';
 import { PlanService } from './services/plan.service';
@@ -52,6 +54,7 @@ export class App implements OnInit {
   private careerService = inject(CareerService);
   private courseService = inject(CourseService);
   private toast = inject(ToastService);
+  private router = inject(Router);
 
   isOpen = signal(true);
   showWorkshop = signal(false);
@@ -70,6 +73,7 @@ export class App implements OnInit {
         if (decoded && decoded.name) {
           const planId = this.careerService.addCareerFromManifest(decoded);
           this.planService.addPlan({ id: planId, label: decoded.name });
+          this.router.navigate(['/home']);
           this.toast.show(`¡Plan "${decoded.name}" importado exitosamente desde el enlace de WhatsApp/Telegram!`, 'success');
           // Clear hash
           history.replaceState(null, '', window.location.pathname);
@@ -95,11 +99,16 @@ export class App implements OnInit {
   handleSubscribePlan(manifest: PlanManifest): void {
     const planId = this.careerService.addCareerFromManifest(manifest);
     this.planService.addPlan({ id: planId, label: manifest.name });
+    this.router.navigate(['/home']);
     this.toast.show(`Plan "${manifest.name}" añadido a tus planes de estudio.`, 'success');
   }
 
   handleLoadDemoPlan(): void {
     this.careerService.selectCareer('lic-diseno-audiovisual');
+    if (this.planService.plans().length === 0) {
+      this.planService.addPlan({ id: '1', label: 'Licenciatura en Diseño Audiovisual' });
+    }
+    this.router.navigate(['/home']);
     this.toast.show('¡Plan de demostración cargado correctamente!', 'success');
   }
 

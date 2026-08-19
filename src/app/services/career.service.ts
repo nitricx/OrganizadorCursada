@@ -30,7 +30,7 @@ export class CareerService {
 
   private readonly careersSignal = signal<CareerIndexEntry[]>(this.loadInitialCareerIndex());
   private readonly selectedCareerIdSignal = signal<string>(this.loadSelectedCareerId());
-  private readonly activeCareerSignal = signal<CareerPlan>(EMPTY_CAREER_PLAN);
+  private readonly activeCareerSignal = signal<CareerPlan>(this.loadInitialCareerPlan());
   private readonly isLoadingSignal = signal<boolean>(false);
   private readonly errorSignal = signal<string | null>(null);
 
@@ -44,7 +44,27 @@ export class CareerService {
 
   constructor() {
     this.fetchRemoteIndex();
-    this.loadCareerById(this.selectedCareerIdSignal());
+    const currentId = this.selectedCareerIdSignal();
+    if (currentId) {
+      this.loadCareerById(currentId);
+    }
+  }
+
+  private loadInitialCareerPlan(): CareerPlan {
+    const selectedId = this.loadSelectedCareerId();
+    if (!selectedId) return EMPTY_CAREER_PLAN;
+
+    const customRaw = this.safeGetItem(`${CareerService.CUSTOM_CAREER_PREFIX}${selectedId}`);
+    if (customRaw) {
+      try {
+        const parsed = JSON.parse(customRaw);
+        if (this.validateCareerPlan(parsed)) {
+          return parsed;
+        }
+      } catch {}
+    }
+
+    return DEFAULT_CAREER_PLANS_MAP.get(selectedId) ?? EMPTY_CAREER_PLAN;
   }
 
   private safeGetItem(key: string): string | null {
