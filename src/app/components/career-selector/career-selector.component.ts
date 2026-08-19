@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, ElementRef, ViewChild, computed, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, ElementRef, ViewChild, computed, signal, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -27,6 +27,8 @@ import { CareerIndexEntry } from '../../models/career.model';
 export class CareerSelectorComponent {
   readonly careerService = inject(CareerService);
   private readonly toastService = inject(ToastService);
+
+  @Output() openWorkshop = new EventEmitter<void>();
 
   readonly careerToDelete = signal<CareerIndexEntry | null>(null);
 
@@ -63,6 +65,10 @@ export class CareerSelectorComponent {
     if (active) {
       this.toastService.info(`Carrera seleccionada: ${active.name}`);
     }
+  }
+
+  openPlanHub(): void {
+    this.openWorkshop.emit();
   }
 
   triggerFileInput(): void {

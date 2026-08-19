@@ -8,10 +8,8 @@
         <mat-icon>menu</mat-icon>
       </button>
       <span class="app-brand-title">OrganizadorCursada</span>
-      @if (plans().length > 0) {
-        <span class="breadcrumb-separator">/</span>
-        <app-career-selector />
-      }
+      <span class="breadcrumb-separator">/</span>
+      <app-career-selector (openWorkshop)="showWorkshop.set(true)" />
 
       <span class="toolbar-spacer"></span>
 

@@ -92,6 +92,14 @@
   color: var(--brand-primary, #3b82f6);
 }
 
+::ng-deep .career-selector-menu .workshop-menu-item {
+  color: var(--brand-primary, #3b82f6);
+}
+
+::ng-deep .career-selector-menu .workshop-icon {
+  color: var(--brand-primary, #3b82f6);
+}
+
 ::ng-deep .career-selector-menu .import-menu-item {
   color: var(--brand-primary, #3b82f6);
 }
