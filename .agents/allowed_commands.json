@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "description": "Configuración de comandos permitidos y bloqueados para el agente Antigravity",
+  "defaultDecision": "ask",
+  "exact": [
+    "git status",
+    "git diff",
+    "npm test",
+    "ng serve",
+    "ng build",
+    "ng test"
+  ],
+  "prefixes": [
+    "ng ",
+    "npm ",
+    "npx ",
+    "git status",
+    "git diff",
+    "git log",
+    "git branch",
+    "git checkout",
+    "node "
+  ],
+  "blockedPrefixes": [
+    "rm -rf",
+    "rmdir /s",
+    "del /f",
+    "git push --force",
+    "git push -f",
+    "git reset --hard",
+    "format "
+  ]
+}
