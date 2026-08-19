@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { CourseService } from './course.service';
+import { BUILTIN_CAREER_PLANS } from '../data/courses.data';
 
 describe('CourseService - Lesson State Toggling', () => {
   let service: CourseService;
@@ -184,6 +185,28 @@ describe('CourseService - Lesson State Toggling', () => {
       const reset = service.courses();
       expect(reset[0]?.lessons[0]?.status).toBe('pending');
       expect(reset[1]?.lessons[0]?.status).toBe('pending');
+    });
+
+    it('should reset subjects of the active career plan instead of reverting to default career', () => {
+      const sistemasPlan = BUILTIN_CAREER_PLANS['ing-sistemas'];
+      expect(sistemasPlan).toBeDefined();
+
+      service.setCareerPlan(sistemasPlan);
+      expect(service.courses().length).toBe(sistemasPlan.courses.length);
+      expect(service.courses()[0].name).toBe(sistemasPlan.courses[0].name);
+
+      // Change status of first course
+      const firstCourseId = service.courses()[0].id;
+      service.toggleCourseStatus(firstCourseId);
+      expect(service.courses()[0].status).not.toBe('pending');
+
+      // Perform reset
+      service.reset();
+
+      // Courses should still belong to sistemasPlan and be reset to pending
+      expect(service.courses().length).toBe(sistemasPlan.courses.length);
+      expect(service.courses()[0].name).toBe(sistemasPlan.courses[0].name);
+      expect(service.courses()[0].status).toBe('pending');
     });
   });
 

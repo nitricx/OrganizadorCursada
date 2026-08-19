@@ -32,6 +32,7 @@ export class CourseService {
   private courseStateSignal = signal<Map<number, CourseStateEntry>>(new Map());
   private currentPlanIdSignal = signal<string>('1');
   private activeCareerIdSignal = signal<string>('lic-diseno-audiovisual');
+  private activeCareerPlanSignal = signal<CareerPlan | null>(null);
   private selectedIdsSignal = signal<Set<number>>(new Set());
   private hoveredCourseIdSignal = signal<number | null>(null);
 
@@ -154,6 +155,7 @@ export class CourseService {
 
   setCareerPlan(careerPlan: CareerPlan): void {
     this.activeCareerIdSignal.set(careerPlan.id);
+    this.activeCareerPlanSignal.set(careerPlan);
     const newCourses: Course[] = careerPlan.courses.map((c) => ({
       id: c.id,
       name: c.name,
@@ -212,14 +214,24 @@ export class CourseService {
     this.coursesByPlanSignal.set(updated);
   }
 
-  private initializeCourses(): Course[] {
-    return parseCareerPlanToCourses(DEFAULT_CAREER_PLAN);
+  private get activeCareerPlan(): CareerPlan {
+    return (
+      this.activeCareerPlanSignal() ??
+      this.careerService?.activeCareer() ??
+      DEFAULT_CAREER_PLAN
+    );
   }
 
-  private initializeCourseStates(): Map<number, CourseStateEntry> {
+  private initializeCourses(plan?: CareerPlan): Course[] {
+    const careerPlan = plan ?? this.activeCareerPlan;
+    return parseCareerPlanToCourses(careerPlan);
+  }
+
+  private initializeCourseStates(plan?: CareerPlan): Map<number, CourseStateEntry> {
     const states = new Map<number, CourseStateEntry>();
-    const defaultCourses = parseCareerPlanToCourses(DEFAULT_CAREER_PLAN);
-    defaultCourses.forEach((course) => {
+    const careerPlan = plan ?? this.activeCareerPlan;
+    const courses = parseCareerPlanToCourses(careerPlan);
+    courses.forEach((course) => {
       const lessonStatuses: Record<string, CourseStatus> = {};
       course.lessons.forEach((lesson) => {
         lessonStatuses[lesson.id] = 'pending';
@@ -533,8 +545,9 @@ export class CourseService {
   }
 
   reset(): void {
-    this.courseStateSignal.set(this.initializeCourseStates());
-    this.setCurrentRawCourses(this.initializeCourses());
+    const plan = this.activeCareerPlan;
+    this.courseStateSignal.set(this.initializeCourseStates(plan));
+    this.setCurrentRawCourses(this.initializeCourses(plan));
     this.selectedIdsSignal.set(new Set());
   }
 
@@ -701,11 +714,12 @@ export class CourseService {
         this.courseStateSignal.set(loadedMap);
       } else if (state.courseStatuses || state.lessonStatuses) {
         // Legacy migration from separate courseStatuses and lessonStatuses
-        const migratedMap = this.initializeCourseStates();
+        const targetPlan = planToUse ?? this.activeCareerPlan;
+        const migratedMap = this.initializeCourseStates(targetPlan);
         const legacyCourseStatuses: Record<string, CourseStatus> = state.courseStatuses ?? {};
         const legacyLessonStatuses: Record<string, CourseStatus> = state.lessonStatuses ?? {};
 
-        const defaultCourses = parseCareerPlanToCourses(DEFAULT_CAREER_PLAN);
+        const defaultCourses = parseCareerPlanToCourses(targetPlan);
         migratedMap.forEach((entry, courseId) => {
           const targetCourse = defaultCourses.find((c) => c.id === courseId);
           const legacyKey = targetCourse ? targetCourse.name : courseId.toString();
