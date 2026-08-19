@@ -1,0 +1,36 @@
+.modal-backdrop {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(6px);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 9999; padding: 16px;
+}
+.glass-panel {
+  background: #181825; border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  color: #cdd6f4; width: 100%; max-width: 720px; max-height: 85vh;
+  display: flex; flex-direction: column;
+}
+.modal-header { padding: 16px 20px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); display: flex; justify-content: space-between; align-items: center; }
+.header-title { display: flex; align-items: center; gap: 10px; }
+.header-title h3 { margin: 0; font-size: 1.15rem; color: #f5e0dc; }
+.btn-close { background: none; border: none; color: #a6adc8; font-size: 1.2rem; cursor: pointer; }
+.modal-body { padding: 20px; display: flex; flex-direction: column; gap: 16px; overflow-y: auto; }
+.search-input {
+  width: 100%; padding: 10px 14px; background: #11111b; border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px; color: #cdd6f4; font-size: 0.9rem; outline: none; box-sizing: border-box;
+}
+.search-input:focus { border-color: #89b4fa; }
+.catalog-list { display: flex; flex-direction: column; gap: 12px; }
+.workshop-card {
+  background: #1e1e2e; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px;
+  padding: 14px 18px; display: flex; justify-content: space-between; align-items: center;
+}
+.card-title-row { display: flex; align-items: center; gap: 12px; }
+.card-title-row h4 { margin: 0; font-size: 1.05rem; color: #cdd6f4; }
+.badge-subscribers { font-size: 0.72rem; padding: 2px 8px; background: rgba(137, 180, 250, 0.15); color: #89b4fa; border-radius: 10px; }
+.university-info { margin: 4px 0; font-size: 0.83rem; color: #a6adc8; }
+.version-info { font-size: 0.75rem; color: #6c7086; }
+.btn-subscribe { background: #89b4fa; color: #11111b; border: none; padding: 8px 16px; border-radius: 10px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; }
+.btn-subscribe:hover { opacity: 0.9; transform: translateY(-1px); }
+.modal-footer { padding: 16px 20px; border-top: 1px solid rgba(255, 255, 255, 0.08); display: flex; justify-content: flex-end; }
+.btn-secondary { background: #313244; color: #cdd6f4; border: none; padding: 8px 18px; border-radius: 10px; font-weight: 600; cursor: pointer; }

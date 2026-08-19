@@ -5,7 +5,8 @@ import { CourseOrganizerLegendComponent } from '../course-organizer-legend/cours
   selector: 'app-calendar-legend',
   standalone: true,
   imports: [CourseOrganizerLegendComponent],
-  template: '<app-course-organizer-legend></app-course-organizer-legend>',
+  templateUrl: './calendar-legend.component.html',
+  styleUrl: './calendar-legend.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CalendarLegendComponent {}

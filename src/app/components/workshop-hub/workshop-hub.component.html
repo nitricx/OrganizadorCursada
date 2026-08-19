@@ -1,0 +1,47 @@
+<div class="modal-backdrop" (click)="onClose.emit()">
+  <div class="modal-card glass-panel" (click)="$event.stopPropagation()">
+    <header class="modal-header">
+      <div class="header-title">
+        <span class="icon">🛒</span>
+        <h3>Plan Hub Comunitario (Steam Workshop)</h3>
+      </div>
+      <button class="btn-close" (click)="onClose.emit()">✕</button>
+    </header>
+
+    <section class="modal-body">
+      <div class="search-bar-row">
+        <input
+          type="text"
+          class="search-input"
+          placeholder="Buscar por universidad, carrera o facultad..."
+          [(ngModel)]="searchQuery"
+        />
+      </div>
+
+      <div class="catalog-list">
+        <div *ngFor="let item of filteredCatalog" class="workshop-card">
+          <div class="card-main">
+            <div class="card-title-row">
+              <h4>{{ item.name }}</h4>
+              <span class="badge-subscribers">👥 {{ item.subscribersRange }} estudiantes</span>
+            </div>
+            <p class="university-info">🏫 {{ item.university }} — {{ item.faculty }}</p>
+            <div class="version-info">
+              <span>Versión {{ item.version }}</span> • <span>Actualizado: {{ item.updatedAt }}</span>
+            </div>
+          </div>
+
+          <div class="card-actions">
+            <button class="btn btn-subscribe" (click)="subscribePlan(item)">
+              Suscribirse al Plan
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="modal-footer">
+      <button class="btn btn-secondary" (click)="onClose.emit()">Cerrar</button>
+    </footer>
+  </div>
+</div>

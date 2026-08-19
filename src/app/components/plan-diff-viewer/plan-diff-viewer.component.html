@@ -1,0 +1,51 @@
+<div class="modal-backdrop" (click)="onClose.emit()">
+  <div class="modal-card glass-panel" (click)="$event.stopPropagation()">
+    <header class="modal-header">
+      <div class="header-title">
+        <span class="icon">🔍</span>
+        <h3>Inspeccionador de Cambios del Plan</h3>
+      </div>
+      <button class="btn-close" (click)="onClose.emit()">✕</button>
+    </header>
+
+    <section class="modal-body">
+      <p class="subtitle">
+        Se encontraron los siguientes cambios entre la versión oficial guardada y la versión actualizada:
+      </p>
+
+      <div class="conflicts-list">
+        <div *ngFor="let conflict of conflicts" class="conflict-card" [class.danger]="conflict.type === 'course_removed'">
+          <div class="conflict-header">
+            <span class="tag" [class.tag-warning]="conflict.type === 'prerequisite_modified'" [class.tag-danger]="conflict.type === 'course_removed'">
+              {{ conflict.type === 'prerequisite_modified' ? 'Correlativa Modificada' : (conflict.type === 'course_removed' ? 'Materia Eliminada' : 'Cambio de Semestre') }}
+            </span>
+            <strong class="course-name">{{ conflict.courseName }}</strong>
+          </div>
+          <p class="description">{{ conflict.description }}</p>
+          
+          <div *ngIf="conflict.oldValue || conflict.newValue" class="diff-comparison">
+            <div class="diff-col old-val">
+              <span class="label">Anterior:</span>
+              <code>{{ formatVal(conflict.oldValue) }}</code>
+            </div>
+            <div class="diff-arrow">➔</div>
+            <div class="diff-col new-val">
+              <span class="label">Actualizado:</span>
+              <code>{{ formatVal(conflict.newValue) }}</code>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="privacy-reassurance">
+        <span>🛡️</span>
+        <span>Sus notas personales, estados de avance ('aprobada', 'cursando') y materias completadas permanecen 100% intactas.</span>
+      </div>
+    </section>
+
+    <footer class="modal-footer">
+      <button class="btn btn-secondary" (click)="onClose.emit()">Conservar Plan Actual</button>
+      <button class="btn btn-primary" (click)="onApply.emit()">Aplicar Cambios</button>
+    </footer>
+  </div>
+</div>
