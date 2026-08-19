@@ -1,7 +1,10 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CareerIndexEntry, CareerPlan, RawCourseData } from '../models/career.model';
-import { COURSES_DATA } from '../data/courses.data';
+import {
+  DEFAULT_AUDIOVISUAL_PLAN,
+  DEFAULT_SISTEMAS_PLAN,
+} from '../data/courses.data';
 
 const DEFAULT_CAREER_INDEX: CareerIndexEntry[] = [
   {
@@ -17,28 +20,6 @@ const DEFAULT_CAREER_INDEX: CareerIndexEntry[] = [
     file: 'sistemas.json',
   },
 ];
-
-const DEFAULT_AUDIOVISUAL_PLAN: CareerPlan = {
-  id: 'lic-diseno-audiovisual',
-  name: 'Licenciatura en Diseño Audiovisual',
-  university: 'Universidad Nacional de Río Negro',
-  version: '2023',
-  courses: COURSES_DATA.map((c) => ({
-    id: c.id,
-    name: c.name,
-    year: c.year,
-    q: c.q,
-    cursarReqId: c.cursarReqId.slice(),
-    aprobarReqId: c.aprobarReqId.slice(),
-    lessons: c.lessons.map((l) => ({
-      id: l.id,
-      professor: l.professor,
-      day: l.day,
-      startTime: l.startTime,
-      endTime: l.endTime,
-    })),
-  })),
-};
 
 @Injectable({
   providedIn: 'root',
@@ -159,15 +140,19 @@ export class CareerService {
       } catch {}
     }
 
-    // 3. Default hardcoded fallback for default audiovisual career
+    // 3. Default hardcoded fallbacks for built-in careers
     if (careerId === 'lic-diseno-audiovisual') {
       this.activeCareerSignal.set(DEFAULT_AUDIOVISUAL_PLAN);
       this.isLoadingSignal.set(false);
       return;
     }
+    if (careerId === 'ing-sistemas') {
+      this.activeCareerSignal.set(DEFAULT_SISTEMAS_PLAN);
+      this.isLoadingSignal.set(false);
+      return;
+    }
 
-
-    // 3. Attempt HTTP fetch for remote career file
+    // 4. Attempt HTTP fetch for remote career file
     const indexEntry = this.careersSignal().find((c) => c.id === careerId);
     const fileName = indexEntry?.file ?? (careerId === 'ing-sistemas' ? 'sistemas.json' : 'audiovisual.json');
 
@@ -176,13 +161,13 @@ export class CareerService {
         next: (plan) => {
           if (this.validateCareerPlan(plan)) {
             this.activeCareerSignal.set(plan);
-          } else if (careerId !== 'lic-diseno-audiovisual') {
+          } else if (careerId !== 'lic-diseno-audiovisual' && careerId !== 'ing-sistemas') {
             this.errorSignal.set('El plan de estudio recibido no es válido.');
           }
           this.isLoadingSignal.set(false);
         },
         error: (err) => {
-          if (careerId !== 'lic-diseno-audiovisual') {
+          if (careerId !== 'lic-diseno-audiovisual' && careerId !== 'ing-sistemas') {
             this.errorSignal.set(`No se pudo cargar la carrera (${err.statusText || 'Error de red'})`);
           }
           this.isLoadingSignal.set(false);

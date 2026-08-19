@@ -1,5 +1,5 @@
 <div class="grid">
-  @for (year of [1, 2, 3]; track year) {
+  @for (year of availableYears(); track year) {
     <div class="year-col">
       <div class="year-label">{{ year }}° Año</div>
       @for (q of [3, 1, 2]; track q) {

@@ -1,7 +1,7 @@
 import { Injectable, effect, inject } from '@angular/core';
 import { signal, computed } from '@angular/core';
 import { Course, CourseStatus } from '../models/course';
-import { COURSES_DATA } from '../data/courses.data';
+import { AUDIOVISUAL_COURSES_DATA } from '../data/courses.data';
 import { CareerService } from './career.service';
 import { CareerPlan } from '../models/career.model';
 import {
@@ -184,7 +184,7 @@ export class CourseService {
     this.courseStateSignal.set(initialStates);
     this.selectedIdsSignal.set(new Set());
 
-    this.loadState();
+    this.loadState(careerPlan);
   }
 
 
@@ -213,7 +213,7 @@ export class CourseService {
   }
 
   private initializeCourses(): Course[] {
-    return COURSES_DATA.map((course) => ({
+    return AUDIOVISUAL_COURSES_DATA.map((course) => ({
       ...course,
       status: 'pending' as CourseStatus,
       cursarReqId: course.cursarReqId.slice(),
@@ -224,7 +224,7 @@ export class CourseService {
 
   private initializeCourseStates(): Map<number, CourseStateEntry> {
     const states = new Map<number, CourseStateEntry>();
-    COURSES_DATA.forEach((course) => {
+    AUDIOVISUAL_COURSES_DATA.forEach((course) => {
       const lessonStatuses: Record<string, CourseStatus> = {};
       course.lessons.forEach((lesson) => {
         lessonStatuses[lesson.id] = 'pending';
@@ -660,7 +660,7 @@ export class CourseService {
     }
   }
 
-  private loadState(): void {
+  private loadState(activePlan?: CareerPlan): void {
     try {
       if (typeof localStorage === 'undefined' || !localStorage) return;
       let stored = localStorage.getItem(this.storageKey);
@@ -672,16 +672,37 @@ export class CourseService {
       const state = JSON.parse(stored);
       if (typeof state !== 'object' || state === null) return;
 
+      const planToUse = activePlan ?? this.careerService?.activeCareer();
 
       if (state.coursesByPlan) {
         const sanitizedByPlan = sanitizeCoursesByPlan(state.coursesByPlan);
         if (sanitizedByPlan.size > 0) {
-          this.coursesByPlanSignal.set(sanitizedByPlan);
+          if (planToUse && Array.isArray(planToUse.courses)) {
+            const reconciled = this.reconcileCoursesByPlan(sanitizedByPlan, planToUse.courses);
+            this.coursesByPlanSignal.set(reconciled);
+          } else {
+            this.coursesByPlanSignal.set(sanitizedByPlan);
+          }
         }
       }
 
       if (state.courseStates) {
         const loadedMap = sanitizeCourseStatesMap(state.courseStates);
+        if (planToUse && Array.isArray(planToUse.courses)) {
+          planToUse.courses.forEach((c) => {
+            if (!loadedMap.has(c.id)) {
+              const lessonStatuses: Record<string, CourseStatus> = {};
+              c.lessons.forEach((l) => {
+                lessonStatuses[l.id] = 'pending';
+              });
+              loadedMap.set(c.id, {
+                status: 'pending',
+                lessonStatuses,
+                selectedLessonId: null,
+              });
+            }
+          });
+        }
         this.courseStateSignal.set(loadedMap);
       } else if (state.courseStatuses || state.lessonStatuses) {
         // Legacy migration from separate courseStatuses and lessonStatuses
@@ -690,7 +711,7 @@ export class CourseService {
         const legacyLessonStatuses: Record<string, CourseStatus> = state.lessonStatuses ?? {};
 
         migratedMap.forEach((entry, courseId) => {
-          const targetCourse = COURSES_DATA.find((c) => c.id === courseId);
+          const targetCourse = AUDIOVISUAL_COURSES_DATA.find((c) => c.id === courseId);
           const legacyKey = targetCourse ? targetCourse.name : courseId.toString();
           const cStatus = legacyCourseStatuses[legacyKey] ?? 'pending';
           const lStatuses: Record<string, CourseStatus> = { ...entry.lessonStatuses };
@@ -711,6 +732,72 @@ export class CourseService {
     } catch (error) {
       console.warn('Failed to load course state from localStorage:', error);
     }
+  }
+
+  private reconcileCoursesByPlan(
+    storedByPlan: Map<string, Course[]>,
+    canonicalCourses: { id: number; name: string; year: number; q: number; cursarReqId: number[]; aprobarReqId: number[]; lessons: any[] }[]
+  ): Map<string, Course[]> {
+    const resultMap = new Map<string, Course[]>();
+    const canonicalMap = new Map<number, { id: number; name: string; year: number; q: number; cursarReqId: number[]; aprobarReqId: number[]; lessons: any[] }>();
+    canonicalCourses.forEach((c) => canonicalMap.set(c.id, c));
+
+    storedByPlan.forEach((storedCourses, planId) => {
+      const storedIds = new Set<number>();
+      const reconciledCourses: Course[] = [];
+
+      // 1. Keep stored courses that exist in canonical list, updating metadata
+      storedCourses.forEach((stored) => {
+        const canonical = canonicalMap.get(stored.id);
+        if (canonical) {
+          storedIds.add(stored.id);
+          reconciledCourses.push({
+            ...stored,
+            name: canonical.name,
+            cursarReqId: canonical.cursarReqId.slice(),
+            aprobarReqId: canonical.aprobarReqId.slice(),
+            lessons: canonical.lessons.map((l) => ({ ...l })),
+          });
+        }
+      });
+
+      // 2. Add missing canonical courses that were not present in stored
+      canonicalCourses.forEach((canonical) => {
+        if (!storedIds.has(canonical.id)) {
+          reconciledCourses.push({
+            id: canonical.id,
+            name: canonical.name,
+            year: canonical.year,
+            q: canonical.q,
+            status: 'pending' as CourseStatus,
+            cursarReqId: canonical.cursarReqId.slice(),
+            aprobarReqId: canonical.aprobarReqId.slice(),
+            lessons: canonical.lessons.map((l) => ({ ...l })),
+          });
+        }
+      });
+
+      resultMap.set(planId, reconciledCourses);
+    });
+
+    const currentPlanId = this.currentPlanIdSignal();
+    if (!resultMap.has(currentPlanId)) {
+      resultMap.set(
+        currentPlanId,
+        canonicalCourses.map((c) => ({
+          id: c.id,
+          name: c.name,
+          year: c.year,
+          q: c.q,
+          status: 'pending' as CourseStatus,
+          cursarReqId: c.cursarReqId.slice(),
+          aprobarReqId: c.aprobarReqId.slice(),
+          lessons: c.lessons.map((l) => ({ ...l })),
+        }))
+      );
+    }
+
+    return resultMap;
   }
 
   private serializeCoursesByPlan(coursesByPlan: Map<string, Course[]>): Record<string, Course[]> {

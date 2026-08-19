@@ -1,4 +1,4 @@
-import { Component, input, output, ChangeDetectionStrategy } from '@angular/core';
+import { Component, input, output, ChangeDetectionStrategy, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Course } from '../../models/course';
 import { CourseCardComponent } from '../course-card/course-card.component';
@@ -14,6 +14,17 @@ import { CourseCardComponent } from '../course-card/course-card.component';
 export class CourseGridComponent {
   readonly courses = input.required<Course[]>();
   readonly selectedIds = input.required<Set<number>>();
+
+  readonly availableYears = computed(() => {
+    const coursesList = this.courses();
+    if (!coursesList || coursesList.length === 0) return [1, 2, 3];
+    const maxYear = Math.max(...coursesList.map((c) => c.year || 1), 1);
+    const years: number[] = [];
+    for (let y = 1; y <= maxYear; y++) {
+      years.push(y);
+    }
+    return years;
+  });
 
   getQuarterLabel(q: number): string {
     return this.quarterLabels[q] || '';

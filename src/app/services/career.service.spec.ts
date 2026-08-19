@@ -37,6 +37,14 @@ describe('CareerService', () => {
     expect(active.courses.length).toBeGreaterThan(0);
   });
 
+  it('should load ing-sistemas plan with 36 subjects when selected', () => {
+    service.selectCareer('ing-sistemas');
+    const active = service.activeCareer();
+    expect(active).toBeTruthy();
+    expect(active.id).toBe('ing-sistemas');
+    expect(active.courses.length).toBe(36);
+  });
+
   it('should validate a valid career plan', () => {
     const validPlan = {
       id: 'test-career',
