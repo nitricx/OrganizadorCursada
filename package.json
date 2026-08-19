@@ -9,6 +9,7 @@
     "test": "ng test",
     "db:seed": "node scripts/seed-firestore.js",
     "docker:up": "docker compose up",
+    "docker:up:prod": "docker compose -f docker-compose.prod.yml up",
     "docker:down": "docker compose down",
     "docker:build": "docker compose build"
   },

@@ -8,6 +8,10 @@ RUN npm install -g firebase-tools
 
 WORKDIR /app
 
+# Memory optimization for Java JVM (Firestore emulator) and Node.js (Firebase CLI)
+ENV JAVA_TOOL_OPTIONS="-Xms32m -Xmx128m -XX:+UseG1GC -XX:+CompactStrings"
+ENV NODE_OPTIONS="--max-old-space-size=256"
+
 EXPOSE 4000 8080 9099
 
 CMD ["firebase", "emulators:start", "--project=organizador-cursada-demo", "--config=firebase.json"]

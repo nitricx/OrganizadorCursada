@@ -18,16 +18,9 @@ services:
   app:
     build:
       context: .
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
     ports:
-      - "4200:4200"   # Angular Dev Server
-    volumes:
-      - .:/app
-      - /app/node_modules
-    environment:
-      - CHOKIDAR_USEPOLLING=true
-      - NODE_OPTIONS=--max-old-space-size=384
-    mem_limit: 512m
+      - "4200:80"     # Map container port 80 (Nginx) to host port 4200
+    mem_limit: 64m
     depends_on:
       - firebase-emulators
-

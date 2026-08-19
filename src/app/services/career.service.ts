@@ -2,6 +2,7 @@ import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CareerIndexEntry, CareerPlan, RawCourseData, EMPTY_CAREER_PLAN } from '../models/career.model';
 import { Firestore, collection, getDocs, doc, getDoc } from '@angular/fire/firestore';
+import { DEFAULT_CAREER_PLANS_MAP } from '../data/default-careers.data';
 
 const DEFAULT_CAREER_INDEX: CareerIndexEntry[] = [
   {
@@ -79,36 +80,108 @@ export class CareerService {
   }
 
   private loadInitialCareerIndex(): CareerIndexEntry[] {
-    return this.loadCustomIndex();
+    const custom = this.loadCustomIndex();
+    const map = new Map<string, CareerIndexEntry>();
+    DEFAULT_CAREER_INDEX.forEach((c) => map.set(c.id, c));
+    custom.forEach((c) => map.set(c.id, c));
+    return Array.from(map.values());
   }
 
   private async fetchRemoteIndex(): Promise<void> {
-    if (!this.firestore) return;
-    try {
-      const snap = await getDocs(collection(this.firestore, 'workshop_plans'));
-      if (!snap.empty) {
-        const remoteEntries: CareerIndexEntry[] = snap.docs.map((docSnap) => {
-          const data = docSnap.data();
-          return {
-            id: docSnap.id,
-            name: data['name'] || docSnap.id,
-            university: data['university'] || 'Universidad',
-          };
-        });
+    const map = new Map<string, CareerIndexEntry>();
+    DEFAULT_CAREER_INDEX.forEach((c) => map.set(c.id, c));
 
-        const custom = this.loadCustomIndex();
-        const map = new Map<string, CareerIndexEntry>();
-        remoteEntries.forEach((c) => map.set(c.id, c));
-        custom.forEach((c) => map.set(c.id, c));
-        this.careersSignal.set(Array.from(map.values()));
-      }
-    } catch {}
+    if (this.firestore) {
+      try {
+        const snap = await getDocs(collection(this.firestore, 'workshop_plans'));
+        if (!snap.empty) {
+          snap.docs.forEach((docSnap) => {
+            const data = docSnap.data();
+            map.set(docSnap.id, {
+              id: docSnap.id,
+              name: data['name'] || docSnap.id,
+              university: data['university'] || 'Universidad',
+            });
+          });
+        }
+      } catch {}
+    }
+
+    const custom = this.loadCustomIndex();
+    custom.forEach((c) => map.set(c.id, c));
+    this.careersSignal.set(Array.from(map.values()));
   }
 
   selectCareer(careerId: string): void {
     this.selectedCareerIdSignal.set(careerId);
     this.safeSetItem(CareerService.SELECTED_CAREER_KEY, careerId);
     this.loadCareerById(careerId);
+  }
+
+  addCareerFromManifest(manifest: any): string {
+    if (!manifest) return '';
+
+    const planId = manifest.id || `custom-plan-${Date.now()}`;
+    const name = manifest.name || 'Plan de estudio';
+    const university = manifest.university || 'Universidad';
+
+    const rawCourses: RawCourseData[] = (manifest.courses || []).map((c: any, index: number) => {
+      const numericId = typeof c.id === 'number' ? c.id : (parseInt(c.id, 10) || index + 1);
+
+      let cursarReqId: number[] = Array.isArray(c.cursarReqId) ? c.cursarReqId : [];
+      if (!cursarReqId.length && Array.isArray(c.cursarReq)) {
+        cursarReqId = c.cursarReq.map((reqStr: string) => {
+          const match = manifest.courses.find((other: any) => other.name === reqStr || String(other.id) === reqStr);
+          return match ? (typeof match.id === 'number' ? match.id : (parseInt(match.id, 10) || null)) : null;
+        }).filter((id: any) => id !== null && !isNaN(id));
+      }
+
+      let aprobarReqId: number[] = Array.isArray(c.aprobarReqId) ? c.aprobarReqId : [];
+      if (!aprobarReqId.length && Array.isArray(c.aprobarReq)) {
+        aprobarReqId = c.aprobarReq.map((reqStr: string) => {
+          const match = manifest.courses.find((other: any) => other.name === reqStr || String(other.id) === reqStr);
+          return match ? (typeof match.id === 'number' ? match.id : (parseInt(match.id, 10) || null)) : null;
+        }).filter((id: any) => id !== null && !isNaN(id));
+      }
+
+      return {
+        id: numericId,
+        name: c.name,
+        year: c.year || 1,
+        q: c.q || 3,
+        cursarReqId,
+        aprobarReqId,
+        lessons: Array.isArray(c.lessons) ? c.lessons : []
+      };
+    });
+
+    const careerPlan: CareerPlan = {
+      id: planId,
+      name,
+      university,
+      version: manifest.version || '1.0.0',
+      courses: rawCourses
+    };
+
+    this.customPlansMapSignal.update((m) => new Map(m).set(planId, careerPlan));
+    const customKey = `${CareerService.CUSTOM_CAREER_PREFIX}${planId}`;
+    this.safeSetItem(customKey, JSON.stringify(careerPlan));
+
+    const newEntry: CareerIndexEntry = {
+      id: planId,
+      name,
+      university
+    };
+
+    const customIndex = this.loadCustomIndex();
+    const updatedCustom = [...customIndex.filter((c) => c.id !== planId), newEntry];
+    this.safeSetItem(CareerService.CUSTOM_CAREERS_INDEX_KEY, JSON.stringify(updatedCustom));
+
+    const updatedAll = [...this.careersSignal().filter((c) => c.id !== planId), newEntry];
+    this.careersSignal.set(updatedAll);
+
+    this.selectCareer(planId);
+    return planId;
   }
 
   async loadCareerById(careerId: string): Promise<void> {
@@ -143,7 +216,15 @@ export class CareerService {
       } catch {}
     }
 
-    // 3. Check Firestore workshop_plans document
+    // 3. Check default bundled plans map
+    const defaultPlan = DEFAULT_CAREER_PLANS_MAP.get(careerId);
+    if (defaultPlan) {
+      this.activeCareerSignal.set(defaultPlan);
+      this.isLoadingSignal.set(false);
+      return;
+    }
+
+    // 4. Check Firestore workshop_plans document
     if (this.firestore) {
       try {
         const docRef = doc(this.firestore, 'workshop_plans', careerId);
@@ -159,10 +240,11 @@ export class CareerService {
       } catch {}
     }
 
-    // 4. Fallback if not found in Firestore or custom
+    // 5. Fallback if not found in Firestore or custom
     this.errorSignal.set('No se pudo cargar la carrera especificada.');
     this.isLoadingSignal.set(false);
   }
+
 
   importCareerFromJson(jsonString: string): { success: boolean; error?: string; careerId?: string } {
     try {

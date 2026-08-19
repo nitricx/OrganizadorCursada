@@ -16,28 +16,31 @@ export interface WorkshopEntry {
   manifest: PlanManifest;
 }
 
+import { SISTEMAS_CAREER_PLAN, AUDIOVISUAL_CAREER_PLAN } from '../../data/default-careers.data';
+
 const sampleWorkshopCatalog: WorkshopEntry[] = [
   {
-    id: 'ing-sistemas',
-    name: 'Ingeniería en Sistemas de Información',
-    university: 'Universidad Tecnológica Nacional',
+    id: SISTEMAS_CAREER_PLAN.id,
+    name: SISTEMAS_CAREER_PLAN.name,
+    university: SISTEMAS_CAREER_PLAN.university || 'UTN',
     faculty: 'Facultad Regional Buenos Aires',
     subscribersRange: '50-100',
-    version: '2023',
+    version: SISTEMAS_CAREER_PLAN.version || '2023',
     updatedAt: '2026-08-19',
-    manifest: {
-      id: 'ing-sistemas',
-      name: 'Ingeniería en Sistemas de Información',
-      university: 'Universidad Tecnológica Nacional',
-      faculty: 'Facultad Regional Buenos Aires',
-      version: '2023',
-      courses: [
-        { id: '1', name: 'Análisis Matemático I', year: 1, q: 3, cursarReq: [], aprobarReq: [] },
-        { id: '2', name: 'Álgebra y Geometría Analítica', year: 1, q: 3, cursarReq: [], aprobarReq: [] },
-      ],
-    },
+    manifest: SISTEMAS_CAREER_PLAN as any,
+  },
+  {
+    id: AUDIOVISUAL_CAREER_PLAN.id,
+    name: AUDIOVISUAL_CAREER_PLAN.name,
+    university: AUDIOVISUAL_CAREER_PLAN.university || 'UNRN',
+    faculty: 'Escuela de Artes y Medios',
+    subscribersRange: '100+',
+    version: AUDIOVISUAL_CAREER_PLAN.version || '2023',
+    updatedAt: '2026-08-19',
+    manifest: AUDIOVISUAL_CAREER_PLAN as any,
   },
 ];
+
 
 @Component({
   selector: 'app-workshop-hub',

@@ -16,6 +16,7 @@ import { UserMenuComponent } from './components/user-menu/user-menu';
 import { ThemeService } from './services/theme.service';
 import { PlanService } from './services/plan.service';
 import { CourseService } from './services/course.service';
+import { CareerService } from './services/career.service';
 import { ToastService } from './services/toast.service';
 import { decodePlanFromUrlHash } from './utils/hash-serializer.util';
 import { PlanManifest } from './models/plan-manifest.model';
@@ -48,6 +49,7 @@ import { OnboardingWelcomeComponent } from './components/onboarding-welcome/onbo
 export class App implements OnInit {
   themeService = inject(ThemeService);
   planService = inject(PlanService);
+  private careerService = inject(CareerService);
   private courseService = inject(CourseService);
   private toast = inject(ToastService);
 
@@ -66,8 +68,8 @@ export class App implements OnInit {
       try {
         const decoded = decodePlanFromUrlHash(window.location.hash);
         if (decoded && decoded.name) {
-          const nextId = String(Date.now());
-          this.planService.addPlan({ id: nextId, label: decoded.name });
+          const planId = this.careerService.addCareerFromManifest(decoded);
+          this.planService.addPlan({ id: planId, label: decoded.name });
           this.toast.show(`¡Plan "${decoded.name}" importado exitosamente desde el enlace de WhatsApp/Telegram!`, 'success');
           // Clear hash
           history.replaceState(null, '', window.location.pathname);
@@ -91,14 +93,13 @@ export class App implements OnInit {
   }
 
   handleSubscribePlan(manifest: PlanManifest): void {
-    const nextId = String(Date.now());
-    this.planService.addPlan({ id: nextId, label: manifest.name });
+    const planId = this.careerService.addCareerFromManifest(manifest);
+    this.planService.addPlan({ id: planId, label: manifest.name });
     this.toast.show(`Plan "${manifest.name}" añadido a tus planes de estudio.`, 'success');
   }
 
   handleLoadDemoPlan(): void {
-    const demoId = String(Date.now());
-    this.planService.addPlan({ id: demoId, label: 'Licenciatura en Diseño Audiovisual (Demo)' });
+    this.careerService.selectCareer('lic-diseno-audiovisual');
     this.toast.show('¡Plan de demostración cargado correctamente!', 'success');
   }
 
