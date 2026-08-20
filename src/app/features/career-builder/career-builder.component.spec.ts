@@ -3,6 +3,7 @@ import { provideRouter } from '@angular/router';
 import { CareerBuilderComponent } from './career-builder.component';
 import { RawCourseData } from '../../models/career.model';
 import { ToastService } from '../../services/toast.service';
+import { CareerService } from '../../services/career.service';
 
 describe('CareerBuilderComponent', () => {
   let component: CareerBuilderComponent;
@@ -18,7 +19,7 @@ describe('CareerBuilderComponent', () => {
 
     await TestBed.configureTestingModule({
       imports: [CareerBuilderComponent],
-      providers: [provideRouter([])],
+      providers: [provideRouter([{ path: '**', component: CareerBuilderComponent }])],
     }).compileComponents();
 
     fixture = TestBed.createComponent(CareerBuilderComponent);
@@ -122,5 +123,69 @@ describe('CareerBuilderComponent', () => {
     const updated1st = component.courses().find((c) => c.id === 101);
     expect(updated1st?.cursarReqId).toEqual([]);
     expect(updated1st?.aprobarReqId).toEqual([]);
+  });
+
+  it('debe cargar un plan de estudio suscrito en el builder', () => {
+    const plan = {
+      id: 'ing-sistemas-test',
+      name: 'Ingeniería Test',
+      university: 'UTN',
+      version: '1.0.0',
+      courses: [{ id: 1, name: 'Sistemas 1', year: 1, q: 1, cursarReqId: [], aprobarReqId: [], lessons: [] }],
+    };
+
+    component.loadPlanIntoBuilder(plan);
+
+    expect(component.originalPlanId()).toBe('ing-sistemas-test');
+    expect(component.careerName()).toBe('Ingeniería Test');
+    expect(component.university()).toBe('UTN');
+    expect(component.courses().length).toBe(1);
+    expect(component.isEditingPlan()).toBe(true);
+  });
+
+  it('debe generar una nueva copia personalizada al guardar un plan estándar modificado', () => {
+    const careerService = TestBed.inject(CareerService);
+    const plan = {
+      id: 'ing-sistemas',
+      name: 'Ingeniería en Sistemas de Información',
+      university: 'UTN',
+      version: '1.0.0',
+      courses: [{ id: 1, name: 'Algoritmos', year: 1, q: 1, cursarReqId: [], aprobarReqId: [], lessons: [] }],
+    };
+
+    component.loadPlanIntoBuilder(plan);
+    component.careerName.set('Mi Sistemas Personalizado');
+
+    const saveSpy = vi.spyOn(careerService, 'saveCustomCareer');
+    component.saveCareerPlan();
+
+    expect(saveSpy).toHaveBeenCalled();
+    const calls = saveSpy.mock.calls as [any][];
+    const savedPlan = calls[0]?.[0];
+    expect(savedPlan?.id?.startsWith('custom-career-')).toBe(true);
+    expect(savedPlan?.name).toBe('Mi Sistemas Personalizado');
+  });
+
+  it('debe mantener el mismo ID al guardar si el plan ya era un plan custom del usuario', () => {
+    const careerService = TestBed.inject(CareerService);
+    const plan = {
+      id: 'custom-career-999',
+      name: 'Mi Carrera Custom',
+      university: 'UNLP',
+      version: '1.0.0',
+      courses: [{ id: 1, name: 'Materia Custom', year: 1, q: 1, cursarReqId: [], aprobarReqId: [], lessons: [] }],
+    };
+
+    component.loadPlanIntoBuilder(plan);
+    component.university.set('UNLP Modificada');
+
+    const saveSpy = vi.spyOn(careerService, 'saveCustomCareer');
+    component.saveCareerPlan();
+
+    expect(saveSpy).toHaveBeenCalled();
+    const calls = saveSpy.mock.calls as [any][];
+    const savedPlan = calls[0]?.[0];
+    expect(savedPlan?.id).toBe('custom-career-999');
+    expect(savedPlan?.university).toBe('UNLP Modificada');
   });
 });

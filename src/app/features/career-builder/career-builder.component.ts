@@ -1,7 +1,7 @@
 import { Component, ChangeDetectionStrategy, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -37,6 +37,10 @@ export class CareerBuilderComponent {
   private readonly toastService = inject(ToastService);
   private readonly planLinterService = inject(PlanLinterService);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute, { optional: true });
+
+  readonly originalPlanId = signal<string | null>(null);
+  readonly isEditingPlan = computed(() => this.originalPlanId() !== null);
 
   readonly careerName = signal<string>('');
   readonly university = signal<string>('');
@@ -131,17 +135,49 @@ export class CareerBuilderComponent {
   });
 
   constructor() {
-    // If there is an active career loaded, prefill if user is editing
+    const mode = this.route?.snapshot?.queryParamMap.get('mode');
+    const planIdParam = this.route?.snapshot?.queryParamMap.get('planId');
+
+    if (mode === 'new') {
+      this.originalPlanId.set(null);
+      this.careerName.set('');
+      this.university.set('');
+      this.faculty.set('');
+      this.courses.set([]);
+      this.totalYears.set(1);
+      return;
+    }
+
+    if (planIdParam && planIdParam !== this.careerService.selectedCareerId()) {
+      void this.careerService.loadCareerById(planIdParam);
+    }
+
     const active = this.careerService.activeCareer();
-    if (active && active.id !== 'empty-plan' && active.id.startsWith('custom-')) {
-      this.careerName.set(active.name || '');
-      this.university.set(active.university || '');
-      this.faculty.set(active.faculty || '');
-      this.courses.set(active.courses || []);
-      if (active.courses && active.courses.length > 0) {
-        const maxY = Math.max(...active.courses.map((c) => c.year));
-        this.totalYears.set(Math.max(1, maxY));
-      }
+    if (active && active.id !== 'empty-plan' && (!planIdParam || active.id === planIdParam)) {
+      this.loadPlanIntoBuilder(active);
+    }
+  }
+
+  loadPlanIntoBuilder(plan: CareerPlan): void {
+    this.originalPlanId.set(plan.id);
+    this.careerName.set(plan.name || '');
+    this.university.set(plan.university || '');
+    this.faculty.set(plan.faculty || '');
+
+    const clonedCourses: RawCourseData[] = (plan.courses || []).map((c) => ({
+      id: c.id,
+      name: c.name,
+      year: c.year,
+      q: c.q,
+      cursarReqId: Array.isArray(c.cursarReqId) ? [...c.cursarReqId] : [],
+      aprobarReqId: Array.isArray(c.aprobarReqId) ? [...c.aprobarReqId] : [],
+      lessons: Array.isArray(c.lessons) ? c.lessons.map((l) => ({ ...l })) : [],
+    }));
+
+    this.courses.set(clonedCourses);
+    if (clonedCourses.length > 0) {
+      const maxY = Math.max(...clonedCourses.map((c) => c.year));
+      this.totalYears.set(Math.max(1, maxY));
     }
   }
 
@@ -551,10 +587,10 @@ export class CareerBuilderComponent {
       return;
     }
 
-    const active = this.careerService.activeCareer();
-    const isEditingCustom = active && active.id !== 'empty-plan' && active.id.startsWith('custom-');
+    const origId = this.originalPlanId();
+    const isEditingCustom = origId !== null && origId.startsWith('custom-');
 
-    const planId = isEditingCustom ? active.id : `custom-career-${Date.now()}`;
+    const planId = isEditingCustom ? origId : `custom-career-${Date.now()}`;
 
     const plan: CareerPlan = {
       id: planId,

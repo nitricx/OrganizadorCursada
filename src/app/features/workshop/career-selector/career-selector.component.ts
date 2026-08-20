@@ -74,7 +74,13 @@ export class CareerSelectorComponent {
     this.openWorkshop.emit();
   }
 
+  editCurrentPlanInBuilder(): void {
+    const activeId = this.careerService.selectedCareerId();
+    void this.router.navigate(['/builder'], { queryParams: { planId: activeId } });
+  }
+
   openCareerBuilder(): void {
-    void this.router.navigateByUrl('/builder');
+    void this.router.navigate(['/builder'], { queryParams: { mode: 'new' } });
   }
 }
+

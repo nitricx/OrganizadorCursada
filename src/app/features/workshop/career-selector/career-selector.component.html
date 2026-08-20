@@ -46,6 +46,12 @@
       <mat-icon class="workshop-icon">storefront</mat-icon>
       <span>Plan Hub</span>
     </button>
+    @if (careerService.selectedCareerId()) {
+      <button mat-menu-item (click)="editCurrentPlanInBuilder()" class="builder-menu-item">
+        <mat-icon class="builder-icon">edit_note</mat-icon>
+        <span>Editar plan actual en Builder</span>
+      </button>
+    }
     <button mat-menu-item (click)="openCareerBuilder()" class="builder-menu-item">
       <mat-icon class="builder-icon">add_box</mat-icon>
       <span>Armar carrera desde cero</span>

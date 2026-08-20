@@ -6,7 +6,12 @@
         <button mat-icon-button (click)="cancel()" aria-label="Volver" matTooltip="Volver al inicio">
           <mat-icon>arrow_back</mat-icon>
         </button>
-        <h1 class="page-title">Diseñador de Carrera</h1>
+        <h1 class="page-title">{{ isEditingPlan() ? 'Editar Plan de Estudio' : 'Diseñador de Carrera' }}</h1>
+        @if (isEditingPlan()) {
+          <span class="editing-badge app-badge" matTooltip="Las modificaciones se guardarán como tu copia personal local sin alterar la versión de la base de datos">
+            Modificando copia personal
+          </span>
+        }
       </div>
 
       <div class="header-inputs">
