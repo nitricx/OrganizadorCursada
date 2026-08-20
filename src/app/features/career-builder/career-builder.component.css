@@ -122,11 +122,11 @@
 }
 
 .req-dot {
-  background-color: #d97706;
+  background-color: var(--status-req-border);
 }
 
 .unlock-dot {
-  background-color: #059669;
+  background-color: var(--status-unlocks-border);
 }
 
 /* Connect Mode Toggle Button (Opción B) */
@@ -179,16 +179,16 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  background: #e6f1fb;
-  border: 1px solid #b5d4f5;
-  color: #0c4a6e;
+  background: var(--banner-info-bg);
+  border: 1px solid var(--banner-info-border);
+  color: var(--banner-info-text);
   border-radius: var(--radius-md, 8px);
   padding: 10px 16px;
   font-size: 13px;
 }
 
 .banner-icon {
-  color: #0284c7;
+  color: var(--banner-info-icon);
   font-size: 20px !important;
   width: 20px !important;
   height: 20px !important;
@@ -197,8 +197,8 @@
 .btn-banner-cancel {
   margin-left: auto;
   background: transparent;
-  border: 1px solid #0284c7;
-  color: #0284c7;
+  border: 1px solid var(--banner-info-icon);
+  color: var(--banner-info-icon);
   border-radius: var(--radius-xs, 4px);
   padding: 3px 8px;
   font-size: 11px;
@@ -207,8 +207,8 @@
 }
 
 .btn-banner-cancel:hover {
-  background: #0284c7;
-  color: #ffffff;
+  background: var(--banner-info-icon);
+  color: var(--btn-primary-text);
 }
 
 /* Grid Layout matching Home */
@@ -264,16 +264,16 @@
 }
 
 .is-req {
-  background-color: #fef3c7 !important;
-  border-color: #f59e0b !important;
-  color: #78350f !important;
+  background-color: var(--status-req-bg) !important;
+  border-color: var(--status-req-border) !important;
+  color: var(--status-req-color) !important;
   font-weight: 600;
 }
 
 .is-unlocks {
-  background-color: #d1fae5 !important;
-  border-color: #10b981 !important;
-  color: #065f46 !important;
+  background-color: var(--status-unlocks-bg) !important;
+  border-color: var(--status-unlocks-border) !important;
+  color: var(--status-unlocks-color) !important;
   font-weight: 600;
 }
 
@@ -284,7 +284,7 @@
 /* Highlight for selected source course in connect mode */
 .connecting-source {
   border: 2px solid var(--brand-primary) !important;
-  background-color: #e6f1fb !important;
+  background-color: var(--status-coursed-bg) !important;
   box-shadow: 0 0 0 3px rgba(24, 95, 165, 0.2) !important;
   animation: pulse-border 1.8s infinite;
 }
@@ -527,7 +527,7 @@
 }
 
 .icon-danger {
-  color: #d93025 !important;
+  color: var(--color-danger-text) !important;
 }
 
 .connect-modal-card {
@@ -641,11 +641,11 @@
 }
 
 .connect-option-btn.cursar:hover {
-  border-color: #185fa5;
+  border-color: var(--status-coursed-border);
 }
 
 .connect-option-btn.aprobar:hover {
-  border-color: #059669;
+  border-color: var(--status-approved-border);
 }
 
 .option-icon {
@@ -655,11 +655,11 @@
 }
 
 .cursar-icon {
-  color: #185fa5;
+  color: var(--status-coursed-border);
 }
 
 .aprobar-icon {
-  color: #059669;
+  color: var(--status-approved-border);
 }
 
 .option-text {
@@ -750,11 +750,11 @@
 }
 
 .btn-delete-modal {
-  color: #dc2626 !important;
+  color: var(--color-danger-text) !important;
   margin-right: auto;
   font-weight: 600 !important;
 }
 
 .btn-delete-modal:hover {
-  background-color: rgba(220, 38, 38, 0.08) !important;
+  background-color: var(--color-danger-hover) !important;
 }

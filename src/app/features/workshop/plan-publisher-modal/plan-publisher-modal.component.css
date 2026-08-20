@@ -14,8 +14,8 @@
 .header-title h3 { margin: 0; font-size: 1.15rem; color: var(--color-text-primary); }
 .btn-close { background: none; border: none; color: var(--color-text-secondary); font-size: 1.2rem; cursor: pointer; }
 .modal-body { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
-.audit-banner { background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: var(--radius-md); padding: 12px 16px; }
-.audit-banner.valid { background: rgba(16, 185, 129, 0.12); border-color: rgba(16, 185, 129, 0.3); }
+.audit-banner { background: var(--color-danger-bg); border: 1px solid var(--color-danger-border); border-radius: var(--radius-md); padding: 12px 16px; }
+.audit-banner.valid { background: var(--color-success-bg); border-color: var(--color-success-border); }
 .audit-status { display: flex; align-items: center; gap: 12px; }
 .status-icon { font-size: 1.4rem; }
 .audit-status strong { display: block; color: var(--color-text-primary); font-size: 0.95rem; }
@@ -23,9 +23,9 @@
 .entropy-card { background: var(--color-surface-card); border: 1px solid var(--color-border-tertiary); border-radius: var(--radius-md); padding: 12px 16px; }
 .entropy-header { display: flex; justify-content: space-between; align-items: center; font-size: 0.88rem; }
 .risk-badge { font-size: 0.75rem; padding: 3px 10px; border-radius: var(--radius-full); font-weight: 600; }
-.badge-low { background: rgba(16, 185, 129, 0.2); color: #10b981; }
-.badge-high { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
-.entropy-warning { margin: 8px 0 0 0; font-size: 0.8rem; color: #d97706; }
+.badge-low { background: var(--color-success-bg); color: var(--color-success-text); }
+.badge-high { background: var(--color-warning-bg); color: var(--color-warning-text); }
+.entropy-warning { margin: 8px 0 0 0; font-size: 0.8rem; color: var(--color-warning-text); }
 .options-grid { display: flex; flex-direction: column; gap: 10px; }
 .option-card {
   display: flex; align-items: center; gap: 14px; background: var(--color-surface-card);

@@ -68,6 +68,20 @@
   --banner-info-text: #0c4a6e;
   --banner-info-icon: #0284c7;
 
+  /* Centralized Feedback & Alert Tokens */
+  --color-danger-bg: #fee2e2;
+  --color-danger-text: #991b1b;
+  --color-danger-border: #f87171;
+  --color-danger-hover: rgba(220, 38, 38, 0.1);
+
+  --color-warning-bg: #fef3c7;
+  --color-warning-text: #78350f;
+  --color-warning-border: #f59e0b;
+
+  --color-success-bg: #d1fae5;
+  --color-success-text: #065f46;
+  --color-success-border: #10b981;
+
   /* Centralized Status Colors */
   --status-pending-bg: var(--neutral-200);
   --status-pending-color: var(--neutral-900);
@@ -137,6 +151,19 @@
   --banner-info-border: #0284c7;
   --banner-info-text: #bae6fd;
   --banner-info-icon: #38bdf8;
+
+  --color-danger-bg: #450a0a;
+  --color-danger-text: #fca5a5;
+  --color-danger-border: #ef4444;
+  --color-danger-hover: rgba(239, 68, 68, 0.2);
+
+  --color-warning-bg: #451a03;
+  --color-warning-text: #fde68a;
+  --color-warning-border: #d97706;
+
+  --color-success-bg: #064e3b;
+  --color-success-text: #a7f3d0;
+  --color-success-border: #059669;
 
   --status-pending-bg: #2d3748;
   --status-pending-color: #e2e8f0;

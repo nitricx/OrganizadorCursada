@@ -3,22 +3,23 @@
   align-items: center;
   gap: 8px;
   padding: 4px 10px;
-  background: rgba(99, 102, 241, 0.12);
-  border: 1px solid rgba(99, 102, 241, 0.3);
+  background: var(--banner-info-bg);
+  border: 1px solid var(--banner-info-border);
   border-radius: 16px;
-  color: #818cf8;
+  color: var(--banner-info-text);
   font-size: 0.8rem;
 }
 .btn-compare {
   background: transparent;
-  border: 1px solid rgba(99, 102, 241, 0.5);
-  color: #a5b4fc;
+  border: 1px solid var(--banner-info-border);
+  color: var(--banner-info-icon);
   border-radius: 10px;
   padding: 2px 8px;
   font-size: 0.72rem;
   cursor: pointer;
-  transition: background 0.2s ease;
+  transition: all var(--transition-fast);
 }
 .btn-compare:hover {
-  background: rgba(99, 102, 241, 0.25);
+  background: var(--banner-info-icon);
+  color: var(--btn-primary-text);
 }

@@ -29,7 +29,7 @@ a.active-link {
 
 [data-theme="dark"] a.active-link {
   background-color: var(--brand-primary) !important;
-  color: #ffffff !important;
+  color: var(--btn-primary-text) !important;
 }
 
 .sidebar-expansion-panel {

@@ -103,14 +103,14 @@
 }
 
 .btn-subscribe {
-  background: var(--brand-primary); color: #ffffff; border: none; padding: 6px 14px; border-radius: var(--radius-sm); font-weight: 600; cursor: pointer; transition: all var(--transition-fast); font-size: 0.82rem;
+  background: var(--brand-primary); color: var(--btn-primary-text); border: none; padding: 6px 14px; border-radius: var(--radius-sm); font-weight: 600; cursor: pointer; transition: all var(--transition-fast); font-size: 0.82rem;
 }
 .btn-subscribe:hover { opacity: 0.9; transform: translateY(-1px); }
 
 .modal-footer { padding: 16px 20px; border-top: 1px solid var(--color-border-tertiary); display: flex; justify-content: flex-end; }
 .btn-secondary { background: var(--btn-secondary-bg); color: var(--btn-secondary-text); border: 1px solid var(--btn-secondary-border); padding: 8px 18px; border-radius: var(--radius-sm); font-weight: 600; cursor: pointer; }
-.btn-unsubscribe { background: rgba(220, 38, 38, 0.1); color: #dc2626; border: 1px solid rgba(220, 38, 38, 0.3); padding: 6px 14px; border-radius: var(--radius-sm); font-size: 0.82rem; }
-.btn-unsubscribe:hover { background: rgba(220, 38, 38, 0.2); }
+.btn-unsubscribe { background: var(--color-danger-hover); color: var(--color-danger-text); border: 1px solid var(--color-danger-border); padding: 6px 14px; border-radius: var(--radius-sm); font-size: 0.82rem; cursor: pointer; }
+.btn-unsubscribe:hover { opacity: 0.9; }
 
 .empty-row td {
   text-align: center;
