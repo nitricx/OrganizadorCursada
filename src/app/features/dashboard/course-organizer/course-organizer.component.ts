@@ -3,7 +3,8 @@ import { CommonModule } from '@angular/common';
 import { CourseService } from '../../../services/course.service';
 import { CourseOrganizerLegendComponent } from '../course-organizer-legend/course-organizer-legend.component';
 import { CourseGridComponent } from '../course-grid/course-grid.component';
-import { LessonSelectorModalComponent } from '../lesson-selector-modal/lesson-selector-modal.component';
+import { LessonSelectorModalComponent } from '../../schedule/lesson-selector-modal/lesson-selector-modal.component';
+
 import { NoPlanSelectedComponent } from '../../../shared/components/no-plan-selected/no-plan-selected.component';
 import { Course } from '../../../models/course';
 
