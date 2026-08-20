@@ -41,7 +41,6 @@ export class SidebarComponent {
   items = computed(() => [
     { label: 'Home', route: '/home', icon: 'home' },
     { label: 'Mi Semana', route: '/myWeek', icon: 'calendar_view_week' },
-    { label: 'Correlatividades', route: '/requisites', icon: 'alt_route' },
     {
       label: 'Calendario Académico',
       route: '/academicCalendar',
