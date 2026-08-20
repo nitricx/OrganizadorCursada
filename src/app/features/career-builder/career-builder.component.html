@@ -175,17 +175,17 @@
 
         <form (submit)="$event.preventDefault(); saveCourse()" class="modal-form">
           <div class="input-field">
-            <label for="course-name-modal">Nombre de la Materia *</label>
-            <input
-              id="course-name-modal"
-              type="text"
-              class="custom-input"
-              placeholder="Ej: Análisis Matemático I"
-              [ngModel]="courseFormName()"
-              (ngModelChange)="courseFormName.set($event)"
-              name="courseName"
-              autofocus
-            />
+            <mat-form-field appearance="outline" class="course-name-field">
+              <mat-label>Nombre de la Materia *</mat-label>
+              <input
+                matInput
+                placeholder="Ej: Análisis Matemático I"
+                [ngModel]="courseFormName()"
+                (ngModelChange)="courseFormName.set($event)"
+                name="courseName"
+                autofocus
+              />
+            </mat-form-field>
           </div>
 
           <!-- Lessons / Commissions Section -->
@@ -208,59 +208,80 @@
               <div class="lessons-list">
                 @for (lesson of courseFormLessons(); track $index) {
                   <div class="lesson-row">
-                    <div class="lesson-field prof-field">
-                      <label>Profesor / Cátedra</label>
-                      <input
-                        type="text"
-                        class="custom-input"
-                        placeholder="Ej: Cátedra A"
-                        [value]="lesson.professor"
-                        (input)="updateLessonField($index, 'professor', $any($event.target).value)"
-                      />
-                    </div>
+                    <input
+                      type="text"
+                      class="custom-input prof-input"
+                      placeholder="Profesor / Cátedra"
+                      [value]="lesson.professor"
+                      (input)="updateLessonField($index, 'professor', $any($event.target).value)"
+                    />
 
-                    <div class="lesson-field day-field">
-                      <label>Día</label>
-                      <select
-                        class="custom-select"
-                        [value]="lesson.day"
-                        (change)="updateLessonField($index, 'day', +$any($event.target).value)"
-                      >
-                        @for (d of daysOfWeekList; track d.value) {
-                          <option [value]="d.value">{{ d.label }}</option>
-                        }
-                      </select>
-                    </div>
+                    <select
+                      class="custom-select day-select"
+                      [value]="lesson.day"
+                      (change)="updateLessonField($index, 'day', +$any($event.target).value)"
+                    >
+                      @for (d of daysOfWeekList; track d.value) {
+                        <option [value]="d.value">{{ d.label }}</option>
+                      }
+                    </select>
 
-                    <div class="lesson-field time-field">
-                      <label>Inicio</label>
-                      <input
-                        type="time"
-                        class="custom-input time-input"
-                        [value]="lesson.startTime"
-                        (change)="updateLessonField($index, 'startTime', $any($event.target).value)"
-                      />
-                    </div>
+                    <div class="time-range-inline">
+                      <div class="time-picker-compact">
+                        <select
+                          class="custom-select-time"
+                          [value]="getHour(lesson.startTime)"
+                          (change)="updateLessonHour($index, 'startTime', $any($event.target).value)"
+                        >
+                          @for (h of startHourOptions; track h) {
+                            <option [value]="h">{{ h }}</option>
+                          }
+                        </select>
+                        <span class="colon-sep">:</span>
+                        <select
+                          class="custom-select-time"
+                          [value]="getMinute(lesson.startTime)"
+                          (change)="updateLessonMinute($index, 'startTime', $any($event.target).value)"
+                        >
+                          @for (m of minuteOptions; track m) {
+                            <option [value]="m">{{ m }}</option>
+                          }
+                        </select>
+                      </div>
 
-                    <div class="lesson-field time-field">
-                      <label>Fin</label>
-                      <input
-                        type="time"
-                        class="custom-input time-input"
-                        [value]="lesson.endTime"
-                        (change)="updateLessonField($index, 'endTime', $any($event.target).value)"
-                      />
+                      <span class="time-to-sep">a</span>
+
+                      <div class="time-picker-compact">
+                        <select
+                          class="custom-select-time"
+                          [value]="getHour(lesson.endTime)"
+                          (change)="updateLessonHour($index, 'endTime', $any($event.target).value)"
+                        >
+                          @for (h of endHourOptions; track h) {
+                            <option [value]="h">{{ h }}</option>
+                          }
+                        </select>
+                        <span class="colon-sep">:</span>
+                        <select
+                          class="custom-select-time"
+                          [value]="getMinute(lesson.endTime)"
+                          (change)="updateLessonMinute($index, 'endTime', $any($event.target).value)"
+                        >
+                          @for (m of minuteOptions; track m) {
+                            <option [value]="m">{{ m }}</option>
+                          }
+                        </select>
+                      </div>
                     </div>
 
                     <button
                       type="button"
                       mat-icon-button
-                      color="warn"
                       class="btn-remove-lesson"
                       (click)="removeLessonFormRow($index)"
                       matTooltip="Eliminar comisión"
                     >
-                      <mat-icon>delete_outline</mat-icon>
+                      <mat-icon class="icon-danger">delete_outline</mat-icon>
                     </button>
                   </div>
                 }

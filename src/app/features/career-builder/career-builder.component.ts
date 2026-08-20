@@ -68,6 +68,10 @@ export class CareerBuilderComponent {
     { value: DayOfWeek.Saturday, label: 'Sábado' },
   ];
 
+  readonly startHourOptions = ['08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20'];
+  readonly endHourOptions = ['09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23'];
+  readonly minuteOptions = ['00', '15', '30', '45'];
+
   readonly yearsArray = computed(() => {
     const count = Math.max(1, Math.min(10, this.totalYears()));
     return Array.from({ length: count }, (_, i) => i + 1);
@@ -355,6 +359,32 @@ export class CareerBuilderComponent {
 
   removeLessonFormRow(index: number): void {
     this.courseFormLessons.update((list) => list.filter((_, i) => i !== index));
+  }
+
+  getHour(timeStr: string): string {
+    if (!timeStr || !timeStr.includes(':')) return '08';
+    return timeStr.split(':')[0].padStart(2, '0');
+  }
+
+  getMinute(timeStr: string): string {
+    if (!timeStr || !timeStr.includes(':')) return '00';
+    return timeStr.split(':')[1].padStart(2, '0');
+  }
+
+  updateLessonHour(index: number, field: 'startTime' | 'endTime', hour: string): void {
+    const current = this.courseFormLessons()[index];
+    if (!current) return;
+    const currentStr = field === 'startTime' ? current.startTime : current.endTime;
+    const minute = this.getMinute(currentStr);
+    this.updateLessonField(index, field, `${hour}:${minute}`);
+  }
+
+  updateLessonMinute(index: number, field: 'startTime' | 'endTime', minute: string): void {
+    const current = this.courseFormLessons()[index];
+    if (!current) return;
+    const currentStr = field === 'startTime' ? current.startTime : current.endTime;
+    const hour = this.getHour(currentStr);
+    this.updateLessonField(index, field, `${hour}:${minute}`);
   }
 
   updateLessonField<K extends keyof Lesson>(index: number, key: K, value: Lesson[K]): void {

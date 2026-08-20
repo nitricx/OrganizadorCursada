@@ -388,9 +388,11 @@
 
 .modal-card {
   width: 100%;
-  max-width: 580px;
+  max-width: 680px;
   max-height: 90vh;
   overflow-y: auto;
+  overflow-x: hidden;
+  box-sizing: border-box;
   background: var(--color-background-primary);
   border: 1px solid var(--color-border-secondary);
   border-radius: var(--radius-md, 12px);
@@ -398,99 +400,134 @@
   box-shadow: var(--shadow-lg);
 }
 
-.lessons-form-section {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  background: var(--color-background-secondary);
-  border: 1px solid var(--color-border-tertiary);
-  border-radius: var(--radius-sm, 8px);
-  padding: 12px;
+::ng-deep .time-select-panel {
+  min-width: 90px !important;
+  max-width: 120px !important;
 }
 
-.lessons-header-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 8px;
+::ng-deep .time-select-panel .mat-mdc-option {
+  min-height: 36px !important;
+  font-size: 13px !important;
+  padding-left: 10px !important;
+  padding-right: 10px !important;
 }
 
-.lessons-header-row label {
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-  color: var(--color-text-secondary);
+.modal-card mat-form-field {
+  width: 100%;
 }
 
-.btn-add-lesson {
-  font-size: 11px !important;
-  font-weight: 600 !important;
-  color: var(--brand-primary) !important;
-  padding: 2px 8px !important;
-  min-height: 28px !important;
-  height: 28px !important;
+.modal-card .mat-mdc-form-field-subscript-wrapper {
+  display: none !important;
 }
 
-.empty-lessons-text {
-  font-size: 12px;
-  color: var(--color-text-tertiary);
-  margin: 4px 0 0;
-}
-
+.modal-form,
+.lessons-form-section,
 .lessons-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-top: 4px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .lesson-row {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   gap: 8px;
   background: var(--color-background-primary);
   border: 1px solid var(--color-border-tertiary);
-  border-radius: var(--radius-sm, 6px);
+  border-radius: var(--radius-sm, 8px);
   padding: 8px 10px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-.lesson-field {
+.prof-input {
+  flex: 1 1 140px;
+  min-width: 110px;
+  height: 36px;
+  padding: 0 10px;
+  font-size: 13px;
+  border: 1px solid var(--color-border-secondary);
+  border-radius: 6px;
+  background: var(--color-background-primary);
+  color: var(--color-text-primary);
+}
+
+.prof-input:focus {
+  outline: none;
+  border-color: var(--brand-primary);
+}
+
+.day-select {
+  flex: 0 0 100px;
+  height: 36px;
+  padding: 0 6px;
+  font-size: 13px;
+  border: 1px solid var(--color-border-secondary);
+  border-radius: 6px;
+  background: var(--color-background-primary);
+  color: var(--color-text-primary);
+  cursor: pointer;
+}
+
+.time-range-inline {
   display: flex;
-  flex-direction: column;
-  gap: 3px;
+  align-items: center;
+  gap: 4px;
+  background: var(--color-background-secondary);
+  border: 1px solid var(--color-border-tertiary);
+  border-radius: 6px;
+  padding: 3px 8px;
+  height: 36px;
+  box-sizing: border-box;
 }
 
-.lesson-field label {
-  font-size: 10px;
+.time-picker-compact {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.custom-select-time {
+  height: 26px;
+  padding: 0 4px;
+  font-size: 13px;
+  font-weight: 700;
+  border: 1px solid var(--color-border-tertiary);
+  border-radius: 4px;
+  background: var(--color-background-primary);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  text-align: center;
+}
+
+.custom-select-time:focus {
+  outline: none;
+  border-color: var(--brand-primary);
+}
+
+.colon-sep {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-text-secondary);
+}
+
+.time-to-sep {
+  font-size: 12px;
   font-weight: 600;
   color: var(--color-text-tertiary);
-  text-transform: uppercase;
-}
-
-.prof-field {
-  flex: 2;
-  min-width: 130px;
-}
-
-.day-field {
-  flex: 1.2;
-  min-width: 95px;
-}
-
-.time-field {
-  width: 90px;
-}
-
-.time-input {
-  padding: 6px 8px;
-  font-size: 12px;
+  padding: 0 2px;
 }
 
 .btn-remove-lesson {
-  width: 32px !important;
-  height: 32px !important;
-  margin-bottom: 2px;
+  width: 36px !important;
+  height: 36px !important;
+  flex-shrink: 0;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.icon-danger {
+  color: #d93025 !important;
 }
 
 .connect-modal-card {
