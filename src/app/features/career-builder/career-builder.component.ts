@@ -12,6 +12,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { CareerService } from '../../services/career.service';
 import { ToastService } from '../../services/toast.service';
 import { CareerPlan, RawCourseData } from '../../models/career.model';
+import { Lesson, DayOfWeek } from '../../models/course';
 
 @Component({
   selector: 'app-career-builder',
@@ -50,12 +51,22 @@ export class CareerBuilderComponent {
   readonly connectSourceCourse = signal<RawCourseData | null>(null);
   readonly connectTargetCourse = signal<RawCourseData | null>(null);
 
-  // Modal / Form state for subject card (Caja aislada)
+  // Modal / Form state for subject card
   readonly isModalOpen = signal<boolean>(false);
   readonly activeCourseId = signal<number | null>(null);
   readonly courseFormName = signal<string>('');
   readonly courseFormYear = signal<number>(1);
   readonly courseFormQ = signal<number>(1);
+  readonly courseFormLessons = signal<Lesson[]>([]);
+
+  readonly daysOfWeekList = [
+    { value: DayOfWeek.Monday, label: 'Lunes' },
+    { value: DayOfWeek.Tuesday, label: 'Martes' },
+    { value: DayOfWeek.Wednesday, label: 'Miércoles' },
+    { value: DayOfWeek.Thursday, label: 'Jueves' },
+    { value: DayOfWeek.Friday, label: 'Viernes' },
+    { value: DayOfWeek.Saturday, label: 'Sábado' },
+  ];
 
   readonly yearsArray = computed(() => {
     const count = Math.max(1, Math.min(10, this.totalYears()));
@@ -163,7 +174,7 @@ export class CareerBuilderComponent {
     return '';
   }
 
-  // --- Connect Mode Logic (Opción B) ---
+  // --- Connect Mode Logic ---
 
   toggleConnectMode(): void {
     const nextState = !this.isConnectMode();
@@ -185,7 +196,6 @@ export class CareerBuilderComponent {
   hasIntermediatePath(sourceId: number, targetId: number): boolean {
     const courses = this.courses();
 
-    // Materias que ya tienen a sourceId como requisito directo
     const directChildren = courses.filter(
       (c) => (c.cursarReqId || []).includes(sourceId) || (c.aprobarReqId || []).includes(sourceId),
     );
@@ -196,7 +206,6 @@ export class CareerBuilderComponent {
     while (queue.length > 0) {
       const currentId = queue.shift()!;
       if (currentId === targetId) {
-        // Existe una ruta intermedia: sourceId -> materia intermedia -> ... -> targetId
         return true;
       }
       if (visited.has(currentId)) continue;
@@ -216,9 +225,6 @@ export class CareerBuilderComponent {
   }
 
   getPrerequisiteType(sourceId: number, targetId: number): 'cursar' | 'aprobar' {
-    // Si ya existe una materia intermedia en la cadena entre Origen y Destino (ej: A -> C -> B),
-    // es una dependencia de 2º Orden (requiere examen final aprobado).
-    // Si no hay materias intermedias encadenadas, es de 1º Orden (requiere solo cursada).
     return this.hasIntermediatePath(sourceId, targetId) ? 'aprobar' : 'cursar';
   }
 
@@ -233,21 +239,17 @@ export class CareerBuilderComponent {
     const source = this.connectSourceCourse();
 
     if (!source) {
-      // Step A: Select Source (Requisito)
       this.connectSourceCourse.set(course);
       this.toastService.info(`Seleccionaste "${course.name}" (Origen). Ahora hacé clic en la materia que la requiere (Destino).`);
       return;
     }
 
-    // Step B: Select Target
     if (source.id === course.id) {
-      // Clicked same course -> cancel selection
       this.cancelConnection();
       this.toastService.info('Selección de vinculación cancelada.');
       return;
     }
 
-    // Check anti-cycle
     if (this.wouldCreateCycle(source.id, course.id)) {
       this.toastService.warning(`No se puede vincular "${source.name}" a "${course.name}" porque generaría un ciclo de dependencia circular.`);
       return;
@@ -294,8 +296,6 @@ export class CareerBuilderComponent {
     return false;
   }
 
-
-
   removePrerequisite(targetCourseId: number, reqId: number, type: 'cursar' | 'aprobar', event?: Event): void {
     if (event) event.stopPropagation();
 
@@ -318,6 +318,7 @@ export class CareerBuilderComponent {
     this.courseFormName.set('');
     this.courseFormYear.set(year);
     this.courseFormQ.set(q);
+    this.courseFormLessons.set([]);
     this.isModalOpen.set(true);
   }
 
@@ -327,11 +328,39 @@ export class CareerBuilderComponent {
     this.courseFormName.set(course.name);
     this.courseFormYear.set(course.year);
     this.courseFormQ.set(course.q);
+    this.courseFormLessons.set(
+      course.lessons ? course.lessons.map((l) => ({ ...l })) : [],
+    );
     this.isModalOpen.set(true);
   }
 
   closeModal(): void {
     this.isModalOpen.set(false);
+  }
+
+  // --- Commission / Lesson Form Management ---
+
+  addLessonFormRow(): void {
+    const activeId = this.activeCourseId() || Date.now();
+    const current = this.courseFormLessons();
+    const newLesson: Lesson = {
+      id: `L-${activeId}-${current.length + 1}`,
+      professor: '',
+      day: DayOfWeek.Monday,
+      startTime: '08:00',
+      endTime: '12:00',
+    };
+    this.courseFormLessons.set([...current, newLesson]);
+  }
+
+  removeLessonFormRow(index: number): void {
+    this.courseFormLessons.update((list) => list.filter((_, i) => i !== index));
+  }
+
+  updateLessonField<K extends keyof Lesson>(index: number, key: K, value: Lesson[K]): void {
+    this.courseFormLessons.update((list) =>
+      list.map((l, i) => (i === index ? { ...l, [key]: value } : l)),
+    );
   }
 
   saveCourse(): void {
@@ -343,6 +372,7 @@ export class CareerBuilderComponent {
 
     const year = this.courseFormYear();
     const q = this.courseFormQ();
+    const lessons = this.courseFormLessons();
 
     if (year > this.totalYears()) {
       this.totalYears.set(year);
@@ -352,7 +382,7 @@ export class CareerBuilderComponent {
     if (existingId !== null) {
       // Update existing course
       this.courses.update((list) =>
-        list.map((c) => (c.id === existingId ? { ...c, name, year, q } : c)),
+        list.map((c) => (c.id === existingId ? { ...c, name, year, q, lessons } : c)),
       );
       this.toastService.info(`Materia "${name}" actualizada.`);
     } else {
@@ -365,7 +395,7 @@ export class CareerBuilderComponent {
         q,
         cursarReqId: [],
         aprobarReqId: [],
-        lessons: [],
+        lessons,
       };
       this.courses.update((list) => [...list, newCourse]);
       this.toastService.success(`Materia "${name}" agregada.`);

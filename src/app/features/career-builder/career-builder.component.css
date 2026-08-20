@@ -388,12 +388,109 @@
 
 .modal-card {
   width: 100%;
-  max-width: 440px;
+  max-width: 580px;
+  max-height: 90vh;
+  overflow-y: auto;
   background: var(--color-background-primary);
   border: 1px solid var(--color-border-secondary);
   border-radius: var(--radius-md, 12px);
   padding: 20px;
   box-shadow: var(--shadow-lg);
+}
+
+.lessons-form-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: var(--color-background-secondary);
+  border: 1px solid var(--color-border-tertiary);
+  border-radius: var(--radius-sm, 8px);
+  padding: 12px;
+}
+
+.lessons-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.lessons-header-row label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--color-text-secondary);
+}
+
+.btn-add-lesson {
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  color: var(--brand-primary) !important;
+  padding: 2px 8px !important;
+  min-height: 28px !important;
+  height: 28px !important;
+}
+
+.empty-lessons-text {
+  font-size: 12px;
+  color: var(--color-text-tertiary);
+  margin: 4px 0 0;
+}
+
+.lessons-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.lesson-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  background: var(--color-background-primary);
+  border: 1px solid var(--color-border-tertiary);
+  border-radius: var(--radius-sm, 6px);
+  padding: 8px 10px;
+}
+
+.lesson-field {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.lesson-field label {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+}
+
+.prof-field {
+  flex: 2;
+  min-width: 130px;
+}
+
+.day-field {
+  flex: 1.2;
+  min-width: 95px;
+}
+
+.time-field {
+  width: 90px;
+}
+
+.time-input {
+  padding: 6px 8px;
+  font-size: 12px;
+}
+
+.btn-remove-lesson {
+  width: 32px !important;
+  height: 32px !important;
+  margin-bottom: 2px;
 }
 
 .connect-modal-card {

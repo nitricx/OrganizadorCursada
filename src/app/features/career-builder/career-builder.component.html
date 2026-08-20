@@ -188,6 +188,86 @@
             />
           </div>
 
+          <!-- Lessons / Commissions Section -->
+          <div class="lessons-form-section">
+            <div class="lessons-header-row">
+              <label>Comisiones / Cátedras (Profesor y Horario):</label>
+              <button
+                type="button"
+                mat-button
+                class="btn-add-lesson"
+                (click)="addLessonFormRow()"
+              >
+                <mat-icon>add</mat-icon> <span>Agregar Comisión</span>
+              </button>
+            </div>
+
+            @if (courseFormLessons().length === 0) {
+              <p class="empty-lessons-text">Sin comisiones registradas. Podés agregar comisiones con sus docentes y horarios.</p>
+            } @else {
+              <div class="lessons-list">
+                @for (lesson of courseFormLessons(); track $index) {
+                  <div class="lesson-row">
+                    <div class="lesson-field prof-field">
+                      <label>Profesor / Cátedra</label>
+                      <input
+                        type="text"
+                        class="custom-input"
+                        placeholder="Ej: Cátedra A"
+                        [value]="lesson.professor"
+                        (input)="updateLessonField($index, 'professor', $any($event.target).value)"
+                      />
+                    </div>
+
+                    <div class="lesson-field day-field">
+                      <label>Día</label>
+                      <select
+                        class="custom-select"
+                        [value]="lesson.day"
+                        (change)="updateLessonField($index, 'day', +$any($event.target).value)"
+                      >
+                        @for (d of daysOfWeekList; track d.value) {
+                          <option [value]="d.value">{{ d.label }}</option>
+                        }
+                      </select>
+                    </div>
+
+                    <div class="lesson-field time-field">
+                      <label>Inicio</label>
+                      <input
+                        type="time"
+                        class="custom-input time-input"
+                        [value]="lesson.startTime"
+                        (change)="updateLessonField($index, 'startTime', $any($event.target).value)"
+                      />
+                    </div>
+
+                    <div class="lesson-field time-field">
+                      <label>Fin</label>
+                      <input
+                        type="time"
+                        class="custom-input time-input"
+                        [value]="lesson.endTime"
+                        (change)="updateLessonField($index, 'endTime', $any($event.target).value)"
+                      />
+                    </div>
+
+                    <button
+                      type="button"
+                      mat-icon-button
+                      color="warn"
+                      class="btn-remove-lesson"
+                      (click)="removeLessonFormRow($index)"
+                      matTooltip="Eliminar comisión"
+                    >
+                      <mat-icon>delete_outline</mat-icon>
+                    </button>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+
           @if (activeCourseId() !== null) {
             @let courseObj = getCourseById(activeCourseId()!);
             @if (courseObj) {
