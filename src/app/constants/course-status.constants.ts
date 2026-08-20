@@ -49,6 +49,36 @@ export const COURSE_STATUS_CONFIG: Record<CourseStatus, CourseStatusConfig> = {
   },
 };
 
+export const AVAILABLE_STATUS_CONFIG: CourseStatusConfig = {
+  key: 'pending',
+  label: 'Disponible para cursar',
+  tag: 'disponible',
+  symbol: '',
+  bg: '#e6f0fa',
+  color: '#042c53',
+  borderColor: '#185fa5',
+};
+
+export const REQ_STATUS_CONFIG: CourseStatusConfig = {
+  key: 'pending',
+  label: 'Requisito',
+  tag: 'requisito',
+  symbol: '',
+  bg: '#fac775',
+  color: '#412402',
+  borderColor: '#ba7517',
+};
+
+export const UNLOCKS_STATUS_CONFIG: CourseStatusConfig = {
+  key: 'pending',
+  label: 'Desbloquea',
+  tag: 'desbloquea',
+  symbol: '',
+  bg: '#9fe1cb',
+  color: '#04342c',
+  borderColor: '#0f6e56',
+};
+
 export const COURSE_STATUS_LIST: CourseStatusConfig[] = [
   COURSE_STATUS_CONFIG.pending,
   COURSE_STATUS_CONFIG.coursing,

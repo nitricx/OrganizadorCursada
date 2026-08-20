@@ -20,6 +20,7 @@
             <mat-label>Filtrar Estado</mat-label>
             <mat-select [value]="selectedStatus()" (selectionChange)="onStatusSelectValueChange($event.value)" aria-label="Filtrar por estado">
               <mat-option value="all">Todos los estados</mat-option>
+              <mat-option value="available">Disponible para cursar</mat-option>
               <mat-option *ngFor="let st of statusConfigList" [value]="st.key">
                 {{ st.label }}
               </mat-option>
@@ -71,6 +72,8 @@
         </div>
       </div>
     </div>
+
+    <app-course-organizer-legend />
 
     <div class="diagram-container-card">
       <div #cyContainer class="cy-canvas" role="img" aria-label="Diagrama interactivo de correlatividades de materias"></div>

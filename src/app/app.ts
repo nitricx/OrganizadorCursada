@@ -108,10 +108,6 @@ export class App implements OnInit {
     this.toast.show('¡Plan de demostración cargado correctamente!', 'success');
   }
 
-  handleImportPlan(): void {
-    this.openWorkshop();
-  }
-
   openWorkshop(): void {
     this.planService.openWorkshop();
     this.internalWorkshopSignal.set(true);

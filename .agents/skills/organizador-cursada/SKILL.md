@@ -82,8 +82,8 @@ All application state is managed via reactive Signal Stores in `src/app/services
 3. **`CareerService` (`src/app/services/career.service.ts`)**:
    - Multi-career catalog switcher. Reads local bundles (`audiovisual.json`, `sistemas.json`), custom user plans from `localStorage`, and remote community plans via Firebase Firestore.
 
-4. **`FirestoreSyncService` & `PlanImportExportService`**:
-   - Handles community workshop publication, remote plan fetching, and local plan JSON import/export.
+4. **`FirestoreSyncService`**:
+   - Handles community workshop publication and remote plan fetching via Firebase Firestore.
 
 5. **Quality, Privacy & Security Services**:
    - **`PlanSanitizerService`**: Strips identifying metadata ($k$-anonymity enforcement) before publishing plans.

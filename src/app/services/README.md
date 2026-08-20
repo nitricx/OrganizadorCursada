@@ -13,7 +13,6 @@ This directory contains the central reactive state management stores, synchroniz
 
 ### 2. Workshop Hub & Cloud Sync
 - **`firestore-sync.service.ts`**: Manages remote read/write sync of public community plans (`PlanManifest`) with Firebase Firestore.
-- **`plan-import-export.service.ts`**: Client-side JSON import/export handler for user study plans.
 - **`static-bundle-fetcher.service.ts`**: Fetches pre-compiled static career datasets from the assets folder.
 - **`sync-scheduler.service.ts`**: Schedules periodic update checks for subscribed community plans.
 

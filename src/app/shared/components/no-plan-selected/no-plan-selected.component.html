@@ -39,28 +39,6 @@
           <span>Cargar Demo</span>
         </button>
       </div>
-
-      <!-- Card 3: Import Plan JSON -->
-      <div class="action-card" (click)="triggerFileInput()">
-        <div class="card-icon-wrapper">
-          <mat-icon>folder_open</mat-icon>
-        </div>
-        <div class="card-text">
-          <h3>Importar Archivo JSON</h3>
-          <p>Cargá un plan exportado desde tu dispositivo.</p>
-        </div>
-        <button mat-stroked-button class="action-btn" (click)="$event.stopPropagation(); triggerFileInput()">
-          <span>Subir Archivo</span>
-        </button>
-      </div>
     </div>
-
-    <input
-      #fileInput
-      type="file"
-      accept=".json"
-      style="display: none"
-      (change)="onFileSelected($event)"
-    />
   </div>
 </div>

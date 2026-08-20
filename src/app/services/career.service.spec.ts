@@ -70,45 +70,6 @@ describe('CareerService', () => {
   });
 
 
-  it('should import a valid custom JSON career plan successfully', () => {
-    const customJson = JSON.stringify({
-      id: 'custom-ing',
-      name: 'Ingeniería Personalizada',
-      university: 'Universidad Test',
-      courses: [
-        {
-          id: 101,
-          name: 'Programación 1',
-          year: 1,
-          q: 1,
-          cursarReqId: [],
-          aprobarReqId: [],
-          lessons: [
-            {
-              id: 'P1-L1',
-              professor: 'Prof. X',
-              day: 1,
-              startTime: '09:00',
-              endTime: '12:00',
-            },
-          ],
-        },
-      ],
-    });
-
-    const result = service.importCareerFromJson(customJson);
-    expect(result.success).toBe(true);
-    expect(result.careerId).toBe('custom-ing');
-    expect(service.selectedCareerId()).toBe('custom-ing');
-    expect(service.activeCareer().name).toBe('Ingeniería Personalizada');
-  });
-
-  it('should return error when importing malformed JSON string', () => {
-    const badJson = '{ invalid json string';
-    const result = service.importCareerFromJson(badJson);
-    expect(result.success).toBe(false);
-    expect(result.error).toContain('Error');
-  });
 
   it('should remove a career and switch selected career to remaining career', () => {
     service.addCareerFromManifest({ id: 'c1', name: 'Carrera 1', courses: [] });

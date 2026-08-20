@@ -23,9 +23,13 @@ import dagre from 'cytoscape-dagre';
 import { CourseService } from '../../../services/course.service';
 import { Course, CourseStatus } from '../../../models/course';
 import { NoPlanSelectedComponent } from '../../../shared/components/no-plan-selected/no-plan-selected.component';
+import { CourseOrganizerLegendComponent } from '../../dashboard/course-organizer-legend/course-organizer-legend.component';
 import {
   COURSE_STATUS_CONFIG,
   COURSE_STATUS_LIST,
+  AVAILABLE_STATUS_CONFIG,
+  REQ_STATUS_CONFIG,
+  UNLOCKS_STATUS_CONFIG,
   getCourseStatusConfig,
 } from '../../../constants/course-status.constants';
 
@@ -38,6 +42,7 @@ cytoscape.use(dagre);
     CommonModule,
     FormsModule,
     NoPlanSelectedComponent,
+    CourseOrganizerLegendComponent,
     MatIconModule,
     MatFormFieldModule,
     MatSelectModule,
@@ -150,8 +155,18 @@ export class RequisitesFlowComponent implements AfterViewInit, OnDestroy {
       if (status === 'all') {
         this.cy?.elements().removeClass('status-dimmed');
       } else {
-        const matchingNodes = this.cy?.nodes().filter((n) => n.data('status') === status);
-        const nonMatchingNodes = this.cy?.nodes().filter((n) => n.data('status') !== status);
+        const isMatch = (n: cytoscape.NodeSingular) => {
+          if (status === 'available') {
+            return n.data('isAvailable') === true;
+          }
+          if (status === 'pending') {
+            return n.data('status') === 'pending' && !n.data('isAvailable');
+          }
+          return n.data('status') === status;
+        };
+
+        const matchingNodes = this.cy?.nodes().filter(isMatch);
+        const nonMatchingNodes = this.cy?.nodes().filter((n) => !isMatch(n));
         const matchingEdges = matchingNodes?.connectedEdges();
 
         nonMatchingNodes?.addClass('status-dimmed');
@@ -266,7 +281,9 @@ export class RequisitesFlowComponent implements AfterViewInit, OnDestroy {
     sortedYears.forEach((yearVal, colIdx) => {
       const yearCourses = coursesByYearMap.get(yearVal)!;
       yearCourses.forEach((course, rowIdx) => {
-        const config = getCourseStatusConfig(course.status);
+        const isAvailable =
+          course.status === 'pending' && this.courseService.areAllRequirementsMet(course);
+        const config = isAvailable ? AVAILABLE_STATUS_CONFIG : getCourseStatusConfig(course.status);
         const xPos = colIdx * colWidth + 120;
         const yPos = rowIdx * rowHeight + 80;
 
@@ -278,7 +295,8 @@ export class RequisitesFlowComponent implements AfterViewInit, OnDestroy {
             year: course.year,
             q: course.q,
             status: course.status,
-            statusLabel: config.label,
+            isAvailable,
+            statusLabel: isAvailable ? 'Disponible' : config.label,
             bg: config.bg,
             color: config.color,
             borderColor: config.borderColor,
@@ -423,19 +441,54 @@ export class RequisitesFlowComponent implements AfterViewInit, OnDestroy {
         },
       },
       {
-        selector: '.highlighted',
+        selector: '.self-highlighted',
         style: {
           'z-index': 999,
           opacity: 1,
+          'border-width': 4,
+          'border-color': '#185fa5',
+        },
+      },
+      {
+        selector: 'node.req-highlighted',
+        style: {
+          'z-index': 998,
+          opacity: 1,
+          'background-color': REQ_STATUS_CONFIG.bg,
+          color: REQ_STATUS_CONFIG.color,
+          'border-color': REQ_STATUS_CONFIG.borderColor,
           'border-width': 3.5,
         },
       },
       {
-        selector: 'edge.highlighted',
+        selector: 'edge.req-highlighted',
         style: {
           width: 4,
           opacity: 1,
-          'z-index': 999,
+          'line-color': REQ_STATUS_CONFIG.borderColor,
+          'target-arrow-color': REQ_STATUS_CONFIG.borderColor,
+          'z-index': 998,
+        },
+      },
+      {
+        selector: 'node.unlocks-highlighted',
+        style: {
+          'z-index': 998,
+          opacity: 1,
+          'background-color': UNLOCKS_STATUS_CONFIG.bg,
+          color: UNLOCKS_STATUS_CONFIG.color,
+          'border-color': UNLOCKS_STATUS_CONFIG.borderColor,
+          'border-width': 3.5,
+        },
+      },
+      {
+        selector: 'edge.unlocks-highlighted',
+        style: {
+          width: 4,
+          opacity: 1,
+          'line-color': UNLOCKS_STATUS_CONFIG.borderColor,
+          'target-arrow-color': UNLOCKS_STATUS_CONFIG.borderColor,
+          'z-index': 998,
         },
       },
       {
@@ -458,15 +511,33 @@ export class RequisitesFlowComponent implements AfterViewInit, OnDestroy {
 
     this.cy.on('mouseover', 'node', (evt) => {
       const node = evt.target as cytoscape.NodeSingular;
-      // Highlight only direct dependencies (direct incoming and direct outgoing neighbors)
-      const highlighted = node.closedNeighborhood();
+
+      // Incoming edges and nodes (Prerequisites / Requisito)
+      const inEdges = node.incomers('edge');
+      const inNodes = node.incomers('node');
+
+      // Outgoing edges and nodes (Unlocks / Desbloquea)
+      const outEdges = node.outgoers('edge');
+      const outNodes = node.outgoers('node');
+
+      const highlighted = node.union(inEdges).union(inNodes).union(outEdges).union(outNodes);
 
       this.cy?.elements().difference(highlighted).addClass('dimmed');
-      highlighted.addClass('highlighted');
+
+      node.addClass('self-highlighted');
+      inEdges.addClass('req-highlighted');
+      inNodes.addClass('req-highlighted');
+      outEdges.addClass('unlocks-highlighted');
+      outNodes.addClass('unlocks-highlighted');
     });
 
     this.cy.on('mouseout', 'node', () => {
-      this.cy?.elements().removeClass('highlighted').removeClass('dimmed');
+      this.cy
+        ?.elements()
+        .removeClass('self-highlighted')
+        .removeClass('req-highlighted')
+        .removeClass('unlocks-highlighted')
+        .removeClass('dimmed');
       this.applyStatusFilterDimming();
     });
 

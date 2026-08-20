@@ -5,7 +5,6 @@ import { PlanSanitizerService } from '../../../services/plan-sanitizer.service';
 import { EntropyScorerService, EntropyReport } from '../../../services/entropy-scorer.service';
 import { PlanLinterService, LintResult } from '../../../services/plan-linter.service';
 import { encodePlanToUrlHash } from '../../../utils/hash-serializer.util';
-import { PlanImportExportService } from '../../../services/plan-import-export.service';
 import { AntiSybilService } from '../../../services/anti-sybil.service';
 import { ToastService } from '../../../services/toast.service';
 
@@ -23,7 +22,6 @@ export class PlanPublisherModalComponent implements OnInit {
   private sanitizer = inject(PlanSanitizerService);
   private entropyScorer = inject(EntropyScorerService);
   private linter = inject(PlanLinterService);
-  private importExportService = inject(PlanImportExportService);
   private antiSybil = inject(AntiSybilService);
   private toast = inject(ToastService);
 
@@ -50,24 +48,6 @@ export class PlanPublisherModalComponent implements OnInit {
       this.toast.show('¡Enlace de WhatsApp/Telegram copiado al portapapeles!', 'success');
     } catch {
       this.toast.show('Error al generar el enlace de compartir.', 'error');
-    }
-  }
-
-  downloadPlanFile(): void {
-    if (!this.sanitizedManifest) return;
-    try {
-      const jsonStr = this.importExportService.exportPublicWorkshopPlan(this.sanitizedManifest);
-      const blob = new Blob([jsonStr], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${this.sanitizedManifest.name.toLowerCase().replace(/\s+/g, '_')}.orgcursada-plan`;
-      a.click();
-      URL.revokeObjectURL(url);
-      this.toast.show('Archivo .orgcursada-plan descargado exitosamente.', 'success');
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Error exportando archivo de plan.';
-      this.toast.show(message, 'error');
     }
   }
 

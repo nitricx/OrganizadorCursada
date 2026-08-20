@@ -27,20 +27,6 @@
         </button>
       </div>
 
-      <!-- Card 2: Import Plan -->
-      <div class="action-card" (click)="onImportPlan.emit()">
-        <div class="card-icon-wrapper">
-          <span class="card-icon">📂</span>
-        </div>
-        <div class="card-content">
-          <h3>Importar Plan</h3>
-          <p>¿Tienes un archivo JSON o un enlace de un compañero? Impórtalo al instante a tu lienzo.</p>
-        </div>
-        <button class="btn btn-secondary" (click)="$event.stopPropagation(); onImportPlan.emit()">
-          <span>Importar Archivo</span>
-        </button>
-      </div>
-
       <!-- Card 3: Demo Plan -->
       <div class="action-card" (click)="onLoadDemoPlan.emit()">
         <div class="card-icon-wrapper">

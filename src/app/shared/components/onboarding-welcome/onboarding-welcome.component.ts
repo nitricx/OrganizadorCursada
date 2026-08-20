@@ -10,6 +10,5 @@ import { CommonModule } from '@angular/common';
 })
 export class OnboardingWelcomeComponent {
   onOpenWorkshop = output<void>();
-  onImportPlan = output<void>();
   onLoadDemoPlan = output<void>();
 }

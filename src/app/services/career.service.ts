@@ -337,45 +337,6 @@ export class CareerService {
   }
 
 
-  importCareerFromJson(jsonString: string): { success: boolean; error?: string; careerId?: string } {
-    try {
-      const parsed = JSON.parse(jsonString);
-      if (!this.validateCareerPlan(parsed)) {
-        return {
-          success: false,
-          error: 'Formato de JSON inválido. Debe contener "id", "name" y un arreglo "courses" válido.',
-        };
-      }
-
-      const plan: CareerPlan = parsed;
-      this.unmarkCareerAsRemoved(plan.id);
-      this.customPlansMapSignal.update((map) => new Map(map).set(plan.id, plan));
-
-      const customKey = `${CareerService.CUSTOM_CAREER_PREFIX}${plan.id}`;
-      this.safeSetItem(customKey, JSON.stringify(plan));
-
-      const newEntry: CareerIndexEntry = {
-        id: plan.id,
-        name: plan.name,
-        university: plan.university ?? 'Personalizada',
-      };
-
-
-      const customIndex = this.loadCustomIndex();
-      const updatedCustom = [...customIndex.filter((c) => c.id !== plan.id), newEntry];
-      this.safeSetItem(CareerService.CUSTOM_CAREERS_INDEX_KEY, JSON.stringify(updatedCustom));
-
-      const updatedAll = [...this.careersSignal().filter((c) => c.id !== plan.id), newEntry];
-      this.careersSignal.set(updatedAll);
-
-      this.selectCareer(plan.id);
-
-      return { success: true, careerId: plan.id };
-    } catch (err: any) {
-      return { success: false, error: `Error al procesar el archivo JSON: ${err?.message || 'Sintaxis errónea'}` };
-    }
-  }
-
   validateCareerPlan(data: any): data is CareerPlan {
     if (!data || typeof data !== 'object') return false;
     if (typeof data.id !== 'string' || !data.id.trim()) return false;

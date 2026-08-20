@@ -16,6 +16,16 @@ const MOCK_COURSES: Course[] = [
     aprobarReqId: [],
     lessons: [],
   },
+  {
+    id: 2,
+    name: 'Materia 2',
+    year: 1,
+    q: 2,
+    status: 'pending',
+    cursarReqId: [1],
+    aprobarReqId: [],
+    lessons: [],
+  },
 ];
 
 class MockCourseService {
@@ -25,6 +35,10 @@ class MockCourseService {
 
   getCourseById(id: number): Course | undefined {
     return this._courses().find((c) => c.id === id);
+  }
+
+  areAllRequirementsMet(course: Course): boolean {
+    return course.cursarReqId.length === 0;
   }
 }
 
@@ -56,8 +70,22 @@ describe('RequisitesFlowComponent', () => {
     expect(component.cy).not.toBeNull();
   });
 
-  it('should filter by status signal', () => {
-    component.selectedStatus.set('approved');
-    expect(component.selectedStatus()).toBe('approved');
+  it('should assign available chip color for pending courses with met requirements', () => {
+    const node1 = component.cy?.getElementById('1');
+    const node2 = component.cy?.getElementById('2');
+
+    expect(node1?.data('isAvailable')).toBe(true);
+    expect(node1?.data('bg')).toBe('#e6f0fa');
+    expect(node1?.data('statusLabel')).toBe('Disponible');
+
+    expect(node2?.data('isAvailable')).toBe(false);
+    expect(node2?.data('bg')).toBe('#e8e7e0');
+    expect(node2?.data('statusLabel')).toBe('Pendiente');
+  });
+
+  it('should filter by available status signal', () => {
+    component.onStatusSelectValueChange('available');
+    expect(component.selectedStatus()).toBe('available');
   });
 });
+
