@@ -1,31 +1,32 @@
 .modal-backdrop {
   position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(6px);
+  background: var(--modal-backdrop-bg); backdrop-filter: blur(4px);
   display: flex; align-items: center; justify-content: center;
   z-index: 9999; padding: 16px;
 }
 .glass-panel {
-  background: #181825; border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 16px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-  color: #cdd6f4; width: 100%; max-width: 900px; max-height: 85vh;
+  background: var(--modal-card-bg); border: 1px solid var(--modal-border);
+  border-radius: var(--radius-md); box-shadow: var(--shadow-lg);
+  color: var(--color-text-primary); width: 100%; max-width: 900px; max-height: 85vh;
   display: flex; flex-direction: column;
 }
-.modal-header { padding: 16px 20px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); display: flex; justify-content: space-between; align-items: center; }
+.modal-header { padding: 16px 20px; border-bottom: 1px solid var(--color-border-tertiary); display: flex; justify-content: space-between; align-items: center; }
 .header-title { display: flex; align-items: center; gap: 10px; }
-.header-title h3 { margin: 0; font-size: 1.15rem; color: #f5e0dc; }
-.btn-close { background: none; border: none; color: #a6adc8; font-size: 1.2rem; cursor: pointer; }
+.header-title h3 { margin: 0; font-size: 1.15rem; color: var(--color-text-primary); }
+.btn-close { background: none; border: none; color: var(--color-text-secondary); font-size: 1.2rem; cursor: pointer; }
 .modal-body { padding: 20px; display: flex; flex-direction: column; gap: 16px; overflow-y: auto; }
 .search-input {
-  width: 100%; padding: 10px 14px; background: #11111b; border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 10px; color: #cdd6f4; font-size: 0.9rem; outline: none; box-sizing: border-box;
+  width: 100%; padding: 10px 14px; background: var(--input-bg); border: 1px solid var(--input-border);
+  border-radius: var(--radius-sm); color: var(--color-text-primary); font-size: 0.9rem; outline: none; box-sizing: border-box;
+  transition: border-color var(--transition-fast), background-color var(--transition-fast);
 }
-.search-input:focus { border-color: #89b4fa; }
+.search-input:focus { border-color: var(--input-border-focus); background: var(--color-background-primary); }
 
 .table-container {
   overflow-x: auto;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
-  background: #1e1e2e;
+  border: 1px solid var(--color-border-tertiary);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-card);
 }
 .workshop-table {
   width: 100%;
@@ -34,21 +35,21 @@
   font-size: 0.88rem;
 }
 .workshop-table th {
-  background: #11111b;
-  color: #a6adc8;
+  background: var(--color-background-secondary);
+  color: var(--color-text-secondary);
   padding: 12px 14px;
   font-weight: 600;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid var(--color-border-tertiary);
   white-space: nowrap;
 }
 .workshop-table th.sortable {
   cursor: pointer;
   user-select: none;
-  transition: color 0.15s ease, background-color 0.15s ease;
+  transition: color var(--transition-fast), background-color var(--transition-fast);
 }
 .workshop-table th.sortable:hover {
-  color: #89b4fa;
-  background: #181825;
+  color: var(--brand-primary);
+  background: var(--color-surface-hover);
 }
 .sort-icon {
   font-size: 0.75rem;
@@ -57,15 +58,15 @@
 }
 .workshop-table td {
   padding: 12px 14px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  color: #cdd6f4;
+  border-bottom: 1px solid var(--color-border-tertiary);
+  color: var(--color-text-primary);
   vertical-align: middle;
 }
 .workshop-table tbody tr:last-child td {
   border-bottom: none;
 }
 .workshop-table tbody tr:hover {
-  background: rgba(255, 255, 255, 0.02);
+  background: var(--color-surface-hover);
 }
 
 .plan-name-cell {
@@ -75,26 +76,26 @@
 }
 .plan-title {
   font-weight: 600;
-  color: #f5e0dc;
+  color: var(--color-text-primary);
 }
 .badge-subscribers {
   font-size: 0.72rem;
   padding: 2px 6px;
-  background: rgba(137, 180, 250, 0.15);
-  color: #89b4fa;
-  border-radius: 10px;
+  background: var(--brand-primary-light);
+  color: var(--brand-primary);
+  border-radius: var(--radius-full);
   width: fit-content;
 }
 
 .col-faculty, .col-university {
-  color: #a6adc8;
+  color: var(--color-text-secondary);
 }
 .version-tag {
   font-size: 0.75rem;
   padding: 2px 8px;
-  background: rgba(255, 255, 255, 0.06);
-  border-radius: 6px;
-  color: #9399b2;
+  background: var(--color-background-secondary);
+  border-radius: var(--radius-xs);
+  color: var(--color-text-tertiary);
 }
 
 .text-right {
@@ -102,19 +103,19 @@
 }
 
 .btn-subscribe {
-  background: #89b4fa; color: #11111b; border: none; padding: 6px 14px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; font-size: 0.82rem;
+  background: var(--brand-primary); color: #ffffff; border: none; padding: 6px 14px; border-radius: var(--radius-sm); font-weight: 600; cursor: pointer; transition: all var(--transition-fast); font-size: 0.82rem;
 }
 .btn-subscribe:hover { opacity: 0.9; transform: translateY(-1px); }
 
-.modal-footer { padding: 16px 20px; border-top: 1px solid rgba(255, 255, 255, 0.08); display: flex; justify-content: flex-end; }
-.btn-secondary { background: #313244; color: #cdd6f4; border: none; padding: 8px 18px; border-radius: 10px; font-weight: 600; cursor: pointer; }
-.btn-unsubscribe { background: rgba(243, 139, 168, 0.15); color: #f38ba8; border: 1px solid rgba(243, 139, 168, 0.3); padding: 6px 14px; border-radius: 8px; font-size: 0.82rem; }
-.btn-unsubscribe:hover { background: rgba(243, 139, 168, 0.25); color: #f38ba8; }
+.modal-footer { padding: 16px 20px; border-top: 1px solid var(--color-border-tertiary); display: flex; justify-content: flex-end; }
+.btn-secondary { background: var(--btn-secondary-bg); color: var(--btn-secondary-text); border: 1px solid var(--btn-secondary-border); padding: 8px 18px; border-radius: var(--radius-sm); font-weight: 600; cursor: pointer; }
+.btn-unsubscribe { background: rgba(220, 38, 38, 0.1); color: #dc2626; border: 1px solid rgba(220, 38, 38, 0.3); padding: 6px 14px; border-radius: var(--radius-sm); font-size: 0.82rem; }
+.btn-unsubscribe:hover { background: rgba(220, 38, 38, 0.2); }
 
 .empty-row td {
   text-align: center;
   padding: 24px;
-  color: #6c7086;
+  color: var(--color-text-tertiary);
   font-style: italic;
 }
 

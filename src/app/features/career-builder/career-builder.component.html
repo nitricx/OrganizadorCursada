@@ -1,6 +1,6 @@
-<div class="wrap">
+<div class="wrap app-page-wrap">
   <!-- Header Bar -->
-  <header class="builder-header">
+  <header class="builder-header app-header-bar">
     <div class="header-main-info">
       <div class="header-title-row">
         <button mat-icon-button (click)="cancel()" aria-label="Volver" matTooltip="Volver al inicio">
@@ -12,14 +12,14 @@
       <div class="header-inputs">
         <input
           type="text"
-          class="builder-input"
+          class="builder-input app-input"
           placeholder="Nombre de la Carrera (ej: Licenciatura en Informática) *"
           [ngModel]="careerName()"
           (ngModelChange)="careerName.set($event)"
         />
         <input
           type="text"
-          class="builder-input"
+          class="builder-input app-input"
           placeholder="Universidad / Institución (ej: UNLP, UBA, UTN...) *"
           [ngModel]="university()"
           (ngModelChange)="university.set($event)"
@@ -31,10 +31,10 @@
       <!-- Hover Legend matching /home -->
       <div class="hover-legend">
         <span class="legend-title">🖱️ AL PASAR EL CURSOR:</span>
-        <span class="legend-badge req-badge">
+        <span class="legend-badge req-badge app-badge">
           <span class="badge-dot req-dot"></span> Requisito
         </span>
-        <span class="legend-badge unlock-badge">
+        <span class="legend-badge unlock-badge app-badge">
           <span class="badge-dot unlock-dot"></span> Desbloquea
         </span>
       </div>
@@ -64,7 +64,7 @@
 
   <!-- Connect Mode Instruction Banner -->
   @if (isConnectMode()) {
-    <div class="connect-banner">
+    <div class="connect-banner app-banner-info">
       <mat-icon class="banner-icon">info</mat-icon>
       @if (!connectSourceCourse()) {
         <span><strong>Modo Vinculación Activo:</strong> Hacé clic en la materia <strong>requisito (Origen)</strong>.</span>
@@ -164,9 +164,9 @@
 
   <!-- Add/Edit Subject Modal Dialog -->
   @if (isModalOpen()) {
-    <div class="modal-backdrop" (click)="closeModal()">
-      <div class="modal-card" (click)="$event.stopPropagation()">
-        <header class="modal-header">
+    <div class="modal-backdrop app-modal-backdrop" (click)="closeModal()">
+      <div class="modal-card app-modal-card" (click)="$event.stopPropagation()">
+        <header class="modal-header app-modal-header">
           <h3>{{ activeCourseId() !== null ? 'Editar Materia' : 'Nueva Materia' }}</h3>
           <button mat-icon-button (click)="closeModal()" class="close-modal-btn">
             <mat-icon>close</mat-icon>
@@ -210,14 +210,14 @@
                   <div class="lesson-row">
                     <input
                       type="text"
-                      class="custom-input prof-input"
+                      class="custom-input prof-input app-input"
                       placeholder="Profesor / Cátedra"
                       [value]="lesson.professor"
                       (input)="updateLessonField($index, 'professor', $any($event.target).value)"
                     />
 
                     <select
-                      class="custom-select day-select"
+                      class="custom-select day-select app-select"
                       [value]="lesson.day"
                       (change)="updateLessonField($index, 'day', +$any($event.target).value)"
                     >
@@ -333,7 +333,7 @@
             }
           }
 
-          <footer class="modal-footer">
+          <footer class="modal-footer app-modal-footer">
             @if (activeCourseId() !== null) {
               <button
                 mat-button
@@ -355,3 +355,4 @@
     </div>
   }
 </div>
+
