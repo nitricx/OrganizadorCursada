@@ -20,8 +20,3 @@ export interface GoogleSyncConfig {
   lastSyncedAt?: string;
 }
 
-export interface SyncedEventMapping {
-  lessonId: string;
-  googleEventId: string;
-  lastUpdated: string;
-}

@@ -13,16 +13,12 @@ This directory contains the central reactive state management stores, synchroniz
 
 ### 2. Workshop Hub & Cloud Sync
 - **`firestore-sync.service.ts`**: Manages remote read/write sync of public community plans (`PlanManifest`) with Firebase Firestore.
-- **`static-bundle-fetcher.service.ts`**: Fetches pre-compiled static career datasets from the assets folder.
-- **`sync-scheduler.service.ts`**: Schedules periodic update checks for subscribed community plans.
 
 ### 3. Plan Quality & Privacy Layer
 - **`plan-sanitizer.service.ts`**: Pre-flight $k$-anonymity sanitizer that strips personal identifying user data, author tags, and high-cardinality fields before publishing plans to the Workshop Hub.
 - **`plan-linter.service.ts`**: Audits study plan schemas for circular prerequisite dependencies, invalid course IDs, or broken semester mappings.
 - **`anti-sybil.service.ts`**: Calculates anonymity entropy and anti-spam confidence scores for community-contributed plans.
 - **`entropy-scorer.service.ts`**: Scores metadata variance to prevent cohort intersection fingerprinting.
-- **`voting-nullifier.service.ts`**: Zero-knowledge nullifier service preventing double-voting on workshop plans while maintaining user anonymity.
-- **`ohttp-client.service.ts`**: Oblivious HTTP client relay wrapper masking client IP addresses when querying remote workshop APIs.
 
 ### 4. Utilities & Presentation
 - **`calendar-export.service.ts`**: Generates iCal (`.ics`) file definitions and Google Calendar deep-links for `coursingLessons`.
