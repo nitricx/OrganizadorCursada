@@ -38,7 +38,7 @@ export class SidebarComponent {
   onOpenWorkshop = output<void>();
   onOpenPublisher = output<void>();
 
-  items = computed(() => [
+  items = computed<SidebarItem[]>(() => [
     { label: 'Home', route: '/home', icon: 'home' },
     { label: 'Mi Semana', route: '/myWeek', icon: 'calendar_view_week' },
     {
@@ -53,7 +53,6 @@ export class SidebarComponent {
       })),
       addButton: true,
     },
-    { label: 'Compartir Plan', action: 'open_publisher', icon: 'ios_share' }
   ]);
 
   addPlan(item: SidebarItem): void {
