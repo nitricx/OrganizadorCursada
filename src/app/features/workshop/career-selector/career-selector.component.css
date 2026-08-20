@@ -19,8 +19,8 @@
 }
 
 .career-chip-btn:hover {
-  background-color: var(--color-background-tertiary, rgba(0, 0, 0, 0.08)) !important;
-  border-color: var(--brand-primary, #3b82f6) !important;
+  background-color: var(--color-surface-hover) !important;
+  border-color: var(--brand-primary) !important;
 }
 
 .career-chip-text {
@@ -55,7 +55,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--color-text-tertiary, #94a3b8);
+  color: var(--color-text-tertiary);
 }
 
 ::ng-deep .career-selector-menu .career-option-details {
@@ -89,19 +89,19 @@
 }
 
 ::ng-deep .career-selector-menu .active-career-item .career-check-icon {
-  color: var(--brand-primary, #3b82f6);
+  color: var(--brand-primary);
 }
 
 ::ng-deep .career-selector-menu .workshop-menu-item,
 ::ng-deep .career-selector-menu .builder-menu-item,
 ::ng-deep .career-selector-menu .import-menu-item {
-  color: var(--brand-primary, #3b82f6);
+  color: var(--brand-primary);
 }
 
 ::ng-deep .career-selector-menu .workshop-icon,
 ::ng-deep .career-selector-menu .builder-icon,
 ::ng-deep .career-selector-menu .import-icon {
-  color: var(--brand-primary, #3b82f6);
+  color: var(--brand-primary);
 }
 
 ::ng-deep .career-selector-menu .career-menu-row {
@@ -129,8 +129,8 @@
 
 ::ng-deep .career-selector-menu .career-delete-btn:hover {
   opacity: 1;
-  color: #ef4444 !important;
-  background-color: rgba(239, 68, 68, 0.1) !important;
+  color: var(--color-danger-text) !important;
+  background-color: var(--color-danger-hover) !important;
 }
 
 ::ng-deep .career-selector-menu .career-delete-btn .mat-icon,
@@ -152,7 +152,7 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: var(--modal-backdrop-bg);
   backdrop-filter: blur(4px);
   z-index: 1000;
   display: flex;
@@ -162,14 +162,15 @@
 }
 
 .confirm-modal-card {
-  background: var(--color-background-elevated, #ffffff);
-  color: var(--color-text-primary, #1e293b);
-  border-radius: 16px;
+  background: var(--modal-card-bg);
+  color: var(--color-text-primary);
+  border: 1px solid var(--modal-border);
+  border-radius: var(--radius-md, 16px);
   padding: 24px;
   max-width: 440px;
   width: calc(100vw - 32px);
   box-sizing: border-box;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  box-shadow: var(--shadow-lg);
   animation: modalFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   overflow: hidden;
 }
@@ -201,7 +202,7 @@
 }
 
 .warn-icon {
-  color: #f59e0b;
+  color: var(--color-warning-border);
   font-size: 28px;
   width: 28px;
   height: 28px;
@@ -224,7 +225,7 @@
 }
 
 .warn-text {
-  color: var(--color-text-secondary, #64748b);
+  color: var(--color-text-secondary);
   font-size: 13px !important;
 }
 

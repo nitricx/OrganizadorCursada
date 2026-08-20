@@ -16,7 +16,7 @@
 .legend-divider {
   width: 1px;
   height: 22px;
-  background: var(--color-border-secondary, #d1d5db);
+  background: var(--color-border-tertiary);
   margin: 0 4px;
 }
 
@@ -26,7 +26,7 @@
   gap: 4px;
   font-size: 0.75rem;
   font-weight: 600;
-  color: var(--color-text-secondary, #6b7280);
+  color: var(--color-text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.03em;
 }
@@ -35,7 +35,7 @@
   font-size: 14px;
   width: 14px;
   height: 14px;
-  color: var(--color-text-tertiary, #9ca3af);
+  color: var(--color-text-tertiary);
 }
 
 .legend-chip-set {
@@ -66,7 +66,7 @@
 
 .legend-hint {
   width: 100%;
-  color: var(--color-text-secondary, #888);
+  color: var(--color-text-secondary);
   font-size: 0.8rem;
   font-style: italic;
   margin-top: 2px;

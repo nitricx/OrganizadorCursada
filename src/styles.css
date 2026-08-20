@@ -68,49 +68,45 @@
   --banner-info-text: #0c4a6e;
   --banner-info-icon: #0284c7;
 
-  /* Centralized Feedback & Alert Tokens */
+  /* Centralized 5 Core Semantic Palette Roles */
   --color-danger-bg: #fee2e2;
   --color-danger-text: #991b1b;
   --color-danger-border: #f87171;
   --color-danger-hover: rgba(220, 38, 38, 0.1);
 
-  --color-warning-bg: #fef3c7;
-  --color-warning-text: #78350f;
-  --color-warning-border: #f59e0b;
+  --color-warning-bg: #fff8e1;
+  --color-warning-text: #5d4e06;
+  --color-warning-border: #d4b856;
 
-  --color-success-bg: #d1fae5;
-  --color-success-text: #065f46;
-  --color-success-border: #10b981;
+  --color-success-bg: #e1f5ee;
+  --color-success-text: #04342c;
+  --color-success-border: #0f6e56;
 
-  /* Centralized Status Colors */
+  /* Centralized Status & Highlight Aliases (Consolidated to Core Roles) */
   --status-pending-bg: var(--neutral-200);
   --status-pending-color: var(--neutral-900);
   --status-pending-border: var(--neutral-500);
 
-  --status-coursing-bg: #fff8e1;
-  --status-coursing-color: #5d4e06;
-  --status-coursing-border: #d4b856;
+  --status-coursing-bg: var(--color-warning-bg);
+  --status-coursing-color: var(--color-warning-text);
+  --status-coursing-border: var(--color-warning-border);
+  --status-req-bg: var(--color-warning-bg);
+  --status-req-color: var(--color-warning-text);
+  --status-req-border: var(--color-warning-border);
 
-  --status-coursed-bg: #e6f1fb;
-  --status-coursed-color: #042c53;
-  --status-coursed-border: #185fa5;
+  --status-coursed-bg: var(--banner-info-bg);
+  --status-coursed-color: var(--banner-info-text);
+  --status-coursed-border: var(--brand-primary);
+  --status-available-bg: var(--banner-info-bg);
+  --status-available-color: var(--banner-info-text);
+  --status-available-border: var(--brand-primary);
 
-  --status-approved-bg: #e1f5ee;
-  --status-approved-color: #04342c;
-  --status-approved-border: #0f6e56;
-
-  /* Highlight & Legend auxiliary colors */
-  --status-available-bg: #e6f0fa;
-  --status-available-color: #042c53;
-  --status-available-border: #185fa5;
-
-  --status-req-bg: #fac775;
-  --status-req-color: #412402;
-  --status-req-border: #ba7517;
-
-  --status-unlocks-bg: #9fe1cb;
-  --status-unlocks-color: #04342c;
-  --status-unlocks-border: #0f6e56;
+  --status-approved-bg: var(--color-success-bg);
+  --status-approved-color: var(--color-success-text);
+  --status-approved-border: var(--color-success-border);
+  --status-unlocks-bg: var(--color-success-bg);
+  --status-unlocks-color: var(--color-success-text);
+  --status-unlocks-border: var(--color-success-border);
 
   /* Transitions */
   --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
@@ -157,9 +153,9 @@
   --color-danger-border: #ef4444;
   --color-danger-hover: rgba(239, 68, 68, 0.2);
 
-  --color-warning-bg: #451a03;
-  --color-warning-text: #fde68a;
-  --color-warning-border: #d97706;
+  --color-warning-bg: #3b2d04;
+  --color-warning-text: #fef08a;
+  --color-warning-border: #854d0e;
 
   --color-success-bg: #064e3b;
   --color-success-text: #a7f3d0;
@@ -169,29 +165,34 @@
   --status-pending-color: #e2e8f0;
   --status-pending-border: #4a5568;
 
-  --status-available-bg: #032b45;
-  --status-available-color: #90caf9;
-  --status-available-border: #38bdf8;
+  --status-coursing-bg: var(--color-warning-bg);
+  --status-coursing-color: var(--color-warning-text);
+  --status-coursing-border: var(--color-warning-border);
+  --status-req-bg: var(--color-warning-bg);
+  --status-req-color: var(--color-warning-text);
+  --status-req-border: var(--color-warning-border);
 
-  --status-coursing-bg: #3b2d04;
-  --status-coursing-color: #fef08a;
-  --status-coursing-border: #854d0e;
+  --status-coursed-bg: var(--banner-info-bg);
+  --status-coursed-color: var(--banner-info-text);
+  --status-coursed-border: var(--banner-info-border);
+  --status-available-bg: var(--banner-info-bg);
+  --status-available-color: var(--banner-info-text);
+  --status-available-border: var(--banner-info-border);
 
-  --status-coursed-bg: #0c2a4a;
-  --status-coursed-color: #bae6fd;
-  --status-coursed-border: #0284c7;
-
-  --status-approved-bg: #064e3b;
-  --status-approved-color: #a7f3d0;
-  --status-approved-border: #059669;
+  --status-approved-bg: var(--color-success-bg);
+  --status-approved-color: var(--color-success-text);
+  --status-approved-border: var(--color-success-border);
+  --status-unlocks-bg: var(--color-success-bg);
+  --status-unlocks-color: var(--color-success-text);
+  --status-unlocks-border: var(--color-success-border);
 }
 
 .info-req {
-  color: #8a4a00;
+  color: var(--color-warning-border);
 }
 
 .info-unlocks {
-  color: #0a5c3f;
+  color: var(--color-success-border);
 }
 
 [data-theme="dark"] .info-req {

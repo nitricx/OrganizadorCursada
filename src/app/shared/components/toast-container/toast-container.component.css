@@ -28,7 +28,7 @@
   animation: toast-slide-up 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   max-width: 36rem;
   width: auto;
-  color: #ffffff;
+  color: var(--btn-primary-text);
 }
 
 @keyframes toast-slide-up {

@@ -42,7 +42,7 @@ mat-sidenav {
 }
 
 .breadcrumb-separator {
-  color: var(--color-text-tertiary, #94a3b8);
+  color: var(--color-text-tertiary);
   font-size: 16px;
   font-weight: 400;
   user-select: none;

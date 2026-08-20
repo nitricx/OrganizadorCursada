@@ -1,7 +1,7 @@
 .available {
-  background: var(--status-available-bg, #e6f0fa) !important;
-  color: var(--status-available-color, #042c53) !important;
-  border-color: var(--status-available-border, #185fa5) !important;
+  background: var(--status-available-bg) !important;
+  color: var(--status-available-color) !important;
+  border-color: var(--status-available-border) !important;
 }
 
 .btn-commission-badge {
@@ -12,19 +12,19 @@
   padding: 0.15rem 0.4rem;
   font-size: 0.7rem;
   font-weight: 600;
-  border-radius: 4px;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  background: rgba(0, 0, 0, 0.25);
-  color: #ffffff;
+  border-radius: var(--radius-xs, 4px);
+  border: 1px solid var(--color-border-tertiary);
+  background: var(--color-background-primary);
+  color: var(--color-text-primary);
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all var(--transition-fast);
   line-height: 1.2;
 }
 
 .btn-commission-badge:hover {
-  background: rgba(0, 0, 0, 0.45);
-  border-color: #38bdf8;
-  color: #38bdf8;
+  background: var(--color-surface-hover);
+  border-color: var(--brand-primary);
+  color: var(--brand-primary);
 }
 
 .btn-commission-badge .badge-icon {
@@ -32,4 +32,3 @@
   width: 12px;
   height: 12px;
 }
-

@@ -61,7 +61,7 @@
 
 .progress-bar-fill {
   height: 100%;
-  background: linear-gradient(90deg, var(--brand-primary), #059669);
+  background: linear-gradient(90deg, var(--brand-primary), var(--status-approved-border));
   border-radius: var(--radius-full);
   transition: width 0.4s ease;
 }
@@ -85,7 +85,7 @@
 }
 
 .info-icon {
-  color: var(--brand-primary, #3b82f6);
+  color: var(--brand-primary);
   flex-shrink: 0;
 }
 

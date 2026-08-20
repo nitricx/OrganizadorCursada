@@ -145,7 +145,7 @@
 
 .btn-connect-mode.active {
   background-color: var(--brand-primary) !important;
-  color: #ffffff !important;
+  color: var(--btn-primary-text) !important;
   box-shadow: var(--shadow-sm);
 }
 
@@ -165,7 +165,7 @@
   font-size: 13px !important;
   font-weight: 600 !important;
   background-color: var(--brand-primary) !important;
-  color: #ffffff !important;
+  color: var(--btn-primary-text) !important;
   border-radius: var(--radius-sm, 6px) !important;
   height: 36px !important;
 }
@@ -352,7 +352,7 @@
 
 .add-year-circle-btn {
   background-color: var(--brand-primary) !important;
-  color: #ffffff !important;
+  color: var(--btn-primary-text) !important;
   width: 44px !important;
   height: 44px !important;
   box-shadow: var(--shadow-sm) !important;
