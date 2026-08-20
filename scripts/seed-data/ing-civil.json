@@ -1,0 +1,515 @@
+{
+  "id": "ing-civil",
+  "name": "Ingeniería Civil",
+  "university": "Universidad Tecnológica Nacional",
+  "faculty": "Facultad Regional Buenos Aires",
+  "subscribersRange": "50-100",
+  "version": "Plan 1995 Adecuado (Ciclo Lectivo 2024)",
+  "updatedAt": "2026-08-20",
+  "courses": [
+    {
+      "id": 1,
+      "name": "Análisis Matemático I",
+      "year": 1,
+      "q": 3,
+      "cursarReqId": [],
+      "aprobarReqId": [],
+      "lessons": []
+    },
+    {
+      "id": 2,
+      "name": "Álgebra y Geometría Analítica",
+      "year": 1,
+      "q": 3,
+      "cursarReqId": [],
+      "aprobarReqId": [],
+      "lessons": []
+    },
+    {
+      "id": 3,
+      "name": "Ingeniería y Sociedad",
+      "year": 1,
+      "q": 3,
+      "cursarReqId": [],
+      "aprobarReqId": [],
+      "lessons": []
+    },
+    {
+      "id": 4,
+      "name": "Ingeniería Civil I",
+      "year": 1,
+      "q": 3,
+      "cursarReqId": [],
+      "aprobarReqId": [],
+      "lessons": []
+    },
+    {
+      "id": 5,
+      "name": "Sistema de Representación",
+      "year": 1,
+      "q": 3,
+      "cursarReqId": [],
+      "aprobarReqId": [],
+      "lessons": []
+    },
+    {
+      "id": 6,
+      "name": "Química General",
+      "year": 1,
+      "q": 3,
+      "cursarReqId": [],
+      "aprobarReqId": [],
+      "lessons": []
+    },
+    {
+      "id": 7,
+      "name": "Física I",
+      "year": 1,
+      "q": 3,
+      "cursarReqId": [],
+      "aprobarReqId": [],
+      "lessons": []
+    },
+    {
+      "id": 8,
+      "name": "Fundamentos de Informática",
+      "year": 1,
+      "q": 3,
+      "cursarReqId": [],
+      "aprobarReqId": [],
+      "lessons": []
+    },
+    {
+      "id": 9,
+      "name": "Análisis Matemático II",
+      "year": 2,
+      "q": 3,
+      "cursarReqId": [1, 2],
+      "aprobarReqId": [1, 2],
+      "lessons": []
+    },
+    {
+      "id": 10,
+      "name": "Estabilidad",
+      "year": 2,
+      "q": 3,
+      "cursarReqId": [1, 2, 7],
+      "aprobarReqId": [1, 2, 7],
+      "lessons": []
+    },
+    {
+      "id": 11,
+      "name": "Ingeniería Civil II",
+      "year": 2,
+      "q": 3,
+      "cursarReqId": [4, 7],
+      "aprobarReqId": [4, 5, 7],
+      "lessons": []
+    },
+    {
+      "id": 12,
+      "name": "Tecnología de los Materiales",
+      "year": 2,
+      "q": 3,
+      "cursarReqId": [6, 7],
+      "aprobarReqId": [6, 7],
+      "lessons": []
+    },
+    {
+      "id": 13,
+      "name": "Física II",
+      "year": 2,
+      "q": 3,
+      "cursarReqId": [1, 7],
+      "aprobarReqId": [1, 7],
+      "lessons": []
+    },
+    {
+      "id": 14,
+      "name": "Probabilidad y Estadística",
+      "year": 2,
+      "q": 3,
+      "cursarReqId": [1, 2],
+      "aprobarReqId": [1, 2],
+      "lessons": []
+    },
+    {
+      "id": 15,
+      "name": "Taller de Idioma - Nivel I",
+      "year": 2,
+      "q": 1,
+      "cursarReqId": [],
+      "aprobarReqId": [],
+      "lessons": []
+    },
+    {
+      "id": 16,
+      "name": "Resistencia de Materiales",
+      "year": 3,
+      "q": 3,
+      "cursarReqId": [1, 2, 7, 10],
+      "aprobarReqId": [10],
+      "lessons": []
+    },
+    {
+      "id": 17,
+      "name": "Tecnología del Hormigón",
+      "year": 3,
+      "q": 3,
+      "cursarReqId": [1, 2, 6, 7, 12, 14],
+      "aprobarReqId": [12, 14],
+      "lessons": []
+    },
+    {
+      "id": 18,
+      "name": "Tecnología de la Construcción",
+      "year": 3,
+      "q": 3,
+      "cursarReqId": [1, 2, 4, 6, 7, 8, 10, 11, 12],
+      "aprobarReqId": [10, 11, 12],
+      "lessons": []
+    },
+    {
+      "id": 19,
+      "name": "Geotopografía",
+      "year": 3,
+      "q": 3,
+      "cursarReqId": [1, 2, 7, 9, 13],
+      "aprobarReqId": [9, 13],
+      "lessons": []
+    },
+    {
+      "id": 20,
+      "name": "Hidráulica General y Aplicada",
+      "year": 3,
+      "q": 3,
+      "cursarReqId": [1, 2, 7, 9, 10],
+      "aprobarReqId": [9, 10],
+      "lessons": []
+    },
+    {
+      "id": 21,
+      "name": "Cálculo Avanzado",
+      "year": 4,
+      "q": 3,
+      "cursarReqId": [1, 2, 9],
+      "aprobarReqId": [9],
+      "lessons": []
+    },
+    {
+      "id": 22,
+      "name": "Instalaciones Eléctricas y Acústicas",
+      "year": 3,
+      "q": 3,
+      "cursarReqId": [1, 6, 7, 12, 13],
+      "aprobarReqId": [12, 13],
+      "lessons": []
+    },
+    {
+      "id": 23,
+      "name": "Instalaciones Termomecánicas",
+      "year": 3,
+      "q": 3,
+      "cursarReqId": [1, 6, 7, 12, 13],
+      "aprobarReqId": [12, 13],
+      "lessons": []
+    },
+    {
+      "id": 24,
+      "name": "Economía",
+      "year": 3,
+      "q": 3,
+      "cursarReqId": [3, 11],
+      "aprobarReqId": [11],
+      "lessons": []
+    },
+    {
+      "id": 25,
+      "name": "Taller de Idioma - Nivel II",
+      "year": 2,
+      "q": 1,
+      "cursarReqId": [15],
+      "aprobarReqId": [15],
+      "lessons": []
+    },
+    {
+      "id": 26,
+      "name": "Geotecnia",
+      "year": 4,
+      "q": 3,
+      "cursarReqId": [9, 10, 11, 12, 16, 18, 20],
+      "aprobarReqId": [16, 18, 20],
+      "lessons": []
+    },
+    {
+      "id": 27,
+      "name": "Instalaciones Sanitarias y Gas",
+      "year": 4,
+      "q": 3,
+      "cursarReqId": [6, 7, 9, 10, 12, 20],
+      "aprobarReqId": [12, 20],
+      "lessons": []
+    },
+    {
+      "id": 28,
+      "name": "Diseño Arquitectónico, Planeamiento y Urbanismo",
+      "year": 4,
+      "q": 3,
+      "cursarReqId": [10, 11, 12, 15, 18],
+      "aprobarReqId": [18],
+      "lessons": []
+    },
+    {
+      "id": 29,
+      "name": "Análisis Estructural I",
+      "year": 4,
+      "q": 3,
+      "cursarReqId": [4, 7, 10, 11, 16],
+      "aprobarReqId": [11, 16],
+      "lessons": []
+    },
+    {
+      "id": 30,
+      "name": "Estructuras de Hormigón",
+      "year": 4,
+      "q": 3,
+      "cursarReqId": [10, 11, 12, 14, 16, 17, 18],
+      "aprobarReqId": [16, 17, 18],
+      "lessons": []
+    },
+    {
+      "id": 31,
+      "name": "Hidrología y Obras Hidráulicas",
+      "year": 4,
+      "q": 3,
+      "cursarReqId": [9, 10, 11, 12, 13, 18, 19, 20],
+      "aprobarReqId": [18, 19, 20],
+      "lessons": []
+    },
+    {
+      "id": 32,
+      "name": "Ingeniería Legal",
+      "year": 3,
+      "q": 3,
+      "cursarReqId": [3, 11],
+      "aprobarReqId": [11],
+      "lessons": []
+    },
+    {
+      "id": 33,
+      "name": "Construcciones Metálicas y de Madera",
+      "year": 5,
+      "q": 3,
+      "cursarReqId": [11, 16, 29],
+      "aprobarReqId": [29],
+      "lessons": []
+    },
+    {
+      "id": 34,
+      "name": "Cimentaciones",
+      "year": 5,
+      "q": 3,
+      "cursarReqId": [16, 17, 18, 20, 26, 30],
+      "aprobarReqId": [26, 30],
+      "lessons": []
+    },
+    {
+      "id": 35,
+      "name": "Ingeniería Sanitaria",
+      "year": 5,
+      "q": 3,
+      "cursarReqId": [18, 19, 20, 31],
+      "aprobarReqId": [31],
+      "lessons": []
+    },
+    {
+      "id": 36,
+      "name": "Organización y Conducción de Obras",
+      "year": 5,
+      "q": 3,
+      "cursarReqId": [11, 16, 18, 20, 22, 23, 24, 26, 27, 28, 30],
+      "aprobarReqId": [22, 23, 24, 27, 28, 30, 32],
+      "lessons": []
+    },
+    {
+      "id": 37,
+      "name": "Vías de Comunicación I",
+      "year": 4,
+      "q": 3,
+      "cursarReqId": [9, 13, 19],
+      "aprobarReqId": [19],
+      "lessons": []
+    },
+    {
+      "id": 38,
+      "name": "Análisis Estructural II",
+      "year": 5,
+      "q": 3,
+      "cursarReqId": [16, 17, 18, 21, 29, 30],
+      "aprobarReqId": [29, 30],
+      "lessons": []
+    },
+    {
+      "id": 39,
+      "name": "Vías de Comunicación II",
+      "year": 5,
+      "q": 3,
+      "cursarReqId": [16, 18, 19, 20, 26, 37],
+      "aprobarReqId": [26, 37],
+      "lessons": []
+    },
+    {
+      "id": 40,
+      "name": "Proyecto Final",
+      "year": 5,
+      "q": 3,
+      "cursarReqId": [11, 14, 16, 18, 20, 21, 28, 30, 31, 32],
+      "aprobarReqId": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39],
+      "lessons": []
+    },
+    {
+      "id": 41,
+      "name": "Planificación Urbana Sustentable (Perfil Construcciones)",
+      "year": 5,
+      "q": 3,
+      "cursarReqId": [16, 18, 28, 30],
+      "aprobarReqId": [16, 18],
+      "lessons": []
+    },
+    {
+      "id": 42,
+      "name": "Prefabricación (Perfil Construcciones)",
+      "year": 5,
+      "q": 3,
+      "cursarReqId": [18, 30],
+      "aprobarReqId": [18],
+      "lessons": []
+    },
+    {
+      "id": 43,
+      "name": "Estructuras Especiales (Perfil Construcciones)",
+      "year": 6,
+      "q": 3,
+      "cursarReqId": [29, 30, 38],
+      "aprobarReqId": [29, 30],
+      "lessons": []
+    },
+    {
+      "id": 44,
+      "name": "Estructuras Antisísmicas (Perfil Construcciones)",
+      "year": 6,
+      "q": 3,
+      "cursarReqId": [29, 30, 38],
+      "aprobarReqId": [29, 30],
+      "lessons": []
+    },
+    {
+      "id": 45,
+      "name": "Saneamiento y Medio Ambiente (Perfil Construcciones)",
+      "year": 6,
+      "q": 3,
+      "cursarReqId": [11, 28],
+      "aprobarReqId": [11],
+      "lessons": []
+    },
+    {
+      "id": 46,
+      "name": "Túneles y Grandes Puentes (Perfil Construcciones)",
+      "year": 6,
+      "q": 3,
+      "cursarReqId": [17, 18, 20, 26, 34, 37, 38],
+      "aprobarReqId": [17, 18, 20, 26],
+      "lessons": []
+    },
+    {
+      "id": 47,
+      "name": "Geología Aplicada (Perfil Vías de Comunicación)",
+      "year": 5,
+      "q": 3,
+      "cursarReqId": [20, 26, 30],
+      "aprobarReqId": [20],
+      "lessons": []
+    },
+    {
+      "id": 48,
+      "name": "Puertos y Vías Navegables (Perfil Vías de Comunicación)",
+      "year": 5,
+      "q": 3,
+      "cursarReqId": [19, 20, 26, 30],
+      "aprobarReqId": [19],
+      "lessons": []
+    },
+    {
+      "id": 49,
+      "name": "Ferrocarriles (Perfil Vías de Comunicación)",
+      "year": 5,
+      "q": 3,
+      "cursarReqId": [11, 16, 19, 26, 37],
+      "aprobarReqId": [11, 16, 19],
+      "lessons": []
+    },
+    {
+      "id": 50,
+      "name": "Construcción de Carreteras (Perfil Vías de Comunicación)",
+      "year": 6,
+      "q": 3,
+      "cursarReqId": [17, 18, 20, 26, 37],
+      "aprobarReqId": [17, 18, 20, 26],
+      "lessons": []
+    },
+    {
+      "id": 51,
+      "name": "Aeropuertos (Perfil Vías de Comunicación)",
+      "year": 6,
+      "q": 3,
+      "cursarReqId": [18, 20, 26, 37],
+      "aprobarReqId": [18, 20, 26],
+      "lessons": []
+    },
+    {
+      "id": 52,
+      "name": "Presas y Centrales Hidroeléctricas (Perfil Hidráulica)",
+      "year": 5,
+      "q": 3,
+      "cursarReqId": [20, 26, 31],
+      "aprobarReqId": [20],
+      "lessons": []
+    },
+    {
+      "id": 53,
+      "name": "Gestión de Cuencas (Perfil Hidráulica)",
+      "year": 6,
+      "q": 3,
+      "cursarReqId": [20, 26, 31],
+      "aprobarReqId": [20],
+      "lessons": []
+    },
+    {
+      "id": 54,
+      "name": "Energías Renovables (Perfil Ambiental)",
+      "year": 5,
+      "q": 3,
+      "cursarReqId": [9, 23, 28],
+      "aprobarReqId": [9, 23],
+      "lessons": []
+    },
+    {
+      "id": 55,
+      "name": "Gestión Ambiental (Perfil Ambiental)",
+      "year": 6,
+      "q": 3,
+      "cursarReqId": [11, 28, 32],
+      "aprobarReqId": [11],
+      "lessons": []
+    },
+    {
+      "id": 56,
+      "name": "Contaminación Ambiental (Perfil Ambiental)",
+      "year": 6,
+      "q": 3,
+      "cursarReqId": [11, 31, 35],
+      "aprobarReqId": [11, 35],
+      "lessons": []
+    }
+  ]
+}
