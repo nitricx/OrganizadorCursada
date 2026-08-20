@@ -41,18 +41,16 @@ describe('ToastService', () => {
     expect(service.toasts().length).toBe(0);
   });
 
-  it('should support helper methods for warning, error, success, and info', () => {
+  it('should support helper methods for warning, error, success, and info, keeping only the latest notification', () => {
     service.warning('Warning msg');
     service.error('Error msg');
     service.success('Success msg');
     service.info('Info msg');
 
     const activeToasts = service.toasts();
-    expect(activeToasts.length).toBe(4);
-    expect(activeToasts[0].type).toBe('warning');
-    expect(activeToasts[1].type).toBe('error');
-    expect(activeToasts[2].type).toBe('success');
-    expect(activeToasts[3].type).toBe('info');
+    expect(activeToasts.length).toBe(1);
+    expect(activeToasts[0].type).toBe('info');
+    expect(activeToasts[0].message).toBe('Info msg');
 
     vi.advanceTimersByTime(3500);
     expect(service.toasts().length).toBe(0);
@@ -66,12 +64,12 @@ describe('ToastService', () => {
     expect(service.toasts().length).toBe(0);
   });
 
-  it('should clear all active toasts', () => {
+  it('should clear active toast', () => {
     service.warning('Msg 1');
-    service.error('Msg 2');
-    expect(service.toasts().length).toBe(2);
+    expect(service.toasts().length).toBe(1);
 
     service.clear();
     expect(service.toasts().length).toBe(0);
   });
+
 });

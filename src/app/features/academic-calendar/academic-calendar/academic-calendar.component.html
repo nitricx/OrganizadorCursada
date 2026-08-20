@@ -9,44 +9,8 @@
     <div class="page-header">
       <div class="title-row">
         <h1>
+          <mat-icon class="header-title-icon">date_range</mat-icon>
           Calendario Académico
-          @if (!isEditingTitle() && isEditable()) {
-            <button
-              mat-icon-button
-              type="button"
-              class="edit-title-btn"
-              aria-label="Editar título y fechas del calendario"
-              (click)="toggleEditTitle()"
-            >
-              <mat-icon>edit</mat-icon>
-            </button>
-            <button
-              mat-icon-button
-              type="button"
-              class="delete-plan-btn"
-              aria-label="Eliminar plan de estudio"
-              (click)="deletePlan()"
-            >
-              <mat-icon>delete</mat-icon>
-            </button>
-          } @else if (isEditingTitle()) {
-            <button
-              mat-icon-button
-              type="button"
-              aria-label="Guardar cambios"
-              (click)="confirmEditTitle()"
-            >
-              <mat-icon>check_circle</mat-icon>
-            </button>
-            <button
-              mat-icon-button
-              type="button"
-              aria-label="Cancelar edición"
-              (click)="cancelEditTitle()"
-            >
-              <mat-icon>cancel</mat-icon>
-            </button>
-          }
         </h1>
 
         <button
@@ -61,21 +25,115 @@
           Exportar Calendario
         </button>
       </div>
+
+      <!-- Multiple Calendars Selector Bar -->
+      <div class="calendar-tabs-bar" role="tablist" aria-label="Calendarios disponibles">
+        <div class="calendar-tabs-scroll">
+          @for (planItem of plans(); track planItem.id) {
+            <button
+              type="button"
+              role="tab"
+              class="calendar-tab-chip"
+              [class.active]="planItem.id === currentRouteId()"
+              [attr.aria-selected]="planItem.id === currentRouteId()"
+              (click)="selectPlan(planItem.id)"
+            >
+              @if (planItem.id === '1') {
+                <mat-icon class="tab-icon lock-icon">lock</mat-icon>
+              } @else {
+                <mat-icon class="tab-icon edit-icon">edit_calendar</mat-icon>
+              }
+              <span class="tab-label">{{ getPlanDisplayName(planItem) }}</span>
+              @if (planItem.id === '1') {
+                <span class="badge-read-only">Oficial</span>
+              }
+            </button>
+          }
+
+          <button
+            type="button"
+            class="add-calendar-chip-btn"
+            (click)="addCalendarPlan()"
+            title="Crear un nuevo calendario local"
+            aria-label="Agregar nuevo calendario académico"
+          >
+            <mat-icon>add</mat-icon>
+            <span>Nuevo Calendario</span>
+          </button>
+        </div>
+      </div>
+
       @if (planId()) {
         <div class="plan-header-row">
-          @if (!isEditingTitle()) {
-            <h2 class="plan-title">{{ planId() }}</h2>
-          } @else {
-            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="editable-plan-field">
-              <mat-label>Título del Plan</mat-label>
-              <input
-                matInput
-                type="text"
-                [(ngModel)]="editablePlanId"
-                placeholder="Subtítulo"
-              />
-            </mat-form-field>
-          }
+          <div class="plan-title-container">
+            @if (!isEditingTitle()) {
+              <div class="plan-title-wrapper">
+                <h2 class="plan-title">
+                  {{ currentRouteId() === '1' ? getPlanDisplayName({ id: '1', label: planId()! }) : planId() }}
+                </h2>
+
+                @if (!isEditable()) {
+                  <span class="read-only-badge" title="El calendario oficial de la carrera es de solo lectura">
+                    <mat-icon>lock</mat-icon> Solo lectura (Oficial)
+                  </span>
+                } @else {
+                  <div class="plan-action-buttons">
+                    <button
+                      mat-icon-button
+                      type="button"
+                      class="edit-title-btn"
+                      aria-label="Editar título y fechas del calendario"
+                      (click)="toggleEditTitle()"
+                      title="Editar título y fechas"
+                    >
+                      <mat-icon>edit</mat-icon>
+                    </button>
+                    <button
+                      mat-icon-button
+                      type="button"
+                      class="delete-plan-btn"
+                      aria-label="Eliminar calendario local"
+                      (click)="deletePlan()"
+                      title="Eliminar este calendario local"
+                    >
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  </div>
+                }
+              </div>
+            } @else {
+              <div class="edit-title-form">
+                <mat-form-field appearance="outline" subscriptSizing="dynamic" class="editable-plan-field">
+                  <mat-label>Título del Calendario</mat-label>
+                  <input
+                    matInput
+                    type="text"
+                    [(ngModel)]="editablePlanId"
+                    placeholder="Subtítulo o nombre"
+                  />
+                </mat-form-field>
+                <button
+                  mat-icon-button
+                  type="button"
+                  aria-label="Guardar cambios"
+                  (click)="confirmEditTitle()"
+                  title="Guardar cambios"
+                >
+                  <mat-icon color="primary">check_circle</mat-icon>
+                </button>
+                <button
+                  mat-icon-button
+                  type="button"
+                  aria-label="Cancelar edición"
+                  (click)="cancelEditTitle()"
+                  title="Cancelar edición"
+                >
+                  <mat-icon>cancel</mat-icon>
+                </button>
+              </div>
+            }
+          </div>
+
           <div class="year-selector">
             @if (!isEditingTitle()) {
               <mat-form-field appearance="outline" subscriptSizing="dynamic" class="year-input-field">
@@ -105,6 +163,7 @@
         </div>
       }
     </div>
+
     @for (item of displaySemesters(); track item.id; let i = $index; let last = $last) {
       <section class="semester-section">
         <div class="semester-header">

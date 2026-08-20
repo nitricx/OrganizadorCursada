@@ -90,62 +90,163 @@
   box-shadow: 0 0 0 3px var(--brand-primary-light);
 }
 
+.calendar-tabs-bar {
+  margin: 12px 0 16px 0;
+}
+
+.calendar-tabs-scroll {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 4px 2px;
+  scrollbar-width: thin;
+}
+
+.calendar-tab-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: var(--radius-md);
+  background: var(--color-background-secondary);
+  border: 1px solid var(--color-border-tertiary);
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--transition-fast);
+}
+
+.calendar-tab-chip:hover {
+  background: var(--color-background-primary);
+  color: var(--color-text-primary);
+  border-color: var(--color-border-secondary);
+}
+
+.calendar-tab-chip.active {
+  background: var(--brand-primary-light);
+  color: var(--brand-primary);
+  border-color: var(--brand-primary);
+  font-weight: 600;
+}
+
+[data-theme="dark"] .calendar-tab-chip.active {
+  background: var(--brand-primary);
+  color: var(--btn-primary-text);
+  border-color: var(--brand-primary);
+}
+
+.calendar-tab-chip .tab-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+}
+
+.calendar-tab-chip .lock-icon {
+  opacity: 0.7;
+}
+
+.badge-read-only {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  background: var(--color-background-primary);
+  color: var(--color-text-tertiary);
+  margin-left: 4px;
+  border: 1px solid var(--color-border-tertiary);
+}
+
+.add-calendar-chip-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  background: transparent;
+  border: 1px dashed var(--brand-primary);
+  color: var(--brand-primary);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--transition-fast);
+}
+
+.add-calendar-chip-btn:hover {
+  background: var(--brand-primary-light);
+  transform: translateY(-1px);
+}
+
+.add-calendar-chip-btn mat-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+}
+
 .plan-header-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
   flex-wrap: wrap;
-  padding-top: 8px;
+  padding-top: 14px;
   border-top: 1px solid var(--color-border-tertiary);
+}
+
+.plan-title-container {
+  flex: 1;
+  min-width: 240px;
+}
+
+.plan-title-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 .plan-title {
   margin: 0;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--color-text-secondary);
-}
-
-.editable-plan-title {
-  margin: 0;
-  font-size: 14px;
-  font-weight: 500;
+  font-size: 16px;
+  font-weight: 700;
   color: var(--color-text-primary);
-  padding: 4px 10px;
-  border: 1px solid var(--color-border-secondary);
+}
+
+.read-only-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-text-tertiary);
+  background: var(--color-background-secondary);
+  border: 1px solid var(--color-border-tertiary);
   border-radius: var(--radius-sm);
-  background: var(--color-background-primary);
-  font-family: inherit;
+  padding: 3px 8px;
 }
 
-.editable-plan-title:focus {
-  outline: none;
-  border-color: var(--brand-primary);
+.read-only-badge mat-icon {
+  font-size: 13px;
+  width: 13px;
+  height: 13px;
 }
 
-.year-selector {
+.plan-action-buttons {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.edit-title-form {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.year-selector label {
-  font-size: 13px;
-  color: var(--color-text-secondary);
-  font-weight: 500;
-}
-
-.year-selector input {
-  width: 70px;
-  padding: 4px 8px;
-  border: 1px solid var(--color-border-secondary);
-  border-radius: var(--radius-sm);
-  font-size: 13px;
-  font-family: inherit;
-  background: var(--color-background-primary);
-  color: var(--color-text-primary);
-}
 
 .year-selector input:disabled {
   border: none;

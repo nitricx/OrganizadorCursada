@@ -7,8 +7,10 @@ import { vi } from 'vitest';
 
 import { AcademicCalendarComponent } from './academic-calendar.component';
 import { CourseService } from '../../../services/course.service';
+import { CareerService } from '../../../services/career.service';
 import { ToastService } from '../../../services/toast.service';
 import { Course, DayOfWeek } from '../../../models/course';
+
 
 // Two courses with no year=2 so the inserted semester pair at year=2 starts empty
 const MOCK_Y1Q1: Course = {
@@ -97,6 +99,8 @@ class MockCourseService {
   }
 }
 
+import { provideRouter } from '@angular/router';
+
 describe('AcademicCalendarComponent – semester insertion and course movement', () => {
   let component: AcademicCalendarComponent;
   let fixture: ComponentFixture<AcademicCalendarComponent>;
@@ -109,9 +113,10 @@ describe('AcademicCalendarComponent – semester insertion and course movement',
     await TestBed.configureTestingModule({
       imports: [AcademicCalendarComponent],
       providers: [
+        provideRouter([{ path: 'academicCalendar/plan/:id', component: AcademicCalendarComponent }]),
         {
           provide: ActivatedRoute,
-          useValue: { paramMap: of(convertToParamMap({ id: 'test-plan' })) },
+          useValue: { paramMap: of(convertToParamMap({ id: '1' })) },
         },
         { provide: CourseService, useClass: MockCourseService },
       ],
@@ -121,6 +126,7 @@ describe('AcademicCalendarComponent – semester insertion and course movement',
         set: { imports: [], schemas: [NO_ERRORS_SCHEMA] },
       })
       .compileComponents();
+
 
     fixture = TestBed.createComponent(AcademicCalendarComponent);
     component = fixture.componentInstance;
@@ -257,4 +263,28 @@ describe('AcademicCalendarComponent – semester insertion and course movement',
       expect(component.hasSelectedPlan()).toBe(true);
     });
   });
+
+  describe('Multiple Calendars Management & Permissions', () => {
+    it('should treat Plan 1 as read-only (isEditable = false)', () => {
+      expect(component.isEditable()).toBe(false);
+    });
+
+    it('should allow creating a new local user calendar plan which is editable (isEditable = true)', () => {
+      const careerService = TestBed.inject(CareerService);
+      careerService.selectCareer('lic-diseno-audiovisual');
+      component.addCalendarPlan();
+      fixture.detectChanges();
+      const plans = component.plans();
+      expect(plans.length).toBeGreaterThan(1);
+      const newPlan = plans[plans.length - 1];
+      expect(newPlan.id).not.toBe('1');
+    });
+
+    it('should prevent deleting Plan 1 (default official calendar)', () => {
+      component.deletePlan();
+      expect(component.plans().some((p) => p.id === '1')).toBe(true);
+    });
+  });
+
 });
+

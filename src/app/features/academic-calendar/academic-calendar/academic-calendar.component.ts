@@ -24,6 +24,8 @@ import { ExportCalendarModalComponent } from '../../schedule/export-calendar-mod
 
 import { NoPlanSelectedComponent } from '../../../shared/components/no-plan-selected/no-plan-selected.component';
 
+import { CareerService } from '../../../services/career.service';
+
 interface DisplaySemester {
   id: string;
   label: string;
@@ -58,9 +60,11 @@ export class AcademicCalendarComponent {
   private readonly courseService = inject(CourseService);
   private readonly route = inject(ActivatedRoute);
   private readonly planService = inject(PlanService);
+  private readonly careerService = inject(CareerService);
   private readonly router = inject(Router);
   private readonly toastService = inject(ToastService);
 
+  readonly plans = this.planService.plans;
   readonly showExportModal = signal<boolean>(false);
 
   openExportModal(): void {
@@ -83,7 +87,7 @@ export class AcademicCalendarComponent {
 
   private readonly routeParamId = toSignal(this.route.paramMap.pipe());
 
-  private readonly currentRouteId = computed(() => this.routeParamId()?.get('id') ?? null);
+  readonly currentRouteId = computed(() => this.routeParamId()?.get('id') ?? null);
 
   planId = computed(() => {
     const id = this.currentRouteId();
@@ -109,7 +113,17 @@ export class AcademicCalendarComponent {
     // Set the current plan ID and initialize semester list when route changes
     effect(() => {
       const id = this.currentRouteId();
-      const plans = this.planService.plans();
+      let plans = this.planService.plans();
+
+      if (plans.length === 0) {
+        untracked(() => {
+          const careerName = this.careerService.activeCareer().name;
+          const label = careerName && careerName !== 'Sin Plan' ? careerName : 'Calendario Oficial';
+          this.planService.addPlan({ id: '1', label });
+        });
+        plans = this.planService.plans();
+      }
+
       if (!id && plans.length > 0) {
         void this.router.navigateByUrl(`/academicCalendar/plan/${plans[0].id}`, { replaceUrl: true });
         return;
@@ -146,6 +160,7 @@ export class AcademicCalendarComponent {
       }
     });
   }
+
 
   semesterList = computed(() => {
     const id = this.currentRouteId();
@@ -349,13 +364,53 @@ export class AcademicCalendarComponent {
 
   deletePlan(): void {
     const planId = this.currentRouteId();
-    if (!planId) return;
+    if (!planId || planId === '1') return;
 
     this.courseService.deletePlan(planId);
     this.planService.deletePlan(planId);
+    this.toastService.info('Calendario local eliminado');
 
     const remaining = this.planService.plans();
-    const fallback = remaining.length > 0 ? `/academicCalendar/plan/${remaining[0].id}` : '/academicCalendar';
+    const fallback = remaining.length > 0 ? `/academicCalendar/plan/${remaining[0].id}` : '/academicCalendar/plan/1';
     void this.router.navigateByUrl(fallback);
   }
+
+  addCalendarPlan(): void {
+    const activeCareer = this.careerService.activeCareer();
+    if (!activeCareer || activeCareer.id === 'empty-plan') {
+      this.toastService.warning(
+        'Seleccioná un plan de estudio en el menú superior o en el Plan Hub para poder agregar un calendario personal.',
+      );
+      this.planService.openWorkshop();
+      return;
+    }
+
+    const existingIds = this.planService
+      .plans()
+      .map((p) => Number(p.id))
+      .filter((n) => !isNaN(n));
+    const nextId = existingIds.length > 0 ? Math.max(...existingIds) + 1 : 1;
+    const labelNumber = this.planService.plans().length;
+    const newPlanId = nextId.toString();
+    const newPlan = { id: newPlanId, label: `Calendario Personal ${labelNumber}` };
+    this.planService.addPlan(newPlan);
+    this.toastService.success('Nuevo calendario personal creado');
+    void this.router.navigateByUrl(`/academicCalendar/plan/${newPlanId}`);
+  }
+
+  selectPlan(planId: string): void {
+    void this.router.navigateByUrl(`/academicCalendar/plan/${planId}`);
+  }
+
+  getPlanDisplayName(plan: { id: string; label: string }): string {
+    if (plan.id === '1') {
+      const activeCareerName = this.careerService.activeCareer().name;
+      if (activeCareerName && activeCareerName !== 'Sin Plan') {
+        return activeCareerName;
+      }
+      return 'Calendario Oficial';
+    }
+    return plan.label || `Calendario ${plan.id}`;
+  }
 }
+

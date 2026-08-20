@@ -32,13 +32,6 @@ a.active-link {
   color: var(--btn-primary-text) !important;
 }
 
-.sidebar-expansion-panel {
-  box-shadow: none !important;
-  background: transparent !important;
-  border-radius: var(--radius-md) !important;
-  margin: 2px 0 !important;
-}
-
 .nav-item-row {
   display: flex;
   align-items: center;
@@ -48,48 +41,6 @@ a.active-link {
   flex: 1;
 }
 
-.delete-plan-btn {
-  flex-shrink: 0;
-  margin-right: 4px;
-  opacity: 0.6;
-  transition: opacity var(--transition-fast);
-}
-
-.delete-plan-btn:hover {
-  opacity: 1;
-}
-
-.sidebar-expansion-panel .mat-expansion-panel-header {
-  padding: 0 12px;
-  height: 44px;
-  border-radius: var(--radius-md);
-  transition: background-color var(--transition-fast);
-  color: var(--color-text-primary) !important;
-}
-
-.sidebar-expansion-panel .mat-expansion-panel-header:hover {
-  background-color: var(--color-background-secondary);
-}
-
-.nested-nav-list {
-  padding: 4px 0;
-}
-
-.nested-nav-list a {
-  padding-left: 28px !important;
-  font-size: 13px;
-}
-
-.sidebar-expansion-panel mat-panel-title {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 100%;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--color-text-primary);
-}
-
 [matListItemTitle] {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -97,3 +48,4 @@ a.active-link {
   max-width: 100%;
   font-size: 13px;
 }
+

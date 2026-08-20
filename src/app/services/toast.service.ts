@@ -21,20 +21,12 @@ export class ToastService {
     const id = `toast-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
     const toast: Toast = { id, message, type, durationMs };
 
-    this.toasts.update((current) => {
-      const updated = [...current, toast];
-      if (updated.length > ToastService.MAX_VISIBLE_TOASTS) {
-        const removed = updated.shift();
-        if (removed) {
-          const timeoutId = this.timeouts.get(removed.id);
-          if (timeoutId !== undefined) {
-            clearTimeout(timeoutId);
-            this.timeouts.delete(removed.id);
-          }
-        }
-      }
-      return updated;
-    });
+    // Clear any existing toast timeouts so only the latest notification is shown
+    this.timeouts.forEach((timeoutId) => clearTimeout(timeoutId));
+    this.timeouts.clear();
+
+    // Replace current toasts with only the latest notification
+    this.toasts.set([toast]);
 
     if (durationMs > 0) {
       const timeoutId = setTimeout(() => {
@@ -45,6 +37,7 @@ export class ToastService {
 
     return id;
   }
+
 
   warning(message: string, durationMs: number = 3500): string {
     return this.show(message, 'warning', durationMs);
