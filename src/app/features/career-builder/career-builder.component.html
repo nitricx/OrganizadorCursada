@@ -133,7 +133,7 @@
           <div class="q-label">Anual</div>
           @for (course of getCourses(year, 3); track course.id) {
             <div
-              class="materia pending builder-materia annual"
+              class="materia pending builder-materia"
               [ngClass]="getCourseCardClass(course)"
               [class.connect-mode-card]="isConnectMode()"
               (mouseenter)="onCourseMouseEnter(course.id)"
@@ -144,7 +144,7 @@
             </div>
           }
           <button class="add-materia-btn" (click)="openAddCourseModal(year, 3)">
-            + Agregar materia anual
+            + Agregar materia
           </button>
         </div>
       </div>

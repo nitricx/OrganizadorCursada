@@ -265,9 +265,7 @@
   word-break: break-word;
 }
 
-.annual {
-  border-left: 3px solid var(--status-approved-border) !important;
-}
+
 
 /* Hover Highlighting Classes (Matching /home) */
 .hovered-self {
