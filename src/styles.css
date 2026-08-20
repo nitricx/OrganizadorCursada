@@ -82,31 +82,35 @@
   --color-success-text: #04342c;
   --color-success-border: #0f6e56;
 
-  /* Centralized Status & Highlight Aliases (Consolidated to Core Roles) */
-  --status-pending-bg: var(--neutral-200);
-  --status-pending-color: var(--neutral-900);
-  --status-pending-border: var(--neutral-500);
+  /* Centralized Status & Highlight Aliases (Consolidated to 5-Color Palette) */
+  --status-pending-bg: #f0f4f8;
+  --status-pending-color: #073b4c;
+  --status-pending-border: #073b4c;
 
-  --status-coursing-bg: var(--color-warning-bg);
-  --status-coursing-color: var(--color-warning-text);
-  --status-coursing-border: var(--color-warning-border);
-  --status-req-bg: var(--color-warning-bg);
-  --status-req-color: var(--color-warning-text);
-  --status-req-border: var(--color-warning-border);
+  --status-available-bg: #e0f2fe;
+  --status-available-color: #0369a1;
+  --status-available-border: #118ab2;
 
-  --status-coursed-bg: var(--banner-info-bg);
-  --status-coursed-color: var(--banner-info-text);
-  --status-coursed-border: var(--brand-primary);
-  --status-available-bg: var(--banner-info-bg);
-  --status-available-color: var(--banner-info-text);
-  --status-available-border: var(--brand-primary);
+  --status-coursing-bg: #fffbeb;
+  --status-coursing-color: #7c2d12;
+  --status-coursing-border: #ffd166;
 
-  --status-approved-bg: var(--color-success-bg);
-  --status-approved-color: var(--color-success-text);
-  --status-approved-border: var(--color-success-border);
-  --status-unlocks-bg: var(--color-success-bg);
-  --status-unlocks-color: var(--color-success-text);
-  --status-unlocks-border: var(--color-success-border);
+  --status-coursed-bg: #e6fbf5;
+  --status-coursed-color: #044e3a;
+  --status-coursed-border: #06d6a0;
+
+  --status-approved-bg: #fde8ed;
+  --status-approved-color: #9f1239;
+  --status-approved-border: #ef476f;
+
+  /* Hover Highlights */
+  --status-req-bg: #fde8ed;
+  --status-req-color: #9f1239;
+  --status-req-border: #ef476f;
+
+  --status-unlocks-bg: #e6fbf5;
+  --status-unlocks-color: #044e3a;
+  --status-unlocks-border: #06d6a0;
 
   /* Transitions */
   --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
@@ -161,30 +165,34 @@
   --color-success-text: #a7f3d0;
   --color-success-border: #059669;
 
-  --status-pending-bg: #2d3748;
-  --status-pending-color: #e2e8f0;
-  --status-pending-border: #4a5568;
+  --status-pending-bg: #0f172a;
+  --status-pending-color: #cbd5e1;
+  --status-pending-border: #073b4c;
 
-  --status-coursing-bg: var(--color-warning-bg);
-  --status-coursing-color: var(--color-warning-text);
-  --status-coursing-border: var(--color-warning-border);
-  --status-req-bg: var(--color-warning-bg);
-  --status-req-color: var(--color-warning-text);
-  --status-req-border: var(--color-warning-border);
+  --status-available-bg: #0c4a6e;
+  --status-available-color: #bae6fd;
+  --status-available-border: #118ab2;
 
-  --status-coursed-bg: var(--banner-info-bg);
-  --status-coursed-color: var(--banner-info-text);
-  --status-coursed-border: var(--banner-info-border);
-  --status-available-bg: var(--banner-info-bg);
-  --status-available-color: var(--banner-info-text);
-  --status-available-border: var(--banner-info-border);
+  --status-coursing-bg: #451a03;
+  --status-coursing-color: #fef08a;
+  --status-coursing-border: #ffd166;
 
-  --status-approved-bg: var(--color-success-bg);
-  --status-approved-color: var(--color-success-text);
-  --status-approved-border: var(--color-success-border);
-  --status-unlocks-bg: var(--color-success-bg);
-  --status-unlocks-color: var(--color-success-text);
-  --status-unlocks-border: var(--color-success-border);
+  --status-coursed-bg: #064e3b;
+  --status-coursed-color: #a7f3d0;
+  --status-coursed-border: #06d6a0;
+
+  --status-approved-bg: #881337;
+  --status-approved-color: #fecdd3;
+  --status-approved-border: #ef476f;
+
+  /* Hover Highlights */
+  --status-req-bg: #881337;
+  --status-req-color: #fecdd3;
+  --status-req-border: #ef476f;
+
+  --status-unlocks-bg: #064e3b;
+  --status-unlocks-color: #a7f3d0;
+  --status-unlocks-border: #06d6a0;
 }
 
 .info-req {
@@ -369,12 +377,18 @@ h1 {
   background: var(--status-req-bg) !important;
   color: var(--status-req-color) !important;
   border-color: var(--status-req-border) !important;
+  border-style: solid !important;
+  opacity: 1 !important;
+  z-index: 3;
 }
 
 .materia.unlocks-highlight {
   background: var(--status-unlocks-bg) !important;
   color: var(--status-unlocks-color) !important;
   border-color: var(--status-unlocks-border) !important;
+  border-style: solid !important;
+  opacity: 1 !important;
+  z-index: 3;
 }
 
 .materia.hovered {

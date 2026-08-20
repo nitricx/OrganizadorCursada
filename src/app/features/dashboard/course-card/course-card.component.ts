@@ -67,9 +67,6 @@ export class CourseCardComponent {
 
       const reqSet = this.courseService.hoveredRequiredSet();
       if (reqSet.has(courseId)) {
-        if (currentCourse.status === 'approved') {
-          return '';
-        }
         return ' req-highlight';
       }
 
@@ -100,9 +97,6 @@ export class CourseCardComponent {
     });
 
     if (needsSet.has(courseId)) {
-      if (currentCourse.status === 'approved') {
-        return '';
-      }
       return ' req-highlight';
     }
 
