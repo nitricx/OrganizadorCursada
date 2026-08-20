@@ -14,6 +14,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { RouterLink } from '@angular/router';
 import { CourseService } from '../../../services/course.service';
 import { PlanService } from '../../../services/plan.service';
 import { Course, DayOfWeek } from '../../../models/course';
@@ -54,6 +55,7 @@ export type { CourseWithLesson };
     MatFormFieldModule,
     MatSelectModule,
     MatButtonToggleModule,
+    RouterLink,
   ],
   templateUrl: './calendar.html',
   styleUrl: './calendar.css',
@@ -114,6 +116,16 @@ export class Calendar {
   /** Determine if calendar is read-only (true when no override provided, i.e., on /myWeek) */
   isReadOnly = computed(() => {
     return this.coursesOverride() === undefined;
+  });
+
+  /** Returns true when on /myWeek and user has no courses marked as 'coursing' */
+  readonly hasNoCoursingLessons = computed(() => {
+    if (!this.isReadOnly()) return false;
+    let total = 0;
+    for (const lessons of this.availableCoursesByDay().values()) {
+      total += lessons.length;
+    }
+    return total === 0;
   });
 
   private readonly allDays: { label: string; day: DayOfWeek; col: number }[] = [

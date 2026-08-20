@@ -63,8 +63,24 @@
     @if (!isReadOnly()) {
       <app-calendar-legend></app-calendar-legend>
     }
-
-    @if (viewMode() === 'grid') {
+    @if (hasNoCoursingLessons()) {
+      <div class="calendar-empty-state glass-panel">
+        <div class="empty-icon-wrapper">
+          <mat-icon>schedule</mat-icon>
+        </div>
+        <h2 class="empty-title">Esperando materias en estado "Cursando"</h2>
+        <p class="empty-description">
+          Aún no tenés materias asignadas al estado <strong>Cursando</strong> en este plan.
+        </p>
+        <p class="empty-hint">
+          Asigná tus materias al estado <strong>Cursando</strong> en el <strong>Plan de Cursada</strong> para visualizar tu grilla semanal de comisiones y horarios.
+        </p>
+        <a mat-flat-button color="primary" routerLink="/home" class="go-to-organizer-btn">
+          <mat-icon>school</mat-icon>
+          <span>Ir al Plan de Cursada</span>
+        </a>
+      </div>
+    } @else if (viewMode() === 'grid') {
       <div
         class="calendar-grid"
         [style.grid-template-columns]="gridTemplateColumns()"

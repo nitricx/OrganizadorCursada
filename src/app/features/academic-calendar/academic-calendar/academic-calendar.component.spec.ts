@@ -262,6 +262,14 @@ describe('AcademicCalendarComponent – semester insertion and course movement',
       expect(displaySemesters.length).toBeGreaterThan(0);
       expect(component.hasSelectedPlan()).toBe(true);
     });
+
+    it('should return hasSelectedPlan = false when CourseService indicates no plan is selected', () => {
+      mockService.hasSelectedPlan = computed(() => false);
+      fixture = TestBed.createComponent(AcademicCalendarComponent);
+      component = fixture.componentInstance;
+      fixture.detectChanges();
+      expect(component.hasSelectedPlan()).toBe(false);
+    });
   });
 
   describe('Multiple Calendars Management & Permissions', () => {

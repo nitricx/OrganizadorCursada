@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 
 import { Calendar } from './calendar';
 
@@ -8,9 +9,9 @@ describe('Calendar', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Calendar]
-    })
-    .compileComponents();
+      imports: [Calendar],
+      providers: [provideRouter([])],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(Calendar);
     component = fixture.componentInstance;
@@ -20,4 +21,10 @@ describe('Calendar', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should compute hasNoCoursingLessons correctly when in readOnly mode with no coursing subjects', () => {
+    expect(component.isReadOnly()).toBe(true);
+    expect(component.hasNoCoursingLessons()).toBe(true);
+  });
 });
+

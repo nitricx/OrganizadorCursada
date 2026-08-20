@@ -100,13 +100,7 @@ export class AcademicCalendarComponent {
   });
 
   readonly hasSelectedPlan = computed(() => {
-    const id = this.currentRouteId();
-    if (!id) return false;
-    const plans = this.planService.plans();
-    if (plans.length > 0) {
-      return plans.some((p) => p.id === id);
-    }
-    return this.courseService.hasSelectedPlan() || this.courseService.getCoursesForPlan(id).length > 0;
+    return this.courseService.hasSelectedPlan();
   });
 
   constructor() {
