@@ -266,6 +266,52 @@ export class CareerService {
     return planId;
   }
 
+  saveCustomCareer(plan: CareerPlan): string {
+    if (!plan) return '';
+
+    const planId = plan.id || `custom-plan-${Date.now()}`;
+    const name = plan.name?.trim() || 'Plan de estudio';
+    const university = plan.university?.trim() || 'Universidad';
+
+    const sanitizedPlan: CareerPlan = {
+      id: planId,
+      name,
+      university,
+      faculty: plan.faculty,
+      version: plan.version || '1.0.0',
+      courses: (plan.courses || []).map((c, idx) => ({
+        id: typeof c.id === 'number' && !isNaN(c.id) ? c.id : idx + 1,
+        name: c.name?.trim() || `Materia ${idx + 1}`,
+        year: c.year || 1,
+        q: c.q || 1,
+        cursarReqId: Array.isArray(c.cursarReqId) ? c.cursarReqId : [],
+        aprobarReqId: Array.isArray(c.aprobarReqId) ? c.aprobarReqId : [],
+        lessons: Array.isArray(c.lessons) ? c.lessons : [],
+      })),
+    };
+
+    this.unmarkCareerAsRemoved(planId);
+    this.customPlansMapSignal.update((m) => new Map(m).set(planId, sanitizedPlan));
+    const customKey = `${CareerService.CUSTOM_CAREER_PREFIX}${planId}`;
+    this.safeSetItem(customKey, JSON.stringify(sanitizedPlan));
+
+    const newEntry: CareerIndexEntry = {
+      id: planId,
+      name,
+      university,
+    };
+
+    const customIndex = this.loadCustomIndex();
+    const updatedCustom = [...customIndex.filter((c) => c.id !== planId), newEntry];
+    this.safeSetItem(CareerService.CUSTOM_CAREERS_INDEX_KEY, JSON.stringify(updatedCustom));
+
+    const updatedAll = [...this.careersSignal().filter((c) => c.id !== planId), newEntry];
+    this.careersSignal.set(updatedAll);
+
+    this.selectCareer(planId);
+    return planId;
+  }
+
   async loadCareerById(careerId: string): Promise<void> {
     this.isLoadingSignal.set(true);
     this.errorSignal.set(null);

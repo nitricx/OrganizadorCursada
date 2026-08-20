@@ -91,4 +91,29 @@ describe('CareerService', () => {
     expect(service.selectedCareerId()).toBe('');
     expect(service.activeCareer().id).toBe('empty-plan');
   });
+
+  it('should save custom career, persist in careers list and select it', () => {
+    const customPlan = {
+      id: 'custom-ing-soft',
+      name: 'Ingeniería de Software',
+      university: 'UNLP',
+      courses: [
+        {
+          id: 1,
+          name: 'Programación I',
+          year: 1,
+          q: 1,
+          cursarReqId: [],
+          aprobarReqId: [],
+          lessons: [],
+        },
+      ],
+    };
+
+    const savedId = service.saveCustomCareer(customPlan);
+    expect(savedId).toBe('custom-ing-soft');
+    expect(service.selectedCareerId()).toBe('custom-ing-soft');
+    expect(service.activeCareer().name).toBe('Ingeniería de Software');
+    expect(service.careers().some((c) => c.id === 'custom-ing-soft')).toBe(true);
+  });
 });

@@ -3,6 +3,7 @@ import { CourseOrganizerComponent } from './features/dashboard/course-organizer/
 import { Calendar } from './features/schedule/calendar/calendar';
 import { AcademicCalendarComponent } from './features/academic-calendar/academic-calendar/academic-calendar.component';
 import { RequisitesFlowComponent } from './features/prerequisites/requisites-flow/requisites-flow.component';
+import { CareerBuilderComponent } from './features/career-builder/career-builder.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -11,4 +12,5 @@ export const routes: Routes = [
   { path: 'academicCalendar', component: AcademicCalendarComponent },
   { path: 'academicCalendar/plan/:id', component: AcademicCalendarComponent },
   { path: 'requisites', component: RequisitesFlowComponent },
+  { path: 'builder', component: CareerBuilderComponent },
 ];

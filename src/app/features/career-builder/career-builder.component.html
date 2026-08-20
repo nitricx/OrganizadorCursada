@@ -1,0 +1,150 @@
+<div class="wrap">
+  <!-- Header Bar -->
+  <header class="builder-header">
+    <div class="header-main-info">
+      <div class="header-title-row">
+        <button mat-icon-button (click)="cancel()" aria-label="Volver" matTooltip="Volver al inicio">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <h1 class="page-title">Diseñador de Carrera</h1>
+      </div>
+
+      <div class="header-inputs">
+        <input
+          type="text"
+          class="builder-input"
+          placeholder="Nombre de la Carrera (ej: Licenciatura en Informática) *"
+          [ngModel]="careerName()"
+          (ngModelChange)="careerName.set($event)"
+        />
+        <input
+          type="text"
+          class="builder-input"
+          placeholder="Universidad / Institución (ej: UNLP, UBA, UTN...) *"
+          [ngModel]="university()"
+          (ngModelChange)="university.set($event)"
+        />
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <span class="stats-counter">
+        <strong>{{ totalCoursesCount() }}</strong> materias registradas
+      </span>
+      <button mat-flat-button color="primary" class="btn-save" (click)="saveCareerPlan()">
+        <mat-icon>save</mat-icon>
+        <span>Guardar Carrera</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Grid Layout Matching Home -->
+  <main class="grid builder-grid">
+    @for (year of yearsArray(); track year) {
+      <div class="year-col">
+        <div class="year-label">{{ year }}° Año</div>
+
+        <!-- 1º Cuatrimestre -->
+        <div class="q-section">
+          <div class="q-label">1º Cuatrimestre</div>
+          @for (course of getCourses(year, 1); track course.id) {
+            <div class="materia pending builder-materia" (click)="openEditCourseModal(course)">
+              <span class="materia-name">{{ course.name }}</span>
+            </div>
+          }
+          <button class="add-materia-btn" (click)="openAddCourseModal(year, 1)">
+            + Agregar materia
+          </button>
+        </div>
+
+        <!-- 2º Cuatrimestre -->
+        <div class="q-section">
+          <div class="q-label">2º Cuatrimestre</div>
+          @for (course of getCourses(year, 2); track course.id) {
+            <div class="materia pending builder-materia" (click)="openEditCourseModal(course)">
+              <span class="materia-name">{{ course.name }}</span>
+            </div>
+          }
+          <button class="add-materia-btn" (click)="openAddCourseModal(year, 2)">
+            + Agregar materia
+          </button>
+        </div>
+
+        <!-- Anual -->
+        <div class="q-section">
+          <div class="q-label">Anual</div>
+          @for (course of getCourses(year, 3); track course.id) {
+            <div class="materia pending builder-materia annual" (click)="openEditCourseModal(course)">
+              <span class="materia-name">{{ course.name }}</span>
+            </div>
+          }
+          <button class="add-materia-btn" (click)="openAddCourseModal(year, 3)">
+            + Agregar materia anual
+          </button>
+        </div>
+      </div>
+    }
+
+    <!-- Add Year Column -->
+    <div class="year-col add-year-col">
+      <button
+        mat-fab
+        class="add-year-circle-btn"
+        (click)="addNextYear()"
+        matTooltip="Agregar {{ totalYears() + 1 }}° Año"
+        aria-label="Agregar un año más"
+      >
+        <mat-icon>add</mat-icon>
+      </button>
+      <span class="add-year-text">Agregar {{ totalYears() + 1 }}° Año</span>
+    </div>
+  </main>
+
+  <!-- Add/Edit Subject Modal Dialog -->
+  @if (isModalOpen()) {
+    <div class="modal-backdrop" (click)="closeModal()">
+      <div class="modal-card" (click)="$event.stopPropagation()">
+        <header class="modal-header">
+          <h3>{{ activeCourseId() !== null ? 'Editar Materia' : 'Nueva Materia' }}</h3>
+          <button mat-icon-button (click)="closeModal()" class="close-modal-btn">
+            <mat-icon>close</mat-icon>
+          </button>
+        </header>
+
+        <form (submit)="$event.preventDefault(); saveCourse()" class="modal-form">
+          <div class="input-field">
+            <label for="course-name-modal">Nombre de la Materia *</label>
+            <input
+              id="course-name-modal"
+              type="text"
+              class="custom-input"
+              placeholder="Ej: Análisis Matemático I"
+              [ngModel]="courseFormName()"
+              (ngModelChange)="courseFormName.set($event)"
+              name="courseName"
+              autofocus
+            />
+          </div>
+
+          <footer class="modal-footer">
+            @if (activeCourseId() !== null) {
+              <button
+                mat-button
+                color="warn"
+                type="button"
+                class="btn-delete-modal"
+                (click)="deleteCourse(activeCourseId()!)"
+              >
+                Eliminar
+              </button>
+            }
+            <button mat-button type="button" (click)="closeModal()">Cancelar</button>
+            <button mat-flat-button color="primary" type="submit">
+              {{ activeCourseId() !== null ? 'Actualizar' : 'Agregar' }}
+            </button>
+          </footer>
+        </form>
+      </div>
+    </div>
+  }
+</div>

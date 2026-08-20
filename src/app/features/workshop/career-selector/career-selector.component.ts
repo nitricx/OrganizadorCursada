@@ -1,5 +1,6 @@
 import { Component, ChangeDetectionStrategy, inject, computed, signal, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
@@ -27,6 +28,7 @@ import { CareerIndexEntry } from '../../../models/career.model';
 export class CareerSelectorComponent {
   readonly careerService = inject(CareerService);
   private readonly toastService = inject(ToastService);
+  private readonly router = inject(Router);
 
   openWorkshop = output<void>();
 
@@ -67,5 +69,9 @@ export class CareerSelectorComponent {
 
   openPlanHub(): void {
     this.openWorkshop.emit();
+  }
+
+  openCareerBuilder(): void {
+    void this.router.navigateByUrl('/builder');
   }
 }
