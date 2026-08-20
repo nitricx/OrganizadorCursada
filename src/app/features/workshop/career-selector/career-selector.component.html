@@ -5,6 +5,7 @@
     #menuTrigger="matMenuTrigger"
     class="career-chip-btn"
     aria-label="Seleccionar plan de estudio"
+    [matTooltip]="activeCareerName()"
   >
     <span class="career-chip-text">{{ activeCareerName() }}</span>
     <mat-icon class="career-chip-arrow">keyboard_arrow_down</mat-icon>
@@ -25,7 +26,7 @@
           </mat-icon>
           <div class="career-option-details">
             <div class="career-option-title-row">
-              <span class="career-option-name">{{ career.name }}</span>
+              <span class="career-option-name" [matTooltip]="career.name">{{ career.name }}</span>
               @if (isCustomCareer(career.id)) {
                 <span class="career-local-badge">Copia local</span>
               }

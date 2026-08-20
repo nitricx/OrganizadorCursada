@@ -24,7 +24,7 @@
 }
 
 .career-chip-text {
-  max-width: 260px;
+  max-width: 320px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -43,8 +43,9 @@
 
 /* Dropdown Menu styling overrides */
 ::ng-deep .career-selector-menu {
-  min-width: 260px !important;
-  max-width: 360px !important;
+  min-width: 320px !important;
+  max-width: 480px !important;
+  width: max-content !important;
   border-radius: 12px !important;
   padding: 6px 0 !important;
 }
@@ -64,21 +65,22 @@
   line-height: 1.2;
   margin-left: 8px;
   overflow: hidden;
+  flex: 1;
 }
 
 ::ng-deep .career-selector-menu .career-option-title-row {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 6px;
 }
 
 ::ng-deep .career-selector-menu .career-option-name {
   font-weight: 500;
   color: var(--color-text-primary);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 200px;
+  white-space: normal;
+  word-break: break-word;
+  line-height: 1.3;
 }
 
 ::ng-deep .career-selector-menu .career-local-badge {
@@ -96,10 +98,9 @@
 ::ng-deep .career-selector-menu .career-option-univ {
   font-size: 12px;
   color: var(--color-text-secondary);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 220px;
+  white-space: normal;
+  word-break: break-word;
+  margin-top: 2px;
 }
 
 ::ng-deep .career-selector-menu .active-career-item {
@@ -108,6 +109,16 @@
 
 ::ng-deep .career-selector-menu .active-career-item .career-check-icon {
   color: var(--brand-primary);
+}
+
+::ng-deep .career-selector-menu .career-menu-item-btn {
+  flex: 1;
+  height: auto !important;
+  min-height: 48px;
+  padding-top: 8px !important;
+  padding-bottom: 8px !important;
+  white-space: normal !important;
+  line-height: normal !important;
 }
 
 ::ng-deep .career-selector-menu .workshop-menu-item,
