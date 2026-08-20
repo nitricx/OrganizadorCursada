@@ -24,7 +24,12 @@
             {{ career.id === careerService.selectedCareerId() ? 'radio_button_checked' : 'radio_button_unchecked' }}
           </mat-icon>
           <div class="career-option-details">
-            <span class="career-option-name">{{ career.name }}</span>
+            <div class="career-option-title-row">
+              <span class="career-option-name">{{ career.name }}</span>
+              @if (isCustomCareer(career.id)) {
+                <span class="career-local-badge">Copia local</span>
+              }
+            </div>
             @if (career.university) {
               <span class="career-option-univ">{{ career.university }}</span>
             }

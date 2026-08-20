@@ -38,11 +38,17 @@ export class CareerSelectorComponent {
 
   readonly activeCareerName = computed(() => {
     const active = this.careerService.activeCareer();
-    if (!active || !this.careerService.selectedCareerId() || active.id === 'empty-plan') {
+    const selectedId = this.careerService.selectedCareerId();
+    if (!active || !selectedId || active.id === 'empty-plan') {
       return 'Sin Plan Seleccionado';
     }
-    return active.name;
+    const isCustom = selectedId.startsWith('custom-');
+    return isCustom ? `${active.name} (Copia local)` : active.name;
   });
+
+  isCustomCareer(careerId: string): boolean {
+    return !!careerId && careerId.startsWith('custom-');
+  }
 
   confirmDeleteCareer(career: CareerIndexEntry, event: Event): void {
     event.stopPropagation();
