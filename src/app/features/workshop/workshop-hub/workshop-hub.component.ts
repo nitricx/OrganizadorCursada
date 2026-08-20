@@ -15,7 +15,6 @@ export interface WorkshopEntry {
   name: string;
   university: string;
   faculty: string;
-  subscribersRange: '< 10' | '10-50' | '50-100' | '100+';
   version: string;
   updatedAt: string;
   manifest: PlanManifest;
@@ -30,7 +29,6 @@ const DEFAULT_CATALOG: WorkshopEntry[] = [
     name: audiovisualPlan.name,
     university: audiovisualPlan.university,
     faculty: audiovisualPlan.faculty,
-    subscribersRange: '100+',
     version: audiovisualPlan.version,
     updatedAt: (audiovisualPlan as Record<string, unknown>)['updatedAt'] as string || '2026-08-19',
     manifest: audiovisualPlan as unknown as PlanManifest
@@ -40,7 +38,6 @@ const DEFAULT_CATALOG: WorkshopEntry[] = [
     name: sistemasPlan.name,
     university: sistemasPlan.university,
     faculty: sistemasPlan.faculty,
-    subscribersRange: '50-100',
     version: sistemasPlan.version,
     updatedAt: (sistemasPlan as Record<string, unknown>)['updatedAt'] as string || '2026-08-19',
     manifest: sistemasPlan as unknown as PlanManifest
@@ -89,7 +86,6 @@ export class WorkshopHubComponent implements OnInit {
             name: data['name'] || dSnap.id,
             university: data['university'] || 'Universidad',
             faculty: data['faculty'] || 'Facultad',
-            subscribersRange: data['subscribersRange'] || '10-50',
             version: data['version'] || '1.0.0',
             updatedAt: data['updatedAt'] || '2026-08-19',
             manifest: {

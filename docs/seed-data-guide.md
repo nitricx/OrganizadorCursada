@@ -26,7 +26,6 @@ Cada archivo en `scripts/seed-data/<id-carrera>.json` debe ser un objeto JSON v�
 | `name` | `string` | **Sí** | Nombre oficial completo de la carrera. | `"Ingeniería en Informática"` |
 | `university` | `string` | **Sí** | Universidad de origen. | `"Universidad de Buenos Aires"` |
 | `faculty` | `string` | **Sí** | Facultad o Unidad Académica. | `"Facultad de Ingeniería"` |
-| `subscribersRange` | `string` | No | Rango estimado de usuarios/suscriptores (opcional). | `"100+"`, `"50-100"`, `"10-50"` |
 | `version` | `string` | **Sí** | Año o código del plan de estudios oficial. | `"2020"`, `"2023"` |
 | `updatedAt` | `string` | **Sí** | Fecha de creación/actualización en formato `YYYY-MM-DD`. | `"2026-08-20"` |
 | `courses` | `Array` | **Sí** | Lista de asignaturas/materias (`RawCourseData[]`). | `[...]` |

@@ -78,14 +78,6 @@
   font-weight: 600;
   color: var(--color-text-primary);
 }
-.badge-subscribers {
-  font-size: 0.72rem;
-  padding: 2px 6px;
-  background: var(--brand-primary-light);
-  color: var(--brand-primary);
-  border-radius: var(--radius-full);
-  width: fit-content;
-}
 
 .col-faculty, .col-university {
   color: var(--color-text-secondary);

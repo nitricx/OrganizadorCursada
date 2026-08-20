@@ -46,7 +46,6 @@ describe('WorkshopHubComponent', () => {
         name: 'Ingeniería Tecnológica',
         university: 'Universidad Tecnológica Nacional',
         faculty: 'Facultad Regional',
-        subscribersRange: '10-50',
         version: '1.0.0',
         updatedAt: '2026-08-19',
         manifest: { id: 'test-tecnologica', name: 'Ingeniería Tecnológica', university: 'UTN', faculty: 'FR', version: '1.0.0', courses: [] }
