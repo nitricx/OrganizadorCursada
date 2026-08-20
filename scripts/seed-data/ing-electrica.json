@@ -1,0 +1,479 @@
+{
+  "id": "ing-electrica",
+  "name": "Ingeniería Eléctrica",
+  "university": "Universidad Tecnológica Nacional",
+  "faculty": "Facultad Regional Buenos Aires",
+  "subscribersRange": "50-100",
+  "version": "Plan de Estudios",
+  "updatedAt": "2026-08-20",
+  "courses": [
+    {
+      "id": 1,
+      "name": "Análisis Matemático I",
+      "year": 1,
+      "q": 3,
+      "cursarReqId": [],
+      "aprobarReqId": [],
+      "lessons": []
+    },
+    {
+      "id": 2,
+      "name": "Álgebra y Geometría Analítica",
+      "year": 1,
+      "q": 3,
+      "cursarReqId": [],
+      "aprobarReqId": [],
+      "lessons": []
+    },
+    {
+      "id": 3,
+      "name": "Ingeniería y Sociedad",
+      "year": 1,
+      "q": 3,
+      "cursarReqId": [],
+      "aprobarReqId": [],
+      "lessons": []
+    },
+    {
+      "id": 4,
+      "name": "Sistemas de Representación",
+      "year": 1,
+      "q": 3,
+      "cursarReqId": [],
+      "aprobarReqId": [],
+      "lessons": []
+    },
+    {
+      "id": 5,
+      "name": "Física I",
+      "year": 1,
+      "q": 3,
+      "cursarReqId": [],
+      "aprobarReqId": [],
+      "lessons": []
+    },
+    {
+      "id": 6,
+      "name": "Química General",
+      "year": 1,
+      "q": 3,
+      "cursarReqId": [],
+      "aprobarReqId": [],
+      "lessons": []
+    },
+    {
+      "id": 7,
+      "name": "Integración Eléctrica I (Integradora)",
+      "year": 1,
+      "q": 3,
+      "cursarReqId": [],
+      "aprobarReqId": [],
+      "lessons": []
+    },
+    {
+      "id": 8,
+      "name": "Fundamentos de Informática",
+      "year": 1,
+      "q": 3,
+      "cursarReqId": [],
+      "aprobarReqId": [],
+      "lessons": []
+    },
+    {
+      "id": 9,
+      "name": "Física II",
+      "year": 2,
+      "q": 3,
+      "cursarReqId": [1, 5],
+      "aprobarReqId": [1, 5],
+      "lessons": []
+    },
+    {
+      "id": 10,
+      "name": "Probabilidad y Estadística",
+      "year": 2,
+      "q": 3,
+      "cursarReqId": [1, 2],
+      "aprobarReqId": [1, 2],
+      "lessons": []
+    },
+    {
+      "id": 11,
+      "name": "Electrotecnia I",
+      "year": 2,
+      "q": 3,
+      "cursarReqId": [1, 2, 5],
+      "aprobarReqId": [1, 2, 5],
+      "lessons": []
+    },
+    {
+      "id": 12,
+      "name": "Estabilidad",
+      "year": 2,
+      "q": 3,
+      "cursarReqId": [2, 5],
+      "aprobarReqId": [2, 5],
+      "lessons": []
+    },
+    {
+      "id": 13,
+      "name": "Mecánica Técnica",
+      "year": 2,
+      "q": 3,
+      "cursarReqId": [1, 5],
+      "aprobarReqId": [2, 5],
+      "lessons": []
+    },
+    {
+      "id": 14,
+      "name": "Integración Eléctrica II (Integradora)",
+      "year": 2,
+      "q": 3,
+      "cursarReqId": [1, 5, 7],
+      "aprobarReqId": [1, 5, 7],
+      "lessons": []
+    },
+    {
+      "id": 15,
+      "name": "Inglés I",
+      "year": 2,
+      "q": 3,
+      "cursarReqId": [],
+      "aprobarReqId": [],
+      "lessons": []
+    },
+    {
+      "id": 16,
+      "name": "Análisis Matemático II",
+      "year": 2,
+      "q": 3,
+      "cursarReqId": [1, 2],
+      "aprobarReqId": [1, 2],
+      "lessons": []
+    },
+    {
+      "id": 17,
+      "name": "Cálculo Numérico",
+      "year": 2,
+      "q": 3,
+      "cursarReqId": [1, 2],
+      "aprobarReqId": [1, 2],
+      "lessons": []
+    },
+    {
+      "id": 18,
+      "name": "Tecnología y Ensayos de Materiales Eléctricos",
+      "year": 3,
+      "q": 3,
+      "cursarReqId": [1, 5, 6, 9],
+      "aprobarReqId": [6, 9],
+      "lessons": []
+    },
+    {
+      "id": 19,
+      "name": "Instrumentos y Mediciones Eléctricas",
+      "year": 3,
+      "q": 3,
+      "cursarReqId": [1, 2, 3, 4, 5, 7, 10, 11, 14],
+      "aprobarReqId": [10, 11, 14],
+      "lessons": []
+    },
+    {
+      "id": 20,
+      "name": "Teoría de los Campos",
+      "year": 3,
+      "q": 3,
+      "cursarReqId": [1, 2, 5, 9, 16],
+      "aprobarReqId": [9, 16],
+      "lessons": []
+    },
+    {
+      "id": 21,
+      "name": "Física III",
+      "year": 3,
+      "q": 3,
+      "cursarReqId": [1, 2, 5, 9, 16],
+      "aprobarReqId": [9, 16],
+      "lessons": []
+    },
+    {
+      "id": 22,
+      "name": "Máquinas Eléctricas I (Integradora)",
+      "year": 3,
+      "q": 3,
+      "cursarReqId": [1, 5, 7, 8, 9, 11, 16],
+      "aprobarReqId": [9, 11, 16],
+      "lessons": []
+    },
+    {
+      "id": 23,
+      "name": "Electrotecnia II",
+      "year": 3,
+      "q": 3,
+      "cursarReqId": [1, 2, 5, 9, 11, 16],
+      "aprobarReqId": [9, 11, 16],
+      "lessons": []
+    },
+    {
+      "id": 24,
+      "name": "Termodinámica",
+      "year": 3,
+      "q": 3,
+      "cursarReqId": [1, 2, 5, 9, 16],
+      "aprobarReqId": [9, 16],
+      "lessons": []
+    },
+    {
+      "id": 25,
+      "name": "Fundamentos para el Análisis de Señales",
+      "year": 3,
+      "q": 3,
+      "cursarReqId": [1, 2, 16, 17],
+      "aprobarReqId": [16, 17],
+      "lessons": []
+    },
+    {
+      "id": 26,
+      "name": "Inglés II",
+      "year": 4,
+      "q": 3,
+      "cursarReqId": [15],
+      "aprobarReqId": [],
+      "lessons": []
+    },
+    {
+      "id": 27,
+      "name": "Economía",
+      "year": 4,
+      "q": 3,
+      "cursarReqId": [3, 14],
+      "aprobarReqId": [14],
+      "lessons": []
+    },
+    {
+      "id": 28,
+      "name": "Electrónica I",
+      "year": 4,
+      "q": 3,
+      "cursarReqId": [1, 5, 11],
+      "aprobarReqId": [11],
+      "lessons": []
+    },
+    {
+      "id": 29,
+      "name": "Máquinas Eléctricas II",
+      "year": 4,
+      "q": 3,
+      "cursarReqId": [6, 9, 10, 11, 14, 16, 18, 20, 22, 23],
+      "aprobarReqId": [18, 19, 20, 22, 23],
+      "lessons": []
+    },
+    {
+      "id": 30,
+      "name": "Seguridad, Riesgo Eléctrico y Medio Ambiente",
+      "year": 4,
+      "q": 3,
+      "cursarReqId": [1, 2, 5, 9, 11, 16, 20],
+      "aprobarReqId": [11, 20],
+      "lessons": []
+    },
+    {
+      "id": 31,
+      "name": "Instalaciones Eléctricas y Luminotecnia (Integradora)",
+      "year": 4,
+      "q": 3,
+      "cursarReqId": [6, 9, 11, 14, 15, 16, 18, 22, 23],
+      "aprobarReqId": [18, 22, 23],
+      "lessons": []
+    },
+    {
+      "id": 32,
+      "name": "Control Automático",
+      "year": 4,
+      "q": 3,
+      "cursarReqId": [11, 16, 23, 25],
+      "aprobarReqId": [23, 25],
+      "lessons": []
+    },
+    {
+      "id": 33,
+      "name": "Máquinas Térmicas, Hidráulicas y de Fluidos",
+      "year": 4,
+      "q": 3,
+      "cursarReqId": [9, 12, 13, 16, 24],
+      "aprobarReqId": [12, 13, 24],
+      "lessons": []
+    },
+    {
+      "id": 34,
+      "name": "Legislación",
+      "year": 4,
+      "q": 3,
+      "cursarReqId": [3, 14],
+      "aprobarReqId": [14],
+      "lessons": []
+    },
+    {
+      "id": 35,
+      "name": "Electrónica II",
+      "year": 5,
+      "q": 3,
+      "cursarReqId": [11, 28],
+      "aprobarReqId": [28],
+      "lessons": []
+    },
+    {
+      "id": 36,
+      "name": "Generación, Transmisión y Distribución de la E.E.",
+      "year": 5,
+      "q": 3,
+      "cursarReqId": [12, 13, 18, 21, 22, 23, 24, 29, 33],
+      "aprobarReqId": [21, 29, 33],
+      "lessons": []
+    },
+    {
+      "id": 37,
+      "name": "Sistemas de Potencia",
+      "year": 5,
+      "q": 3,
+      "cursarReqId": [18, 22, 23, 29],
+      "aprobarReqId": [29],
+      "lessons": []
+    },
+    {
+      "id": 38,
+      "name": "Accionamientos y Controles Eléctricos",
+      "year": 5,
+      "q": 3,
+      "cursarReqId": [11, 18, 22, 23, 25, 28, 29, 32],
+      "aprobarReqId": [28, 29, 32],
+      "lessons": []
+    },
+    {
+      "id": 39,
+      "name": "Organización y Administración de Empresas",
+      "year": 5,
+      "q": 3,
+      "cursarReqId": [14, 27, 34],
+      "aprobarReqId": [27, 34],
+      "lessons": []
+    },
+    {
+      "id": 40,
+      "name": "Proyecto Final (Integradora)",
+      "year": 5,
+      "q": 3,
+      "cursarReqId": [18, 22, 23, 25, 26, 29, 31, 32],
+      "aprobarReqId": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39],
+      "lessons": []
+    },
+    {
+      "id": 41,
+      "name": "Mercado eléctrico y Planificación Eléctrica (Electiva)",
+      "year": 5,
+      "q": 3,
+      "cursarReqId": [27, 33, 34],
+      "aprobarReqId": [27, 33, 34],
+      "lessons": []
+    },
+    {
+      "id": 42,
+      "name": "Calidad aplicada a la Gestión Energética en Ingeniería Eléctrica I (Electiva)",
+      "year": 5,
+      "q": 3,
+      "cursarReqId": [10, 22],
+      "aprobarReqId": [10, 22],
+      "lessons": []
+    },
+    {
+      "id": 43,
+      "name": "Calidad aplicada a la Gestión Energética en Ingeniería Eléctrica II (Electiva)",
+      "year": 5,
+      "q": 3,
+      "cursarReqId": [10, 22, 42],
+      "aprobarReqId": [10, 22],
+      "lessons": []
+    },
+    {
+      "id": 45,
+      "name": "Energías Renovables I (Electiva)",
+      "year": 5,
+      "q": 3,
+      "cursarReqId": [22, 31],
+      "aprobarReqId": [22, 31],
+      "lessons": []
+    },
+    {
+      "id": 46,
+      "name": "Energías Renovables II (Electiva)",
+      "year": 5,
+      "q": 3,
+      "cursarReqId": [22, 31],
+      "aprobarReqId": [22, 31],
+      "lessons": []
+    },
+    {
+      "id": 47,
+      "name": "Monitoreo de la Operación de Sistemas Eléctricos (Electiva)",
+      "year": 5,
+      "q": 3,
+      "cursarReqId": [22, 31, 32, 33],
+      "aprobarReqId": [31, 32, 33],
+      "lessons": []
+    },
+    {
+      "id": 48,
+      "name": "Redes Inteligentes (Electiva)",
+      "year": 5,
+      "q": 3,
+      "cursarReqId": [22, 29, 31],
+      "aprobarReqId": [22, 29, 31],
+      "lessons": []
+    },
+    {
+      "id": 49,
+      "name": "Instrumentación (Electiva)",
+      "year": 5,
+      "q": 3,
+      "cursarReqId": [23, 24, 25, 32, 33],
+      "aprobarReqId": [32, 33],
+      "lessons": []
+    },
+    {
+      "id": 50,
+      "name": "Centrales Eléctricas y Protecciones de Generador",
+      "year": 5,
+      "q": 3,
+      "cursarReqId": [22, 29, 31, 33],
+      "aprobarReqId": [22, 29, 31, 33],
+      "lessons": []
+    },
+    {
+      "id": 51,
+      "name": "Construcción de Máquinas Eléctricas I (Electiva)",
+      "year": 5,
+      "q": 3,
+      "cursarReqId": [18, 22, 29],
+      "aprobarReqId": [18, 22, 29],
+      "lessons": []
+    },
+    {
+      "id": 52,
+      "name": "Construcción de Máquinas Eléctricas II (Electiva)",
+      "year": 5,
+      "q": 3,
+      "cursarReqId": [18, 22, 29],
+      "aprobarReqId": [18, 22, 29],
+      "lessons": []
+    },
+    {
+      "id": 53,
+      "name": "Protección y Control de Sistemas Eléctricos",
+      "year": 5,
+      "q": 3,
+      "cursarReqId": [22, 31, 32, 33],
+      "aprobarReqId": [31, 32, 33],
+      "lessons": []
+    }
+  ]
+}

@@ -1,0 +1,452 @@
+{
+  "id": "ing-mecanica",
+  "name": "Ingeniería Mecánica",
+  "university": "Universidad Tecnológica Nacional",
+  "faculty": "UTN",
+  "subscribersRange": "50-100",
+  "version": "Plan 1994 Adecuado (Marzo 2022)",
+  "updatedAt": "2026-08-20",
+  "courses": [
+    {
+      "id": 1,
+      "name": "Química General",
+      "year": 1,
+      "q": 3,
+      "cursarReqId": [],
+      "aprobarReqId": [],
+      "lessons": []
+    },
+    {
+      "id": 2,
+      "name": "Álgebra y Geometría Analítica",
+      "year": 1,
+      "q": 3,
+      "cursarReqId": [],
+      "aprobarReqId": [],
+      "lessons": []
+    },
+    {
+      "id": 3,
+      "name": "Análisis Matemático I",
+      "year": 1,
+      "q": 3,
+      "cursarReqId": [],
+      "aprobarReqId": [],
+      "lessons": []
+    },
+    {
+      "id": 4,
+      "name": "Física I",
+      "year": 1,
+      "q": 3,
+      "cursarReqId": [],
+      "aprobarReqId": [],
+      "lessons": []
+    },
+    {
+      "id": 5,
+      "name": "Ingeniería Mecánica I",
+      "year": 1,
+      "q": 3,
+      "cursarReqId": [],
+      "aprobarReqId": [],
+      "lessons": []
+    },
+    {
+      "id": 6,
+      "name": "Ingeniería y Sociedad",
+      "year": 1,
+      "q": 1,
+      "cursarReqId": [],
+      "aprobarReqId": [],
+      "lessons": []
+    },
+    {
+      "id": 7,
+      "name": "Sistemas de Representación",
+      "year": 1,
+      "q": 3,
+      "cursarReqId": [],
+      "aprobarReqId": [],
+      "lessons": []
+    },
+    {
+      "id": 8,
+      "name": "Fundamentos de Informática",
+      "year": 1,
+      "q": 2,
+      "cursarReqId": [],
+      "aprobarReqId": [],
+      "lessons": []
+    },
+    {
+      "id": 9,
+      "name": "Química Aplicada",
+      "year": 2,
+      "q": 3,
+      "cursarReqId": [1],
+      "aprobarReqId": [1],
+      "lessons": []
+    },
+    {
+      "id": 10,
+      "name": "Estabilidad I",
+      "year": 2,
+      "q": 3,
+      "cursarReqId": [2, 4],
+      "aprobarReqId": [2, 4],
+      "lessons": []
+    },
+    {
+      "id": 11,
+      "name": "Análisis Matemático II",
+      "year": 2,
+      "q": 3,
+      "cursarReqId": [2, 3],
+      "aprobarReqId": [2, 3],
+      "lessons": []
+    },
+    {
+      "id": 12,
+      "name": "Física II",
+      "year": 2,
+      "q": 3,
+      "cursarReqId": [3, 4],
+      "aprobarReqId": [3, 4],
+      "lessons": []
+    },
+    {
+      "id": 13,
+      "name": "Ingeniería Mecánica II",
+      "year": 2,
+      "q": 3,
+      "cursarReqId": [4, 5],
+      "aprobarReqId": [4, 5],
+      "lessons": []
+    },
+    {
+      "id": 14,
+      "name": "Ingeniería Ambiental y Seguridad Industrial",
+      "year": 2,
+      "q": 2,
+      "cursarReqId": [1],
+      "aprobarReqId": [1],
+      "lessons": []
+    },
+    {
+      "id": 15,
+      "name": "Materiales Metálicos",
+      "year": 2,
+      "q": 3,
+      "cursarReqId": [1],
+      "aprobarReqId": [1],
+      "lessons": []
+    },
+    {
+      "id": 16,
+      "name": "Probabilidades y Estadística",
+      "year": 2,
+      "q": 1,
+      "cursarReqId": [2, 3],
+      "aprobarReqId": [2, 3],
+      "lessons": []
+    },
+    {
+      "id": 17,
+      "name": "Diseño en 3D (Electiva)",
+      "year": 2,
+      "q": 3,
+      "cursarReqId": [7],
+      "aprobarReqId": [7],
+      "lessons": []
+    },
+    {
+      "id": 18,
+      "name": "Mecánica Racional",
+      "year": 3,
+      "q": 3,
+      "cursarReqId": [2, 3, 4, 10, 11],
+      "aprobarReqId": [10, 11],
+      "lessons": []
+    },
+    {
+      "id": 19,
+      "name": "Estabilidad II",
+      "year": 3,
+      "q": 3,
+      "cursarReqId": [2, 3, 4, 10, 11],
+      "aprobarReqId": [10, 11],
+      "lessons": []
+    },
+    {
+      "id": 20,
+      "name": "Termodinámica",
+      "year": 3,
+      "q": 3,
+      "cursarReqId": [2, 3, 4, 11, 12],
+      "aprobarReqId": [11, 12],
+      "lessons": []
+    },
+    {
+      "id": 21,
+      "name": "Economía",
+      "year": 3,
+      "q": 3,
+      "cursarReqId": [6, 13],
+      "aprobarReqId": [13],
+      "lessons": []
+    },
+    {
+      "id": 22,
+      "name": "Electrotecnia y Máquinas Eléctricas",
+      "year": 3,
+      "q": 3,
+      "cursarReqId": [2, 3, 4, 11, 12],
+      "aprobarReqId": [11, 12],
+      "lessons": []
+    },
+    {
+      "id": 23,
+      "name": "Diseño Mecánico",
+      "year": 3,
+      "q": 3,
+      "cursarReqId": [7, 13],
+      "aprobarReqId": [13],
+      "lessons": []
+    },
+    {
+      "id": 24,
+      "name": "Ingeniería Mecánica III",
+      "year": 3,
+      "q": 3,
+      "cursarReqId": [1, 4, 5, 8, 9, 13, 15],
+      "aprobarReqId": [9, 13, 15],
+      "lessons": []
+    },
+    {
+      "id": 25,
+      "name": "Cálculo Avanzado",
+      "year": 3,
+      "q": 3,
+      "cursarReqId": [2, 3, 11],
+      "aprobarReqId": [11],
+      "lessons": []
+    },
+    {
+      "id": 26,
+      "name": "Energías Renovables (Electiva)",
+      "year": 3,
+      "q": 3,
+      "cursarReqId": [11, 12],
+      "aprobarReqId": [11, 12],
+      "lessons": []
+    },
+    {
+      "id": 27,
+      "name": "Industria 4.0 (Electiva)",
+      "year": 3,
+      "q": 3,
+      "cursarReqId": [5, 13, 14, 15],
+      "aprobarReqId": [13, 15],
+      "lessons": []
+    },
+    {
+      "id": 28,
+      "name": "Mecánica de los Fluidos",
+      "year": 4,
+      "q": 3,
+      "cursarReqId": [11, 12, 20],
+      "aprobarReqId": [20],
+      "lessons": []
+    },
+    {
+      "id": 29,
+      "name": "Mediciones y Ensayos Industriales",
+      "year": 4,
+      "q": 3,
+      "cursarReqId": [3, 4, 12, 15],
+      "aprobarReqId": [12, 15],
+      "lessons": []
+    },
+    {
+      "id": 30,
+      "name": "Organización Industrial",
+      "year": 4,
+      "q": 3,
+      "cursarReqId": [1, 5, 13, 15, 21],
+      "aprobarReqId": [13, 21],
+      "lessons": []
+    },
+    {
+      "id": 31,
+      "name": "Electrónica y Sistemas de Control",
+      "year": 4,
+      "q": 3,
+      "cursarReqId": [2, 3, 4, 11, 12],
+      "aprobarReqId": [11, 12],
+      "lessons": []
+    },
+    {
+      "id": 32,
+      "name": "Elementos de Máquinas",
+      "year": 4,
+      "q": 3,
+      "cursarReqId": [1, 9, 10, 11, 12, 13, 15, 18, 19, 24],
+      "aprobarReqId": [15, 18, 19, 24],
+      "lessons": []
+    },
+    {
+      "id": 33,
+      "name": "Tecnología del Calor",
+      "year": 4,
+      "q": 3,
+      "cursarReqId": [11, 12, 20],
+      "aprobarReqId": [20],
+      "lessons": []
+    },
+    {
+      "id": 34,
+      "name": "Legislación",
+      "year": 4,
+      "q": 3,
+      "cursarReqId": [6, 13],
+      "aprobarReqId": [13],
+      "lessons": []
+    },
+    {
+      "id": 35,
+      "name": "Evaluación y Gestión de Proyectos de Ingeniería Sustentable (Electiva)",
+      "year": 4,
+      "q": 3,
+      "cursarReqId": [16, 21, 24],
+      "aprobarReqId": [21, 24],
+      "lessons": []
+    },
+    {
+      "id": 36,
+      "name": "Cálculo por Elementos Finitos (Electiva)",
+      "year": 4,
+      "q": 3,
+      "cursarReqId": [11, 25],
+      "aprobarReqId": [25],
+      "lessons": []
+    },
+    {
+      "id": 37,
+      "name": "Automatización Industrial (Electiva)",
+      "year": 4,
+      "q": 3,
+      "cursarReqId": [3, 11],
+      "aprobarReqId": [11],
+      "lessons": []
+    },
+    {
+      "id": 38,
+      "name": "Introducción a Tecnología Ferroviaria (Electiva)",
+      "year": 4,
+      "q": 3,
+      "cursarReqId": [3, 10, 11, 19],
+      "aprobarReqId": [13, 23, 24],
+      "lessons": []
+    },
+    {
+      "id": 39,
+      "name": "Tecnología de la Soldadura (Electiva)",
+      "year": 4,
+      "q": 3,
+      "cursarReqId": [10, 15, 24],
+      "aprobarReqId": [15, 24],
+      "lessons": []
+    },
+    {
+      "id": 40,
+      "name": "Máquinas Alternativas y Turbomáquinas",
+      "year": 5,
+      "q": 3,
+      "cursarReqId": [20, 28, 33],
+      "aprobarReqId": [28, 33],
+      "lessons": []
+    },
+    {
+      "id": 41,
+      "name": "Mantenimiento",
+      "year": 5,
+      "q": 3,
+      "cursarReqId": [9, 12, 15, 18, 19, 22, 23, 24, 32],
+      "aprobarReqId": [22, 32],
+      "lessons": []
+    },
+    {
+      "id": 42,
+      "name": "Tecnología de Fabricación",
+      "year": 5,
+      "q": 3,
+      "cursarReqId": [1, 2, 9, 12, 15, 16, 23, 29],
+      "aprobarReqId": [9, 15, 16, 23, 29],
+      "lessons": []
+    },
+    {
+      "id": 43,
+      "name": "Metrología e Ingeniería de Calidad",
+      "year": 5,
+      "q": 3,
+      "cursarReqId": [1, 2, 9, 12, 15, 16, 23, 29],
+      "aprobarReqId": [9, 15, 16, 23, 29],
+      "lessons": []
+    },
+    {
+      "id": 44,
+      "name": "Proyecto Final",
+      "year": 5,
+      "q": 3,
+      "cursarReqId": [18, 19, 23, 24, 25, 32],
+      "aprobarReqId": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43],
+      "lessons": []
+    },
+    {
+      "id": 45,
+      "name": "Instalaciones Industriales",
+      "year": 5,
+      "q": 3,
+      "cursarReqId": [20, 22, 28, 31],
+      "aprobarReqId": [22, 28, 31],
+      "lessons": []
+    },
+    {
+      "id": 46,
+      "name": "Automotores (Electiva)",
+      "year": 5,
+      "q": 3,
+      "cursarReqId": [24, 32, 33],
+      "aprobarReqId": [32, 33],
+      "lessons": []
+    },
+    {
+      "id": 47,
+      "name": "Transporte de Fluidos por Tuberías (Electiva)",
+      "year": 5,
+      "q": 3,
+      "cursarReqId": [19, 20, 28],
+      "aprobarReqId": [28],
+      "lessons": []
+    },
+    {
+      "id": 48,
+      "name": "Proyecto de Instalación de Aire Acondicionado y Refrigeración (Electiva)",
+      "year": 5,
+      "q": 3,
+      "cursarReqId": [20, 28],
+      "aprobarReqId": [28],
+      "lessons": []
+    },
+    {
+      "id": 49,
+      "name": "Robótica Industrial (Electiva)",
+      "year": 5,
+      "q": 3,
+      "cursarReqId": [15, 18, 19, 24, 32],
+      "aprobarReqId": [32],
+      "lessons": []
+    }
+  ]
+}
