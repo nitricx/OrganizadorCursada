@@ -104,4 +104,22 @@ describe('PlanLinterService (Exhaustive Test Suite)', () => {
     expect(res.errors.some(e => e.includes('límite máximo'))).toBe(true);
     expect(res.errors.some(e => e.includes('límite razonable de años'))).toBe(true);
   });
+
+  it('should validate raw course data arrays using lintRawCourses', () => {
+    const validRawCourses = [
+      { id: 1, name: 'Materia 1', cursarReqId: [], aprobarReqId: [] },
+      { id: 2, name: 'Materia 2', cursarReqId: [1], aprobarReqId: [] },
+      { id: 3, name: 'Materia 3', cursarReqId: [2], aprobarReqId: [] }
+    ];
+    expect(service.lintRawCourses(validRawCourses).valid).toBe(true);
+
+    const cyclicRawCourses = [
+      { id: 1, name: 'Materia 1', cursarReqId: [3], aprobarReqId: [] },
+      { id: 2, name: 'Materia 2', cursarReqId: [1], aprobarReqId: [] },
+      { id: 3, name: 'Materia 3', cursarReqId: [2], aprobarReqId: [] }
+    ];
+    const cyclicRes = service.lintRawCourses(cyclicRawCourses);
+    expect(cyclicRes.valid).toBe(false);
+    expect(cyclicRes.errors.some(e => e.includes('circular'))).toBe(true);
+  });
 });

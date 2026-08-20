@@ -11,6 +11,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { CareerService } from '../../services/career.service';
 import { ToastService } from '../../services/toast.service';
+import { PlanLinterService } from '../../services/plan-linter.service';
 import { CareerPlan, RawCourseData } from '../../models/career.model';
 import { Lesson, DayOfWeek } from '../../models/course';
 
@@ -34,6 +35,7 @@ import { Lesson, DayOfWeek } from '../../models/course';
 export class CareerBuilderComponent {
   private readonly careerService = inject(CareerService);
   private readonly toastService = inject(ToastService);
+  private readonly planLinterService = inject(PlanLinterService);
   private readonly router = inject(Router);
 
   readonly careerName = signal<string>('');
@@ -201,7 +203,7 @@ export class CareerBuilderComponent {
     const courses = this.courses();
 
     const directChildren = courses.filter(
-      (c) => (c.cursarReqId || []).includes(sourceId) || (c.aprobarReqId || []).includes(sourceId),
+      (c) => c.id !== targetId && ((c.cursarReqId || []).includes(sourceId) || (c.aprobarReqId || []).includes(sourceId)),
     );
 
     const queue: number[] = directChildren.map((c) => c.id);
@@ -232,6 +234,14 @@ export class CareerBuilderComponent {
     return this.hasIntermediatePath(sourceId, targetId) ? 'aprobar' : 'cursar';
   }
 
+  isFuturePrerequisite(source: { year: number; q: number }, target: { year: number; q: number }): boolean {
+    if (source.year > target.year) return true;
+    if (source.year < target.year) return false;
+    if (source.q === 2 && target.q === 1) return true;
+    if (source.q === 3 && target.q === 1) return true;
+    return false;
+  }
+
   handleCourseClick(course: RawCourseData, event?: Event): void {
     if (event) event.stopPropagation();
 
@@ -254,6 +264,21 @@ export class CareerBuilderComponent {
       return;
     }
 
+    if (this.isFuturePrerequisite(source, course)) {
+      this.toastService.warning(
+        `No se puede vincular "${source.name}" como correlativa de "${course.name}" porque pertenece a un período posterior.`,
+      );
+      this.cancelConnection();
+      return;
+    }
+
+    const alreadyLinked = (course.cursarReqId || []).includes(source.id) || (course.aprobarReqId || []).includes(source.id);
+    if (alreadyLinked) {
+      this.toastService.warning(`La materia "${source.name}" ya es correlativa de "${course.name}".`);
+      this.cancelConnection();
+      return;
+    }
+
     if (this.wouldCreateCycle(source.id, course.id)) {
       this.toastService.warning(`No se puede vincular "${source.name}" a "${course.name}" porque generaría un ciclo de dependencia circular.`);
       return;
@@ -265,8 +290,12 @@ export class CareerBuilderComponent {
     this.courses.update((list) =>
       list.map((c) => {
         if (c.id !== course.id) return c;
-        const cursarReqId = type === 'cursar' ? Array.from(new Set([...c.cursarReqId, source.id])) : c.cursarReqId;
-        const aprobarReqId = type === 'aprobar' ? Array.from(new Set([...c.aprobarReqId, source.id])) : c.aprobarReqId;
+        const cursarReqId = type === 'cursar'
+          ? Array.from(new Set([...(c.cursarReqId || []), source.id]))
+          : (c.cursarReqId || []).filter((id) => id !== source.id);
+        const aprobarReqId = type === 'aprobar'
+          ? Array.from(new Set([...(c.aprobarReqId || []), source.id]))
+          : (c.aprobarReqId || []).filter((id) => id !== source.id);
         return { ...c, cursarReqId, aprobarReqId };
       }),
     );
@@ -512,6 +541,13 @@ export class CareerBuilderComponent {
 
     if (this.courses().length === 0) {
       this.toastService.warning('Agregá al menos una materia para poder guardar la carrera.');
+      return;
+    }
+
+    const lintResult = this.planLinterService.lintRawCourses(this.courses());
+    if (!lintResult.valid) {
+      const firstError = lintResult.errors[0] || 'El plan de estudio posee errores en la estructura de correlativas.';
+      this.toastService.warning(firstError);
       return;
     }
 

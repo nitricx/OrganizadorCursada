@@ -119,4 +119,107 @@ export class PlanLinterService {
     // If visited count != total courses, there is at least one cycle
     return visitedCount !== courses.length;
   }
+
+  public isFuturePrerequisite(source: { year?: number; q?: number }, target: { year?: number; q?: number }): boolean {
+    const sYear = source.year || 1;
+    const tYear = target.year || 1;
+    const sQ = source.q || 1;
+    const tQ = target.q || 1;
+
+    if (sYear > tYear) return true;
+    if (sYear < tYear) return false;
+    if (sQ === 2 && tQ === 1) return true;
+    if (sQ === 3 && tQ === 1) return true;
+    return false;
+  }
+
+  /**
+   * Lints an array of RawCourseData (used in Career Builder and internal stores).
+   */
+  public lintRawCourses(courses: { id: number; name: string; year?: number; q?: number; cursarReqId?: number[]; aprobarReqId?: number[] }[]): LintResult {
+    const errors: string[] = [];
+    const warnings: string[] = [];
+
+    if (!Array.isArray(courses) || courses.length === 0) {
+      return { valid: false, errors: ['No hay materias para validar.'], warnings: [] };
+    }
+
+    const courseMap = new Map<number, { id: number; name: string; year?: number; q?: number; cursarReqId?: number[]; aprobarReqId?: number[] }>();
+    courses.forEach((c) => courseMap.set(c.id, c));
+
+    courses.forEach((c) => {
+      const cursarReqs = c.cursarReqId || [];
+      const aprobarReqs = c.aprobarReqId || [];
+      const allReqs = [...cursarReqs, ...aprobarReqs];
+
+      // Self reference check
+      if (allReqs.includes(c.id)) {
+        errors.push(`La materia "${c.name}" no puede ser correlativa de sí misma.`);
+      }
+
+      // Dangling reference & future prerequisite check
+      allReqs.forEach((reqId) => {
+        const reqCourse = courseMap.get(reqId);
+        if (!reqCourse) {
+          errors.push(`La materia "${c.name}" posee una correlativa con ID inexistente (${reqId}).`);
+        } else if (this.isFuturePrerequisite(reqCourse, c)) {
+          errors.push(`La materia "${c.name}" no puede depender de "${reqCourse.name}" porque pertenece a un período posterior.`);
+        }
+      });
+    });
+
+    const hasCycle = this.detectCyclesInRawCourses(courses);
+    if (hasCycle) {
+      errors.push('Se detectó una dependencia circular de correlativas entre las materias.');
+    }
+
+    return {
+      valid: errors.length === 0,
+      errors,
+      warnings,
+    };
+  }
+
+  private detectCyclesInRawCourses(courses: { id: number; cursarReqId?: number[]; aprobarReqId?: number[] }[]): boolean {
+    if (courses.length === 0) return false;
+
+    const nodeMap = new Map<number, number>();
+    courses.forEach((c, idx) => {
+      nodeMap.set(c.id, idx);
+    });
+
+    const inDegree = new Array<number>(courses.length).fill(0);
+    const adjList: number[][] = Array.from({ length: courses.length }, () => []);
+
+    courses.forEach((c, targetIdx) => {
+      const reqs = new Set([...(c.cursarReqId || []), ...(c.aprobarReqId || [])]);
+      reqs.forEach((reqId) => {
+        const prereqIdx = nodeMap.get(reqId);
+        if (prereqIdx !== undefined && prereqIdx !== targetIdx) {
+          adjList[prereqIdx].push(targetIdx);
+          inDegree[targetIdx]++;
+        }
+      });
+    });
+
+    const queue: number[] = [];
+    inDegree.forEach((deg, idx) => {
+      if (deg === 0) queue.push(idx);
+    });
+
+    let visitedCount = 0;
+    while (queue.length > 0) {
+      const u = queue.shift()!;
+      visitedCount++;
+
+      for (const v of adjList[u]) {
+        inDegree[v]--;
+        if (inDegree[v] === 0) {
+          queue.push(v);
+        }
+      }
+    }
+
+    return visitedCount !== courses.length;
+  }
 }
