@@ -8,7 +8,7 @@
         (click)="onChipClick('pending')"
         title="Clic para activar/desactivar filtro de materias Pendientes"
       >
-        <div class="leg-dot" style="background: #e8e7e0; border: 1px solid #888888"></div>
+        <div class="leg-dot" style="background: var(--status-pending-bg); border: 1px solid var(--status-pending-border)"></div>
         <span>Pendiente</span>
       </mat-chip>
       <mat-chip
@@ -18,7 +18,7 @@
         (click)="onChipClick('available')"
         title="Clic para activar/desactivar filtro de materias Disponibles para cursar"
       >
-        <div class="leg-dot" style="background: #e6f0fa; border: 1px solid #185fa5"></div>
+        <div class="leg-dot" style="background: var(--status-available-bg); border: 1px solid var(--status-available-border)"></div>
         <span>Disponible para cursar</span>
       </mat-chip>
       <mat-chip
@@ -28,7 +28,7 @@
         (click)="onChipClick('coursing')"
         title="Clic para activar/desactivar filtro de materias en Cursando"
       >
-        <div class="leg-dot" style="background: #fff8e1; border: 1px solid #d4b856"></div>
+        <div class="leg-dot" style="background: var(--status-coursing-bg); border: 1px solid var(--status-coursing-border)"></div>
         <span>Cursando</span>
       </mat-chip>
       <mat-chip
@@ -38,7 +38,7 @@
         (click)="onChipClick('coursed')"
         title="Clic para activar/desactivar filtro de materias Cursadas"
       >
-        <div class="leg-dot" style="background: #e6f1fb; border: 1px solid #185fa5"></div>
+        <div class="leg-dot" style="background: var(--status-coursed-bg); border: 1px solid var(--status-coursed-border)"></div>
         <span>Cursada</span>
       </mat-chip>
       <mat-chip
@@ -48,7 +48,7 @@
         (click)="onChipClick('approved')"
         title="Clic para activar/desactivar filtro de materias Aprobadas"
       >
-        <div class="leg-dot" style="background: #e1f5ee; border: 1px solid #0f6e56"></div>
+        <div class="leg-dot" style="background: var(--status-approved-bg); border: 1px solid var(--status-approved-border)"></div>
         <span>Aprobada</span>
       </mat-chip>
     </mat-chip-set>

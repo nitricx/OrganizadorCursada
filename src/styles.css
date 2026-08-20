@@ -95,13 +95,13 @@
   --status-coursing-color: #7c2d12;
   --status-coursing-border: #ffd166;
 
-  --status-coursed-bg: #e6fbf5;
-  --status-coursed-color: #044e3a;
-  --status-coursed-border: #06d6a0;
+  --status-coursed-bg: #eef2ff;
+  --status-coursed-color: #3730a3;
+  --status-coursed-border: #6366f1;
 
-  --status-approved-bg: #fde8ed;
-  --status-approved-color: #9f1239;
-  --status-approved-border: #ef476f;
+  --status-approved-bg: #e6fbf5;
+  --status-approved-color: #044e3a;
+  --status-approved-border: #06d6a0;
 
   /* Hover Highlights */
   --status-req-bg: #fde8ed;
@@ -177,13 +177,13 @@
   --status-coursing-color: #fef08a;
   --status-coursing-border: #ffd166;
 
-  --status-coursed-bg: #064e3b;
-  --status-coursed-color: #a7f3d0;
-  --status-coursed-border: #06d6a0;
+  --status-coursed-bg: #1e1b4b;
+  --status-coursed-color: #c7d2fe;
+  --status-coursed-border: #6366f1;
 
-  --status-approved-bg: #881337;
-  --status-approved-color: #fecdd3;
-  --status-approved-border: #ef476f;
+  --status-approved-bg: #064e3b;
+  --status-approved-color: #a7f3d0;
+  --status-approved-border: #06d6a0;
 
   /* Hover Highlights */
   --status-req-bg: #881337;
