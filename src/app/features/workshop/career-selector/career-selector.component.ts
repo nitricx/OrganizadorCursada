@@ -1,9 +1,9 @@
-import { Component, ChangeDetectionStrategy, inject, computed, signal, output } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, computed, signal, output, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatMenuModule } from '@angular/material/menu';
+import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { CareerService } from '../../../services/career.service';
@@ -26,6 +26,8 @@ import { CareerIndexEntry } from '../../../models/career.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CareerSelectorComponent {
+  @ViewChild(MatMenuTrigger) menuTrigger?: MatMenuTrigger;
+
   readonly careerService = inject(CareerService);
   private readonly toastService = inject(ToastService);
   private readonly router = inject(Router);
@@ -44,6 +46,7 @@ export class CareerSelectorComponent {
 
   confirmDeleteCareer(career: CareerIndexEntry, event: Event): void {
     event.stopPropagation();
+    this.menuTrigger?.closeMenu();
     this.careerToDelete.set(career);
   }
 
