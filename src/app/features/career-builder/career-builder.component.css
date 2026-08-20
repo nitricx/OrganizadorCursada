@@ -37,7 +37,7 @@
 }
 
 .header-title-row button {
-  color: var(--color-text-primary) !important;
+  color: var(--color-text-primary);
 }
 
 .page-title {
@@ -143,22 +143,24 @@
 }
 
 /* Connect Mode Toggle Button (Opción B) */
+button.btn-connect-mode.mat-mdc-button,
 .btn-connect-mode {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 12px !important;
-  font-weight: 600 !important;
-  border-color: var(--brand-primary) !important;
-  color: var(--brand-primary) !important;
-  height: 36px !important;
-  border-radius: var(--radius-sm, 6px) !important;
+  font-size: 12px;
+  font-weight: 600;
+  border-color: var(--brand-primary);
+  color: var(--brand-primary);
+  height: 36px;
+  border-radius: var(--radius-sm, 6px);
   transition: all var(--transition-fast, 0.15s);
 }
 
+button.btn-connect-mode.active.mat-mdc-button,
 .btn-connect-mode.active {
-  background-color: var(--brand-primary) !important;
-  color: var(--btn-primary-text) !important;
+  background-color: var(--brand-primary);
+  color: var(--btn-primary-text);
   box-shadow: var(--shadow-sm);
 }
 
@@ -171,20 +173,22 @@
   color: var(--brand-primary);
 }
 
+button.btn-save.mat-mdc-button,
 .btn-save {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 13px !important;
-  font-weight: 600 !important;
-  background-color: var(--brand-primary) !important;
-  color: var(--btn-primary-text) !important;
-  border-radius: var(--radius-sm, 6px) !important;
-  height: 36px !important;
+  font-size: 13px;
+  font-weight: 600;
+  background-color: var(--brand-primary);
+  color: var(--btn-primary-text);
+  border-radius: var(--radius-sm, 6px);
+  height: 36px;
 }
 
+button.btn-save.mat-mdc-button:hover,
 .btn-save:hover {
-  background-color: var(--brand-primary-hover) !important;
+  background-color: var(--brand-primary-hover);
 }
 
 /* Connect Instruction Banner */
@@ -200,11 +204,12 @@
   font-size: 13px;
 }
 
+mat-icon.banner-icon,
 .banner-icon {
   color: var(--banner-info-icon);
-  font-size: 20px !important;
-  width: 20px !important;
-  height: 20px !important;
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
 }
 
 .btn-banner-cancel {
@@ -269,34 +274,34 @@
 
 /* Hover Highlighting Classes (Matching /home) */
 .hovered-self {
-  border-color: var(--brand-primary) !important;
-  box-shadow: var(--shadow-md) !important;
+  border-color: var(--brand-primary);
+  box-shadow: var(--shadow-md);
   transform: translateY(-1px);
 }
 
 .is-req {
-  background-color: var(--status-req-bg) !important;
-  border-color: var(--status-req-border) !important;
-  color: var(--status-req-color) !important;
+  background-color: var(--status-req-bg);
+  border-color: var(--status-req-border);
+  color: var(--status-req-color);
   font-weight: 600;
 }
 
 .is-unlocks {
-  background-color: var(--status-unlocks-bg) !important;
-  border-color: var(--status-unlocks-border) !important;
-  color: var(--status-unlocks-color) !important;
+  background-color: var(--status-unlocks-bg);
+  border-color: var(--status-unlocks-border);
+  color: var(--status-unlocks-color);
   font-weight: 600;
 }
 
 .is-dimmed {
-  opacity: 0.35 !important;
+  opacity: 0.35;
 }
 
 /* Highlight for selected source course in connect mode */
 .connecting-source {
-  border: 2px solid var(--brand-primary) !important;
-  background-color: var(--status-coursed-bg) !important;
-  box-shadow: 0 0 0 3px rgba(24, 95, 165, 0.2) !important;
+  border: 2px solid var(--brand-primary);
+  background-color: var(--status-coursed-bg);
+  box-shadow: 0 0 0 3px rgba(24, 95, 165, 0.2);
   animation: pulse-border 1.8s infinite;
 }
 
@@ -361,17 +366,19 @@
   margin-top: 28px;
 }
 
+button.add-year-circle-btn.mat-mdc-icon-button,
 .add-year-circle-btn {
-  background-color: var(--brand-primary) !important;
-  color: var(--btn-primary-text) !important;
-  width: 44px !important;
-  height: 44px !important;
-  box-shadow: var(--shadow-sm) !important;
+  background-color: var(--brand-primary);
+  color: var(--btn-primary-text);
+  width: 44px;
+  height: 44px;
+  box-shadow: var(--shadow-sm);
 }
 
+button.add-year-circle-btn.mat-mdc-icon-button:hover,
 .add-year-circle-btn:hover {
-  background-color: var(--brand-primary-hover) !important;
-  box-shadow: var(--shadow-md) !important;
+  background-color: var(--brand-primary-hover);
+  box-shadow: var(--shadow-md);
 }
 
 .add-year-text {
@@ -411,16 +418,16 @@
   box-shadow: var(--shadow-lg);
 }
 
-::ng-deep .time-select-panel {
-  min-width: 90px !important;
-  max-width: 120px !important;
+::ng-deep .cdk-overlay-pane .time-select-panel {
+  min-width: 90px;
+  max-width: 120px;
 }
 
 ::ng-deep .time-select-panel .mat-mdc-option {
-  min-height: 36px !important;
-  font-size: 13px !important;
-  padding-left: 10px !important;
-  padding-right: 10px !important;
+  min-height: 36px;
+  font-size: 13px;
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
 .modal-card mat-form-field {
@@ -428,7 +435,7 @@
 }
 
 .modal-card .mat-mdc-form-field-subscript-wrapper {
-  display: none !important;
+  display: none;
 }
 
 .modal-form,
@@ -528,17 +535,19 @@
   padding: 0 2px;
 }
 
+button.btn-remove-lesson.mat-mdc-icon-button,
 .btn-remove-lesson {
-  width: 36px !important;
-  height: 36px !important;
+  width: 36px;
+  height: 36px;
   flex-shrink: 0;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
+mat-icon.icon-danger,
 .icon-danger {
-  color: var(--color-danger-text) !important;
+  color: var(--color-danger-text);
 }
 
 .connect-modal-card {
@@ -559,8 +568,9 @@
   color: var(--color-text-primary);
 }
 
+button.close-modal-btn.mat-mdc-icon-button,
 .close-modal-btn {
-  color: var(--color-text-secondary) !important;
+  color: var(--color-text-secondary);
 }
 
 .modal-form {
@@ -659,10 +669,11 @@
   border-color: var(--status-approved-border);
 }
 
+mat-icon.option-icon,
 .option-icon {
-  font-size: 24px !important;
-  width: 24px !important;
-  height: 24px !important;
+  font-size: 24px;
+  width: 24px;
+  height: 24px;
 }
 
 .cursar-icon {
@@ -760,12 +771,14 @@
   margin-top: 8px;
 }
 
+button.btn-delete-modal.mat-mdc-button,
 .btn-delete-modal {
-  color: var(--color-danger-text) !important;
+  color: var(--color-danger-text);
   margin-right: auto;
-  font-weight: 600 !important;
+  font-weight: 600;
 }
 
+button.btn-delete-modal.mat-mdc-button:hover,
 .btn-delete-modal:hover {
-  background-color: var(--color-danger-hover) !important;
+  background-color: var(--color-danger-hover);
 }

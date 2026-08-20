@@ -45,7 +45,7 @@
 :host.cdk-drag-preview {
   opacity: 0.92;
   box-shadow: var(--shadow-lg);
-  z-index: 1000 !important;
+  z-index: 1000;
 }
 
 :host.cdk-drag-placeholder {

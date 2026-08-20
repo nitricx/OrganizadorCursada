@@ -373,21 +373,35 @@ h1 {
   opacity: 0.25;
 }
 
+.materia.filtered-out {
+  opacity: 0.2;
+  filter: grayscale(85%);
+}
+
+
+.materia.status-pending.req-highlight,
+.materia.status-coursing.req-highlight,
+.materia.status-coursed.req-highlight,
+.materia.status-approved.req-highlight,
 .materia.req-highlight {
-  background: var(--status-req-bg) !important;
-  color: var(--status-req-color) !important;
-  border-color: var(--status-req-border) !important;
-  border-style: solid !important;
-  opacity: 1 !important;
+  background: var(--status-req-bg);
+  color: var(--status-req-color);
+  border-color: var(--status-req-border);
+  border-style: solid;
+  opacity: 1;
   z-index: 3;
 }
 
+.materia.status-pending.unlocks-highlight,
+.materia.status-coursing.unlocks-highlight,
+.materia.status-coursed.unlocks-highlight,
+.materia.status-approved.unlocks-highlight,
 .materia.unlocks-highlight {
-  background: var(--status-unlocks-bg) !important;
-  color: var(--status-unlocks-color) !important;
-  border-color: var(--status-unlocks-border) !important;
-  border-style: solid !important;
-  opacity: 1 !important;
+  background: var(--status-unlocks-bg);
+  color: var(--status-unlocks-color);
+  border-color: var(--status-unlocks-border);
+  border-style: solid;
+  opacity: 1;
   z-index: 3;
 }
 
@@ -453,16 +467,16 @@ h1 {
 }
 
 /* Google Account Menu Overlay Customization */
-.google-account-menu-panel {
-  border-radius: 28px !important;
-  background: transparent !important;
-  box-shadow: 0 6px 30px rgba(0, 0, 0, 0.2) !important;
-  overflow: hidden !important;
+.cdk-overlay-pane.google-account-menu-panel {
+  border-radius: 28px;
+  background: transparent;
+  box-shadow: 0 6px 30px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
 }
 
-.google-account-menu-panel .mat-mdc-menu-content {
-  padding: 0 !important;
-  background: transparent !important;
+.cdk-overlay-pane.google-account-menu-panel .mat-mdc-menu-content {
+  padding: 0;
+  background: transparent;
 }
 
 /* ==========================================================================
@@ -540,13 +554,15 @@ h1 {
 }
 
 /* Buttons */
+button.app-btn-primary.mat-mdc-button,
+a.app-btn-primary.mat-mdc-button,
 .app-btn-primary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
-  background-color: var(--btn-primary-bg) !important;
-  color: var(--btn-primary-text) !important;
+  background-color: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
   border: 1px solid transparent;
   border-radius: var(--radius-sm);
   padding: 8px 14px;
@@ -557,19 +573,23 @@ h1 {
   transition: background-color var(--transition-fast), box-shadow var(--transition-fast);
 }
 
+button.app-btn-primary.mat-mdc-button:hover,
+a.app-btn-primary.mat-mdc-button:hover,
 .app-btn-primary:hover {
-  background-color: var(--btn-primary-hover) !important;
+  background-color: var(--btn-primary-hover);
   box-shadow: var(--shadow-md);
 }
 
+button.app-btn-secondary.mat-mdc-button,
+a.app-btn-secondary.mat-mdc-button,
 .app-btn-secondary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
-  background-color: var(--btn-secondary-bg) !important;
-  color: var(--btn-secondary-text) !important;
-  border: 1px solid var(--btn-secondary-border) !important;
+  background-color: var(--btn-secondary-bg);
+  color: var(--btn-secondary-text);
+  border: 1px solid var(--btn-secondary-border);
   border-radius: var(--radius-sm);
   padding: 8px 14px;
   font-size: 13px;
@@ -579,18 +599,22 @@ h1 {
   transition: all var(--transition-fast);
 }
 
+button.app-btn-secondary.mat-mdc-button:hover,
+a.app-btn-secondary.mat-mdc-button:hover,
 .app-btn-secondary:hover {
-  background-color: var(--color-surface-hover) !important;
-  border-color: var(--color-border-primary) !important;
+  background-color: var(--color-surface-hover);
+  border-color: var(--color-border-primary);
 }
 
+button.app-btn-danger.mat-mdc-button,
+a.app-btn-danger.mat-mdc-button,
 .app-btn-danger {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
-  background-color: transparent !important;
-  color: #dc2626 !important;
+  background-color: transparent;
+  color: #dc2626;
   border: 1px solid transparent;
   border-radius: var(--radius-sm);
   padding: 8px 14px;
@@ -600,8 +624,10 @@ h1 {
   transition: background-color var(--transition-fast);
 }
 
+button.app-btn-danger.mat-mdc-button:hover,
+a.app-btn-danger.mat-mdc-button:hover,
 .app-btn-danger:hover {
-  background-color: rgba(220, 38, 38, 0.1) !important;
+  background-color: rgba(220, 38, 38, 0.1);
 }
 
 /* Modals & Dialog Overlays */

@@ -1,7 +1,7 @@
-.available {
-  background: var(--status-available-bg) !important;
-  color: var(--status-available-color) !important;
-  border-color: var(--status-available-border) !important;
+:host .available {
+  background: var(--status-available-bg);
+  color: var(--status-available-color);
+  border-color: var(--status-available-border);
 }
 
 .btn-commission-badge {

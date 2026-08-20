@@ -447,4 +447,33 @@ describe('CourseService - Lesson State Toggling', () => {
       expect(pa2?.status).toBe('pending');
     });
   });
+
+  describe('Legend Status Filtering', () => {
+    it('should start with no disabled status filters', () => {
+      expect(service.disabledStatusFilters().size).toBe(0);
+    });
+
+    it('should toggle status filters correctly', () => {
+      service.toggleStatusFilter('approved');
+      expect(service.disabledStatusFilters().has('approved')).toBe(true);
+
+      service.toggleStatusFilter('approved');
+      expect(service.disabledStatusFilters().has('approved')).toBe(false);
+    });
+
+    it('should correctly identify filtered courses by status key', () => {
+      const course = service.getCourseById(1)!;
+      // Initially not filtered
+      expect(service.isCourseFiltered(course)).toBe(false);
+
+      // Course 1 has no requirements met, so its status key for pending is 'available'
+      service.toggleStatusFilter('available');
+      expect(service.isCourseFiltered(course)).toBe(true);
+
+      service.toggleStatusFilter('available');
+      expect(service.isCourseFiltered(course)).toBe(false);
+    });
+  });
 });
+
+

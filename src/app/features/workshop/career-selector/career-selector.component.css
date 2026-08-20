@@ -3,24 +3,26 @@
   align-items: center;
 }
 
+button.career-chip-btn.mat-mdc-button,
 .career-chip-btn {
   display: inline-flex;
   align-items: center;
   gap: 4px;
   height: 34px;
-  padding: 0 10px 0 12px !important;
-  border-radius: 18px !important;
-  background-color: var(--color-background-secondary, rgba(0, 0, 0, 0.04)) !important;
-  color: var(--color-text-primary) !important;
+  padding: 0 10px 0 12px;
+  border-radius: 18px;
+  background-color: var(--color-background-secondary, rgba(0, 0, 0, 0.04));
+  color: var(--color-text-primary);
   font-size: 14px;
   font-weight: 500;
-  border: 1px solid var(--color-border-secondary, transparent) !important;
+  border: 1px solid var(--color-border-secondary, transparent);
   transition: all var(--transition-fast, 0.15s ease);
 }
 
+button.career-chip-btn.mat-mdc-button:hover,
 .career-chip-btn:hover {
-  background-color: var(--color-surface-hover) !important;
-  border-color: var(--brand-primary) !important;
+  background-color: var(--color-surface-hover);
+  border-color: var(--brand-primary);
 }
 
 .career-chip-text {
@@ -42,12 +44,13 @@
 }
 
 /* Dropdown Menu styling overrides */
+::ng-deep .cdk-overlay-pane .career-selector-menu.mat-mdc-menu-panel,
 ::ng-deep .career-selector-menu {
-  min-width: 320px !important;
-  max-width: 480px !important;
-  width: max-content !important;
-  border-radius: 12px !important;
-  padding: 6px 0 !important;
+  min-width: 320px;
+  max-width: 480px;
+  width: max-content;
+  border-radius: 12px;
+  padding: 6px 0;
 }
 
 ::ng-deep .career-selector-menu .menu-header-title {
@@ -111,14 +114,15 @@
   color: var(--brand-primary);
 }
 
+::ng-deep .career-selector-menu button.career-menu-item-btn.mat-mdc-menu-item,
 ::ng-deep .career-selector-menu .career-menu-item-btn {
   flex: 1;
-  height: auto !important;
+  height: auto;
   min-height: 48px;
-  padding-top: 8px !important;
-  padding-bottom: 8px !important;
-  white-space: normal !important;
-  line-height: normal !important;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  white-space: normal;
+  line-height: normal;
 }
 
 ::ng-deep .career-selector-menu .workshop-menu-item,
@@ -144,34 +148,36 @@
   flex: 1;
 }
 
+::ng-deep .career-selector-menu button.career-delete-btn.mat-mdc-icon-button,
 ::ng-deep .career-selector-menu .career-delete-btn {
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  width: 32px !important;
-  height: 32px !important;
-  padding: 0 !important;
-  min-width: 32px !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  min-width: 32px;
   opacity: 0.6;
   transition: opacity 0.2s ease, color 0.2s ease, background-color 0.2s ease;
 }
 
+::ng-deep .career-selector-menu button.career-delete-btn.mat-mdc-icon-button:hover,
 ::ng-deep .career-selector-menu .career-delete-btn:hover {
   opacity: 1;
-  color: var(--color-danger-text) !important;
-  background-color: var(--color-danger-hover) !important;
+  color: var(--color-danger-text);
+  background-color: var(--color-danger-hover);
 }
 
 ::ng-deep .career-selector-menu .career-delete-btn .mat-icon,
 ::ng-deep .career-selector-menu .delete-icon {
-  font-size: 18px !important;
-  width: 18px !important;
-  height: 18px !important;
-  line-height: 18px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  margin: 0 !important;
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  line-height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
 }
 
 /* Confirmation Modal Overlay */
@@ -255,7 +261,7 @@
 
 .warn-text {
   color: var(--color-text-secondary);
-  font-size: 13px !important;
+  font-size: 13px;
 }
 
 .confirm-modal-actions {

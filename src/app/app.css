@@ -53,29 +53,34 @@ mat-sidenav {
   flex: 1;
 }
 
+button.toolbar-action-btn.mat-mdc-button,
+a.toolbar-action-btn.mat-mdc-button,
 .toolbar-action-btn {
-  color: var(--color-text-secondary) !important;
-  font-size: 13px !important;
-  font-weight: 500 !important;
-  border-radius: var(--radius-md) !important;
-  padding: 0 10px !important;
-  height: 36px !important;
-  line-height: 36px !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 6px !important;
-  transition: all var(--transition-fast) !important;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: var(--radius-md);
+  padding: 0 10px;
+  height: 36px;
+  line-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all var(--transition-fast);
 }
 
+button.toolbar-action-btn.mat-mdc-button:hover,
+a.toolbar-action-btn.mat-mdc-button:hover,
 .toolbar-action-btn:hover {
-  background-color: var(--color-background-secondary) !important;
-  color: var(--color-text-primary) !important;
+  background-color: var(--color-background-secondary);
+  color: var(--color-text-primary);
 }
 
-.toolbar-action-btn .btn-icon {
-  font-size: 18px !important;
-  width: 18px !important;
-  height: 18px !important;
+.toolbar-action-btn .btn-icon,
+.toolbar-action-btn mat-icon.btn-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
   margin-right: 4px;
   vertical-align: middle;
 }

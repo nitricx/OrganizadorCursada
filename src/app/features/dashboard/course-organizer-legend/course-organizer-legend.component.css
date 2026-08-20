@@ -48,12 +48,34 @@
 .leg-chip {
   font-size: 0.825rem;
   font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.2s ease, filter 0.2s ease, transform 0.15s ease;
+  user-select: none;
+}
+
+.leg-chip:hover {
+  transform: translateY(-1px);
+}
+
+.leg-chip.chip-disabled {
+  opacity: 0.45;
+  filter: grayscale(60%);
+  text-decoration: line-through;
+}
+
+.leg-chip.leg-chip-hover {
+  cursor: default;
+}
+
+.leg-chip.leg-chip-hover:hover {
+  transform: none;
 }
 
 .leg-chip ::ng-deep .mat-mdc-chip-action-label {
   display: inline-flex;
   align-items: center;
 }
+
 
 .leg-dot {
   width: 10px;

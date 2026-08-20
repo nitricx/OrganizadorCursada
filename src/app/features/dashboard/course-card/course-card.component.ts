@@ -58,7 +58,12 @@ export class CourseCardComponent {
     const currentCourse = this.course();
     const courseId = currentCourse.id;
 
+    if (this.courseService.isCourseFiltered(currentCourse)) {
+      return ' filtered-out';
+    }
+
     const hoveredId = this.courseService.hoveredCourseId();
+
 
     if (hoveredId !== null) {
       if (hoveredId === courseId) {

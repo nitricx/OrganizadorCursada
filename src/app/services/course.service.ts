@@ -1,6 +1,6 @@
 import { Injectable, effect, inject } from '@angular/core';
 import { signal, computed } from '@angular/core';
-import { Course, CourseStatus } from '../models/course';
+import { Course, CourseStatus, LegendFilterKey } from '../models/course';
 import { CareerService } from './career.service';
 import { CareerPlan, parseCareerPlanToCourses, EMPTY_CAREER_PLAN } from '../models/career.model';
 import {
@@ -34,6 +34,34 @@ export class CourseService {
   private activeCareerPlanSignal = signal<CareerPlan | null>(null);
   private selectedIdsSignal = signal<Set<number>>(new Set());
   private hoveredCourseIdSignal = signal<number | null>(null);
+  private disabledStatusFiltersSignal = signal<Set<LegendFilterKey>>(new Set());
+
+  readonly disabledStatusFilters = computed(() => this.disabledStatusFiltersSignal());
+
+  toggleStatusFilter(key: LegendFilterKey): void {
+    const current = new Set(this.disabledStatusFiltersSignal());
+    if (current.has(key)) {
+      current.delete(key);
+    } else {
+      current.add(key);
+    }
+    this.disabledStatusFiltersSignal.set(current);
+  }
+
+  isCourseFiltered(course: Course): boolean {
+    const disabled = this.disabledStatusFiltersSignal();
+    if (disabled.size === 0) return false;
+
+    let effectiveKey: LegendFilterKey;
+    if (course.status === 'pending') {
+      const isAvailable = this.areAllRequirementsMet(course);
+      effectiveKey = isAvailable ? 'available' : 'pending';
+    } else {
+      effectiveKey = course.status;
+    }
+
+    return disabled.has(effectiveKey);
+  }
 
   private get storageKey(): string {
     return `course-organizer-state-${this.activeCareerIdSignal()}`;
