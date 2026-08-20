@@ -28,6 +28,30 @@
     </div>
 
     <div class="header-actions">
+      <!-- Hover Legend matching /home -->
+      <div class="hover-legend">
+        <span class="legend-title">🖱️ AL PASAR EL CURSOR:</span>
+        <span class="legend-badge req-badge">
+          <span class="badge-dot req-dot"></span> Requisito
+        </span>
+        <span class="legend-badge unlock-badge">
+          <span class="badge-dot unlock-dot"></span> Desbloquea
+        </span>
+      </div>
+
+      <!-- Toggle Connect Mode (Opción B) -->
+      <button
+        type="button"
+        mat-stroked-button
+        class="btn-connect-mode"
+        [class.active]="isConnectMode()"
+        (click)="toggleConnectMode()"
+        matTooltip="Activar el modo de conexión directa entre materias"
+      >
+        <mat-icon>{{ isConnectMode() ? 'link_off' : 'link' }}</mat-icon>
+        <span>{{ isConnectMode() ? 'Salir de Vinculación' : 'Vincular Correlativas' }}</span>
+      </button>
+
       <span class="stats-counter">
         <strong>{{ totalCoursesCount() }}</strong> materias registradas
       </span>
@@ -37,6 +61,21 @@
       </button>
     </div>
   </header>
+
+  <!-- Connect Mode Instruction Banner -->
+  @if (isConnectMode()) {
+    <div class="connect-banner">
+      <mat-icon class="banner-icon">info</mat-icon>
+      @if (!connectSourceCourse()) {
+        <span><strong>Modo Vinculación Activo:</strong> Hacé clic en la materia <strong>requisito (Origen)</strong>.</span>
+      } @else {
+        <span>
+          <strong>Paso 2:</strong> Requisito <strong>"{{ connectSourceCourse()?.name }}"</strong> seleccionado. Ahora hacé clic en la materia que la requiere.
+        </span>
+        <button class="btn-banner-cancel" (click)="cancelConnection()">Cancelar selección</button>
+      }
+    </div>
+  }
 
   <!-- Grid Layout Matching Home -->
   <main class="grid builder-grid">
@@ -48,7 +87,14 @@
         <div class="q-section">
           <div class="q-label">1º Cuatrimestre</div>
           @for (course of getCourses(year, 1); track course.id) {
-            <div class="materia pending builder-materia" (click)="openEditCourseModal(course)">
+            <div
+              class="materia pending builder-materia"
+              [ngClass]="getCourseCardClass(course)"
+              [class.connect-mode-card]="isConnectMode()"
+              (mouseenter)="onCourseMouseEnter(course.id)"
+              (mouseleave)="onCourseMouseLeave()"
+              (click)="handleCourseClick(course, $event)"
+            >
               <span class="materia-name">{{ course.name }}</span>
             </div>
           }
@@ -61,7 +107,14 @@
         <div class="q-section">
           <div class="q-label">2º Cuatrimestre</div>
           @for (course of getCourses(year, 2); track course.id) {
-            <div class="materia pending builder-materia" (click)="openEditCourseModal(course)">
+            <div
+              class="materia pending builder-materia"
+              [ngClass]="getCourseCardClass(course)"
+              [class.connect-mode-card]="isConnectMode()"
+              (mouseenter)="onCourseMouseEnter(course.id)"
+              (mouseleave)="onCourseMouseLeave()"
+              (click)="handleCourseClick(course, $event)"
+            >
               <span class="materia-name">{{ course.name }}</span>
             </div>
           }
@@ -74,7 +127,14 @@
         <div class="q-section">
           <div class="q-label">Anual</div>
           @for (course of getCourses(year, 3); track course.id) {
-            <div class="materia pending builder-materia annual" (click)="openEditCourseModal(course)">
+            <div
+              class="materia pending builder-materia annual"
+              [ngClass]="getCourseCardClass(course)"
+              [class.connect-mode-card]="isConnectMode()"
+              (mouseenter)="onCourseMouseEnter(course.id)"
+              (mouseleave)="onCourseMouseLeave()"
+              (click)="handleCourseClick(course, $event)"
+            >
               <span class="materia-name">{{ course.name }}</span>
             </div>
           }
@@ -99,6 +159,8 @@
       <span class="add-year-text">Agregar {{ totalYears() + 1 }}° Año</span>
     </div>
   </main>
+
+
 
   <!-- Add/Edit Subject Modal Dialog -->
   @if (isModalOpen()) {
@@ -125,6 +187,50 @@
               autofocus
             />
           </div>
+
+          @if (activeCourseId() !== null) {
+            @let courseObj = getCourseById(activeCourseId()!);
+            @if (courseObj) {
+              <div class="modal-reqs-container">
+                <!-- Dependencias descendentes (Requisitos previos que necesita esta materia) -->
+                @if (courseObj.cursarReqId.length > 0 || courseObj.aprobarReqId.length > 0) {
+                  <div class="modal-reqs-list">
+                    <label>Requisitos Previos (lo que requiere):</label>
+                    <div class="materia-req-chips">
+                      @for (reqId of courseObj.cursarReqId; track reqId) {
+                        <span class="req-chip cursar" matTooltip="Requisito de Cursada">
+                          📘 {{ getCourseNameById(reqId) }}
+                          <button class="chip-del" type="button" (click)="removePrerequisite(courseObj.id, reqId, 'cursar', $event)">✕</button>
+                        </span>
+                      }
+                      @for (reqId of courseObj.aprobarReqId; track reqId) {
+                        <span class="req-chip aprobar" matTooltip="Requisito de Examen Final / Aprobación">
+                          🟢 {{ getCourseNameById(reqId) }}
+                          <button class="chip-del" type="button" (click)="removePrerequisite(courseObj.id, reqId, 'aprobar', $event)">✕</button>
+                        </span>
+                      }
+                    </div>
+                  </div>
+                }
+
+                <!-- Dependencias ascendentes (Materias que esta materia desbloquea / habilita) -->
+                @let unlockedList = getUnlockedCourses(courseObj.id);
+                @if (unlockedList.length > 0) {
+                  <div class="modal-reqs-list">
+                    <label>Materias que Habilita (lo que la requiere):</label>
+                    <div class="materia-req-chips">
+                      @for (item of unlockedList; track item.course.id) {
+                        <span class="req-chip" [class.cursar]="item.type === 'cursar'" [class.aprobar]="item.type === 'aprobar'" [matTooltip]="item.type === 'cursar' ? 'Es requisito de cursada' : 'Es requisito de aprobación'">
+                          {{ item.type === 'cursar' ? '📘' : '🟢' }} {{ item.course.name }}
+                          <button class="chip-del" type="button" (click)="removePrerequisite(item.course.id, courseObj.id, item.type, $event)">✕</button>
+                        </span>
+                      }
+                    </div>
+                  </div>
+                }
+              </div>
+            }
+          }
 
           <footer class="modal-footer">
             @if (activeCourseId() !== null) {
