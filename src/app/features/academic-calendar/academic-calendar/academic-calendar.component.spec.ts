@@ -243,5 +243,18 @@ describe('AcademicCalendarComponent – semester insertion and course movement',
       const semestersAfter = component.displaySemesters().map((s) => s.courses.length);
       expect(semestersAfter).toEqual(semestersBefore);
     });
+
+    it('should initialize default semester slots when course list is empty without entering infinite loop', () => {
+      mockService.getCoursesForPlan = () => [];
+      fixture = TestBed.createComponent(AcademicCalendarComponent);
+      component = fixture.componentInstance;
+      fixture.detectChanges();
+      TestBed.flushEffects();
+      fixture.detectChanges();
+
+      const displaySemesters = component.displaySemesters();
+      expect(displaySemesters.length).toBeGreaterThan(0);
+      expect(component.hasSelectedPlan()).toBe(true);
+    });
   });
 });

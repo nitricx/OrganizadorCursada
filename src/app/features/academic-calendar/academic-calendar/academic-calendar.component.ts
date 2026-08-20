@@ -120,28 +120,29 @@ export class AcademicCalendarComponent {
         untracked(() => {
           this.courseService.setCurrentPlanId(id);
           this.planService.setSelectedPlanId(id);
+          const stored = this.planService.getSemesterList(id);
+          if (stored.length === 0) {
+            const courses: Course[] = this.courseService.getCoursesForPlan(id);
+            const yearsFromCourses = Array.from(new Set(courses.map((c) => c.year))).sort((a, b) => a - b);
+            const years = yearsFromCourses.length > 0 ? yearsFromCourses : [1, 2, 3, 4, 5];
+            const startingYear = this.planService.getStartingYear(id);
+            const base = years.flatMap((year) => [
+              {
+                id: `Y${year}Q1`,
+                courseYear: year,
+                courseQ: 1,
+                ...this.planService.getDefaultSemesterDates(startingYear, 1),
+              },
+              {
+                id: `Y${year}Q2`,
+                courseYear: year,
+                courseQ: 2,
+                ...this.planService.getDefaultSemesterDates(startingYear, 2),
+              },
+            ]);
+            this.planService.setSemesterList(id, base);
+          }
         });
-        const stored = this.planService.getSemesterList(id);
-        if (stored.length === 0) {
-          const courses: Course[] = untracked(() => this.courseService.getCoursesForPlan(id));
-          const years = Array.from(new Set(courses.map((c) => c.year))).sort((a, b) => a - b);
-          const startingYear = untracked(() => this.planService.getStartingYear(id));
-          const base = years.flatMap((year) => [
-            {
-              id: `Y${year}Q1`,
-              courseYear: year,
-              courseQ: 1,
-              ...this.planService.getDefaultSemesterDates(startingYear, 1),
-            },
-            {
-              id: `Y${year}Q2`,
-              courseYear: year,
-              courseQ: 2,
-              ...this.planService.getDefaultSemesterDates(startingYear, 2),
-            },
-          ]);
-          this.planService.setSemesterList(id, base);
-        }
       }
     });
   }

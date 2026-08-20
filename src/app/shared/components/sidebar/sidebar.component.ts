@@ -6,6 +6,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { PlanService } from '../../../services/plan.service';
 import { CourseService } from '../../../services/course.service';
+import { CareerService } from '../../../services/career.service';
+import { ToastService } from '../../../services/toast.service';
 
 export interface SidebarItem {
   label: string;
@@ -29,6 +31,8 @@ export interface SidebarItem {
 export class SidebarComponent {
   private readonly planService = inject(PlanService);
   private readonly courseService = inject(CourseService);
+  private readonly careerService = inject(CareerService);
+  private readonly toastService = inject(ToastService);
   private readonly router = inject(Router);
 
   onOpenWorkshop = output<void>();
@@ -54,6 +58,17 @@ export class SidebarComponent {
   ]);
 
   addPlan(item: SidebarItem): void {
+    const selectedId = this.careerService.selectedCareerId();
+    const activeCareer = this.careerService.activeCareer();
+
+    if (!selectedId || !activeCareer || activeCareer.id === 'empty-plan') {
+      this.toastService.warning(
+        'Seleccioná un plan de estudio en el menú superior o en el Plan Hub para poder agregar un plan de cursada.',
+      );
+      this.planService.openWorkshop();
+      return;
+    }
+
     const existingIds = this.planService
       .plans()
       .map((p) => Number(p.id))

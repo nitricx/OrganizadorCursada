@@ -2,11 +2,15 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { SidebarComponent } from './sidebar.component';
 import { PlanService } from '../../../services/plan.service';
+import { CareerService } from '../../../services/career.service';
+import { ToastService } from '../../../services/toast.service';
 
 describe('SidebarComponent', () => {
   let component: SidebarComponent;
   let fixture: ComponentFixture<SidebarComponent>;
   let planService: PlanService;
+  let careerService: CareerService;
+  let toastService: ToastService;
 
   beforeEach(async () => {
     try {
@@ -22,6 +26,9 @@ describe('SidebarComponent', () => {
     fixture = TestBed.createComponent(SidebarComponent);
     component = fixture.componentInstance;
     planService = TestBed.inject(PlanService);
+    careerService = TestBed.inject(CareerService);
+    toastService = TestBed.inject(ToastService);
+    careerService.selectCareer('lic-diseno-audiovisual');
     fixture.detectChanges();
   });
 
@@ -65,5 +72,19 @@ describe('SidebarComponent', () => {
     const plans = planService.plans();
     const lastPlan = plans[plans.length - 1];
     expect(lastPlan.id).toBe('11');
+  });
+
+  it('should block adding a plan and show a warning toast when no career plan is selected', () => {
+    const toastSpy = vi.spyOn(toastService, 'warning');
+    // Remove career selection
+    careerService.removeCareer('lic-diseno-audiovisual');
+    const plansBefore = planService.plans().length;
+
+    component.addPlan({ label: 'Calendario Académico' });
+
+    expect(planService.plans().length).toBe(plansBefore);
+    expect(toastSpy).toHaveBeenCalledWith(
+      'Seleccioná un plan de estudio en el menú superior o en el Plan Hub para poder agregar un plan de cursada.',
+    );
   });
 });
