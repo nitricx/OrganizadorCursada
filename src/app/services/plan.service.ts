@@ -8,6 +8,8 @@ import {
   cleanupOrphanedStorageKeys,
 } from '../utils/storage-sanitizer.utils';
 
+import { SecureStorageService } from './security/secure-storage.service';
+
 export interface Plan {
   id: string;
   label: string;
@@ -27,6 +29,14 @@ export interface SemesterSlot {
 export class PlanService {
   private static readonly PLANS_KEY = 'plans';
   private static readonly DEFAULT_PLANS: Plan[] = [{ id: '1', label: 'Plan de estudio 1' }];
+
+  private readonly secureStorage = (() => {
+    try {
+      return inject(SecureStorageService, { optional: true });
+    } catch {
+      return null;
+    }
+  })();
 
   private readonly careerService = (() => {
     try {
@@ -99,6 +109,12 @@ export class PlanService {
 
   private safeGetItem(key: string): string | null {
     try {
+      if (this.secureStorage) {
+        const val = this.secureStorage.getItem<any>(key);
+        if (val !== null) {
+          return typeof val === 'string' ? val : JSON.stringify(val);
+        }
+      }
       if (typeof localStorage !== 'undefined' && localStorage) {
         return localStorage.getItem(key);
       }
@@ -108,6 +124,15 @@ export class PlanService {
 
   private safeSetItem(key: string, value: string): void {
     try {
+      if (this.secureStorage) {
+        try {
+          const parsed = JSON.parse(value);
+          this.secureStorage.setItem(key, parsed);
+        } catch {
+          this.secureStorage.setItem(key, value);
+        }
+        return;
+      }
       if (typeof localStorage !== 'undefined' && localStorage) {
         localStorage.setItem(key, value);
       }
@@ -116,6 +141,9 @@ export class PlanService {
 
   private safeRemoveItem(key: string): void {
     try {
+      if (this.secureStorage) {
+        this.secureStorage.removeItem(key);
+      }
       if (typeof localStorage !== 'undefined' && localStorage) {
         localStorage.removeItem(key);
       }

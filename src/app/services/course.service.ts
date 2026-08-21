@@ -10,6 +10,7 @@ import {
 
 import { AuthService } from './auth.service';
 import { AwsSyncService, UserCareerStateDoc } from './aws-sync.service';
+import { SecureStorageService } from './security/secure-storage.service';
 
 export interface CourseStateEntry {
   status: CourseStatus;
@@ -24,6 +25,7 @@ export class CourseService {
   private careerService = inject(CareerService, { optional: true });
   private authService = inject(AuthService, { optional: true });
   private awsSync = inject(AwsSyncService, { optional: true });
+  private secureStorage = inject(SecureStorageService, { optional: true });
 
   // Layout per plan (which semester each subject is placed in)
   private coursesByPlanSignal = signal<Map<string, Course[]>>(new Map());
@@ -713,7 +715,9 @@ export class CourseService {
         courseStates: courseStatesObj,
       };
 
-      if (typeof localStorage !== 'undefined' && localStorage) {
+      if (this.secureStorage) {
+        this.secureStorage.setItem(this.storageKey, state);
+      } else if (typeof localStorage !== 'undefined' && localStorage) {
         localStorage.setItem(this.storageKey, JSON.stringify(state));
       }
 
@@ -728,14 +732,24 @@ export class CourseService {
 
   private loadState(activePlan?: CareerPlan): void {
     try {
-      if (typeof localStorage === 'undefined' || !localStorage) return;
-      let stored = localStorage.getItem(this.storageKey);
-      if (!stored && this.activeCareerIdSignal() === 'lic-diseno-audiovisual') {
-        stored = localStorage.getItem('course-organizer-state');
+      let state: any = null;
+      if (this.secureStorage) {
+        state = this.secureStorage.getItem(this.storageKey);
+        if (!state && this.activeCareerIdSignal() === 'lic-diseno-audiovisual') {
+          state = this.secureStorage.getItem('course-organizer-state');
+        }
+      } else if (typeof localStorage !== 'undefined' && localStorage) {
+        let stored = localStorage.getItem(this.storageKey);
+        if (!stored && this.activeCareerIdSignal() === 'lic-diseno-audiovisual') {
+          stored = localStorage.getItem('course-organizer-state');
+        }
+        if (stored) {
+          try {
+            state = JSON.parse(stored);
+          } catch {}
+        }
       }
-      if (!stored) return;
 
-      const state = JSON.parse(stored);
       if (typeof state !== 'object' || state === null) return;
 
       const planToUse = activePlan ?? this.careerService?.activeCareer();
