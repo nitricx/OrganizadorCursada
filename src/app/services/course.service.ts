@@ -9,7 +9,7 @@ import {
 } from '../utils/storage-sanitizer.utils';
 
 import { AuthService } from './auth.service';
-import { FirestoreSyncService, UserCareerStateDoc } from './firestore-sync.service';
+import { AwsSyncService, UserCareerStateDoc } from './aws-sync.service';
 
 export interface CourseStateEntry {
   status: CourseStatus;
@@ -23,7 +23,7 @@ export interface CourseStateEntry {
 export class CourseService {
   private careerService = inject(CareerService, { optional: true });
   private authService = inject(AuthService, { optional: true });
-  private firestoreSync = inject(FirestoreSyncService, { optional: true });
+  private awsSync = inject(AwsSyncService, { optional: true });
 
   // Layout per plan (which semester each subject is placed in)
   private coursesByPlanSignal = signal<Map<string, Course[]>>(new Map());
@@ -175,12 +175,12 @@ export class CourseService {
       this.saveState();
     });
 
-    if (this.authService && this.firestoreSync) {
+    if (this.authService && this.awsSync) {
       effect((onCleanup) => {
         const user = this.authService?.userSignal();
         const careerId = this.activeCareerIdSignal();
-        if (user && this.firestoreSync) {
-          const sub = this.firestoreSync.getUserCareerData$(user.uid, careerId).subscribe((cloudDoc) => {
+        if (user && this.awsSync) {
+          const sub = this.awsSync.getUserCareerData$(user.uid, careerId).subscribe((cloudDoc) => {
             if (cloudDoc) {
               this.applyCloudData(cloudDoc);
             } else {
@@ -675,12 +675,12 @@ export class CourseService {
   }
 
   private syncToCloud(uid: string, careerId: string): void {
-    if (!this.firestoreSync) return;
+    if (!this.awsSync) return;
     const courseStatesObj: Record<string, CourseStateEntry> = {};
     this.courseStateSignal().forEach((val, key) => {
       courseStatesObj[key.toString()] = val;
     });
-    this.firestoreSync.saveUserCareerData(uid, careerId, {
+    this.awsSync.saveUserCareerData(uid, careerId, {
       coursesByPlan: this.serializeCoursesByPlan(this.coursesByPlanSignal()),
       courseStates: courseStatesObj,
     });
@@ -718,7 +718,7 @@ export class CourseService {
       }
 
       const user = this.authService?.userSignal();
-      if (user && this.firestoreSync) {
+      if (user && this.awsSync) {
         this.syncToCloud(user.uid, this.activeCareerIdSignal());
       }
     } catch (error) {

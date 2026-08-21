@@ -1,20 +1,4 @@
 services:
-  firebase-emulators:
-    build:
-      context: .
-      dockerfile: firebase/Dockerfile.firebase
-    ports:
-      - "4000:4000"   # Emulator UI Dashboard
-      - "8080:8080"   # Firestore Emulator
-      - "9099:9099"   # Auth Emulator
-    volumes:
-      - ./firebase.json:/app/firebase.json
-      - ./firestore.rules:/app/firestore.rules
-      - ./firestore.indexes.json:/app/firestore.indexes.json
-    environment:
-      - JAVA_TOOL_OPTIONS=-Xms32m -Xmx128m -XX:+UseG1GC -XX:+CompactStrings
-    mem_limit: 256m
-
   app:
     build:
       context: .
@@ -22,5 +6,3 @@ services:
     ports:
       - "4200:80"     # Map container port 80 (Nginx) to host port 4200
     mem_limit: 64m
-    depends_on:
-      - firebase-emulators

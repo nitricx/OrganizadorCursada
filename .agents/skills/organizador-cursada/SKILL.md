@@ -80,10 +80,10 @@ All application state is managed via reactive Signal Stores in `src/app/services
    - Manages user-created plans, plan cloning, renaming, deletion, and semester date range definitions (`plan-semesters-{planId}`).
 
 3. **`CareerService` (`src/app/services/career.service.ts`)**:
-   - Multi-career catalog switcher. Reads local bundles (`audiovisual.json`, `sistemas.json`), custom user plans from `localStorage`, and remote community plans via Firebase Firestore.
+   - Multi-career catalog switcher. Reads local bundles (`audiovisual.json`, `sistemas.json`), custom user plans from `localStorage`, and remote community plans via AWS Cloud Sync.
 
-4. **`FirestoreSyncService`**:
-   - Handles community workshop publication and remote plan fetching via Firebase Firestore.
+4. **`AwsSyncService` (`src/app/services/aws-sync.service.ts`)**:
+   - Handles user career state cloud synchronization via AWS API Gateway and Cognito.
 
 5. **Quality, Privacy & Security Services**:
    - **`PlanSanitizerService`**: Strips identifying metadata ($k$-anonymity enforcement) before publishing plans.

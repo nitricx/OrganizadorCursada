@@ -36,7 +36,7 @@
   - **Anti-Sybil & Anonymous Voting**: Zero-knowledge rating and voting support via OHTTP client relays.
 
 - 🎓 **Multi-Career Switcher**:
-  - Header dropdown selector to seamlessly switch between multiple academic degree plans stored locally or fetched via Firebase Firestore.
+  - Header dropdown selector to seamlessly switch between multiple academic degree plans stored locally or fetched via Cloud Sync.
 
 - 💾 **Air-Gapped State Persistence**:
   - Fully client-side state saved automatically in `localStorage`, maintaining plan layout changes, subject statuses, notes, and schedule selections across browser sessions without transmitting private progress over the network.
@@ -48,7 +48,7 @@
 - **Framework**: [Angular 21](https://angular.dev/) (Standalone Components, Signals architecture, `@if`/`@for` control flow)
 - **UI Components & Styling**: [Angular Material 21](https://material.angular.io/) & Angular CDK v21, Custom Glassmorphism CSS
 - **Graph & Visualizations**: [Cytoscape.js](https://js.cytoscape.org/) v3.33 & [cytoscape-dagre](https://github.com/cytoscape/cytoscape.js-dagre) layout engine
-- **Backend & Cloud Sync**: Firebase Firestore v11 (for community plan sharing)
+- **Backend & Cloud Sync**: AWS Cloud Sync (Cognito Auth + API Gateway)
 - **Privacy & Security**: Oblivious HTTP (OHTTP) client relay, $k$-Anonymity pre-flight sanitizer, Anti-Sybil scorer
 - **Testing Runner**: [Vitest](https://vitest.dev/) v4 & Angular CLI Testbed
 - **State Management**: Angular `signal`, `computed`, `effect` reactive primitives
@@ -85,7 +85,7 @@ OrganizadorCursada/
 │   │   │   ├── plan.service.ts
 │   │   │   ├── career.service.ts
 │   │   │   ├── plan-sanitizer.service.ts
-│   │   │   ├── firestore-sync.service.ts
+│   │   │   ├── aws-sync.service.ts
 │   │   │   └── ... (see services catalog)
 │   │   ├── app.routes.ts       # Application routes (/home, /myWeek, /requisites, /academicCalendar, /workshop)
 │   │   └── app.ts              # Root application component

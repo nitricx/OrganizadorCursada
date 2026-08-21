@@ -1,6 +1,6 @@
 # Datos de Sembrado de Planes de Estudio (`scripts/seed-data`)
 
-Este directorio contiene los archivos JSON que representan los planes de estudio iniciales cargados en la base de datos de la plataforma (**OrganizadorCursada**) a través de Firestore (`scripts/seed-firestore.js`).
+Este directorio contiene los archivos JSON que representan los planes de estudio iniciales cargados en la plataforma (**OrganizadorCursada**).
 
 ---
 

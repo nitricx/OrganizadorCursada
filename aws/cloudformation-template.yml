@@ -1,0 +1,174 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'CloudFormation template for OrganizadorCursada (S3, CloudFront OAC, Cognito User Pool)'
+
+Parameters:
+  AppName:
+    Type: String
+    Default: organizador-cursada
+    Description: Application identifier name used for resource naming.
+  Environment:
+    Type: String
+    Default: production
+    AllowedValues:
+      - production
+      - staging
+      - dev
+    Description: Target deployment environment.
+
+Resources:
+  # ------------------------------------------------------------
+  # 1. S3 Bucket for Static SPA Assets
+  # ------------------------------------------------------------
+  AppS3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub '${AppName}-${Environment}-${AWS::AccountId}'
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+
+  # ------------------------------------------------------------
+  # 2. CloudFront Origin Access Control (OAC)
+  # ------------------------------------------------------------
+  CloudFrontOAC:
+    Type: AWS::CloudFront::OriginAccessControl
+    Properties:
+      OriginAccessControlConfig:
+        Name: !Sub '${AppName}-${Environment}-oac'
+        OriginAccessControlOriginType: s3
+        SigningBehavior: always
+        SigningProtocol: sigv4
+
+  # ------------------------------------------------------------
+  # 3. S3 Bucket Policy allowing CloudFront OAC Access
+  # ------------------------------------------------------------
+  AppS3BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref AppS3Bucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: AllowCloudFrontServicePrincipalReadOnly
+            Effect: Allow
+            Principal:
+              Service: cloudfront.amazonaws.com
+            Action: s3:GetObject
+            Resource: !Sub '${AppS3Bucket.Arn}/*'
+            Condition:
+              StringEquals:
+                AWS:SourceArn: !Sub 'arn:aws:cloudfront::${AWS::AccountId}:distribution/${AppCloudFrontDistribution}'
+
+  # ------------------------------------------------------------
+  # 4. CloudFront Distribution with SPA 404/403 Rewrite Rules
+  # ------------------------------------------------------------
+  AppCloudFrontDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Enabled: true
+        Comment: !Sub 'CDN Distribution for ${AppName} (${Environment})'
+        DefaultRootObject: index.html
+        HttpVersion: http2and3
+        PriceClass: PriceClass_100
+        Origins:
+          - Id: S3Origin
+            DomainName: !GetAtt AppS3Bucket.RegionalDomainName
+            OriginAccessControlId: !Ref CloudFrontOAC
+            S3OriginConfig:
+              OriginAccessIdentity: ''
+        DefaultCacheBehavior:
+          TargetOriginId: S3Origin
+          ViewerProtocolPolicy: redirect-to-https
+          AllowedMethods:
+            - GET
+            - HEAD
+            - OPTIONS
+          CachedMethods:
+            - GET
+            - HEAD
+          Compress: true
+          ForwardedValues:
+            QueryString: false
+            Cookies:
+              Forward: none
+        CustomErrorResponses:
+          - ErrorCode: 403
+            ResponseCode: 200
+            ResponsePagePath: /index.html
+            ErrorCachingMinTTL: 0
+          - ErrorCode: 404
+            ResponseCode: 200
+            ResponsePagePath: /index.html
+            ErrorCachingMinTTL: 0
+
+  # ------------------------------------------------------------
+  # 5. AWS Cognito User Pool & Web Client
+  # ------------------------------------------------------------
+  UserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: !Sub '${AppName}-${Environment}-user-pool'
+      AutoVerifiedAttributes:
+        - email
+      UsernameAttributes:
+        - email
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 8
+          RequireLowercase: true
+          RequireNumbers: true
+          RequireSymbols: false
+          RequireUppercase: true
+
+  UserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      ClientName: !Sub '${AppName}-${Environment}-web-client'
+      UserPoolId: !Ref UserPool
+      GenerateSecret: false
+      ExplicitAuthFlows:
+        - ALLOW_USER_SRP_AUTH
+        - ALLOW_REFRESH_TOKEN_AUTH
+      AllowedOAuthFlows:
+        - code
+        - implicit
+      AllowedOAuthFlowsUserPoolClient: true
+      AllowedOAuthScopes:
+        - email
+        - openid
+        - profile
+      CallbackURLs:
+        - !Sub 'https://${AppCloudFrontDistribution.DomainName}/'
+        - 'http://localhost:4200/'
+      LogoutURLs:
+        - !Sub 'https://${AppCloudFrontDistribution.DomainName}/'
+        - 'http://localhost:4200/'
+      SupportedIdentityProviders:
+        - COGNITO
+
+Outputs:
+  S3BucketName:
+    Description: Name of the S3 Bucket for static asset deployment
+    Value: !Ref AppS3Bucket
+  CloudFrontDistributionId:
+    Description: ID of the CloudFront Distribution
+    Value: !Ref AppCloudFrontDistribution
+  CloudFrontDomainName:
+    Description: Domain name of the CloudFront Distribution
+    Value: !GetAtt AppCloudFrontDistribution.DomainName
+  CloudFrontURL:
+    Description: URL of the hosted application
+    Value: !Sub 'https://${AppCloudFrontDistribution.DomainName}'
+  UserPoolId:
+    Description: AWS Cognito User Pool ID
+    Value: !Ref UserPool
+  UserPoolClientId:
+    Description: AWS Cognito User Pool Web Client ID
+    Value: !Ref UserPoolClient
