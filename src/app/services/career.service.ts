@@ -1,7 +1,7 @@
 import { Injectable, inject, signal, Injector } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CareerIndexEntry, CareerPlan, RawCourseData, EMPTY_CAREER_PLAN } from '../models/career.model';
-import { Firestore, collection, getDocs, doc, getDoc } from '@angular/fire/firestore';
+import { AwsSyncService } from './aws-sync.service';
 
 import sistemasPlan from '../../../scripts/seed-data/sistemas.json';
 import audiovisualPlan from '../../../scripts/seed-data/audiovisual.json';
@@ -12,8 +12,7 @@ import { PlanService } from './plan.service';
   providedIn: 'root',
 })
 export class CareerService {
-  private http = inject(HttpClient, { optional: true });
-  private firestore = inject(Firestore, { optional: true });
+  private awsSyncService = inject(AwsSyncService, { optional: true });
   private injector = inject(Injector, { optional: true });
 
   private getPlanService(): PlanService | null {
@@ -356,28 +355,7 @@ export class CareerService {
       return;
     }
 
-    // 4. Check Firestore workshop_plans document
-    if (this.firestore) {
-      try {
-        const docRef = doc(this.firestore, 'workshop_plans', careerId);
-        const snap = await getDoc(docRef);
-        if (snap.exists()) {
-          const planData = snap.data() as CareerPlan;
-          if (this.validateCareerPlan(planData)) {
-            // Cache to localStorage for offline access
-            const customKey = `${CareerService.CUSTOM_CAREER_PREFIX}${careerId}`;
-            this.safeSetItem(customKey, JSON.stringify(planData));
-            this.customPlansMapSignal.update((m) => new Map(m).set(careerId, planData));
-
-            this.activeCareerSignal.set(planData);
-            this.isLoadingSignal.set(false);
-            return;
-          }
-        }
-      } catch {}
-    }
-
-    // 5. Fallback if not found in Firestore or custom
+    // 4. Fallback if custom plan not found
     this.errorSignal.set('No se pudo cargar la carrera especificada.');
     this.isLoadingSignal.set(false);
   }

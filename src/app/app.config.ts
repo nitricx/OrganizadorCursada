@@ -1,37 +1,39 @@
 import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { provideHttpClient } from '@angular/common/http';
 import { provideRouter } from '@angular/router';
-import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
-import { getAuth, provideAuth, connectAuthEmulator } from '@angular/fire/auth';
-import { getFirestore, provideFirestore, connectFirestoreEmulator } from '@angular/fire/firestore';
+import { Amplify } from 'aws-amplify';
 
 import { routes } from './app.routes';
 import { environment } from '../environments/environment';
+
+if (environment.aws) {
+  try {
+    Amplify.configure({
+      Auth: {
+        Cognito: {
+          userPoolId: environment.aws.userPoolId,
+          userPoolClientId: environment.aws.userPoolWebClientId,
+          loginWith: {
+            oauth: {
+              domain: environment.aws.oauthDomain,
+              scopes: ['email', 'profile', 'openid'],
+              redirectSignIn: [environment.aws.redirectSignIn],
+              redirectSignOut: [environment.aws.redirectSignOut],
+              responseType: 'code'
+            }
+          }
+        }
+      }
+    });
+  } catch (err) {
+    console.warn('AWS Amplify initial configuration deferred:', err);
+  }
+}
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
     provideHttpClient(),
-    provideFirebaseApp(() => initializeApp(environment.firebase)),
-    provideAuth(() => {
-      const auth = getAuth();
-      if (!environment.production && (environment as { useEmulators?: boolean }).useEmulators) {
-        connectAuthEmulator(auth, environment.emulatorHosts.auth, { disableWarnings: true });
-      }
-      return auth;
-    }),
-    provideFirestore(() => {
-      const db = getFirestore();
-      if (!environment.production && (environment as { useEmulators?: boolean }).useEmulators) {
-        connectFirestoreEmulator(
-          db,
-          environment.emulatorHosts.firestore.host,
-          environment.emulatorHosts.firestore.port
-        );
-      }
-      return db;
-    }),
   ],
 };
-

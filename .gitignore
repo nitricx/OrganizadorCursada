@@ -47,3 +47,10 @@ playwright/.cache/
 # System files
 .DS_Store
 Thumbs.db
+
+# Local environment credentials
+src/environments/environment.local.ts
+src/environments/environment.development.ts
+.env
+.env.local
+

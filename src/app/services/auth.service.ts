@@ -1,63 +1,86 @@
-import { Injectable, inject, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Auth, user } from '@angular/fire/auth';
-import { GoogleAuthProvider, User, signInWithPopup, signOut } from 'firebase/auth';
-import { Subscription } from 'rxjs';
+import { Injectable, signal } from '@angular/core';
+import {
+  signInWithRedirect,
+  signOut,
+  getCurrentUser,
+  fetchUserAttributes,
+  AuthUser,
+} from 'aws-amplify/auth';
+import { Hub } from 'aws-amplify/utils';
+
+export interface AppUser {
+  uid: string;
+  email?: string | null;
+  displayName?: string | null;
+  photoURL?: string | null;
+}
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private auth = inject(Auth, { optional: true });
-
-  readonly userSignal = signal<User | null>(null);
+  readonly userSignal = signal<AppUser | null>(null);
   readonly loadingSignal = signal<boolean>(false);
 
-  private authSubscription?: Subscription;
-
   constructor() {
-    if (this.auth) {
-      this.loadingSignal.set(true);
-      this.authSubscription = user(this.auth)
-        .pipe(takeUntilDestroyed())
-        .subscribe({
-          next: (userState) => {
-            this.userSignal.set(userState);
-            this.loadingSignal.set(false);
-          },
-          error: (err) => {
-            console.error('Error listening to auth state changes:', err);
-            this.loadingSignal.set(false);
-          },
-        });
-    }
+    this.checkCurrentUser();
+    this.listenToAuthEvents();
   }
 
-  async loginWithGoogle(): Promise<User | null> {
-    if (!this.auth) {
-      console.warn('Firebase Auth is not provided.');
-      return null;
-    }
+  private async checkCurrentUser(): Promise<void> {
+    this.loadingSignal.set(true);
     try {
-      this.loadingSignal.set(true);
-      const provider = new GoogleAuthProvider();
-      const credential = await signInWithPopup(this.auth, provider);
-      return credential.user;
-    } catch (error) {
-      console.error('Error signing in with Google:', error);
-      throw error;
+      const authUser: AuthUser = await getCurrentUser();
+      const attributes = (await fetchUserAttributes().catch(() => ({}))) as Record<string, string | undefined>;
+      this.userSignal.set({
+        uid: authUser.userId || authUser.username,
+        email: attributes['email'] || authUser.signInDetails?.loginId || null,
+        displayName: attributes['name'] || attributes['nickname'] || authUser.username || null,
+        photoURL: attributes['picture'] || null,
+      });
+    } catch {
+      this.userSignal.set(null);
     } finally {
       this.loadingSignal.set(false);
     }
   }
 
-  async logout(): Promise<void> {
-    if (!this.auth) return;
+  private listenToAuthEvents(): void {
+    Hub.listen('auth', ({ payload }) => {
+      switch (payload.event) {
+        case 'signedIn':
+          this.checkCurrentUser();
+          break;
+        case 'signedOut':
+          this.userSignal.set(null);
+          break;
+        case 'signInWithRedirect_failure':
+          console.error('AWS Cognito Google Sign In Failure:', payload.data);
+          this.userSignal.set(null);
+          break;
+      }
+    });
+  }
+
+  async loginWithGoogle(): Promise<AppUser | null> {
     try {
       this.loadingSignal.set(true);
-      await signOut(this.auth);
+      await signInWithRedirect({ provider: 'Google' });
+      return this.userSignal();
     } catch (error) {
-      console.error('Error signing out:', error);
+      console.error('Error initiating Google sign-in with AWS Cognito:', error);
+      this.loadingSignal.set(false);
+      throw error;
+    }
+  }
+
+  async logout(): Promise<void> {
+    try {
+      this.loadingSignal.set(true);
+      await signOut();
+      this.userSignal.set(null);
+    } catch (error) {
+      console.error('Error signing out of AWS Cognito:', error);
       throw error;
     } finally {
       this.loadingSignal.set(false);

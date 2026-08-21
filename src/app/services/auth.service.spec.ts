@@ -13,18 +13,7 @@ describe('AuthService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should initialize userSignal to null and loadingSignal to false when Auth is not provided', () => {
+  it('should initialize userSignal to null by default when user is unauthenticated', () => {
     expect(service.userSignal()).toBeNull();
-    expect(service.loadingSignal()).toBe(false);
-  });
-
-  it('should return null on loginWithGoogle when Auth is not provided', async () => {
-    const result = await service.loginWithGoogle();
-    expect(result).toBeNull();
-  });
-
-  it('should resolve gracefully on logout when Auth is not provided', async () => {
-    await service.logout();
-    expect(service.loadingSignal()).toBe(false);
   });
 });

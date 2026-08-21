@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PlanManifest } from '../../../models/plan-manifest.model';
 import { ToastService } from '../../../services/toast.service';
-import { Firestore, collection, getDocs } from '@angular/fire/firestore';
 import { normalizeString } from '../../../utils/string.utils';
 import { CareerService } from '../../../services/career.service';
 
@@ -56,7 +55,6 @@ export class WorkshopHubComponent implements OnInit {
   onSubscribe = output<PlanManifest>();
 
   private toast = inject(ToastService);
-  private firestore = inject(Firestore, { optional: true });
   private careerService = inject(CareerService);
 
   searchQuery = '';
@@ -75,35 +73,7 @@ export class WorkshopHubComponent implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
-    if (!this.firestore) return;
-    try {
-      const snap = await getDocs(collection(this.firestore, 'workshop_plans'));
-      if (!snap.empty) {
-        const remoteEntries: WorkshopEntry[] = snap.docs.map((dSnap) => {
-          const data = dSnap.data();
-          return {
-            id: dSnap.id,
-            name: data['name'] || dSnap.id,
-            university: data['university'] || 'Universidad',
-            faculty: data['faculty'] || 'Facultad',
-            version: data['version'] || '1.0.0',
-            updatedAt: data['updatedAt'] || '2026-08-19',
-            manifest: {
-              id: dSnap.id,
-              name: data['name'] || dSnap.id,
-              university: data['university'],
-              faculty: data['faculty'],
-              version: data['version'],
-              courses: data['courses'] || []
-            }
-          };
-        });
-
-        const remoteIds = new Set(remoteEntries.map(e => e.id));
-        const nonDuplicateDefaults = DEFAULT_CATALOG.filter(e => !remoteIds.has(e.id));
-        this.catalog = [...remoteEntries, ...nonDuplicateDefaults];
-      }
-    } catch {}
+    // AWS API fetch catalog when configured
   }
 
   toggleSort(column: SortColumn): void {
