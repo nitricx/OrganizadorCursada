@@ -57,7 +57,14 @@ export class PlanPublisherModalComponent implements OnInit {
     this.toast.show('Generando prueba anti-bot de privacidad...', 'info');
 
     try {
-      const proof = await this.antiSybil.generateAntiSybilProof(JSON.stringify(this.sanitizedManifest));
+      const payloadStr = JSON.stringify(this.sanitizedManifest);
+      const proof = await this.antiSybil.generateAntiSybilProof(payloadStr);
+      const isValid = await this.antiSybil.verifyProofLocally(proof, payloadStr);
+      if (!isValid) {
+        throw new Error('La prueba anti-bot es inválida o ha expirado.');
+      }
+      const verificationPayload = this.antiSybil.buildVerificationPayload(proof, payloadStr);
+      // Attach verificationPayload for submission to Workshop backend API
       this.toast.show(`¡Plan publicado exitosamente en el Workshop! (Prueba: ${proof.proofType.toUpperCase()})`, 'success');
       this.onClose.emit();
     } catch (err) {

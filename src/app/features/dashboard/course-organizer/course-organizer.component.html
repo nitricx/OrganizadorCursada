@@ -37,7 +37,22 @@
     <mat-card appearance="outlined" class="info-bar-card">
       <mat-card-content class="info-bar-content">
         <mat-icon class="info-icon">info</mat-icon>
-        <span [innerHTML]="infoMessage()"></span>
+        @if (hoveredCourseInfo(); as info) {
+          <span>
+            <strong>{{ info.name }}</strong>
+            @if (info.requirements.length) {
+              &nbsp;·&nbsp; <span class="info-req">Requiere: {{ info.requirements.join(', ') }}</span>
+            }
+            @if (info.unlocks.length) {
+              &nbsp;·&nbsp; <span class="info-unlocks">Habilita: {{ info.unlocks.join(', ') }}</span>
+            }
+            @if (!info.requirements.length && !info.unlocks.length) {
+              &nbsp;·&nbsp; Sin correlativas
+            }
+          </span>
+        } @else {
+          <span>Pasá el cursor sobre una materia para ver qué requiere y qué habilita.</span>
+        }
       </mat-card-content>
     </mat-card>
 

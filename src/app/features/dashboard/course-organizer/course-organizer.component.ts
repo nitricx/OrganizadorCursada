@@ -13,6 +13,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 
+export interface HoveredCourseInfo {
+  name: string;
+  requirements: string[];
+  unlocks: string[];
+}
+
 @Component({
   selector: 'app-course-organizer',
   templateUrl: './course-organizer.component.html',
@@ -47,10 +53,7 @@ export class CourseOrganizerComponent {
     return total > 0 ? Math.round((this.approvedCount() / total) * 100) : 0;
   });
 
-  private infoMessageSignal = signal<string>(
-    'Pasá el cursor sobre una materia para ver qué requiere y qué habilita.',
-  );
-  readonly infoMessage = () => this.infoMessageSignal();
+  readonly hoveredCourseInfo = signal<HoveredCourseInfo | null>(null);
 
   readonly selectedCourseForModal = signal<Course | null>(null);
   readonly isModalOpen = signal<boolean>(false);
@@ -106,25 +109,17 @@ export class CourseOrganizerComponent {
         .map((id) => this.courseService.getCourseById(id)?.name)
         .filter((name): name is string => !!name);
 
-      let msg = `<strong>${course.name}</strong>`;
-      if (requirements.length) {
-        msg += ` &nbsp;·&nbsp; <span class="info-req">Requiere: ${requirements.join(', ')}</span>`;
-      }
-      if (unlocks.length) {
-        msg += ` &nbsp;·&nbsp; <span class="info-unlocks">Habilita: ${unlocks.join(', ')}</span>`;
-      }
-      if (!requirements.length && !unlocks.length) {
-        msg += ' &nbsp;·&nbsp; Sin correlativas';
-      }
-      this.infoMessageSignal.set(msg);
+      this.hoveredCourseInfo.set({
+        name: course.name,
+        requirements,
+        unlocks,
+      });
     }
   }
 
   onMouseLeft(): void {
     this.courseService.setHoveredCourseId(null);
-    this.infoMessageSignal.set(
-      'Pasá el cursor sobre una materia para ver qué requiere y qué habilita.',
-    );
+    this.hoveredCourseInfo.set(null);
   }
 
   onReset(): void {
