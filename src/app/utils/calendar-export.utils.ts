@@ -102,7 +102,7 @@ export function generateICalendarContent(options: ExportCalendarOptions): string
     'PRODID:-//OrganizadorCursada//UNQ Academic Organizer//ES',
     'CALSCALE:GREGORIAN',
     'METHOD:PUBLISH',
-    'X-WR-CALNAME:' + (options.planLabel || 'Cursada Universitaria'),
+    'X-WR-CALNAME:' + sanitizeICalHeaderValue(options.planLabel || 'Cursada Universitaria'),
     'X-WR-TIMEZONE:America/Argentina/Buenos_Aires',
   ];
 
@@ -113,9 +113,10 @@ export function generateICalendarContent(options: ExportCalendarOptions): string
     const dtStart = formatICalDateTime(firstClassDate, lesson.startTime);
     const dtEnd = formatICalDateTime(firstClassDate, lesson.endTime);
 
+    const cleanLessonId = sanitizeICalHeaderValue(String(lesson.id));
     const summary = `${course.name} - ${lesson.professor ? 'Prof. ' + lesson.professor : 'Comisión'}`;
     const description = `Materia: ${course.name}\\nProfesor: ${lesson.professor || 'No especificado'}\\nPlan: ${options.planLabel || 'Organizador de Cursada'}`;
-    const uid = `lesson-${lesson.id}-${firstClassDate.getTime()}@organizadorcursada.app`;
+    const uid = `lesson-${cleanLessonId}-${firstClassDate.getTime()}@organizadorcursada.app`;
     const dayCode = ICAL_DAY_MAP[lesson.day] || 'MO';
 
     lines.push(
@@ -137,7 +138,15 @@ export function generateICalendarContent(options: ExportCalendarOptions): string
 }
 
 /**
- * Escapes text characters per RFC 5545 specifications.
+ * Sanitizes header values for iCalendar to prevent CRLF injection.
+ */
+export function sanitizeICalHeaderValue(text: string): string {
+  if (!text) return '';
+  return text.replace(/[\r\n]+/g, ' ').trim();
+}
+
+/**
+ * Escapes text characters per RFC 5545 specifications, preventing CRLF injection.
  */
 export function escapeICalText(text: string): string {
   if (!text) return '';
@@ -145,6 +154,8 @@ export function escapeICalText(text: string): string {
     .replace(/\\/g, '\\\\')
     .replace(/;/g, '\\;')
     .replace(/,/g, '\\,')
+    .replace(/\r\n/g, '\\n')
+    .replace(/\r/g, '\\n')
     .replace(/\n/g, '\\n');
 }
 

@@ -6,6 +6,7 @@ import {
   generateICalendarContent,
   generateGoogleCalendarWebUrl,
   escapeICalText,
+  sanitizeICalHeaderValue,
 } from './calendar-export.utils';
 import { DayOfWeek } from '../models/course';
 import { ExportCalendarOptions } from '../models/calendar-sync.model';
@@ -67,11 +68,28 @@ describe('calendar-export.utils', () => {
     });
   });
 
+  describe('sanitizeICalHeaderValue', () => {
+    it('should strip CRLF characters and replace with space', () => {
+      const input = 'Plan\r\nHeader Injection\nTest';
+      const output = sanitizeICalHeaderValue(input);
+      expect(output).toBe('Plan Header Injection Test');
+      expect(output).not.toContain('\r');
+      expect(output).not.toContain('\n');
+    });
+  });
+
   describe('escapeICalText', () => {
     it('should escape commas, semicolons, and newlines', () => {
       const input = 'Materia, 1; Prof: Juan\nLinea 2';
       const output = escapeICalText(input);
       expect(output).toContain('Materia\\, 1\\; Prof: Juan\\nLinea 2');
+    });
+
+    it('should handle carriage returns and CRLF without leaving raw line breaks', () => {
+      const input = 'Materia\r\nInyectada\rTest';
+      const output = escapeICalText(input);
+      expect(output).toBe('Materia\\nInyectada\\nTest');
+      expect(output).not.toContain('\r');
     });
   });
 
@@ -123,6 +141,23 @@ describe('calendar-export.utils', () => {
       expect(content).toContain('RRULE:FREQ=WEEKLY;BYDAY=MO;UNTIL=20260615T235959');
       expect(content).toContain('END:VEVENT');
       expect(content).toContain('END:VCALENDAR');
+    });
+
+    it('should prevent CRLF injection in planLabel header', () => {
+      const options: ExportCalendarOptions = {
+        planId: '1',
+        planLabel: 'Plan Informática\r\nBEGIN:VEVENT\r\nSUMMARY:Injected Event\r\nEND:VEVENT',
+        startDate: '01/04/2026',
+        endDate: '15/06/2026',
+        selectedEvents: [],
+      };
+
+      const content = generateICalendarContent(options);
+      expect(content).toContain(
+        'X-WR-CALNAME:Plan Informática BEGIN:VEVENT SUMMARY:Injected Event END:VEVENT',
+      );
+      // Ensure VEVENT was not injected into the root VCALENDAR body
+      expect(content).not.toContain('\r\nBEGIN:VEVENT\r\nSUMMARY:Injected Event');
     });
   });
 
