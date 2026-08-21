@@ -62,19 +62,44 @@
         </div>
       </div>
 
-      <!-- Theme Switcher Card/Row -->
-      <div class="user-menu-theme-row">
-        <div class="theme-row-info">
-          <mat-icon class="theme-row-icon">{{ themeService.isDarkMode() ? 'dark_mode' : 'light_mode' }}</mat-icon>
-          <span class="theme-row-label">Tema {{ themeService.isDarkMode() ? 'Oscuro' : 'Claro' }}</span>
+      <!-- Theme Switcher Container -->
+      <div class="user-menu-theme-container">
+        <div class="theme-header">
+          <mat-icon class="theme-header-icon">palette</mat-icon>
+          <span class="theme-header-label">Tema</span>
         </div>
-        <button
-          mat-button
-          class="theme-toggle-menu-btn"
-          (click)="themeService.toggleDarkMode()"
-        >
-          {{ themeService.isDarkMode() ? 'Cambiar a Claro' : 'Cambiar a Oscuro' }}
-        </button>
+        <div class="theme-selector-group">
+          <button
+            type="button"
+            class="theme-option-btn"
+            [class.active]="themeService.mode() === 'light'"
+            (click)="themeService.setMode('light')"
+            matTooltip="Modo Claro"
+          >
+            <mat-icon>light_mode</mat-icon>
+            <span>Claro</span>
+          </button>
+          <button
+            type="button"
+            class="theme-option-btn"
+            [class.active]="themeService.mode() === 'dark'"
+            (click)="themeService.setMode('dark')"
+            matTooltip="Modo Oscuro"
+          >
+            <mat-icon>dark_mode</mat-icon>
+            <span>Oscuro</span>
+          </button>
+          <button
+            type="button"
+            class="theme-option-btn"
+            [class.active]="themeService.mode() === 'system'"
+            (click)="themeService.setMode('system')"
+            matTooltip="Seguir tema del sistema"
+          >
+            <mat-icon>desktop_windows</mat-icon>
+            <span>Sistema</span>
+          </button>
+        </div>
       </div>
 
       <!-- Bottom action: Sign out -->
@@ -125,19 +150,44 @@
         </button>
       </div>
 
-      <!-- Theme Switcher Card/Row -->
-      <div class="user-menu-theme-row">
-        <div class="theme-row-info">
-          <mat-icon class="theme-row-icon">{{ themeService.isDarkMode() ? 'dark_mode' : 'light_mode' }}</mat-icon>
-          <span class="theme-row-label">Tema {{ themeService.isDarkMode() ? 'Oscuro' : 'Claro' }}</span>
+      <!-- Theme Switcher Container -->
+      <div class="user-menu-theme-container">
+        <div class="theme-header">
+          <mat-icon class="theme-header-icon">palette</mat-icon>
+          <span class="theme-header-label">Tema</span>
         </div>
-        <button
-          mat-button
-          class="theme-toggle-menu-btn"
-          (click)="themeService.toggleDarkMode()"
-        >
-          {{ themeService.isDarkMode() ? 'Cambiar a Claro' : 'Cambiar a Oscuro' }}
-        </button>
+        <div class="theme-selector-group">
+          <button
+            type="button"
+            class="theme-option-btn"
+            [class.active]="themeService.mode() === 'light'"
+            (click)="themeService.setMode('light')"
+            matTooltip="Modo Claro"
+          >
+            <mat-icon>light_mode</mat-icon>
+            <span>Claro</span>
+          </button>
+          <button
+            type="button"
+            class="theme-option-btn"
+            [class.active]="themeService.mode() === 'dark'"
+            (click)="themeService.setMode('dark')"
+            matTooltip="Modo Oscuro"
+          >
+            <mat-icon>dark_mode</mat-icon>
+            <span>Oscuro</span>
+          </button>
+          <button
+            type="button"
+            class="theme-option-btn"
+            [class.active]="themeService.mode() === 'system'"
+            (click)="themeService.setMode('system')"
+            matTooltip="Seguir tema del sistema"
+          >
+            <mat-icon>desktop_windows</mat-icon>
+            <span>Sistema</span>
+          </button>
+        </div>
       </div>
 
       <!-- Reset New User Session -->

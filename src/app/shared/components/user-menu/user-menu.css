@@ -357,7 +357,94 @@ a.google-login-menu-btn.mat-mdc-button,
   color: var(--color-text-secondary);
 }
 
-/* Theme Switcher Row */
+/* Theme Switcher Container */
+.user-menu-theme-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 12px;
+  background-color: var(--color-background-secondary);
+  border-radius: 16px;
+  box-shadow: var(--shadow-sm);
+}
+
+.theme-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-left: 2px;
+}
+
+.theme-header-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  color: var(--color-text-secondary);
+}
+
+.theme-header-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.theme-selector-group {
+  display: flex;
+  background-color: var(--color-background-primary);
+  border-radius: 12px;
+  padding: 3px;
+  gap: 2px;
+  border: 1px solid var(--color-border-subtle, rgba(0, 0, 0, 0.08));
+}
+
+[data-theme='dark'] .theme-selector-group {
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.theme-option-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: 30px;
+  padding: 0 6px;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  color: var(--color-text-secondary);
+  font-size: 0.725rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.theme-option-btn mat-icon {
+  font-size: 15px;
+  width: 15px;
+  height: 15px;
+}
+
+.theme-option-btn:hover {
+  color: var(--color-text-primary);
+  background-color: var(--color-hover-bg, rgba(0, 0, 0, 0.04));
+}
+
+.theme-option-btn.active {
+  background-color: var(--brand-primary);
+  color: #ffffff;
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+[data-theme='dark'] .theme-option-btn.active {
+  background-color: var(--brand-primary);
+  color: #ffffff;
+}
+
+/* Legacy Theme Switcher Row (used for reset session) */
 .user-menu-theme-row {
   display: flex;
   align-items: center;

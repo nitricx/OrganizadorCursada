@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { ThemeService } from './theme.service';
+import { ThemeService, ThemeMode } from './theme.service';
 
 describe('ThemeService', () => {
   let service: ThemeService;
@@ -15,12 +15,32 @@ describe('ThemeService', () => {
 
   it('should initialize isDarkMode signal as a boolean', () => {
     const val = service.isDarkMode();
-    expect(val === true || val === false).toBe(true);
+    expect(typeof val).toBe('boolean');
   });
 
-  it('should toggle dark mode state when toggleDarkMode is called', () => {
-    const initial = service.isDarkMode();
+  it('should allow setting mode explicitly to light, dark, system', () => {
+    service.setMode('light');
+    expect(service.mode()).toBe('light');
+    expect(service.isDarkMode()).toBe(false);
+
+    service.setMode('dark');
+    expect(service.mode()).toBe('dark');
+    expect(service.isDarkMode()).toBe(true);
+
+    service.setMode('system');
+    expect(service.mode()).toBe('system');
+  });
+
+  it('should cycle through modes when toggleDarkMode is called', () => {
+    service.setMode('system');
     service.toggleDarkMode();
-    expect(service.isDarkMode()).toBe(!initial);
+    expect(service.mode()).toBe('light');
+
+    service.toggleDarkMode();
+    expect(service.mode()).toBe('dark');
+
+    service.toggleDarkMode();
+    expect(service.mode()).toBe('system');
   });
 });
+

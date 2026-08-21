@@ -1,13 +1,27 @@
-import { Injectable, effect, signal } from '@angular/core';
+import { Injectable, effect, signal, computed } from '@angular/core';
+
+export type ThemeMode = 'light' | 'dark' | 'system';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ThemeService {
   private static readonly THEME_KEY = 'organizador-cursada-theme';
-  readonly isDarkMode = signal<boolean>(this.loadInitialTheme());
+
+  readonly mode = signal<ThemeMode>(this.loadInitialMode());
+  private readonly systemIsDark = signal<boolean>(this.getInitialSystemPreference());
+
+  readonly isDarkMode = computed<boolean>(() => {
+    const currentMode = this.mode();
+    if (currentMode === 'system') {
+      return this.systemIsDark();
+    }
+    return currentMode === 'dark';
+  });
 
   constructor() {
+    this.initSystemThemeListener();
+
     effect(() => {
       const isDark = this.isDarkMode();
       if (typeof document !== 'undefined') {
@@ -19,15 +33,19 @@ export class ThemeService {
           document.documentElement.style.setProperty('color-scheme', 'light');
         }
       }
+    });
+
+    effect(() => {
+      const currentMode = this.mode();
       try {
         if (typeof localStorage !== 'undefined') {
-          localStorage.setItem(ThemeService.THEME_KEY, isDark ? 'dark' : 'light');
+          localStorage.setItem(ThemeService.THEME_KEY, currentMode);
         }
       } catch {}
     });
   }
 
-  private loadInitialTheme(): boolean {
+  private loadInitialMode(): ThemeMode {
     let savedTheme: string | null = null;
     try {
       if (typeof localStorage !== 'undefined') {
@@ -35,9 +53,14 @@ export class ThemeService {
       }
     } catch {}
 
-    if (savedTheme === 'dark') return true;
-    if (savedTheme === 'light') return false;
+    if (savedTheme === 'dark' || savedTheme === 'light' || savedTheme === 'system') {
+      return savedTheme;
+    }
 
+    return 'system';
+  }
+
+  private getInitialSystemPreference(): boolean {
     return Boolean(
       typeof window !== 'undefined' &&
       window.matchMedia &&
@@ -45,7 +68,30 @@ export class ThemeService {
     );
   }
 
+  private initSystemThemeListener(): void {
+    if (typeof window !== 'undefined' && window.matchMedia) {
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      const updateSystemTheme = (e: MediaQueryListEvent | MediaQueryList) => {
+        this.systemIsDark.set(e.matches);
+      };
+
+      if (mediaQuery.addEventListener) {
+        mediaQuery.addEventListener('change', updateSystemTheme);
+      } else if ('addListener' in mediaQuery) {
+        (mediaQuery as any).addListener(updateSystemTheme);
+      }
+    }
+  }
+
+  setMode(mode: ThemeMode): void {
+    this.mode.set(mode);
+  }
+
   toggleDarkMode(): void {
-    this.isDarkMode.update((current) => !current);
+    const modes: ThemeMode[] = ['system', 'light', 'dark'];
+    const currentIndex = modes.indexOf(this.mode());
+    const nextMode = modes[(currentIndex + 1) % modes.length];
+    this.setMode(nextMode);
   }
 }
+
