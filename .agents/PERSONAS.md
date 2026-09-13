@@ -92,6 +92,7 @@ Este documento formaliza la asignación de roles (**Personas**) para los agentes
   - **PROHIBIDO utilizar datos simulados (dummy data o mocks ficticios)** como carreras inexistentes. Usar siempre `sistemas.json` y `audiovisual.json`.
   - **PROHIBIDO violar el Local Airgap**: ningún dato privado del estudiante debe enviarse fuera de `localStorage`.
   - **PROHIBIDO alterar el alcance funcional** definido por el Analista. Si detecta un impedimento técnico o necesidad de cambio de requerimiento, debe solicitar clarificación.
+  - **PROHIBIDO des-sincronizar el lockfile**: Si se modifica `package.json`, SIEMPRE debe ejecutarse `npm install` inmediatamente para mantener `package-lock.json` en perfecta sincronía (previene fallos en `npm ci`).
 
 ---
 

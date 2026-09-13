@@ -5,13 +5,16 @@
  * 1. Prohibición de Dummy Data o Mocks no autorizados.
  * 2. Tests unitarios obligatorios para cada archivo *.service.ts.
  * 3. Cero colores hexadecimales hardcodeados (#fff, #1a1a1a, etc.) en estilos de componentes o atributos inline HTML.
- * 4. Respeto del Airgap de privacidad (LocalStorage sin fugas en red).
+ * 4. Sincronización estricta entre package.json y package-lock.json (previene fallos en npm ci).
  */
 const fs = require('fs');
 const path = require('path');
 
+const ROOT_DIR = path.resolve(__dirname, '../../');
 const SRC_APP_DIR = path.resolve(__dirname, '../../src/app');
 const SERVICES_DIR = path.resolve(__dirname, '../../src/app/services');
+const PACKAGE_JSON = path.join(ROOT_DIR, 'package.json');
+const PACKAGE_LOCK = path.join(ROOT_DIR, 'package-lock.json');
 
 let errorCount = 0;
 
@@ -55,12 +58,7 @@ function auditServiceTests() {
       checked++;
       const specFile = serviceFile.replace(/\.service\.ts$/, '.service.spec.ts');
       if (!fs.existsSync(specFile)) {
-        reportError(
-          'MISSING_SERVICE_SPEC',
-          serviceFile,
-          1,
-          'No se encontró el archivo de pruebas unitarias *.service.spec.ts',
-        );
+        reportError('MISSING_SERVICE_SPEC', serviceFile, 1, 'No se encontró el archivo de pruebas unitarias *.service.spec.ts');
       }
     }
   }
@@ -70,9 +68,7 @@ function auditServiceTests() {
 
 // 2. Audit: Zero Hardcoded Hex Colors in Component Styles & Inline HTML
 function auditHexColors() {
-  logHeader(
-    'Regla 3: Verificando ausencia de colores hexadecimales en estilos de componentes e inline HTML...',
-  );
+  logHeader('Regla 3: Verificando ausencia de colores hexadecimales en estilos de componentes e inline HTML...');
   const hexColorRegex = /#([0-9a-fA-F]{3}|[0-9a-fA-F]{4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})\b/g;
 
   // A. Auditar todos los archivos .css en src/app/
@@ -91,7 +87,7 @@ function auditHexColors() {
           'HEX_COLOR_IN_CSS',
           file,
           idx + 1,
-          `Se detectó color hexadecimal hardcodeado '${match[0]}'. Debe consumirse un token CSS var(--...) de src/styles.css.`,
+          `Se detectó color hexadecimal hardcodeado '${match[0]}'. Debe consumirse un token CSS var(--...) de src/styles.css.`
         );
       }
     });
@@ -114,7 +110,7 @@ function auditHexColors() {
               'HEX_COLOR_IN_INLINE_HTML',
               file,
               idx + 1,
-              `Se detectó color hexadecimal en atributo style inline '${match[0]}'. Usar clases con tokens CSS.`,
+              `Se detectó color hexadecimal en atributo style inline '${match[0]}'. Usar clases with tokens CSS.`
             );
           }
         }
@@ -122,9 +118,7 @@ function auditHexColors() {
     });
   }
 
-  console.log(
-    `  ✅ ${cssFiles.length} hojas de estilo CSS y ${htmlFiles.length} plantillas HTML auditadas.`,
-  );
+  console.log(`  ✅ ${cssFiles.length} hojas de estilo CSS y ${htmlFiles.length} plantillas HTML auditadas.`);
 }
 
 // 3. Audit: No Dummy Data
@@ -148,7 +142,7 @@ function auditNoDummyData() {
           'DUMMY_DATA_FORBIDDEN',
           file,
           1,
-          `Se detectó referencia a dataset simulado '${term}'. Usar solo carreras auténticas.`,
+          `Se detectó referencia a dataset simulado '${term}'. Usar solo carreras auténticas.`
         );
       }
     }
@@ -157,11 +151,59 @@ function auditNoDummyData() {
   console.log(`  ✅ Integridad de planes de estudio auténticos verificada.`);
 }
 
+// 4. Audit: Lockfile Synchronization (previene fallos de CI por npm ci)
+function auditLockfileSync() {
+  logHeader('Regla 4: Verificando sincronización de package.json y package-lock.json...');
+
+  if (!fs.existsSync(PACKAGE_JSON)) {
+    reportError('LOCKFILE_DESYNC', PACKAGE_JSON, 1, 'No se encontró package.json');
+    return;
+  }
+  if (!fs.existsSync(PACKAGE_LOCK)) {
+    reportError('LOCKFILE_DESYNC', PACKAGE_LOCK, 1, 'No se encontró package-lock.json');
+    return;
+  }
+
+  const pkgJson = JSON.parse(fs.readFileSync(PACKAGE_JSON, 'utf-8'));
+  const pkgLock = JSON.parse(fs.readFileSync(PACKAGE_LOCK, 'utf-8'));
+
+  const lockPackages = pkgLock.packages || {};
+  const lockDeps = pkgLock.dependencies || {};
+
+  const allDeclared = {
+    ...(pkgJson.dependencies || {}),
+    ...(pkgJson.devDependencies || {}),
+  };
+
+  let missingInLock = 0;
+
+  for (const [dep, reqVersion] of Object.entries(allDeclared)) {
+    const nodeModulePath = `node_modules/${dep}`;
+    const inPackages = lockPackages[nodeModulePath] || lockPackages['']?.dependencies?.[dep];
+    const inDeps = lockDeps[dep];
+
+    if (!inPackages && !inDeps) {
+      missingInLock++;
+      reportError(
+        'LOCKFILE_DESYNC',
+        PACKAGE_JSON,
+        1,
+        `La dependencia '${dep}' (${reqVersion}) está en package.json pero NO está registrada en package-lock.json. Ejecuta 'npm install' para sincronizar.`
+      );
+    }
+  }
+
+  if (missingInLock === 0) {
+    console.log(`  ✅ Sincronización perfecta de lockfile (todos los paquetes de package.json existen en package-lock.json).`);
+  }
+}
+
 // Ejecución
 console.log('🚀 Iniciando Auditoría Estática de Reglas Inviolables (OrganizadorCursada)...');
 auditServiceTests();
 auditHexColors();
 auditNoDummyData();
+auditLockfileSync();
 
 console.log('\n─────────────────────────────────────────────────────────────');
 if (errorCount === 0) {
