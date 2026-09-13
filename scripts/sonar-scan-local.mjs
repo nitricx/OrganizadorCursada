@@ -5,7 +5,8 @@
  * Checks if local SonarQube instance is reachable, runs test coverage, and executes the scanner.
  */
 
-import { execSync } from 'node:child_process';
+import { execFileSync } from 'node:child_process';
+import path from 'node:path';
 import { scan } from 'sonarqube-scanner';
 
 const SONAR_HOST = process.env.SONAR_HOST_URL || 'http://localhost:9000';
@@ -67,8 +68,14 @@ async function main() {
   console.log(`✓  [SonarQube] Local server is healthy and UP.`);
   console.log(`🧪 [SonarQube] Generating unit test coverage with Vitest...`);
 
+  const ngCliPath = path.resolve('node_modules', '@angular', 'cli', 'bin', 'ng.js');
+
   try {
-    execSync('npm run test:coverage', { stdio: 'inherit' });
+    execFileSync(
+      process.execPath,
+      [ngCliPath, 'test', '--watch=false', '--coverage', '--coverage-reporters=lcov'],
+      { stdio: 'inherit' }
+    );
   } catch (err) {
     console.error(`\n❌ [SonarQube] Unit tests failed! Aborting push.\n`);
     process.exit(1);
