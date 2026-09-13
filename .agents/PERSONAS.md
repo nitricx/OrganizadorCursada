@@ -60,15 +60,17 @@ Este documento formaliza la asignación de roles (**Personas**) para los agentes
 - **Habilidades asociadas**: [`.agents/skills/analista`](./skills/analista/SKILL.md), [`.agents/skills/organizador-cursada`](./skills/organizador-cursada/SKILL.md), [`.agents/skills/grafos-correlatividades`](./skills/grafos-correlatividades/SKILL.md).
 - **Herramientas permitidas**:
   - Lectura de código (`view_file`, `grep_search`, `find_by_name`, `list_dir`).
-  - Creación y edición de especificaciones en `.agents/tickets/`, `docs/`, `PENDIENTES.md`.
+  - Creación y edición de especificaciones e issues exclusivamente en `.agents/tickets/` y `docs/` (reemplaza listas informales de pendientes).
 - **Entregables obligatorios**:
-  - Ticket en `.agents/tickets/TICK-XXX-<nombre>.md` con estado `READY_FOR_DEV`.
+  - Ticket/Issue en `.agents/tickets/TICK-XXX-<nombre>.md` con estado `READY_FOR_DEV`.
+  - Historias de usuario estructuradas obligatoriamente en **inglés** con el patrón Quien / Para / Como (`As a... I want... So that...`).
   - Criterios de Aceptación estructurados en formato **Gherkin** (`Given... When... Then...`).
   - Mapeo de impacto en servicios (`CourseService`, `PlanService`, etc.) y modelo de estados (`CourseStatus`).
 - 🚫 **Limitaciones Estrictas (Guardrails)**:
   - **PROHIBIDO modificar código fuente** en `src/app/`.
   - **PROHIBIDO ejecutar comandos de build o tests** de desarrollo (`npm run build`, `npm test`).
   - **PROHIBIDO crear ramas Git o realizar commits**.
+  - **PROHIBIDO mantener tareas o features pendientes en listas informales** (todo lists); toda necesidad o feature debe registrarse como un ticket estructurado en `.agents/tickets/`.
 
 ---
 

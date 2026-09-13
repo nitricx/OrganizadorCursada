@@ -135,6 +135,36 @@ function makeCommit(ticketId) {
   }
 }
 
+function createPR(ticketId) {
+  if (!ticketId) {
+    console.error('❌ Error: Debes especificar el ID del ticket.');
+    process.exit(1);
+  }
+
+  const ticket = findTicket(ticketId);
+  if (!ticket) {
+    console.error(`❌ Error: No se encontró el ticket ${ticketId}`);
+    process.exit(1);
+  }
+
+  if (ticket.status !== 'QA_VERIFIED') {
+    console.error(`🚫 GUARDRAIL ACTIVADO: El ticket ${ticketId} debe estar en QA_VERIFIED para abrir un PR.`);
+    process.exit(1);
+  }
+
+  const currentBranch = runGit('git branch --show-current');
+  console.log(`🚀 Creando Pull Request desde '${currentBranch}' hacia 'develop'...`);
+
+  try {
+    const title = `feat(${ticketId.toUpperCase()}): ${ticket.title}`;
+    const body = `## Ticket: ${ticketId}\n\n${ticket.title}\n\nCertificado por QA (\`QA_VERIFIED\`).`;
+    const prUrl = runGit(`gh pr create --base develop --title "${title}" --body "${body}"`);
+    console.log(`✅ Pull Request creado exitosamente: ${prUrl}`);
+  } catch (err) {
+    console.error(`⚠️ No se pudo crear el PR automáticamente vía 'gh': ${err.message}`);
+  }
+}
+
 const args = process.argv.slice(2);
 const command = args[0];
 
@@ -145,10 +175,14 @@ switch (command) {
   case 'commit':
     makeCommit(args[1]);
     break;
+  case 'pr':
+    createPR(args[1]);
+    break;
   default:
     console.log('📖 Ayudante de GitFlow para OrganizadorCursada');
     console.log('Comandos:');
     console.log('  node gitflow_helper.js branch <TICK-ID>');
     console.log('  node gitflow_helper.js commit <TICK-ID>');
+    console.log('  node gitflow_helper.js pr <TICK-ID>');
     process.exit(0);
 }
