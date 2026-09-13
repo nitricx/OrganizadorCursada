@@ -386,26 +386,39 @@ describe('CourseService - Lesson State Toggling', () => {
         setItem: (key: string, value: string) => {
           mockStore[key] = value;
         },
-        clear: () => {},
-        removeItem: () => {},
+        clear: () => {
+          Object.keys(mockStore).forEach((k) => delete mockStore[k]);
+        },
+        removeItem: (key: string) => {
+          delete mockStore[key];
+        },
       };
 
+      const originalLocalStorage = globalThis.localStorage;
       Object.defineProperty(globalThis, 'localStorage', {
         value: mockLocalStorage,
         configurable: true,
         writable: true,
       });
 
-      // Re-create service instance to trigger loadState()
-      TestBed.resetTestingModule();
-      TestBed.configureTestingModule({});
-      const newService = TestBed.inject(CourseService);
-      newService.setCareerPlan(TEST_CAREER_PLAN);
-      (newService as any).loadState(TEST_CAREER_PLAN);
-      const pa1 = newService.getCourseById(1);
+      try {
+        // Re-create service instance to trigger loadState()
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({});
+        const newService = TestBed.inject(CourseService);
+        newService.setCareerPlan(TEST_CAREER_PLAN);
+        (newService as any).loadState(TEST_CAREER_PLAN);
+        const pa1 = newService.getCourseById(1);
 
-      expect(pa1?.status).toBe('coursing');
-      expect(pa1?.lessons[0].status).toBe('coursing');
+        expect(pa1?.status).toBe('coursing');
+        expect(pa1?.lessons[0].status).toBe('coursing');
+      } finally {
+        Object.defineProperty(globalThis, 'localStorage', {
+          value: originalLocalStorage,
+          configurable: true,
+          writable: true,
+        });
+      }
     });
 
     it('should sanitize corrupted localStorage courseStates data without failing', () => {
@@ -426,25 +439,38 @@ describe('CourseService - Lesson State Toggling', () => {
         setItem: (key: string, value: string) => {
           mockStore[key] = value;
         },
-        clear: () => {},
-        removeItem: () => {},
+        clear: () => {
+          Object.keys(mockStore).forEach((k) => delete mockStore[k]);
+        },
+        removeItem: (key: string) => {
+          delete mockStore[key];
+        },
       };
 
+      const originalLocalStorage = globalThis.localStorage;
       Object.defineProperty(globalThis, 'localStorage', {
         value: mockLocalStorage,
         configurable: true,
         writable: true,
       });
 
-      TestBed.resetTestingModule();
-      TestBed.configureTestingModule({});
-      const newService = TestBed.inject(CourseService);
-      newService.setCareerPlan(TEST_CAREER_PLAN);
-      const pa1 = newService.getCourseById(1);
-      const pa2 = newService.getCourseById(12);
+      try {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({});
+        const newService = TestBed.inject(CourseService);
+        newService.setCareerPlan(TEST_CAREER_PLAN);
+        const pa1 = newService.getCourseById(1);
+        const pa2 = newService.getCourseById(12);
 
-      expect(pa1?.status).toBe('pending');
-      expect(pa2?.status).toBe('pending');
+        expect(pa1?.status).toBe('pending');
+        expect(pa2?.status).toBe('pending');
+      } finally {
+        Object.defineProperty(globalThis, 'localStorage', {
+          value: originalLocalStorage,
+          configurable: true,
+          writable: true,
+        });
+      }
     });
   });
 

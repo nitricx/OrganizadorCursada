@@ -8,6 +8,12 @@ describe('CareerService', () => {
   let httpMock: HttpTestingController;
 
   beforeEach(() => {
+    try {
+      if (typeof localStorage !== 'undefined' && localStorage && typeof localStorage.clear === 'function') {
+        localStorage.clear();
+      }
+    } catch {}
+
     TestBed.configureTestingModule({
       providers: [CareerService, provideHttpClient(), provideHttpClientTesting()],
     });
@@ -20,6 +26,12 @@ describe('CareerService', () => {
   });
 
   afterEach(() => {
+    try {
+      if (typeof localStorage !== 'undefined' && localStorage && typeof localStorage.clear === 'function') {
+        localStorage.clear();
+      }
+    } catch {}
+
     const openReqs = httpMock.match((r) => r.url.startsWith('/careers/'));
     openReqs.forEach((req) => req.error(new ProgressEvent('error')));
     httpMock.verify();

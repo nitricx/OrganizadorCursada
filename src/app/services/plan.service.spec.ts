@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { PlanService, SemesterSlot } from './plan.service';
+import { SecureStorageService } from './security/secure-storage.service';
 
 describe('PlanService', () => {
   let service: PlanService;
@@ -68,7 +69,12 @@ describe('PlanService', () => {
     // Verify persistence in localStorage if available
     const rawStored = safeGetItem('plan-semesters-1');
     if (rawStored !== null) {
-      expect(JSON.parse(rawStored)).toEqual(mockSlots);
+      if (rawStored.startsWith('enc:v1:')) {
+        const secureStorage = TestBed.inject(SecureStorageService);
+        expect(secureStorage.getItem<SemesterSlot[]>('plan-semesters-1')).toEqual(mockSlots);
+      } else {
+        expect(JSON.parse(rawStored)).toEqual(mockSlots);
+      }
     }
   });
 
@@ -85,7 +91,12 @@ describe('PlanService', () => {
     // Verify persistence in localStorage if available
     const rawStored = safeGetItem('plan-starting-year-1');
     if (rawStored !== null) {
-      expect(rawStored).toBe('2025');
+      if (rawStored.startsWith('enc:v1:')) {
+        const secureStorage = TestBed.inject(SecureStorageService);
+        expect(secureStorage.getItem<number>('plan-starting-year-1')).toBe(2025);
+      } else {
+        expect(rawStored).toBe('2025');
+      }
     }
   });
 
