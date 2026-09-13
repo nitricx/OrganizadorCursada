@@ -69,7 +69,12 @@ describe('PlanService', () => {
     // Verify persistence in localStorage if available
     const rawStored = safeGetItem('plan-semesters-1');
     if (rawStored !== null) {
-      expect(JSON.parse(rawStored)).toEqual(mockSlots);
+      if (rawStored.startsWith('enc:v1:')) {
+        const secureStorage = TestBed.inject(SecureStorageService);
+        expect(secureStorage.getItem<SemesterSlot[]>('plan-semesters-1')).toEqual(mockSlots);
+      } else {
+        expect(JSON.parse(rawStored)).toEqual(mockSlots);
+      }
     }
   });
 
