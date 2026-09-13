@@ -37,7 +37,25 @@ The codebase enforces a strict separation of concerns across three layers:
 
 ---
 
-## 🧭 3. Directory of Available Skills (`.agents/skills/`)
+## 🎭 3. AI Agent Personas & Guardrails
+
+To prevent conflicts of interest and enforce rigorous software engineering standards, agent collaboration is strictly governed by specialized **Personas** with distinct operational boundaries (see [`.agents/PERSONAS.md`](file:///.agents/PERSONAS.md) and [`.agents/WORKFLOW.md`](file:///.agents/WORKFLOW.md)):
+
+```
+   [1. ANALISTA]             [2. DESARROLLADOR]          [3. QA TESTER]           [4. GITFLOW]
+   Creates Ticket        --> Implements Feature      --> Certifies/Rejects    --> Integrates to develop
+   Gherkin Acceptance        Services + Unit Tests       Impartial audit          Conventional Commits
+   (src/app/ forbidden)      (Self-approval forbidden)   (Fixing code forbidden)  (QA sign-off required)
+```
+
+- **`analista`**: Specifies requirements, defines Gherkin scenarios, and authors tickets in [`.agents/tickets/`](file:///.agents/tickets/README.md). _Prohibited from touching `src/app/`_.
+- **`desarrollador`**: Implements business logic in services and presentation components with mandatory unit tests. _Prohibited from self-approving or closing tickets without QA_.
+- **`qa`**: Audits features against acceptance criteria, runs test suites (`npm test`, `npm run build`, `npm run test:e2e`), and certifies or rejects tickets. _Prohibited from modifying feature code directly_.
+- **`gitflow`**: Manages semantic branches, Conventional Commits, and PRs once a ticket is marked `QA_VERIFIED`.
+
+---
+
+## 🧭 4. Directory of Available Skills (`.agents/skills/`)
 
 Activate or consult the relevant skill for each task:
 
@@ -57,7 +75,7 @@ Activate or consult the relevant skill for each task:
 
 ---
 
-## ⚡ 4. Essential Verification Commands
+## ⚡ 5. Essential Verification Commands
 
 ```bash
 # Run unit test suite (Vitest)
