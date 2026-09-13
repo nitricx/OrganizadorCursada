@@ -158,6 +158,18 @@ function updateTicketStatus(ticketId, newStatus, assignee = null) {
   if (assignee) {
     console.log(`👤 Reasignado a: ${assignee}`);
   }
+
+  // Automatización: Si el estado pasa a READY_FOR_DEV, invocar automáticamente la creación de la rama GitFlow
+  if (statusUpper === 'READY_FOR_DEV') {
+    try {
+      const { execSync } = require('child_process');
+      const gitflowScript = path.join(__dirname, 'gitflow_helper.js');
+      console.log(`🚀 Triggering automatic GitFlow branch creation for ${ticketId}...`);
+      execSync(`node "${gitflowScript}" branch ${ticketId}`, { stdio: 'inherit' });
+    } catch (err) {
+      console.log(`⚠️ No se pudo crear automáticamente la rama: ${err.message}`);
+    }
+  }
 }
 
 // Dispatcher de CLI

@@ -43,6 +43,9 @@ The system models the university academic trajectory of students, covering degre
 
 ## 2. Functional Specification Methodology
 
+> [!IMPORTANT]
+> **No Informal Todo Lists**: Instead of maintaining informal checklists or pending lists (`PENDIENTES.md`), all missing features, enhancements, and tasks MUST be tracked as structured tickets/issues under `.agents/tickets/` using `npm run ticket:new -- "<title>"`.
+
 When analyzing or specifying a new feature or refinement, follow this structure:
 
 ### 1. Problem Statement & Context
@@ -50,9 +53,9 @@ When analyzing or specifying a new feature or refinement, follow this structure:
 - What student or planner problem does this solve?
 - What academic value does it deliver to the student experience?
 
-### 2. User Stories
+### 2. User Stories (Mandatory English Format: Who / What / Why)
 
-Write using the standard user story template:
+All user stories MUST be written in **English** using the standard template:
 
 ```text
 As a [user persona: student / career advisor / faculty]

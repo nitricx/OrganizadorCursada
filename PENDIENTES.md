@@ -1,36 +1,36 @@
-# 📋 Lista de Pendientes (Backlog de Proyecto) - OrganizadorCursada
+# 📋 Registro de Tareas y Features del Proyecto (Single Source of Truth)
 
-Este archivo documenta las características pendientes, mejoras de experiencia de usuario y refactorizaciones de deuda técnica para trabajar de forma ordenada.
-
----
-
-## ✅ Épica 1: Selección de Comisión / Docente por Materia (COMPLETADA)
-> **Objetivo**: Evitar que al marcar una materia como `coursing` se activen todas sus comisiones/docentes en el calendario semanal. El usuario debe ver únicamente la comisión que eligió cursar.
-
-- [x] **1.1 Modelo de Datos**: Campo `selectedLessonId?: string | null` en `Course` (`src/app/models/course.ts`).
-- [x] **1.2 Modal de Selección**: Componente `lesson-selector-modal` para elegir comisión/docente al cursar.
-- [x] **1.3 Integración con Calendario**: Filtrado en `CalendarService`/`CourseService` para proyectar únicamente la comisión seleccionada en el horario semanal (`/myWeek`).
+> [!IMPORTANT]
+> **Aviso de Arquitectura de Tareas**: De acuerdo con las reglas operativas de la Persona `analista`, la lista de pendientes informal (TODO list) ha sido desestimada en favor del **Sistema de Tickets Estructurados** alojado en [`.agents/tickets/`](file:///.agents/tickets/README.md).
+>
+> Todas las características faltantes, refactorizaciones y mejoras de experiencia de usuario son especificadas por el Analista mediante historias de usuario estructuradas obligatoriamente en **inglés** siguiendo el patrón **Who / What / Why** (`As a... I want... So that...`) y escenarios de aceptación **Gherkin**.
 
 ---
 
-## ⏸️ Épica 2: Gestión de Materias "En Pausa" / Postergadas
-> **Objetivo**: Permitir al usuario poner en pausa materias que cumple correlatividades para cursar pero que decide no realizar en el cuatrimestre vigente.
+## 🎟️ Catálogo Activo de Issues y Tickets (`.agents/tickets/`)
 
-- [ ] **2.1 Extensión de Estados de Cursada**
-  - Incorporar el estado `'on-hold'` (En Pausa / Postergada) en `CourseStatus` (`pending` | `coursing` | `coursed` | `approved` | `on-hold`).
-  - Adaptar la máquina de estados y las funciones de validación de correlatividades (`canChangeStatusTo`).
-- [ ] **2.2 Identificación Visual en Grilla (`/home`)**
-  - Diseñar badge y estilos CSS para indicar visualmente que una materia está "En Pausa".
-  - Agregar botón de acción / menú contextual para pausar o reanudar una materia.
-- [ ] **2.3 Reglas en Calendario y Siguientes Niveles**
-  - Asegurar que materias en pausa no se consideren activas en "Mi Semana" y no bloqueen incorrectamente flujo de materias dependientes.
+| ID Ticket                                                                                                              | Título del Feature / Issue                                           | Estado Actual   | Responsable     | Historia de Usuario (User Story)                                                                                                                                  |
+| :--------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------- | :-------------- | :-------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`TICK-001`](file:///.agents/tickets/TICK-001-soporte-materias-postergadas-on-hold.md)                                 | Soporte de materias postergadas (`on-hold`) en modelo de dominio     | `QA_VERIFIED`   | `qa`            | Domain state machine & status transition rules for paused courses                                                                                                 |
+| [`TICK-002`](file:///.agents/tickets/TICK-002-estrategia-obligatoria-de-squash-and-merge-para-pull-requests.md)        | Estrategia obligatoria de Squash and Merge para Pull Requests        | `CLOSED`        | `gitflow`       | Mandatory PR merge strategy policy                                                                                                                                |
+| [`TICK-003`](file:///.agents/tickets/TICK-003-identificacion-visual-y-acciones-de-materias-postergadas-en-grilla.md)   | Identificación visual y acciones de materias postergadas en grilla   | `READY_FOR_DEV` | `desarrollador` | _As a university student planning my academic semester, I want subjects marked as "on-hold" to feature a distinct visual badge and contextual action controls..._ |
+| [`TICK-004`](file:///.agents/tickets/TICK-004-reglas-de-calendario-y-flujo-correlativo-para-materias-postergadas.md)   | Reglas de calendario y flujo correlativo para materias postergadas   | `READY_FOR_DEV` | `desarrollador` | _As a university student scheduling my weekly classes, I want subjects marked as "on-hold" to be automatically excluded from my weekly timetable..._              |
+| [`TICK-005`](file:///.agents/tickets/TICK-005-visualizador-de-diferencias-de-plan-plan-diff-viewer-en-workshop-hub.md) | Visualizador de diferencias de plan Plan Diff Viewer en Workshop Hub | `READY_FOR_DEV` | `desarrollador` | _As a community plan subscriber, I want to view a visual diff comparison when an updated version of a shared study plan is available..._                          |
+| [`TICK-006`](file:///.agents/tickets/TICK-006-filtro-y-busqueda-avanzada-de-planes-en-workshop-hub.md)                 | Filtro y búsqueda avanzada de planes en Workshop Hub                 | `READY_FOR_DEV` | `desarrollador` | _As a student exploring community study plans, I want to search and filter plans in the Workshop Hub by university, faculty, degree program..._                   |
 
 ---
 
-## 🛒 Épica 3: Mejoras en Workshop Hub & Visualización de Cambios (Plan Diff Viewer)
-> **Objetivo**: Mejorar la experiencia de suscripción a planes comunitarios y resolución de conflictos al actualizar planes upstream.
+## 🔄 Flujo Operativo para Nuevas Solicitudes
 
-- [ ] **3.1 Visualizador de Diferencias (Plan Diff Viewer)**
-  - Mejorar componente `plan-diff-viewer` para resaltar diferencias entre versiones de un mismo plan (nuevas materias, cambios de correlatividades o cuatrimestre).
-- [ ] **3.2 Filtro y Búsqueda Avanzada en Workshop**
-  - Filtrado por Universidad, Facultad y popularidad/calificaciones anónimas.
+Para agregar una nueva tarea o feature al proyecto:
+
+1. La persona `analista` ejecuta:
+   ```bash
+   npm run ticket:new -- "<Nombre descriptivo de la tarea>"
+   ```
+2. Completa la sección de **Historias de Usuario** en inglés (`As a... I want... So that...`).
+3. Define los Criterios de Aceptación en formato **Gherkin**.
+4. Pasa el ticket a estado `READY_FOR_DEV`:
+   ```bash
+   npm run ticket:status -- TICK-XXX READY_FOR_DEV
+   ```

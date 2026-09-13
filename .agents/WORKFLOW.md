@@ -5,6 +5,12 @@ This document defines the standardized engineering lifecycle for AI agents and h
 Detailed persona profiles and strict limitations are documented in [`.agents/PERSONAS.md`](./PERSONAS.md).
 Active and completed tickets reside in [`.agents/tickets/`](./tickets/README.md).
 
+> [!IMPORTANT]
+> **Mandatory Automatic Persona Hand-Off**:
+> AI agents MUST NOT pause execution after ticket specification (Phase 1) or QA verification (Phase 4) waiting for user prompt reminders. The agent must automatically transition personas to complete the hand-off chain:
+> 1. When `analista` advances a ticket to `READY_FOR_DEV`, the agent MUST immediately invoke `gitflow` to create the feature branch (`npm run gitflow:branch -- <TICK-ID>`).
+> 2. When `qa` certifies a ticket (`QA_VERIFIED`), the agent MUST immediately invoke `gitflow` to generate the Conventional Commit (`npm run gitflow:commit -- <TICK-ID>`) and prepare/open the Pull Request towards `develop`.
+
 ---
 
 ## 🔄 The 5-Phase Delivery Lifecycle & Ticket Machine

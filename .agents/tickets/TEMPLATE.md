@@ -19,12 +19,12 @@
 
 > Descripción clara del problema del estudiante o de la necesidad funcional que aborda este ticket.
 
-### Historias de Usuario
+### Historias de Usuario (User Stories - English Format)
 
 ```text
-Como [rol del usuario: estudiante / asesor de carrera]
-Quiero [capacidad o acción]
-Para que [beneficio o resultado esperado]
+As a [user persona: student / career advisor / faculty]
+I want [capability or action]
+So that [desired benefit or outcome]
 ```
 
 ### Criterios de Aceptación (Gherkin)
