@@ -113,7 +113,7 @@ When opening a Pull Request (PR):
   - **Motivation**: Why the modification was needed.
   - **Verification Steps**: Reproducible steps demonstrating success.
   - **Checklist**: Unit tests passing, design tokens respected, zero `any` types.
-- **Merge Strategy**: Prefer **Squash and Merge** or **Rebase and Merge** to maintain clean, linear history on `develop`.
+- **Merge Strategy**: **MANDATORY Squash and Merge**. All Pull Requests MUST squash their commits into a single cohesive commit upon merging into target branches (`develop` or `main`) to preserve a clean, linear history.
 
 ---
 
