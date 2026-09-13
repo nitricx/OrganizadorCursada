@@ -4,7 +4,7 @@ const path = require('path');
 let rawInput = '';
 process.stdin.setEncoding('utf8');
 
-process.stdin.on('data', chunk => {
+process.stdin.on('data', (chunk) => {
   rawInput += chunk;
 });
 
@@ -19,7 +19,7 @@ process.stdin.on('end', () => {
       defaultDecision: 'ask',
       exact: [],
       prefixes: [],
-      blockedPrefixes: []
+      blockedPrefixes: [],
     };
 
     if (fs.existsSync(configPath)) {
@@ -29,40 +29,40 @@ process.stdin.on('end', () => {
     const trimmedCmd = commandLine.trim();
 
     // 1. Check blocked prefixes first
-    const blockedMatch = (config.blockedPrefixes || []).find(prefix =>
-      trimmedCmd.toLowerCase().startsWith(prefix.toLowerCase())
+    const blockedMatch = (config.blockedPrefixes || []).find((prefix) =>
+      trimmedCmd.toLowerCase().startsWith(prefix.toLowerCase()),
     );
 
     if (blockedMatch) {
       outputResult({
         decision: 'deny',
-        reason: `El comando "${trimmedCmd}" fue bloqueado por coincidir con el patrón prohibido "${blockedMatch}".`
+        reason: `Command "${trimmedCmd}" was blocked because it matches prohibited pattern "${blockedMatch}".`,
       });
       return;
     }
 
     // 2. Check exact matches
-    const exactMatch = (config.exact || []).some(cmd =>
-      trimmedCmd.toLowerCase() === cmd.toLowerCase()
+    const exactMatch = (config.exact || []).some(
+      (cmd) => trimmedCmd.toLowerCase() === cmd.toLowerCase(),
     );
 
     if (exactMatch) {
       outputResult({
         decision: 'allow',
-        reason: `Comando "${trimmedCmd}" permitido por coincidencia exacta.`
+        reason: `Command "${trimmedCmd}" allowed by exact match.`,
       });
       return;
     }
 
     // 3. Check allowed prefixes
-    const prefixMatch = (config.prefixes || []).find(prefix =>
-      trimmedCmd.toLowerCase().startsWith(prefix.toLowerCase())
+    const prefixMatch = (config.prefixes || []).find((prefix) =>
+      trimmedCmd.toLowerCase().startsWith(prefix.toLowerCase()),
     );
 
     if (prefixMatch) {
       outputResult({
         decision: 'allow',
-        reason: `Comando "${trimmedCmd}" permitido por prefijo "${prefixMatch}".`
+        reason: `Command "${trimmedCmd}" allowed by prefix match "${prefixMatch}".`,
       });
       return;
     }
@@ -71,15 +71,15 @@ process.stdin.on('end', () => {
     const defaultDecision = config.defaultDecision || 'ask';
     outputResult({
       decision: defaultDecision,
-      reason: defaultDecision === 'deny'
-        ? `El comando "${trimmedCmd}" no está en la lista blanca de .agents/allowed_commands.json.`
-        : `El comando "${trimmedCmd}" no está en la lista blanca. Se solicita confirmación.`
+      reason:
+        defaultDecision === 'deny'
+          ? `Command "${trimmedCmd}" is not in the .agents/allowed_commands.json allowlist.`
+          : `Command "${trimmedCmd}" is not in allowlist. Prompting for confirmation.`,
     });
-
   } catch (err) {
     outputResult({
       decision: 'ask',
-      reason: `Error evaluando validación de comandos: ${err.message}`
+      reason: `Error evaluating command validation: ${err.message}`,
     });
   }
 });

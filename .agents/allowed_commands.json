@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "description": "Configuración de comandos permitidos y bloqueados para el agente Antigravity",
+  "description": "Allowed and blocked commands configuration for Antigravity agents in OrganizadorCursada",
   "defaultDecision": "ask",
   "exact": [
     "git status",
@@ -8,18 +8,35 @@
     "npm test",
     "ng serve",
     "ng build",
-    "ng test"
+    "ng test",
+    "npm run build",
+    "npm run config:env",
+    "npm run test:e2e",
+    "npm run test:e2e:ui",
+    "npm run test:e2e:debug",
+    "npm run docker:up",
+    "npm run docker:down",
+    "npm run docker:build"
   ],
   "prefixes": [
     "ng ",
     "npm ",
     "npx ",
+    "node ",
     "git status",
     "git diff",
     "git log",
     "git branch",
     "git checkout",
-    "node "
+    "git add ",
+    "git commit ",
+    "git stash",
+    "git merge ",
+    "git rebase ",
+    "git fetch",
+    "git pull",
+    "docker compose ",
+    "docker "
   ],
   "blockedPrefixes": [
     "rm -rf",
