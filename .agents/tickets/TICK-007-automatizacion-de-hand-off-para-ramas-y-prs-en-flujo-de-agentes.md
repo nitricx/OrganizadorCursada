@@ -66,10 +66,10 @@ Scenario: Mandatory persona hand-off directive
 
 ### Registro de Pruebas Ejecutadas
 
-| Tipo de Prueba          | Comando Ejecutado  | Resultado | Observaciones                                |
-| :---------------------- | :----------------- | :-------: | :------------------------------------------- |
-| **Auditoría Estática**  | `npm run qa:audit` |   PASS    | 0 infracciones detectadas                    |
-| **Pruebas Unitarias**   | `npm test`         |   PASS    | 31 archivos pasados, 196 specs en verde      |
+| Tipo de Prueba         | Comando Ejecutado  | Resultado | Observaciones                           |
+| :--------------------- | :----------------- | :-------: | :-------------------------------------- |
+| **Auditoría Estática** | `npm run qa:audit` |   PASS    | 0 infracciones detectadas               |
+| **Pruebas Unitarias**  | `npm test`         |   PASS    | 31 archivos pasados, 196 specs en verde |
 
 ---
 
