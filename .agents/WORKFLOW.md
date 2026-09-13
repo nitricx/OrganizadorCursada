@@ -129,7 +129,7 @@ Active and completed tickets reside in [`.agents/tickets/`](./tickets/README.md)
      npm run gitflow:commit -- <TICK-ID>
      ```
   3. Rebase onto `develop` if upstream changes occurred (`git pull --rebase origin develop`).
-  4. Open Pull Request targeting `develop`.
+  4. Open Pull Request targeting `develop` (MUST ALWAYS use **Squash and Merge**).
   5. Close ticket: `npm run ticket:status -- <TICK-ID> CLOSED`.
 - **Strict Limitation**: Never commit or open PR without prior `QA_VERIFIED` certification.
 - **References**:
