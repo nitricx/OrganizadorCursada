@@ -8,14 +8,18 @@
     "build": "npm run config:env && ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "test:coverage": "ng test --watch=false --coverage",
+    "test:coverage": "ng test --watch=false --coverage --coverage-reporters=lcov",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:debug": "playwright test --debug",
     "docker:up": "docker compose up",
     "docker:up:prod": "docker compose -f docker-compose.prod.yml up",
     "docker:down": "docker compose down",
-    "docker:build": "docker compose build"
+    "docker:build": "docker compose build",
+    "sonar:up": "docker compose -f docker-compose.sonar.yml up -d",
+    "sonar:down": "docker compose -f docker-compose.sonar.yml down",
+    "sonar:scan:local": "node scripts/sonar-scan-local.mjs",
+    "prepare": "husky"
   },
   "prettier": {
     "printWidth": 100,
@@ -55,7 +59,9 @@
     "@types/cytoscape": "^3.21.9",
     "@types/cytoscape-dagre": "^2.3.4",
     "@vitest/coverage-v8": "^4.1.11",
+    "husky": "^9.1.7",
     "jsdom": "^27.1.0",
+    "sonarqube-scanner": "^5.0.0",
     "typescript": "~5.9.2",
     "vitest": "^4.0.8"
   }
