@@ -16,7 +16,14 @@
     "npm run test:e2e:debug",
     "npm run docker:up",
     "npm run docker:down",
-    "npm run docker:build"
+    "npm run docker:build",
+    "npm run qa:audit",
+    "npm run qa:verify",
+    "npm run ticket:new",
+    "npm run ticket:status",
+    "npm run gitflow:branch",
+    "npm run gitflow:commit",
+    "npm run gen:service"
   ],
   "prefixes": [
     "ng ",

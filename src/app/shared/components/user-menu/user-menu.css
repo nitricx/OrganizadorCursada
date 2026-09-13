@@ -35,7 +35,9 @@
   padding: 0 16px;
   background-color: var(--color-background-primary);
   color: var(--color-text-primary);
-  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .google-login-btn:hover {
@@ -63,7 +65,9 @@
 
 .guest-avatar-btn {
   color: var(--color-text-secondary);
-  transition: color 0.15s ease, background-color 0.15s ease;
+  transition:
+    color 0.15s ease,
+    background-color 0.15s ease;
 }
 
 .guest-avatar-btn:hover {
@@ -108,7 +112,11 @@
   border: 1px solid var(--color-border-tertiary);
   border-radius: 28px;
   box-sizing: border-box;
-  font-family: Google Sans, Roboto, Arial, sans-serif;
+  font-family:
+    Google Sans,
+    Roboto,
+    Arial,
+    sans-serif;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -434,14 +442,14 @@ a.google-login-menu-btn.mat-mdc-button,
 
 .theme-option-btn.active {
   background-color: var(--brand-primary);
-  color: #ffffff;
+  color: var(--btn-primary-text);
   font-weight: 600;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
 [data-theme='dark'] .theme-option-btn.active {
   background-color: var(--brand-primary);
-  color: #ffffff;
+  color: var(--btn-primary-text);
 }
 
 /* Legacy Theme Switcher Row (used for reset session) */
@@ -545,6 +553,10 @@ button.theme-toggle-menu-btn.mat-mdc-button,
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }

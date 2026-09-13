@@ -19,7 +19,14 @@
     "sonar:up": "docker compose -f docker-compose.sonar.yml up -d",
     "sonar:down": "docker compose -f docker-compose.sonar.yml down",
     "sonar:scan:local": "node scripts/sonar-scan-local.mjs",
-    "prepare": "husky"
+    "prepare": "husky",
+    "ticket:new": "node .agents/scripts/ticket_manager.js new",
+    "ticket:status": "node .agents/scripts/ticket_manager.js status",
+    "qa:audit": "node .agents/scripts/qa_audit.js",
+    "qa:verify": "node .agents/scripts/qa_verify.js",
+    "gitflow:branch": "node .agents/scripts/gitflow_helper.js branch",
+    "gitflow:commit": "node .agents/scripts/gitflow_helper.js commit",
+    "gen:service": "node .agents/scripts/generate_service.js"
   },
   "prettier": {
     "printWidth": 100,
@@ -58,10 +65,9 @@
     "@playwright/test": "^1.62.1",
     "@types/cytoscape": "^3.21.9",
     "@types/cytoscape-dagre": "^2.3.4",
-    "@vitest/coverage-v8": "^4.1.11",
     "husky": "^9.1.7",
     "jsdom": "^27.1.0",
-    "sonarqube-scanner": "^5.0.0",
+    "sonarqube-scanner": "^4.3.0",
     "typescript": "~5.9.2",
     "vitest": "^4.0.8"
   }
