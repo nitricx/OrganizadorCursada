@@ -11,8 +11,6 @@ import { RouterModule, Router } from '@angular/router';
 import { SidebarComponent } from './shared/components/sidebar/sidebar.component';
 import { ToastContainerComponent } from './shared/components/toast-container/toast-container.component';
 import { CareerSelectorComponent } from './features/workshop/career-selector/career-selector.component';
-import { WorkshopHubComponent } from './features/workshop/workshop-hub/workshop-hub.component';
-import { PlanPublisherModalComponent } from './features/workshop/plan-publisher-modal/plan-publisher-modal.component';
 import { PlanDiffViewerComponent } from './features/workshop/plan-diff-viewer/plan-diff-viewer.component';
 import { UserMenuComponent } from './shared/components/user-menu/user-menu';
 import { MatSidenavModule } from '@angular/material/sidenav';
@@ -40,8 +38,6 @@ import { PlanManifest } from './models/plan-manifest.model';
     ToastContainerComponent,
     CareerSelectorComponent,
     UserMenuComponent,
-    WorkshopHubComponent,
-    PlanPublisherModalComponent,
     PlanDiffViewerComponent,
     MatSidenavModule,
     MatToolbarModule,
