@@ -44,7 +44,7 @@ The system models the university academic trajectory of students, covering degre
 ## 2. Functional Specification Methodology
 
 > [!IMPORTANT]
-> **No Informal Todo Lists**: Instead of maintaining informal checklists or pending lists (`PENDIENTES.md`), all missing features, enhancements, and tasks MUST be tracked as structured tickets/issues under `.agents/tickets/` using `npm run ticket:new -- "<title>"`.
+> **No Informal Todo Lists**: Instead of maintaining informal checklists or pending lists (`PENDIENTES.md`), all missing features, enhancements, and tasks MUST be tracked as structured tickets/issues in GitHub Issues using `npm run ticket:new -- "<title>"`.
 
 When analyzing or specifying a new feature or refinement, follow this structure:
 

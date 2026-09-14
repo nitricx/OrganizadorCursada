@@ -3,7 +3,7 @@
 This document defines the standardized engineering lifecycle for AI agents and human developers collaborating on **OrganizadorCursada**, formalizing role transitions, ticket-based hand-offs, and persona guardrails.
 
 Detailed persona profiles and strict limitations are documented in [`.agents/PERSONAS.md`](./PERSONAS.md).
-Active and completed tickets reside in [`.agents/tickets/`](./tickets/README.md).
+Active and completed tickets reside in [GitHub Issues](https://github.com/nitricx/OrganizadorCursada/issues).
 
 > [!IMPORTANT]
 > **Mandatory Automatic Persona Hand-Off**:
