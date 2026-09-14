@@ -9,7 +9,7 @@ describe('CourseGridComponent', () => {
   const createMockCourses = (qValues: number[]): Course[] => {
     return qValues.map((q, index) => ({
       id: index + 1,
-      name: `Materia ${index + 1}`,
+      name: `Course ${index + 1}`,
       year: 1,
       q,
       status: 'pending',

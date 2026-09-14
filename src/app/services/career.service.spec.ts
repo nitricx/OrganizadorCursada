@@ -60,7 +60,7 @@ describe('CareerService', () => {
       courses: [
         {
           id: 1,
-          name: 'Materia 1',
+          name: 'Course 1',
           year: 1,
           q: 1,
           cursarReqId: [],

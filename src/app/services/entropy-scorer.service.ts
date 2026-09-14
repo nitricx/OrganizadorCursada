@@ -49,7 +49,7 @@ export class EntropyScorerService {
 
     if (multiCampusCourses.length > 0) {
       score += 40;
-      warnings.push(`Materias con asignación de sede específica detectadas (${multiCampusCourses.length}). Se recomienda desglosarlas como packs independientes.`);
+      warnings.push(`Courses con asignación de sede específica detectadas (${multiCampusCourses.length}). Se recomienda desglosarlas como packs independientes.`);
     }
 
     // Check if total courses deviate significantly from average degree size (approx 30-45 courses)

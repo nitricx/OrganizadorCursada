@@ -479,7 +479,7 @@ export class CareerBuilderComponent {
       this.courses.update((list) =>
         list.map((c) => (c.id === existingId ? { ...c, name, year, q, lessons } : c)),
       );
-      this.toastService.info(`Materia "${name}" actualizada.`);
+      this.toastService.info(`Course "${name}" updated.`);
     } else {
       // Add new course box
       const maxId = this.courses().reduce((max, c) => Math.max(max, c.id), 0);
@@ -493,7 +493,7 @@ export class CareerBuilderComponent {
         lessons,
       };
       this.courses.update((list) => [...list, newCourse]);
-      this.toastService.success(`Materia "${name}" agregada.`);
+      this.toastService.success(`Course "${name}" agregada.`);
     }
 
     this.closeModal();
@@ -519,7 +519,7 @@ export class CareerBuilderComponent {
     }
 
     if (target) {
-      this.toastService.info(`Materia "${target.name}" eliminada.`);
+      this.toastService.info(`Course "${target.name}" eliminada.`);
     }
   }
 
@@ -543,7 +543,7 @@ export class CareerBuilderComponent {
 
   getCourseNameById(id: number): string {
     const course = this.getCourseById(id);
-    return course ? course.name : `Materia #${id}`;
+    return course ? course.name : `Course #${id}`;
   }
 
   getUnlockedCourses(courseId: number): { course: RawCourseData; type: 'cursar' | 'aprobar' }[] {

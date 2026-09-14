@@ -18,10 +18,10 @@ describe('PlanLinterService (Exhaustive Test Suite)', () => {
       university: 'UNSAM',
       version: '1.0.0',
       courses: [
-        { id: 'c1', name: 'Materia 1', year: 1, q: 1, cursarReq: [], aprobarReq: [] },
-        { id: 'c2', name: 'Materia 2', year: 1, q: 2, cursarReq: ['c1'], aprobarReq: [] },
-        { id: 'c3', name: 'Materia 3', year: 1, q: 2, cursarReq: ['c1'], aprobarReq: [] },
-        { id: 'c4', name: 'Materia 4', year: 2, q: 1, cursarReq: ['c2', 'c3'], aprobarReq: [] }
+        { id: 'c1', name: 'Course 1', year: 1, q: 1, cursarReq: [], aprobarReq: [] },
+        { id: 'c2', name: 'Course 2', year: 1, q: 2, cursarReq: ['c1'], aprobarReq: [] },
+        { id: 'c3', name: 'Course 3', year: 1, q: 2, cursarReq: ['c1'], aprobarReq: [] },
+        { id: 'c4', name: 'Course 4', year: 2, q: 1, cursarReq: ['c2', 'c3'], aprobarReq: [] }
       ]
     };
 
@@ -37,8 +37,8 @@ describe('PlanLinterService (Exhaustive Test Suite)', () => {
       university: 'UNSAM',
       version: '1.0.0',
       courses: [
-        { id: 'c1', name: 'Materia 1', year: 1, q: 1, cursarReq: ['c2'], aprobarReq: [] },
-        { id: 'c2', name: 'Materia 2', year: 1, q: 2, cursarReq: ['c1'], aprobarReq: [] }
+        { id: 'c1', name: 'Course 1', year: 1, q: 1, cursarReq: ['c2'], aprobarReq: [] },
+        { id: 'c2', name: 'Course 2', year: 1, q: 2, cursarReq: ['c1'], aprobarReq: [] }
       ]
     };
 
@@ -54,9 +54,9 @@ describe('PlanLinterService (Exhaustive Test Suite)', () => {
       university: 'UNSAM',
       version: '1.0.0',
       courses: [
-        { id: 'c1', name: 'Materia 1', year: 1, q: 1, cursarReq: ['c3'], aprobarReq: [] },
-        { id: 'c2', name: 'Materia 2', year: 1, q: 2, cursarReq: ['c1'], aprobarReq: [] },
-        { id: 'c3', name: 'Materia 3', year: 2, q: 1, cursarReq: ['c2'], aprobarReq: [] }
+        { id: 'c1', name: 'Course 1', year: 1, q: 1, cursarReq: ['c3'], aprobarReq: [] },
+        { id: 'c2', name: 'Course 2', year: 1, q: 2, cursarReq: ['c1'], aprobarReq: [] },
+        { id: 'c3', name: 'Course 3', year: 2, q: 1, cursarReq: ['c2'], aprobarReq: [] }
       ]
     };
 
@@ -72,7 +72,7 @@ describe('PlanLinterService (Exhaustive Test Suite)', () => {
       university: 'UNSAM',
       version: '1.0.0',
       courses: [
-        { id: 'c1', name: 'Materia 1', year: 1, q: 1, cursarReq: ['c_ghost'], aprobarReq: [] }
+        { id: 'c1', name: 'Course 1', year: 1, q: 1, cursarReq: ['c_ghost'], aprobarReq: [] }
       ]
     };
 
@@ -84,7 +84,7 @@ describe('PlanLinterService (Exhaustive Test Suite)', () => {
   it('should reject plans exceeding maximum course bounds (> 200 courses) or max years (> 15 years)', () => {
     const hugeCourses = Array.from({ length: 205 }, (_, i) => ({
       id: `c${i}`,
-      name: `Materia ${i}`,
+      name: `Course ${i}`,
       year: 20, // 20 years exceeds max 15 years limit
       q: 1,
       cursarReq: [],
@@ -107,16 +107,16 @@ describe('PlanLinterService (Exhaustive Test Suite)', () => {
 
   it('should validate raw course data arrays using lintRawCourses', () => {
     const validRawCourses = [
-      { id: 1, name: 'Materia 1', cursarReqId: [], aprobarReqId: [] },
-      { id: 2, name: 'Materia 2', cursarReqId: [1], aprobarReqId: [] },
-      { id: 3, name: 'Materia 3', cursarReqId: [2], aprobarReqId: [] }
+      { id: 1, name: 'Course 1', cursarReqId: [], aprobarReqId: [] },
+      { id: 2, name: 'Course 2', cursarReqId: [1], aprobarReqId: [] },
+      { id: 3, name: 'Course 3', cursarReqId: [2], aprobarReqId: [] }
     ];
     expect(service.lintRawCourses(validRawCourses).valid).toBe(true);
 
     const cyclicRawCourses = [
-      { id: 1, name: 'Materia 1', cursarReqId: [3], aprobarReqId: [] },
-      { id: 2, name: 'Materia 2', cursarReqId: [1], aprobarReqId: [] },
-      { id: 3, name: 'Materia 3', cursarReqId: [2], aprobarReqId: [] }
+      { id: 1, name: 'Course 1', cursarReqId: [3], aprobarReqId: [] },
+      { id: 2, name: 'Course 2', cursarReqId: [1], aprobarReqId: [] },
+      { id: 3, name: 'Course 3', cursarReqId: [2], aprobarReqId: [] }
     ];
     const cyclicRes = service.lintRawCourses(cyclicRawCourses);
     expect(cyclicRes.valid).toBe(false);

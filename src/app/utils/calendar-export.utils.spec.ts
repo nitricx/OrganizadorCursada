@@ -80,15 +80,15 @@ describe('calendar-export.utils', () => {
 
   describe('escapeICalText', () => {
     it('should escape commas, semicolons, and newlines', () => {
-      const input = 'Materia, 1; Prof: Juan\nLinea 2';
+      const input = 'Course, 1; Prof: Juan\nLinea 2';
       const output = escapeICalText(input);
-      expect(output).toContain('Materia\\, 1\\; Prof: Juan\\nLinea 2');
+      expect(output).toContain('Course\\, 1\\; Prof: Juan\\nLinea 2');
     });
 
     it('should handle carriage returns and CRLF without leaving raw line breaks', () => {
-      const input = 'Materia\r\nInyectada\rTest';
+      const input = 'Course\r\nInyectada\rTest';
       const output = escapeICalText(input);
-      expect(output).toBe('Materia\\nInyectada\\nTest');
+      expect(output).toBe('Course\\nInyectada\\nTest');
       expect(output).not.toContain('\r');
     });
   });

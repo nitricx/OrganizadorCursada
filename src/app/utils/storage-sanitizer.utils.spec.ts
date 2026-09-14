@@ -145,7 +145,7 @@ describe('storage-sanitizer.utils', () => {
       };
       const validCourse = {
         id: 101,
-        name: 'Materia 1',
+        name: 'Course 1',
         year: 1,
         q: 1,
         status: 'pending',

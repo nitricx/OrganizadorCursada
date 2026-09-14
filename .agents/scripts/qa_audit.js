@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 /**
  * qa_audit.js
- * Auditoría estática determinística de las 4 Reglas Inviolables del Repositorio:
- * 1. Prohibición de Dummy Data o Mocks no autorizados.
- * 2. Tests unitarios obligatorios para cada archivo *.service.ts.
- * 3. Cero colores hexadecimales hardcodeados (#fff, #1a1a1a, etc.) en estilos de componentes o atributos inline HTML.
- * 4. Sincronización estricta entre package.json y package-lock.json (previene fallos en npm ci).
+ * Deterministic static audit of the 4 Inviolable Rules of the Repository:
+ * 1. Prohibition of Dummy Data or unauthorized Mocks.
+ * 2. Mandatory unit tests for each *.service.ts file.
+ * 3. Zero hardcoded hex colors (#fff, #1a1a1a, etc.) in component styles or inline HTML attributes.
+ * 4. Strict synchronization between package.json and package-lock.json (previene fallos en npm ci).
  */
 const fs = require('fs');
 const path = require('path');
@@ -49,7 +49,7 @@ function getAllFiles(dir, extensions, excludeSpec = false) {
 
 // 1. Audit: Mandatory Service Unit Tests
 function auditServiceTests() {
-  logHeader('Regla 2: Verificando tests unitarios para servicios...');
+  logHeader('Regla 2: Verifying unit tests for services...');
   const serviceFiles = getAllFiles(SERVICES_DIR, ['.ts'], true);
   let checked = 0;
 
@@ -58,17 +58,17 @@ function auditServiceTests() {
       checked++;
       const specFile = serviceFile.replace(/\.service\.ts$/, '.service.spec.ts');
       if (!fs.existsSync(specFile)) {
-        reportError('MISSING_SERVICE_SPEC', serviceFile, 1, 'No se encontró el archivo de pruebas unitarias *.service.spec.ts');
+        reportError('MISSING_SERVICE_SPEC', serviceFile, 1, 'Unit test file not found *.service.spec.ts');
       }
     }
   }
 
-  console.log(`  ✅ ${checked} servicios auditados. Cobertura de archivos de spec: 100%.`);
+  console.log(`  ✅ ${checked} services audited. Spec files coverage: 100%.`);
 }
 
 // 2. Audit: Zero Hardcoded Hex Colors in Component Styles & Inline HTML
 function auditHexColors() {
-  logHeader('Regla 3: Verificando ausencia de colores hexadecimales en estilos de componentes e inline HTML...');
+  logHeader('Regla 3: Verifying absence of hex colors in component styles and inline HTML...');
   const hexColorRegex = /#([0-9a-fA-F]{3}|[0-9a-fA-F]{4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})\b/g;
 
   // A. Auditar todos los archivos .css en src/app/
@@ -87,7 +87,7 @@ function auditHexColors() {
           'HEX_COLOR_IN_CSS',
           file,
           idx + 1,
-          `Se detectó color hexadecimal hardcodeado '${match[0]}'. Debe consumirse un token CSS var(--...) de src/styles.css.`
+          `Hardcoded hex color detected '${match[0]}'. Must consume a CSS token var(--...) de src/styles.css.`
         );
       }
     });
@@ -110,7 +110,7 @@ function auditHexColors() {
               'HEX_COLOR_IN_INLINE_HTML',
               file,
               idx + 1,
-              `Se detectó color hexadecimal en atributo style inline '${match[0]}'. Usar clases with tokens CSS.`
+              `Hex color detected in inline style attribute '${match[0]}'. Usar clases with tokens CSS.`
             );
           }
         }

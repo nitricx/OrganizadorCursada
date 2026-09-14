@@ -36,9 +36,9 @@ describe('EntropyScorerService (Exhaustive Test Suite)', () => {
       university: 'UNRN',
       version: '1.0.0',
       courses: [
-        { id: 'c1', name: 'Materia Electiva 1 Sede San Martín', year: 1, q: 1, cursarReq: [], aprobarReq: [] },
-        { id: 'c2', name: 'Materia Optativa 2', year: 1, q: 2, cursarReq: [], aprobarReq: [] },
-        { id: 'c3', name: 'Materia Optativa 3', year: 2, q: 1, cursarReq: [], aprobarReq: [] },
+        { id: 'c1', name: 'Course Electiva 1 Sede San Martín', year: 1, q: 1, cursarReq: [], aprobarReq: [] },
+        { id: 'c2', name: 'Course Optativa 2', year: 1, q: 2, cursarReq: [], aprobarReq: [] },
+        { id: 'c3', name: 'Course Optativa 3', year: 2, q: 1, cursarReq: [], aprobarReq: [] },
         { id: 'c4', name: 'Seminario Especial Optativo 4', year: 2, q: 2, cursarReq: [], aprobarReq: [] }
       ]
     };
@@ -55,7 +55,7 @@ describe('EntropyScorerService (Exhaustive Test Suite)', () => {
   it('should flag high course volume when total courses exceed 55', () => {
     const courses = Array.from({ length: 60 }, (_, i) => ({
       id: `c${i}`,
-      name: `Materia ${i}`,
+      name: `Course ${i}`,
       year: Math.floor(i / 10) + 1,
       q: 1,
       cursarReq: [],

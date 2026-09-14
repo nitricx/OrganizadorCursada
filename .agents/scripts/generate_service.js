@@ -1,15 +1,15 @@
 #!/usr/bin/env node
 /**
  * generate_service.js
- * Generador de boilerplate determinístico para Servicios de OrganizadorCursada.
- * Genera el par *.service.ts y *.service.spec.ts con arquitectura obligatoria de Signals:
- * - Signal privado WritableSignal.
- * - Signal público readonly via .asReadonly().
- * - Spec con TestBed y Vitest.
+ * Deterministic boilerplate generator for OrganizadorCursada Services.
+ * Generates the *.service.ts and *.service.spec.ts pair with mandatory Signals architecture:
+ * - Private WritableSignal.
+ * - Public readonly signal via .asReadonly().
+ * - Spec with TestBed and Vitest.
  *
- * Uso:
+ * Usage:
  *   node generate_service.js <nombre>
- *   Ejemplo: node generate_service.js course-reminder
+ *   Example: node generate_service.js course-reminder
  */
 const fs = require('fs');
 const path = require('path');
@@ -34,12 +34,12 @@ function toPascalCase(str) {
 
 function generateService(name) {
   if (!name) {
-    console.error('❌ Error: Debes especificar el nombre del servicio.');
-    console.error('Uso: node generate_service.js <nombre>');
+    console.error('❌ Error: You must specify the service name.');
+    console.error('Usage: node generate_service.js <nombre>');
     process.exit(1);
   }
 
-  // Quitar sufijo .service si el usuario lo puso
+  // Remove .service suffix if the user provided it
   const cleanName = name.replace(/\.service(\.ts)?$/, '');
   const kebabName = toKebabCase(cleanName);
   const className = `${toPascalCase(kebabName)}Service`;
@@ -51,25 +51,25 @@ function generateService(name) {
   const specPath = path.join(SERVICES_DIR, specFileName);
 
   if (fs.existsSync(servicePath)) {
-    console.error(`❌ Error: El servicio ${serviceFileName} ya existe.`);
+    console.error(`❌ Error: El servicio ${serviceFileName} already exists.`);
     process.exit(1);
   }
 
-  // Plantilla del Servicio con Signals
+  // Service Template with Signals
   const serviceContent = `import { Injectable, signal } from '@angular/core';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ${className} {
-  // Estado privado mutable mediante Signals
+  // Mutable private state using Signals
   private readonly _state = signal<string[]>([]);
 
-  // Estado público expuesto exclusivamente como solo lectura
+  // Public state exposed exclusively as read-only
   public readonly state = this._state.asReadonly();
 
   /**
-   * Actualiza el estado emitiendo siempre una nueva instancia para garantizar reactividad.
+   * Updates the state by always emitting a new instance to ensure reactivity.
    */
   addItem(item: string): void {
     if (!item) return;
@@ -77,7 +77,7 @@ export class ${className} {
   }
 
   /**
-   * Limpia el estado.
+   * Clears the state.
    */
   clear(): void {
     this._state.set([]);
@@ -85,7 +85,7 @@ export class ${className} {
 }
 `;
 
-  // Plantilla del Spec con Vitest
+  // Spec Template with Vitest
   const specContent = `import { TestBed } from '@angular/core/testing';
 import { ${className} } from './${kebabName}.service';
 
@@ -121,10 +121,10 @@ describe('${className}', () => {
   fs.writeFileSync(servicePath, serviceContent, 'utf-8');
   fs.writeFileSync(specPath, specContent, 'utf-8');
 
-  console.log(`✅ Par de Servicio + Spec generado con éxito:`);
-  console.log(`  📄 Servicio: src/app/services/${serviceFileName}`);
+  console.log(`✅ Service + Spec pair successfully generated:`);
+  console.log(`  📄 Service: src/app/services/${serviceFileName}`);
   console.log(`  🧪 Test:     src/app/services/${specFileName}`);
-  console.log(`💡 Arquitectura de Signals y TestBed configurada automáticamente.`);
+  console.log(`💡 Signals architecture and TestBed configured automatically.`);
 }
 
 const args = process.argv.slice(2);

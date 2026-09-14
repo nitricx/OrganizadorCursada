@@ -3,7 +3,7 @@
  * ticket_manager.js
  * Utilidad determinística para gestionar el ciclo de vida de tickets usando GitHub Issues via gh CLI.
  *
- * Uso:
+ * Usage:
  *   node ticket_manager.js new "<titulo>" [persona]
  *   node ticket_manager.js status <ISSUE-NUMBER> <NUEVO_ESTADO> [persona]
  */
@@ -39,7 +39,7 @@ const PERSONA_LABEL_MAP = {
 function createTicket(title, assignee = 'analista') {
   if (!title) {
     console.error('❌ Error: Debes proporcionar un título para el ticket.');
-    console.error('Uso: node ticket_manager.js new "<titulo>" [persona]');
+    console.error('Usage: node ticket_manager.js new "<titulo>" [persona]');
     process.exit(1);
   }
 
@@ -47,7 +47,7 @@ function createTicket(title, assignee = 'analista') {
   const statusLabel = 'status:draft';
 
   try {
-    const cmd = `gh issue create --title "${title}" --label "${statusLabel},${personaLabel}" --body "## 📝 1. Especificación Funcional (Analista)\n\n### Contexto y Problema\n\n### Historias de Usuario (English Format)\n\n### Criterios de Aceptación (Gherkin)\n\n### Impacto en Servicios\n\n---\n## 💻 2. Registro de Implementación (Desarrollador)\n- Estado: PENDIENTE\n\n---\n## 🔍 3. Certificación de Calidad (QA)\n- Estado: PENDIENTE\n\n---\n## 🚀 4. Cierre y Release (GitFlow)\n- Estado: PENDIENTE"`;
+    const cmd = `gh issue create --title "${title}" --label "${statusLabel},${personaLabel}" --body "## 📝 1. Especificación Funcional (Analista)\n\n### Contexto y Problema\n\n### Historias de Usuario (English Format)\n\n### Criterios de Aceptación (Gherkin)\n\n### Impacto en Servicios\n\n---\n## 💻 2. Registro de Implementación (Desarrollador)\n- Status: PENDIENTE\n\n---\n## 🔍 3. Certificación de Calidad (QA)\n- Status: PENDIENTE\n\n---\n## 🚀 4. Cierre y Release (GitFlow)\n- Status: PENDIENTE"`;
     const output = execSync(cmd, { encoding: 'utf-8' }).trim();
     console.log(`✅ GitHub Issue creado exitosamente: ${output}`);
   } catch (err) {
@@ -59,14 +59,14 @@ function createTicket(title, assignee = 'analista') {
 function updateTicketStatus(issueNum, newStatus, assignee = null) {
   if (!issueNum || !newStatus) {
     console.error('❌ Error: Debes especificar el número de issue y el nuevo estado.');
-    console.error('Uso: node ticket_manager.js status <ISSUE-NUMBER> <NUEVO_ESTADO> [persona]');
+    console.error('Usage: node ticket_manager.js status <ISSUE-NUMBER> <NUEVO_ESTADO> [persona]');
     process.exit(1);
   }
 
   const statusUpper = newStatus.toUpperCase().trim();
   if (!VALID_STATUSES.includes(statusUpper)) {
-    console.error(`❌ Error: Estado '${newStatus}' inválido.`);
-    console.error(`Estados válidos: ${VALID_STATUSES.join(', ')}`);
+    console.error(`❌ Error: Estado '${newStatus}' invalid.`);
+    console.error(`Estados valids: ${VALID_STATUSES.join(', ')}`);
     process.exit(1);
   }
 

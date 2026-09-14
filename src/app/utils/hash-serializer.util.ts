@@ -31,6 +31,6 @@ export function decodePlanFromUrlHash(hashString: string): PlanManifest {
     return manifest;
   } catch (err) {
     console.error('Failed to decode PlanManifest from URL hash fragment:', err);
-    throw new Error('El enlace de importación es inválido o se encuentra dañado.');
+    throw new Error('El enlace de importación es invalid o se encuentra dañado.');
   }
 }

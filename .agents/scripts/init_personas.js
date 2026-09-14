@@ -11,21 +11,21 @@ const PERSONAS_MD = path.resolve(__dirname, '../PERSONAS.md');
 
 function runCheck() {
   console.log(
-    '🚀 Verificando configuración de Personas, Modelos y Subagentes de OrganizadorCursada...\n',
+    '🚀 Verifying configuration of Personas, Models and Subagents of OrganizadorCursada...\n',
   );
 
   if (!fs.existsSync(SUBAGENTS_FILE)) {
-    console.error(`❌ Error: Archivo ${SUBAGENTS_FILE} no encontrado.`);
+    console.error(`❌ Error: Archivo ${SUBAGENTS_FILE} not found.`);
     process.exit(1);
   }
 
   if (!fs.existsSync(PERSONAS_MD)) {
-    console.error(`❌ Error: Archivo ${PERSONAS_MD} no encontrado.`);
+    console.error(`❌ Error: Archivo ${PERSONAS_MD} not found.`);
     process.exit(1);
   }
 
   if (!fs.existsSync(TICKETS_DIR)) {
-    console.error(`❌ Error: Directorio de tickets ${TICKETS_DIR} no encontrado.`);
+    console.error(`❌ Error: Tickets directory ${TICKETS_DIR} not found.`);
     process.exit(1);
   }
 
@@ -33,25 +33,25 @@ function runCheck() {
   const data = JSON.parse(rawData);
 
   console.log(
-    `✅ Archivo subagents.json válido (${data.subagents.length} personas registradas):\n`,
+    `✅ Archivo subagents.json valid (${data.subagents.length} registered personas):\n`,
   );
 
   for (const agent of data.subagents) {
     console.log(`┌─────────────────────────────────────────────────────────────────────────────`);
     console.log(`│ 👤 Persona:          ${agent.name.toUpperCase()} (${agent.role})`);
     console.log(
-      `│ 🤖 Modelo Sugerido:  ${agent.preferredModel.toUpperCase()} | Thinking: ${agent.thinkingLevel.toUpperCase()}`,
+      `│ 🤖 Suggested Model:  ${agent.preferredModel.toUpperCase()} | Thinking: ${agent.thinkingLevel.toUpperCase()}`,
     );
-    console.log(`│ 💡 Estrategia Token: ${agent.providerStrategy}`);
+    console.log(`│ 💡 Token Strategy: ${agent.providerStrategy}`);
     console.log(
-      `│ 🛠️ Write Tools:      ${agent.enable_write_tools ? 'Habilitadas' : 'Deshabilitadas'}`,
+      `│ 🛠️ Write Tools:      ${agent.enable_write_tools ? 'Enabled' : 'Disabled'}`,
     );
-    console.log(`│ 📂 Rutas permitidas:  ${agent.allowedWritePaths.join(', ')}`);
+    console.log(`│ 📂 Allowed paths:  ${agent.allowedWritePaths.join(', ')}`);
     console.log(`└─────────────────────────────────────────────────────────────────────────────\n`);
   }
 
   console.log(
-    '✨ Todo el ecosistema de Personas, Modelos y Guardrails está correctamente configurado.',
+    '✨ The entire ecosystem of Personas, Models and Guardrails is correctly configured.',
   );
 }
 

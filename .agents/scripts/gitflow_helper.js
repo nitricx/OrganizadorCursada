@@ -58,7 +58,7 @@ function toSlug(str) {
 function createBranch(ticketId) {
   if (!ticketId) {
     console.error('❌ Error: Debes especificar el ID del ticket.');
-    console.error('Uso: node gitflow_helper.js branch <TICK-ID>');
+    console.error('Usage: node gitflow_helper.js branch <TICK-ID>');
     process.exit(1);
   }
 
@@ -97,7 +97,7 @@ function createBranch(ticketId) {
 function makeCommit(ticketId) {
   if (!ticketId) {
     console.error('❌ Error: Debes especificar el ID del ticket.');
-    console.error('Uso: node gitflow_helper.js commit <TICK-ID>');
+    console.error('Usage: node gitflow_helper.js commit <TICK-ID>');
     process.exit(1);
   }
 

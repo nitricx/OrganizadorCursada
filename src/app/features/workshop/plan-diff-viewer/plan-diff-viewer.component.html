@@ -10,7 +10,7 @@
 
     <section class="modal-body">
       <p class="subtitle">
-        Se encontraron los siguientes cambios entre la versión oficial guardada y la versión actualizada:
+        Se encontraron los siguientes cambios entre la versión oficial guardada y la versión updated:
       </p>
 
       <div class="conflicts-list">
@@ -18,7 +18,7 @@
           <div class="conflict-card" [class.danger]="conflict.type === 'course_removed'">
             <div class="conflict-header">
               <span class="tag" [class.tag-warning]="conflict.type === 'prerequisite_modified'" [class.tag-danger]="conflict.type === 'course_removed'">
-                {{ conflict.type === 'prerequisite_modified' ? 'Correlativa Modificada' : (conflict.type === 'course_removed' ? 'Materia Eliminada' : 'Cambio de Semestre') }}
+                {{ conflict.type === 'prerequisite_modified' ? 'Correlativa Modificada' : (conflict.type === 'course_removed' ? 'Course Eliminada' : 'Cambio de Semestre') }}
               </span>
               <strong class="course-name">{{ conflict.courseName }}</strong>
             </div>
