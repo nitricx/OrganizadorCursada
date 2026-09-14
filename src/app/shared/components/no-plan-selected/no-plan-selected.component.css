@@ -8,7 +8,7 @@
 }
 
 .empty-state-card {
-  max-width: 860px;
+  max-width: 100%;
   width: 100%;
   border-radius: var(--radius-lg, 20px);
   padding: 3rem 2.5rem;

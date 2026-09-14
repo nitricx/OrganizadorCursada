@@ -1,14 +1,24 @@
-<div class="wrap app-page-wrap">
+<div class="app-page-wrap">
   <!-- Header Bar -->
   <header class="builder-header app-header-bar">
     <div class="header-main-info">
       <div class="header-title-row">
-        <button mat-icon-button (click)="cancel()" aria-label="Volver" matTooltip="Volver al inicio">
+        <button
+          mat-icon-button
+          (click)="cancel()"
+          aria-label="Volver"
+          matTooltip="Volver al inicio"
+        >
           <mat-icon>arrow_back</mat-icon>
         </button>
-        <h1 class="page-title">{{ isEditingPlan() ? 'Editar Plan de Estudio' : 'Diseñador de Carrera' }}</h1>
+        <h1 class="page-title">
+          {{ isEditingPlan() ? 'Editar Plan de Estudio' : 'Diseñador de Carrera' }}
+        </h1>
         @if (isEditingPlan()) {
-          <span class="editing-badge app-badge" matTooltip="Las modificaciones se guardarán como tu copia personal local sin alterar la versión de la base de datos">
+          <span
+            class="editing-badge app-badge"
+            matTooltip="Las modificaciones se guardarán como tu copia personal local sin alterar la versión de la base de datos"
+          >
             Modificando copia personal
           </span>
         }
@@ -72,10 +82,15 @@
     <div class="connect-banner app-banner-info">
       <mat-icon class="banner-icon">info</mat-icon>
       @if (!connectSourceCourse()) {
-        <span><strong>Modo Vinculación Activo:</strong> Hacé clic en la materia <strong>requisito (Origen)</strong>.</span>
+        <span
+          ><strong>Modo Vinculación Activo:</strong> Hacé clic en la materia
+          <strong>requisito (Origen)</strong>.</span
+        >
       } @else {
         <span>
-          <strong>Paso 2:</strong> Requisito <strong>"{{ connectSourceCourse()?.name }}"</strong> seleccionado. Ahora hacé clic en la materia que la requiere.
+          <strong>Paso 2:</strong> Requisito
+          <strong>"{{ connectSourceCourse()?.name }}"</strong> seleccionado. Ahora hacé clic en la
+          materia que la requiere.
         </span>
         <button class="btn-banner-cancel" (click)="cancelConnection()">Cancelar selección</button>
       }
@@ -165,8 +180,6 @@
     </div>
   </main>
 
-
-
   <!-- Add/Edit Subject Modal Dialog -->
   @if (isModalOpen()) {
     <div class="modal-backdrop app-modal-backdrop" (click)="closeModal()">
@@ -197,18 +210,15 @@
           <div class="lessons-form-section">
             <div class="lessons-header-row">
               <label>Comisiones / Cátedras (Profesor y Horario):</label>
-              <button
-                type="button"
-                mat-button
-                class="btn-add-lesson"
-                (click)="addLessonFormRow()"
-              >
+              <button type="button" mat-button class="btn-add-lesson" (click)="addLessonFormRow()">
                 <mat-icon>add</mat-icon> <span>Agregar Comisión</span>
               </button>
             </div>
 
             @if (courseFormLessons().length === 0) {
-              <p class="empty-lessons-text">Sin comisiones registradas. Podés agregar comisiones con sus docentes y horarios.</p>
+              <p class="empty-lessons-text">
+                Sin comisiones registradas. Podés agregar comisiones con sus docentes y horarios.
+              </p>
             } @else {
               <div class="lessons-list">
                 @for (lesson of courseFormLessons(); track $index) {
@@ -236,7 +246,9 @@
                         <select
                           class="custom-select-time"
                           [value]="getHour(lesson.startTime)"
-                          (change)="updateLessonHour($index, 'startTime', $any($event.target).value)"
+                          (change)="
+                            updateLessonHour($index, 'startTime', $any($event.target).value)
+                          "
                         >
                           @for (h of startHourOptions; track h) {
                             <option [value]="h">{{ h }}</option>
@@ -246,7 +258,9 @@
                         <select
                           class="custom-select-time"
                           [value]="getMinute(lesson.startTime)"
-                          (change)="updateLessonMinute($index, 'startTime', $any($event.target).value)"
+                          (change)="
+                            updateLessonMinute($index, 'startTime', $any($event.target).value)
+                          "
                         >
                           @for (m of minuteOptions; track m) {
                             <option [value]="m">{{ m }}</option>
@@ -270,7 +284,9 @@
                         <select
                           class="custom-select-time"
                           [value]="getMinute(lesson.endTime)"
-                          (change)="updateLessonMinute($index, 'endTime', $any($event.target).value)"
+                          (change)="
+                            updateLessonMinute($index, 'endTime', $any($event.target).value)
+                          "
                         >
                           @for (m of minuteOptions; track m) {
                             <option [value]="m">{{ m }}</option>
@@ -306,13 +322,28 @@
                       @for (reqId of courseObj.cursarReqId; track reqId) {
                         <span class="req-chip cursar" matTooltip="Requisito de Cursada">
                           📘 {{ getCourseNameById(reqId) }}
-                          <button class="chip-del" type="button" (click)="removePrerequisite(courseObj.id, reqId, 'cursar', $event)">✕</button>
+                          <button
+                            class="chip-del"
+                            type="button"
+                            (click)="removePrerequisite(courseObj.id, reqId, 'cursar', $event)"
+                          >
+                            ✕
+                          </button>
                         </span>
                       }
                       @for (reqId of courseObj.aprobarReqId; track reqId) {
-                        <span class="req-chip aprobar" matTooltip="Requisito de Examen Final / Aprobación">
+                        <span
+                          class="req-chip aprobar"
+                          matTooltip="Requisito de Examen Final / Aprobación"
+                        >
                           🟢 {{ getCourseNameById(reqId) }}
-                          <button class="chip-del" type="button" (click)="removePrerequisite(courseObj.id, reqId, 'aprobar', $event)">✕</button>
+                          <button
+                            class="chip-del"
+                            type="button"
+                            (click)="removePrerequisite(courseObj.id, reqId, 'aprobar', $event)"
+                          >
+                            ✕
+                          </button>
                         </span>
                       }
                     </div>
@@ -326,9 +357,26 @@
                     <label>Courses que Habilita (lo que la requiere):</label>
                     <div class="materia-req-chips">
                       @for (item of unlockedList; track item.course.id) {
-                        <span class="req-chip" [class.cursar]="item.type === 'cursar'" [class.aprobar]="item.type === 'aprobar'" [matTooltip]="item.type === 'cursar' ? 'Es requisito de cursada' : 'Es requisito de aprobación'">
+                        <span
+                          class="req-chip"
+                          [class.cursar]="item.type === 'cursar'"
+                          [class.aprobar]="item.type === 'aprobar'"
+                          [matTooltip]="
+                            item.type === 'cursar'
+                              ? 'Es requisito de cursada'
+                              : 'Es requisito de aprobación'
+                          "
+                        >
                           {{ item.type === 'cursar' ? '📘' : '🟢' }} {{ item.course.name }}
-                          <button class="chip-del" type="button" (click)="removePrerequisite(item.course.id, courseObj.id, item.type, $event)">✕</button>
+                          <button
+                            class="chip-del"
+                            type="button"
+                            (click)="
+                              removePrerequisite(item.course.id, courseObj.id, item.type, $event)
+                            "
+                          >
+                            ✕
+                          </button>
                         </span>
                       }
                     </div>
@@ -360,4 +408,3 @@
     </div>
   }
 </div>
-

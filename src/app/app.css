@@ -17,7 +17,7 @@ mat-sidenav {
 
 .wrap {
   padding: 20px 16px 36px;
-  max-width: 1100px;
+  max-width: var(--layout-max-width);
   margin: 0 auto;
 }
 
