@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 /**
  * ticket_manager.js
- * Utilidad determinística para gestionar el ciclo de vida de tickets usando GitHub Issues via gh CLI.
+ * Deterministic utility to manage ticket lifecycle using GitHub Issues via gh CLI.
  *
  * Usage:
- *   node ticket_manager.js new "<titulo>" [persona]
- *   node ticket_manager.js status <ISSUE-NUMBER> <NUEVO_ESTADO> [persona]
+ *   node ticket_manager.js new "<title>" [persona]
+ *   node ticket_manager.js status <ISSUE-NUMBER> <NEW_STATUS> [persona]
  */
 const { execSync } = require('child_process');
 
@@ -38,8 +38,8 @@ const PERSONA_LABEL_MAP = {
 
 function createTicket(title, assignee = 'analista') {
   if (!title) {
-    console.error('❌ Error: Debes proporcionar un título para el ticket.');
-    console.error('Usage: node ticket_manager.js new "<titulo>" [persona]');
+    console.error('❌ Error: You must provide a title for the ticket.');
+    console.error('Usage: node ticket_manager.js new "<title>" [persona]');
     process.exit(1);
   }
 
@@ -47,26 +47,26 @@ function createTicket(title, assignee = 'analista') {
   const statusLabel = 'status:draft';
 
   try {
-    const cmd = `gh issue create --title "${title}" --label "${statusLabel},${personaLabel}" --body "## 📝 1. Especificación Funcional (Analista)\n\n### Contexto y Problema\n\n### Historias de Usuario (English Format)\n\n### Criterios de Aceptación (Gherkin)\n\n### Impacto en Servicios\n\n---\n## 💻 2. Registro de Implementación (Desarrollador)\n- Status: PENDIENTE\n\n---\n## 🔍 3. Certificación de Calidad (QA)\n- Status: PENDIENTE\n\n---\n## 🚀 4. Cierre y Release (GitFlow)\n- Status: PENDIENTE"`;
+    const cmd = `gh issue create --title "${title}" --label "${statusLabel},${personaLabel}" --body "## 📝 1. Functional Specification (Analyst)\n\n### Context & Problem Statement\n\n### User Stories (English Format)\n\n### Acceptance Criteria (Gherkin Format)\n\n### Service & Domain Model Impact\n\n---\n## 💻 2. Implementation Record (Developer)\n- Status: PENDING\n\n---\n## 🔍 3. Quality Certification (QA)\n- Status: PENDING\n\n---\n## 🚀 4. Closure & Release (GitFlow)\n- Status: PENDING"`;
     const output = execSync(cmd, { encoding: 'utf-8' }).trim();
-    console.log(`✅ GitHub Issue creado exitosamente: ${output}`);
+    console.log(`✅ GitHub Issue created successfully: ${output}`);
   } catch (err) {
-    console.error(`❌ Error creando issue en GitHub: ${err.message}`);
+    console.error(`❌ Error creating GitHub issue: ${err.message}`);
     process.exit(1);
   }
 }
 
 function updateTicketStatus(issueNum, newStatus, assignee = null) {
   if (!issueNum || !newStatus) {
-    console.error('❌ Error: Debes especificar el número de issue y el nuevo estado.');
-    console.error('Usage: node ticket_manager.js status <ISSUE-NUMBER> <NUEVO_ESTADO> [persona]');
+    console.error('❌ Error: You must specify the issue number and the new status.');
+    console.error('Usage: node ticket_manager.js status <ISSUE-NUMBER> <NEW_STATUS> [persona]');
     process.exit(1);
   }
 
   const statusUpper = newStatus.toUpperCase().trim();
   if (!VALID_STATUSES.includes(statusUpper)) {
-    console.error(`❌ Error: Estado '${newStatus}' invalid.`);
-    console.error(`Estados valids: ${VALID_STATUSES.join(', ')}`);
+    console.error(`❌ Error: Invalid status '${newStatus}'.`);
+    console.error(`Valid statuses: ${VALID_STATUSES.join(', ')}`);
     process.exit(1);
   }
 
@@ -98,12 +98,12 @@ function updateTicketStatus(issueNum, newStatus, assignee = null) {
 
     if (statusUpper === 'CLOSED') {
       execSync(`gh issue close ${num}`, { encoding: 'utf-8' });
-      console.log(`🔒 Issue #${num} cerrado.`);
+      console.log(`🔒 Issue #${num} closed.`);
     }
 
-    console.log(`✅ Issue #${num} actualizado a estado: ${statusUpper}`);
+    console.log(`✅ Issue #${num} updated to status: ${statusUpper}`);
   } catch (err) {
-    console.error(`❌ Error actualizando issue en GitHub: ${err.message}`);
+    console.error(`❌ Error updating GitHub issue: ${err.message}`);
     process.exit(1);
   }
 }
@@ -119,9 +119,9 @@ switch (command) {
     updateTicketStatus(args[1], args[2], args[3]);
     break;
   default:
-    console.log('📖 Gestor de Tickets (GitHub Issues) de OrganizadorCursada');
-    console.log('Comandos:');
-    console.log('  node ticket_manager.js new "<titulo>" [persona]');
-    console.log('  node ticket_manager.js status <ISSUE-NUM> <NUEVO_ESTADO> [persona]');
+    console.log('📖 Ticket Manager (GitHub Issues) for OrganizadorCursada');
+    console.log('Commands:');
+    console.log('  node ticket_manager.js new "<title>" [persona]');
+    console.log('  node ticket_manager.js status <ISSUE-NUM> <NEW_STATUS> [persona]');
     process.exit(0);
 }

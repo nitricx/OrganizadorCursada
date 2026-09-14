@@ -6,18 +6,18 @@ body:
   - type: markdown
     attributes:
       value: |
-        ## 📝 1. Especificación Funcional (Analista)
+        ## 📝 1. Functional Specification (Analyst)
   - type: textarea
     id: problem
     attributes:
-      label: Contexto y Problema
-      description: Descripción clara del problema del estudiante o necesidad funcional.
+      label: Context & Problem Statement
+      description: Clear description of the student's problem or functional requirement.
     validations:
       required: true
   - type: textarea
     id: user_story
     attributes:
-      label: Historias de Usuario (English Format)
+      label: User Stories (English Format)
       description: 'As a [persona] I want [action] So that [outcome]'
       placeholder: |
         As a student
@@ -28,8 +28,8 @@ body:
   - type: textarea
     id: gherkin
     attributes:
-      label: Criterios de Aceptación (Gherkin)
-      description: Scenarios pass/fail
+      label: Acceptance Criteria (Gherkin Format)
+      description: Pass/fail scenarios
       placeholder: |
         Scenario: ...
           Given ...
@@ -40,26 +40,26 @@ body:
   - type: textarea
     id: impact
     attributes:
-      label: Impacto en Servicios y Modelo de Dominio
-      description: Servicios, componentes y modelos afectados.
+      label: Service & Domain Model Impact
+      description: Affected services, components, and domain models.
     validations:
       required: false
   - type: markdown
     attributes:
       value: |
         ---
-        ## 💻 2. Registro de Implementación (Desarrollador)
-        - **Estado**: PENDIENTE
-        - **Archivos Modificados**: TBD
+        ## 💻 2. Implementation Record (Developer)
+        - **Status**: PENDING
+        - **Modified Files**: TBD
   - type: markdown
     attributes:
       value: |
         ---
-        ## 🔍 3. Certificación de Calidad (QA)
-        - **Estado**: PENDIENTE
+        ## 🔍 3. Quality Certification (QA)
+        - **Status**: PENDING
   - type: markdown
     attributes:
       value: |
         ---
-        ## 🚀 4. Cierre y Release (GitFlow)
-        - **Estado**: PENDIENTE
+        ## 🚀 4. Closure & Release (GitFlow)
+        - **Status**: PENDING
