@@ -317,7 +317,7 @@
                 <!-- Dependencias descendentes (Requisitos previos que necesita esta materia) -->
                 @if (courseObj.cursarReqId.length > 0 || courseObj.aprobarReqId.length > 0) {
                   <div class="modal-reqs-list">
-                    <label>Requisitos Previos (lo que requiere):</label>
+                    <span class="reqs-label">Requisitos Previos (lo que requiere):</span>
                     <div class="materia-req-chips">
                       @for (reqId of courseObj.cursarReqId; track reqId) {
                         <span class="req-chip cursar" matTooltip="Requisito de Cursada">
@@ -354,7 +354,7 @@
                 @let unlockedList = getUnlockedCourses(courseObj.id);
                 @if (unlockedList.length > 0) {
                   <div class="modal-reqs-list">
-                    <label>Courses que Habilita (lo que la requiere):</label>
+                    <span class="reqs-label">Courses que Habilita (lo que la requiere):</span>
                     <div class="materia-req-chips">
                       @for (item of unlockedList; track item.course.id) {
                         <span
