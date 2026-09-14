@@ -17,7 +17,7 @@ import { CourseService } from '../../../services/course.service';
   standalone: true,
   imports: [CommonModule, RouterModule, MatButtonModule, MatIconModule],
   templateUrl: './plan-publisher-modal.component.html',
-  styleUrl: './plan-publisher-modal.component.css'
+  styleUrl: './plan-publisher-modal.component.css',
 })
 export class PlanPublisherModalComponent implements OnInit {
   rawPlan = input<unknown>();
@@ -45,10 +45,12 @@ export class PlanPublisherModalComponent implements OnInit {
         name: 'Mi Plan Actual',
         university: 'Universidad',
         version: '1.0.0',
-        courses: activeCourses
+        courses: activeCourses,
       };
     }
-    this.sanitizedManifest = this.sanitizer.sanitizeForPublishing(planData as Record<string, unknown>);
+    this.sanitizedManifest = this.sanitizer.sanitizeForPublishing(
+      planData as Record<string, unknown>,
+    );
     this.entropyReport = this.entropyScorer.calculatePlanEntropy(this.sanitizedManifest);
     this.lintResult = this.linter.lintPlanManifest(this.sanitizedManifest);
   }
@@ -84,7 +86,10 @@ export class PlanPublisherModalComponent implements OnInit {
       }
       const verificationPayload = this.antiSybil.buildVerificationPayload(proof, payloadStr);
       // Attach verificationPayload for submission to Workshop backend API
-      this.toast.show(`¡Plan publicado exitosamente en el Workshop! (Prueba: ${proof.proofType.toUpperCase()})`, 'success');
+      this.toast.show(
+        `¡Plan publicado exitosamente en el Workshop! (Prueba: ${proof.proofType.toUpperCase()})`,
+        'success',
+      );
       this.onClose.emit();
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Error al publicar en el Workshop.';

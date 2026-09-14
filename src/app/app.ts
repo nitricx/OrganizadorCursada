@@ -1,4 +1,11 @@
-import { Component, ChangeDetectionStrategy, inject, signal, computed, OnInit } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  inject,
+  signal,
+  computed,
+  OnInit,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { SidebarComponent } from './shared/components/sidebar/sidebar.component';
@@ -70,7 +77,10 @@ export class App implements OnInit {
           const planId = this.careerService.addCareerFromManifest(decoded);
           this.planService.addPlan({ id: planId, label: decoded.name });
           this.router.navigate(['/home']);
-          this.toast.show(`¡Plan "${decoded.name}" importado exitosamente desde el enlace de WhatsApp/Telegram!`, 'success');
+          this.toast.show(
+            `¡Plan "${decoded.name}" importado exitosamente desde el enlace de WhatsApp/Telegram!`,
+            'success',
+          );
           // Clear hash
           history.replaceState(null, '', window.location.pathname);
         }
@@ -87,7 +97,7 @@ export class App implements OnInit {
       name: 'Mi Plan Actual',
       university: 'Universidad',
       version: '1.0.0',
-      courses: activeCareer
+      courses: activeCareer,
     });
     this.router.navigate(['/publish']);
   }

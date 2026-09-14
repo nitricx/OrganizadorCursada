@@ -4,7 +4,11 @@
   </mat-sidenav>
   <mat-sidenav-content role="main">
     <mat-toolbar class="main-toolbar">
-      <button mat-icon-button (click)="isOpen.update(v => !v)" aria-label="Alternar menú de navegación">
+      <button
+        mat-icon-button
+        (click)="isOpen.update(v => !v)"
+        aria-label="Alternar menú de navegación"
+      >
         <mat-icon>menu</mat-icon>
       </button>
       <span class="app-brand-title">OrganizadorCursada</span>
@@ -21,8 +25,6 @@
   </mat-sidenav-content>
 </mat-sidenav-container>
 <app-toast-container />
-
-
 
 <!-- Plan Diff Viewer Modal -->
 @if (showDiffViewer()) {

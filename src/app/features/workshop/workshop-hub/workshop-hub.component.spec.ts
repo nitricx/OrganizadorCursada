@@ -31,11 +31,14 @@ describe('WorkshopHubComponent', () => {
     component.searchQuery = 'sistemas';
     const result = component.filteredAndSortedCatalog;
     expect(result.length).toBeGreaterThan(0);
-    expect(result.every((item) =>
-      item.name.toLowerCase().includes('sistemas') ||
-      item.university.toLowerCase().includes('sistemas') ||
-      item.faculty.toLowerCase().includes('sistemas')
-    )).toBe(true);
+    expect(
+      result.every(
+        (item) =>
+          item.name.toLowerCase().includes('sistemas') ||
+          item.university.toLowerCase().includes('sistemas') ||
+          item.faculty.toLowerCase().includes('sistemas'),
+      ),
+    ).toBe(true);
   });
 
   it('debe filtrar de forma insensible a tildes y diacríticos (ej: tecnologica encuentra Tecnológica)', () => {
@@ -48,8 +51,15 @@ describe('WorkshopHubComponent', () => {
         faculty: 'Facultad Regional',
         version: '1.0.0',
         updatedAt: '2026-08-19',
-        manifest: { id: 'test-tecnologica', name: 'Ingeniería Tecnológica', university: 'UTN', faculty: 'FR', version: '1.0.0', courses: [] }
-      }
+        manifest: {
+          id: 'test-tecnologica',
+          name: 'Ingeniería Tecnológica',
+          university: 'UTN',
+          faculty: 'FR',
+          version: '1.0.0',
+          courses: [],
+        },
+      },
     ];
 
     component.searchQuery = 'tecnologica';

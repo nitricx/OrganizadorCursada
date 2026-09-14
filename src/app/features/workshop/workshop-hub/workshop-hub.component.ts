@@ -33,8 +33,9 @@ const DEFAULT_CATALOG: WorkshopEntry[] = [
     university: audiovisualPlan.university,
     faculty: audiovisualPlan.faculty,
     version: audiovisualPlan.version,
-    updatedAt: (audiovisualPlan as Record<string, unknown>)['updatedAt'] as string || '2026-08-19',
-    manifest: audiovisualPlan as unknown as PlanManifest
+    updatedAt:
+      ((audiovisualPlan as Record<string, unknown>)['updatedAt'] as string) || '2026-08-19',
+    manifest: audiovisualPlan as unknown as PlanManifest,
   },
   {
     id: sistemasPlan.id,
@@ -42,9 +43,9 @@ const DEFAULT_CATALOG: WorkshopEntry[] = [
     university: sistemasPlan.university,
     faculty: sistemasPlan.faculty,
     version: sistemasPlan.version,
-    updatedAt: (sistemasPlan as Record<string, unknown>)['updatedAt'] as string || '2026-08-19',
-    manifest: sistemasPlan as unknown as PlanManifest
-  }
+    updatedAt: ((sistemasPlan as Record<string, unknown>)['updatedAt'] as string) || '2026-08-19',
+    manifest: sistemasPlan as unknown as PlanManifest,
+  },
 ];
 
 @Component({
@@ -52,7 +53,7 @@ const DEFAULT_CATALOG: WorkshopEntry[] = [
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule, MatButtonModule, MatIconModule],
   templateUrl: './workshop-hub.component.html',
-  styleUrl: './workshop-hub.component.css'
+  styleUrl: './workshop-hub.component.css',
 })
 export class WorkshopHubComponent implements OnInit {
   onClose = output<void>();
@@ -101,10 +102,10 @@ export class WorkshopHubComponent implements OnInit {
     if (this.searchQuery.trim()) {
       const q = normalizeString(this.searchQuery);
       list = list.filter(
-        c =>
+        (c) =>
           normalizeString(c.name).includes(q) ||
           normalizeString(c.university).includes(q) ||
-          normalizeString(c.faculty).includes(q)
+          normalizeString(c.faculty).includes(q),
       );
     }
 

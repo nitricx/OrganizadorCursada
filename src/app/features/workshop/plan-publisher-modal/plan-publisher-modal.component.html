@@ -16,7 +16,13 @@
         <span class="status-icon">{{ lintResult?.valid ? '✓' : '⚠️' }}</span>
         <div>
           <strong>Auditoría de Privacidad y Estructura</strong>
-          <p>{{ lintResult?.valid ? 'Plan verificado: 0 datos personales incluidos. Listo para compartir.' : 'Se encontraron errores estructurales.' }}</p>
+          <p>
+            {{
+              lintResult?.valid
+                ? 'Plan verificado: 0 datos personales incluidos. Listo para compartir.'
+                : 'Se encontraron errores estructurales.'
+            }}
+          </p>
         </div>
       </div>
     </div>
@@ -25,7 +31,11 @@
     <div class="entropy-card" [class.high-risk]="entropyReport?.riskLevel === 'high'">
       <div class="entropy-header">
         <span>Índice de Unicidad / Privacidad:</span>
-        <span class="risk-badge" [class.badge-low]="entropyReport?.riskLevel === 'low'" [class.badge-high]="entropyReport?.riskLevel === 'high'">
+        <span
+          class="risk-badge"
+          [class.badge-low]="entropyReport?.riskLevel === 'low'"
+          [class.badge-high]="entropyReport?.riskLevel === 'high'"
+        >
           {{ entropyReport?.riskLevel === 'low' ? 'Bajo Riesgo (K-Anónimo)' : 'Alta Unicidad' }}
         </span>
       </div>

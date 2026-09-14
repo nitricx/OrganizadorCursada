@@ -47,13 +47,14 @@
             <td class="col-university">{{ item.university }}</td>
             <td class="col-actions text-right">
               @if (isSubscribed(item)) {
-                <button class="btn btn-secondary btn-unsubscribe" (click)="unsubscribePlan(item, $event)">
+                <button
+                  class="btn btn-secondary btn-unsubscribe"
+                  (click)="unsubscribePlan(item, $event)"
+                >
                   Desuscribirse
                 </button>
               } @else {
-                <button class="btn btn-subscribe" (click)="subscribePlan(item)">
-                  Suscribirse
-                </button>
+                <button class="btn btn-subscribe" (click)="subscribePlan(item)">Suscribirse</button>
               }
             </td>
           </tr>
