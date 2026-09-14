@@ -32,6 +32,9 @@ jobs:
       - name: Generate environment configuration
         run: npm run config:env
 
+      - name: Run Deterministic QA Audit (Inviolable Rules Check)
+        run: npm run qa:audit
+
       - name: Run Unit Tests & Coverage (Vitest)
         run: npm run test:coverage
 
