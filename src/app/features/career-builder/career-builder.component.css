@@ -1,4 +1,4 @@
-/* Layout container matching Home wrap */
+
 .wrap {
   padding: 20px 16px 36px;
   max-width: 1150px;
@@ -8,7 +8,7 @@
   gap: 20px;
 }
 
-/* Header Bar */
+
 .builder-header {
   display: flex;
   flex-wrap: wrap;
@@ -17,7 +17,7 @@
   gap: 16px;
   background: var(--color-background-primary);
   border: 1px solid var(--color-border-tertiary);
-  border-radius: var(--radius-md, 10px);
+  border-radius: var();
   padding: 16px 20px;
   box-shadow: var(--shadow-sm);
 }
@@ -55,7 +55,7 @@
   font-size: 11px;
   font-weight: 600;
   padding: 3px 8px;
-  border-radius: var(--radius-xs, 4px);
+  border-radius: var();
   background: var(--status-coursed-bg);
   color: var(--status-coursed-color);
   border: 1px solid var(--status-coursed-border);
@@ -72,12 +72,12 @@
   min-width: 200px;
   background: var(--color-background-secondary);
   border: 1px solid var(--color-border-tertiary);
-  border-radius: var(--radius-sm, 6px);
+  border-radius: var();
   padding: 8px 12px;
   font-size: 13px;
   color: var(--color-text-primary);
   outline: none;
-  transition: border-color var(--transition-fast, 0.15s);
+  transition: border-color var();
 }
 
 .builder-input::placeholder {
@@ -96,14 +96,14 @@
   flex-wrap: wrap;
 }
 
-/* Hover Legend (matching /home) */
+
 .hover-legend {
   display: flex;
   align-items: center;
   gap: 8px;
   background: var(--color-background-secondary);
   border: 1px solid var(--color-border-tertiary);
-  border-radius: var(--radius-sm, 6px);
+  border-radius: var();
   padding: 4px 10px;
 }
 
@@ -121,7 +121,7 @@
   font-size: 11px;
   font-weight: 600;
   padding: 2px 8px;
-  border-radius: var(--radius-xs, 4px);
+  border-radius: var();
   border: 1px solid var(--color-border-tertiary);
   background: var(--color-background-primary);
   color: var(--color-text-primary);
@@ -142,7 +142,7 @@
   background-color: var(--status-unlocks-border);
 }
 
-/* Connect Mode Toggle Button (Opción B) */
+
 button.btn-connect-mode.mat-mdc-button,
 .btn-connect-mode {
   display: flex;
@@ -153,8 +153,8 @@ button.btn-connect-mode.mat-mdc-button,
   border-color: var(--brand-primary);
   color: var(--brand-primary);
   height: 36px;
-  border-radius: var(--radius-sm, 6px);
-  transition: all var(--transition-fast, 0.15s);
+  border-radius: var();
+  transition: all var();
 }
 
 button.btn-connect-mode.active.mat-mdc-button,
@@ -182,7 +182,7 @@ button.btn-save.mat-mdc-button,
   font-weight: 600;
   background-color: var(--brand-primary);
   color: var(--btn-primary-text);
-  border-radius: var(--radius-sm, 6px);
+  border-radius: var();
   height: 36px;
 }
 
@@ -191,7 +191,7 @@ button.btn-save.mat-mdc-button:hover,
   background-color: var(--brand-primary-hover);
 }
 
-/* Connect Instruction Banner */
+
 .connect-banner {
   display: flex;
   align-items: center;
@@ -199,7 +199,7 @@ button.btn-save.mat-mdc-button:hover,
   background: var(--banner-info-bg);
   border: 1px solid var(--banner-info-border);
   color: var(--banner-info-text);
-  border-radius: var(--radius-md, 8px);
+  border-radius: var();
   padding: 10px 16px;
   font-size: 13px;
 }
@@ -217,7 +217,7 @@ mat-icon.banner-icon,
   background: transparent;
   border: 1px solid var(--banner-info-icon);
   color: var(--banner-info-icon);
-  border-radius: var(--radius-xs, 4px);
+  border-radius: var();
   padding: 3px 8px;
   font-size: 11px;
   font-weight: 600;
@@ -229,7 +229,7 @@ mat-icon.banner-icon,
   color: var(--btn-primary-text);
 }
 
-/* Grid Layout matching Home */
+
 .builder-grid {
   display: flex;
   gap: 20px;
@@ -255,24 +255,24 @@ mat-icon.banner-icon,
   max-width: 260px;
 }
 
-/* Builder Course Card (materia) */
+
 .builder-materia {
   display: flex;
   align-items: center;
   justify-content: space-between;
   cursor: pointer;
-  transition: all var(--transition-fast, 0.15s);
+  transition: all var();
 }
 
 .materia-name {
   flex: 1;
-  min-width: 0;
+  
   word-break: break-word;
 }
 
 
 
-/* Hover Highlighting Classes (Matching /home) */
+
 .hovered-self {
   border-color: var(--brand-primary);
   box-shadow: var(--shadow-md);
@@ -297,7 +297,7 @@ mat-icon.banner-icon,
   opacity: 0.35;
 }
 
-/* Highlight for selected source course in connect mode */
+
 .connecting-source {
   border: 2px solid var(--brand-primary);
   background-color: var(--status-coursed-bg);
@@ -327,20 +327,20 @@ mat-icon.banner-icon,
   text-transform: uppercase;
 }
 
-/* Add Materia Button */
+
 .add-materia-btn {
   font-size: 11px;
   font-weight: 600;
   color: var(--color-text-secondary);
   background: var(--color-background-primary);
   border: 1px solid var(--color-border-secondary);
-  border-radius: var(--radius-sm, 6px);
+  border-radius: var();
   padding: 6px 10px;
   width: 100%;
   text-align: center;
   cursor: pointer;
   box-shadow: var(--shadow-sm);
-  transition: all var(--transition-fast, 0.15s);
+  transition: all var();
   margin-top: 4px;
 }
 
@@ -351,7 +351,7 @@ mat-icon.banner-icon,
   box-shadow: var(--shadow-hover);
 }
 
-/* Add Year Column */
+
 .add-year-col {
   display: flex;
   flex-direction: column;
@@ -361,7 +361,7 @@ mat-icon.banner-icon,
   min-height: 200px;
   padding: 20px 12px;
   border: 1px dashed var(--color-border-secondary);
-  border-radius: var(--radius-md, 10px);
+  border-radius: var();
   align-self: flex-start;
   margin-top: 28px;
 }
@@ -388,7 +388,7 @@ button.add-year-circle-btn.mat-mdc-icon-button:hover,
   white-space: nowrap;
 }
 
-/* Modal Dialog */
+
 .modal-backdrop {
   position: fixed;
   top: 0;
@@ -410,10 +410,10 @@ button.add-year-circle-btn.mat-mdc-icon-button:hover,
   max-height: 90vh;
   overflow-y: auto;
   overflow-x: hidden;
-  box-sizing: border-box;
+  
   background: var(--color-background-primary);
   border: 1px solid var(--color-border-secondary);
-  border-radius: var(--radius-md, 12px);
+  border-radius: var();
   padding: 20px;
   box-shadow: var(--shadow-lg);
 }
@@ -442,7 +442,7 @@ button.add-year-circle-btn.mat-mdc-icon-button:hover,
 .lessons-form-section,
 .lessons-list {
   width: 100%;
-  box-sizing: border-box;
+  
 }
 
 .lesson-row {
@@ -451,10 +451,10 @@ button.add-year-circle-btn.mat-mdc-icon-button:hover,
   gap: 8px;
   background: var(--color-background-primary);
   border: 1px solid var(--color-border-tertiary);
-  border-radius: var(--radius-sm, 8px);
+  border-radius: var();
   padding: 8px 10px;
   width: 100%;
-  box-sizing: border-box;
+  
 }
 
 .prof-input {
@@ -495,7 +495,7 @@ button.add-year-circle-btn.mat-mdc-icon-button:hover,
   border-radius: 6px;
   padding: 3px 8px;
   height: 36px;
-  box-sizing: border-box;
+  
 }
 
 .time-picker-compact {
@@ -597,12 +597,12 @@ button.close-modal-btn.mat-mdc-icon-button,
 .custom-select {
   background: var(--color-background-secondary);
   border: 1px solid var(--color-border-tertiary);
-  border-radius: var(--radius-sm, 6px);
+  border-radius: var();
   padding: 8px 12px;
   color: var(--color-text-primary);
   font-size: 13px;
   outline: none;
-  transition: border-color var(--transition-fast, 0.15s);
+  transition: border-color var();
 }
 
 .custom-select {
@@ -648,12 +648,12 @@ button.close-modal-btn.mat-mdc-icon-button,
   align-items: center;
   gap: 12px;
   padding: 12px 14px;
-  border-radius: var(--radius-md, 8px);
+  border-radius: var();
   border: 1px solid var(--color-border-tertiary);
   background: var(--color-background-secondary);
   cursor: pointer;
   text-align: left;
-  transition: all var(--transition-fast, 0.15s);
+  transition: all var();
 }
 
 .connect-option-btn:hover {
@@ -731,7 +731,7 @@ mat-icon.option-icon,
   font-size: 10px;
   font-weight: 600;
   padding: 2px 6px;
-  border-radius: var(--radius-xs, 4px);
+  border-radius: var();
   display: inline-flex;
   align-items: center;
   gap: 4px;
