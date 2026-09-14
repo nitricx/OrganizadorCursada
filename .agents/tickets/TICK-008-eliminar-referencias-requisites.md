@@ -72,7 +72,7 @@ Scenario: Documentation accuracy
 
 ## 💻 2. Registro de Implementación (Completado por: `desarrollador`)
 
-### Estado de Desarrollo: `PENDIENTE`
+### Estado de Desarrollo: `COMPLETADO`
 
 ### Archivos Modificados / Creados
 
@@ -92,11 +92,11 @@ Scenario: Documentation accuracy
 ### Checklist Pre-QA del Desarrollador
 
 - [ ] Todo el código de negocio reside en Servicios, no en Componentes.
-- [ ] Se crearon/actualizaron tests unitarios en `*.service.spec.ts`.
-- [ ] La suite de tests unitarios pasa limpia localmente (`npm test -- --watch=false`).
-- [ ] No se utilizaron colores hexadecimales hardcodeados (solo CSS tokens de `src/styles.css`).
-- [ ] No se inventaron datos dummy ni mocks ficticios.
-- [ ] Los datos del estudiante se mantienen dentro del Privacy Airgap.
+- [x] Se crearon/actualizaron tests unitarios en `*.service.spec.ts`.
+- [x] La suite de tests unitarios pasa limpia localmente (`npm test -- --watch=false`).
+- [x] No se utilizaron colores hexadecimales hardcodeados (solo CSS tokens de `src/styles.css`).
+- [x] No se inventaron datos dummy ni mocks ficticios.
+- [x] Los datos del estudiante se mantienen dentro del Privacy Airgap.
 
 ---
 

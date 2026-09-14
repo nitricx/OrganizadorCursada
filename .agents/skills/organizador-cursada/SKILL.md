@@ -111,8 +111,6 @@ The codebase is organized under `src/app/components/`:
   - `calendar-legend`: Schedule filter legend.
   - `lesson-selector-modal`: Modal dialog for selecting specific commissions/teachers per course.
   - `export-calendar-modal`: Modal for exporting schedule to iCal / Google Calendar.
-- **Prerequisites Flow (`/requisites`)**:
-  - `requisites-flow`: Cytoscape.js & Dagre directional dependency graph visualization.
 - **Academic Calendar (`/academicCalendar`)**:
   - `academic-calendar`: Date range timeline for academic terms.
 - **Workshop Hub (`/workshop`)**:

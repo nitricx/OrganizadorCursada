@@ -126,6 +126,6 @@ The system must display an advisory alert blocking the change because "Algebra 2
 - [ ] All unit tests pass with zero failures (`npm test -- --watch=false`).
 - [ ] TypeScript compilation succeeds with zero errors (`npm run build`).
 - [ ] Playwright E2E suites pass cleanly (`npm run test:e2e`).
-- [ ] Browser developer console contains zero unhandled exceptions across `/home`, `/myWeek`, `/requisites`, and `/workshop`.
+- [ ] Browser developer console contains zero unhandled exceptions across `/home`, `/myWeek`, and `/workshop`.
 - [ ] `localStorage` accurately persists state and recovers after a browser reload (`F5`).
 ```

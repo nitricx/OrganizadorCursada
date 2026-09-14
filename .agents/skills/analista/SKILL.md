@@ -94,7 +94,7 @@ Map affected layers before presenting specifications to development:
 
 | Requirement Scope              | Affected Services                           | Affected Components / Views                          |
 | :----------------------------- | :------------------------------------------ | :--------------------------------------------------- |
-| Prerequisite validation logic  | `CourseService`                             | `course-card`, `course-grid`, `requisites-flow`      |
+| Prerequisite validation logic  | `CourseService`                             | `course-card`, `course-grid`      |
 | Weekly timetable / calendar    | `CourseService`, `CalendarExportService`    | `calendar`, `calendar-card`, `export-calendar-modal` |
 | Degree plan creation / cloning | `PlanService`, `CareerService`              | `course-organizer`, `workshop-hub`                   |
 | Community plan publishing      | `PlanSanitizerService`, `PlanLinterService` | `plan-publisher-modal`, `plan-diff-viewer`           |
