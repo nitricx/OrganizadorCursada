@@ -78,6 +78,7 @@ export class CareerSelectorComponent {
 
   openPlanHub(): void {
     this.openWorkshop.emit();
+    void this.router.navigate(['/workshop']);
   }
 
   editCurrentPlanInBuilder(): void {

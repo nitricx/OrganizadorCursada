@@ -1,60 +1,56 @@
-<div class="modal-backdrop" (click)="onClose.emit()">
-  <div class="modal-card glass-panel" (click)="$event.stopPropagation()">
-    <header class="modal-header">
-      <div class="header-title">
-        <span class="icon">🚀</span>
-        <h3>Compartir / Publicar Plan de Estudio</h3>
-      </div>
-      <button class="btn-close" (click)="onClose.emit()">✕</button>
-    </header>
+<div class="app-page-wrap">
+  <header class="app-header-bar">
+    <div class="header-title-row">
+      <button mat-icon-button (click)="goBack()" aria-label="Volver" title="Volver al inicio">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <span class="icon">🚀</span>
+      <h1 class="page-title">Compartir / Publicar Plan de Estudio</h1>
+    </div>
+  </header>
 
-    <section class="modal-body">
-      <!-- Step 1: Sanitizer & Audit Result -->
-      <div class="audit-banner" [class.valid]="lintResult?.valid">
-        <div class="audit-status">
-          <span class="status-icon">{{ lintResult?.valid ? '✓' : '⚠️' }}</span>
-          <div>
-            <strong>Auditoría de Privacidad y Estructura</strong>
-            <p>{{ lintResult?.valid ? 'Plan verificado: 0 datos personales incluidos. Listo para compartir.' : 'Se encontraron errores estructurales.' }}</p>
-          </div>
+  <main class="app-card publisher-card-body">
+    <!-- Step 1: Sanitizer & Audit Result -->
+    <div class="audit-banner" [class.valid]="lintResult?.valid">
+      <div class="audit-status">
+        <span class="status-icon">{{ lintResult?.valid ? '✓' : '⚠️' }}</span>
+        <div>
+          <strong>Auditoría de Privacidad y Estructura</strong>
+          <p>{{ lintResult?.valid ? 'Plan verificado: 0 datos personales incluidos. Listo para compartir.' : 'Se encontraron errores estructurales.' }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Entropy & Privacy Score -->
+    <div class="entropy-card" [class.high-risk]="entropyReport?.riskLevel === 'high'">
+      <div class="entropy-header">
+        <span>Índice de Unicidad / Privacidad:</span>
+        <span class="risk-badge" [class.badge-low]="entropyReport?.riskLevel === 'low'" [class.badge-high]="entropyReport?.riskLevel === 'high'">
+          {{ entropyReport?.riskLevel === 'low' ? 'Bajo Riesgo (K-Anónimo)' : 'Alta Unicidad' }}
+        </span>
+      </div>
+      <p *ngIf="entropyReport?.warnings?.length" class="entropy-warning">
+        {{ entropyReport?.warnings?.join(' ') }}
+      </p>
+    </div>
+
+    <!-- Sharing Options -->
+    <div class="options-grid">
+      <div class="option-card" (click)="copyShareLink()">
+        <span class="option-icon">💬</span>
+        <div class="option-info">
+          <strong>Enlace Directo (WhatsApp / Telegram)</strong>
+          <p>Genera un enlace comprimido instantáneo sin pasar por servidores.</p>
         </div>
       </div>
 
-      <!-- Entropy & Privacy Score -->
-      <div class="entropy-card" [class.high-risk]="entropyReport?.riskLevel === 'high'">
-        <div class="entropy-header">
-          <span>Índice de Unicidad / Privacidad:</span>
-          <span class="risk-badge" [class.badge-low]="entropyReport?.riskLevel === 'low'" [class.badge-high]="entropyReport?.riskLevel === 'high'">
-            {{ entropyReport?.riskLevel === 'low' ? 'Bajo Riesgo (K-Anónimo)' : 'Alta Unicidad' }}
-          </span>
-        </div>
-        <p *ngIf="entropyReport?.warnings?.length" class="entropy-warning">
-          {{ entropyReport?.warnings?.join(' ') }}
-        </p>
-      </div>
-
-      <!-- Sharing Options -->
-      <div class="options-grid">
-        <div class="option-card" (click)="copyShareLink()">
-          <span class="option-icon">💬</span>
-          <div class="option-info">
-            <strong>Enlace Directo (WhatsApp / Telegram)</strong>
-            <p>Genera un enlace comprimido instantáneo sin pasar por servidores.</p>
-          </div>
-        </div>
-
-        <div class="option-card" (click)="publishToWorkshop()" [class.disabled]="isPublishing">
-          <span class="option-icon">🌐</span>
-          <div class="option-info">
-            <strong>Publicar en Workshop Comunitario</strong>
-            <p>Indexa el plan de manera anónima para otros estudiantes.</p>
-          </div>
+      <div class="option-card" (click)="publishToWorkshop()" [class.disabled]="isPublishing">
+        <span class="option-icon">🌐</span>
+        <div class="option-info">
+          <strong>Publicar en Workshop Comunitario</strong>
+          <p>Indexa el plan de manera anónima para otros estudiantes.</p>
         </div>
       </div>
-    </section>
-
-    <footer class="modal-footer">
-      <button class="btn btn-secondary" (click)="onClose.emit()">Cerrar</button>
-    </footer>
-  </div>
+    </div>
+  </main>
 </div>

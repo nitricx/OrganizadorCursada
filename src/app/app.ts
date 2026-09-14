@@ -89,7 +89,7 @@ export class App implements OnInit {
       version: '1.0.0',
       courses: activeCareer
     });
-    this.showPublisher.set(true);
+    this.router.navigate(['/publish']);
   }
 
   handleSubscribePlan(manifest: PlanManifest): void {
@@ -109,13 +109,11 @@ export class App implements OnInit {
   }
 
   openWorkshop(): void {
-    this.planService.openWorkshop();
-    this.internalWorkshopSignal.set(true);
+    this.router.navigate(['/workshop']);
   }
 
   closeWorkshop(): void {
-    this.planService.closeWorkshop();
-    this.internalWorkshopSignal.set(false);
+    this.router.navigate(['/home']);
   }
 
   resetToNewUser(): void {

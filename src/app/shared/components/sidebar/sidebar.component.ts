@@ -26,8 +26,8 @@ export class SidebarComponent {
     { label: 'Home', route: '/home', icon: 'home' },
     { label: 'Mi Semana', route: '/myWeek', icon: 'calendar_view_week' },
     { label: 'Calendario Académico', route: '/academicCalendar', icon: 'date_range' },
-    { label: 'Workshop', action: 'open_workshop', icon: 'store' },
-    { label: 'Publicar Plan', action: 'open_publisher', icon: 'publish' },
+    { label: 'Workshop', route: '/workshop', icon: 'store' },
+    { label: 'Publicar Plan', route: '/publish', icon: 'publish' },
   ]);
 
   handleAction(item: SidebarItem): void {

@@ -1,10 +1,14 @@
 import { Component, output, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { PlanManifest } from '../../../models/plan-manifest.model';
 import { ToastService } from '../../../services/toast.service';
 import { normalizeString } from '../../../utils/string.utils';
 import { CareerService } from '../../../services/career.service';
+import { PlanService } from '../../../services/plan.service';
 
 import sistemasPlan from '../../../../../scripts/seed-data/sistemas.json';
 import audiovisualPlan from '../../../../../scripts/seed-data/audiovisual.json';
@@ -46,7 +50,7 @@ const DEFAULT_CATALOG: WorkshopEntry[] = [
 @Component({
   selector: 'app-workshop-hub',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule, MatButtonModule, MatIconModule],
   templateUrl: './workshop-hub.component.html',
   styleUrl: './workshop-hub.component.css'
 })
@@ -56,6 +60,8 @@ export class WorkshopHubComponent implements OnInit {
 
   private toast = inject(ToastService);
   private careerService = inject(CareerService);
+  private planService = inject(PlanService);
+  private router = inject(Router);
 
   searchQuery = '';
   catalog: WorkshopEntry[] = [...DEFAULT_CATALOG];
@@ -112,9 +118,17 @@ export class WorkshopHubComponent implements OnInit {
     });
   }
 
+  goBack(): void {
+    this.onClose.emit();
+    this.router.navigate(['/home']);
+  }
+
   subscribePlan(item: WorkshopEntry): void {
+    const planId = this.careerService.addCareerFromManifest(item.manifest);
+    this.planService.addPlan({ id: planId, label: item.name });
     this.onSubscribe.emit(item.manifest);
     this.toast.show(`¡Suscrito al plan "${item.name}"!`, 'success');
     this.onClose.emit();
+    this.router.navigate(['/home']);
   }
 }

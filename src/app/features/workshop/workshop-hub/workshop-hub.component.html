@@ -1,75 +1,71 @@
-<div class="modal-backdrop" (click)="onClose.emit()">
-  <div class="modal-card glass-panel" (click)="$event.stopPropagation()">
-    <header class="modal-header">
-      <div class="header-title">
-        <span class="icon">🛒</span>
-        <h3>Plan Hub Comunitario (Steam Workshop)</h3>
-      </div>
-      <button class="btn-close" (click)="onClose.emit()">✕</button>
-    </header>
+<div class="app-page-wrap">
+  <header class="app-header-bar">
+    <div class="header-title-row">
+      <button mat-icon-button (click)="goBack()" aria-label="Volver" title="Volver al inicio">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <span class="icon">🛒</span>
+      <h1 class="page-title">Plan Hub Comunitario (Workshop)</h1>
+    </div>
+  </header>
 
-    <section class="modal-body">
-      <div class="search-bar-row">
-        <input
-          type="text"
-          class="search-input"
-          placeholder="Buscar por universidad, carrera o facultad..."
-          [(ngModel)]="searchQuery"
-          data-testid="search-input"
-        />
-      </div>
+  <main class="app-card workshop-card-body">
+    <div class="search-bar-row">
+      <input
+        type="text"
+        class="search-input app-input"
+        placeholder="Buscar por universidad, carrera o facultad..."
+        [(ngModel)]="searchQuery"
+        data-testid="search-input"
+      />
+    </div>
 
-      <div class="table-container">
-        <table class="workshop-table" data-testid="workshop-table">
-          <thead>
-            <tr>
-              <th class="sortable" (click)="toggleSort('name')" data-testid="sort-name">
-                Carrera <span class="sort-icon">{{ getSortIcon('name') }}</span>
-              </th>
-              <th class="sortable" (click)="toggleSort('faculty')" data-testid="sort-faculty">
-                Facultad <span class="sort-icon">{{ getSortIcon('faculty') }}</span>
-              </th>
-              <th class="sortable" (click)="toggleSort('university')" data-testid="sort-university">
-                Universidad <span class="sort-icon">{{ getSortIcon('university') }}</span>
-              </th>
-              <th class="text-right">Acción</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let item of filteredAndSortedCatalog" data-testid="plan-row">
-              <td class="col-name">
-                <div class="plan-name-cell">
-                  <span class="plan-title">{{ item.name }}</span>
-                </div>
+    <div class="table-container">
+      <table class="workshop-table" data-testid="workshop-table">
+        <thead>
+          <tr>
+            <th class="sortable" (click)="toggleSort('name')" data-testid="sort-name">
+              Carrera <span class="sort-icon">{{ getSortIcon('name') }}</span>
+            </th>
+            <th class="sortable" (click)="toggleSort('faculty')" data-testid="sort-faculty">
+              Facultad <span class="sort-icon">{{ getSortIcon('faculty') }}</span>
+            </th>
+            <th class="sortable" (click)="toggleSort('university')" data-testid="sort-university">
+              Universidad <span class="sort-icon">{{ getSortIcon('university') }}</span>
+            </th>
+            <th class="text-right">Acción</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of filteredAndSortedCatalog" data-testid="plan-row">
+            <td class="col-name">
+              <div class="plan-name-cell">
+                <span class="plan-title">{{ item.name }}</span>
+              </div>
+            </td>
+            <td class="col-faculty">{{ item.faculty }}</td>
+            <td class="col-university">{{ item.university }}</td>
+            <td class="col-actions text-right">
+              @if (isSubscribed(item)) {
+                <button class="btn btn-secondary btn-unsubscribe" (click)="unsubscribePlan(item, $event)">
+                  Desuscribirse
+                </button>
+              } @else {
+                <button class="btn btn-subscribe" (click)="subscribePlan(item)">
+                  Suscribirse
+                </button>
+              }
+            </td>
+          </tr>
+          @if (filteredAndSortedCatalog.length === 0) {
+            <tr class="empty-row">
+              <td colspan="4" class="empty-message">
+                No se encontraron planes de estudio que coincidan con la búsqueda.
               </td>
-              <td class="col-faculty">{{ item.faculty }}</td>
-              <td class="col-university">{{ item.university }}</td>
-              <td class="col-actions text-right">
-                @if (isSubscribed(item)) {
-                  <button class="btn btn-secondary btn-unsubscribe" (click)="unsubscribePlan(item, $event)">
-                    Desuscribirse
-                  </button>
-                } @else {
-                  <button class="btn btn-subscribe" (click)="subscribePlan(item)">
-                    Suscribirse
-                  </button>
-                }
-              </td>
             </tr>
-            @if (filteredAndSortedCatalog.length === 0) {
-              <tr class="empty-row">
-                <td colspan="4" class="empty-message">
-                  No se encontraron planes de estudio que coincidan con la búsqueda.
-                </td>
-              </tr>
-            }
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <footer class="modal-footer">
-      <button class="btn btn-secondary" (click)="onClose.emit()">Cerrar</button>
-    </footer>
-  </div>
+          }
+        </tbody>
+      </table>
+    </div>
+  </main>
 </div>

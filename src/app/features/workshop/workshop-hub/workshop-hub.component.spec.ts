@@ -14,7 +14,7 @@ describe('WorkshopHubComponent', () => {
     } catch {}
     await TestBed.configureTestingModule({
       imports: [WorkshopHubComponent],
-      providers: [provideRouter([])],
+      providers: [provideRouter([{ path: 'home', component: WorkshopHubComponent }])],
     }).compileComponents();
 
     fixture = TestBed.createComponent(WorkshopHubComponent);
@@ -86,10 +86,10 @@ describe('WorkshopHubComponent', () => {
     expect(result[0].faculty.localeCompare(result[1].faculty, 'es')).toBeGreaterThanOrEqual(0);
   });
 
-  it('debe emitir onClose al hacer click en cerrar', () => {
+  it('debe emitir onClose al hacer click en volver o cerrar', () => {
     let closed = false;
     component.onClose.subscribe(() => (closed = true));
-    const closeBtn = fixture.nativeElement.querySelector('.btn-close');
+    const closeBtn = fixture.nativeElement.querySelector('button[aria-label="Volver"]');
     closeBtn.click();
     expect(closed).toBe(true);
   });

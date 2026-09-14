@@ -3,6 +3,8 @@ import { CourseOrganizerComponent } from './features/dashboard/course-organizer/
 import { Calendar } from './features/schedule/calendar/calendar';
 import { AcademicCalendarComponent } from './features/academic-calendar/academic-calendar/academic-calendar.component';
 import { CareerBuilderComponent } from './features/career-builder/career-builder.component';
+import { WorkshopHubComponent } from './features/workshop/workshop-hub/workshop-hub.component';
+import { PlanPublisherModalComponent } from './features/workshop/plan-publisher-modal/plan-publisher-modal.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -11,4 +13,6 @@ export const routes: Routes = [
   { path: 'academicCalendar', component: AcademicCalendarComponent },
   { path: 'academicCalendar/plan/:id', component: AcademicCalendarComponent },
   { path: 'builder', component: CareerBuilderComponent },
+  { path: 'workshop', component: WorkshopHubComponent },
+  { path: 'publish', component: PlanPublisherModalComponent },
 ];

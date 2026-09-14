@@ -22,21 +22,7 @@
 </mat-sidenav-container>
 <app-toast-container />
 
-<!-- Workshop Hub Modal -->
-@if (showWorkshop()) {
-  <app-workshop-hub
-    (onClose)="closeWorkshop()"
-    (onSubscribe)="handleSubscribePlan($event)"
-  />
-}
 
-<!-- Plan Publisher Modal -->
-@if (showPublisher()) {
-  <app-plan-publisher-modal
-    [rawPlan]="currentPlanToPublish()"
-    (onClose)="showPublisher.set(false)"
-  />
-}
 
 <!-- Plan Diff Viewer Modal -->
 @if (showDiffViewer()) {
