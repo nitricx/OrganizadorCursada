@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('Validación del Estado "Sin Plan Seleccionado" en /home, /myWeek y /requisites', () => {
+test.describe('Validación del Estado "Sin Plan Seleccionado" en /home y /myWeek', () => {
   test.beforeEach(async ({ page }) => {
     // Limpiar localStorage antes de cada prueba para simular estado sin carrera/plan seleccionado
     await page.goto('/');
@@ -34,17 +34,6 @@ test.describe('Validación del Estado "Sin Plan Seleccionado" en /home, /myWeek 
     await expect(page.locator('.calendar-grid-wrapper')).not.toBeVisible();
   });
 
-  test('debe mostrar el componente app-no-plan-selected en /requisites cuando no hay plan seleccionado', async ({ page }) => {
-    await page.goto('/requisites');
-    const noPlanComponent = page.locator('app-no-plan-selected');
-    await expect(noPlanComponent).toBeVisible();
-
-    const title = noPlanComponent.locator('.empty-state-title');
-    await expect(title).toContainText('Flujo de Correlatividades no disponible');
-
-    // El contenedor de Cytoscape no debe estar visible en este estado
-    await expect(page.locator('.graph-container')).not.toBeVisible();
-  });
 
   test('debe cargar el plan demo al hacer click en "Cargar Demo" desde el estado sin plan y restaurar las vistas', async ({ page }) => {
     await page.goto('/home');
@@ -63,8 +52,5 @@ test.describe('Validación del Estado "Sin Plan Seleccionado" en /home, /myWeek 
     await page.goto('/myWeek');
     await expect(page.locator('app-no-plan-selected')).not.toBeVisible();
 
-    // Navegar a /requisites y confirmar que ya no muestra el empty state
-    await page.goto('/requisites');
-    await expect(page.locator('app-no-plan-selected')).not.toBeVisible();
   });
 });

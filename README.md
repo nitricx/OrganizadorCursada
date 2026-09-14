@@ -20,11 +20,6 @@
   - Automated schedule overlap and conflict detection.
   - **iCal / Google Calendar Export**: Export weekly timetable to `.ics` format or sync directly with calendar apps.
 
-- 🕸️ **Prerequisites Flow Diagram (`/requisites`)**:
-  - Visual dependency graph powered by **Cytoscape.js** and **cytoscape-dagre** layout engine.
-  - Color-coded nodes reflecting real-time subject completion status.
-  - Clear directional arrows differentiating prerequisite types (*requisito para cursar* vs *requisito para rendir examen final*).
-
 - 📆 **Academic Calendar Timeline (`/academicCalendar`)**:
   - Timeline view mapping academic semesters to real-world calendar start and end dates.
   - Customizable semester date ranges per plan.
@@ -76,7 +71,6 @@ OrganizadorCursada/
 │   │   │   ├── calendar/
 │   │   │   ├── course-grid/
 │   │   │   ├── course-organizer/
-│   │   │   ├── requisites-flow/
 │   │   │   ├── workshop-hub/
 │   │   │   └── ... (see components catalog)
 │   │   ├── models/             # Domain TypeScript interfaces (course, career, plan-manifest)
@@ -87,7 +81,7 @@ OrganizadorCursada/
 │   │   │   ├── plan-sanitizer.service.ts
 │   │   │   ├── aws-sync.service.ts
 │   │   │   └── ... (see services catalog)
-│   │   ├── app.routes.ts       # Application routes (/home, /myWeek, /requisites, /academicCalendar, /workshop)
+│   │   ├── app.routes.ts       # Application routes (/home, /myWeek, /academicCalendar, /workshop)
 │   │   └── app.ts              # Root application component
 │   └── styles.css              # Global design system & theme variables
 ├── package.json

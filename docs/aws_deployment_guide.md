@@ -109,5 +109,5 @@ If you prefer deploying a Docker container rather than S3 static hosting:
 
 ## 🧪 Verification & Troubleshooting
 
-- **SPA Routing Check**: Navigate directly to `/home`, `/myWeek`, `/requisites`, `/academicCalendar`, or `/workshop` in your browser. CloudFront handles custom 403/404 rewrites to `index.html` seamlessly.
+- **SPA Routing Check**: Navigate directly to `/home`, `/myWeek`, `/academicCalendar`, or `/workshop` in your browser. CloudFront handles custom 403/404 rewrites to `index.html` seamlessly.
 - **Cache Verification**: Hard refresh (`Ctrl + Shift + R`) to test CloudFront CDN invalidations.

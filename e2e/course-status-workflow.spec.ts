@@ -24,17 +24,4 @@ test.describe('Flujo de Interacción y Cambio de Estado de Materias', () => {
     expect(await yearCols.count()).toBeGreaterThan(0);
   });
 
-  test('debe permitir cambiar de vista a Correlatividades y Mi Semana', async ({ page }) => {
-    // 1. Navegar a Mi Semana
-    await page.locator('mat-nav-list a', { hasText: 'Mi Semana' }).click();
-    await expect(page).toHaveURL(/\/myWeek/);
-
-    // 2. Navegar a Diagrama de Correlatividades
-    await page.locator('mat-nav-list a', { hasText: 'Correlatividades' }).click();
-    await expect(page).toHaveURL(/\/requisites/);
-
-    // 3. Regresar a Home
-    await page.locator('mat-nav-list a', { hasText: 'Home' }).click();
-    await expect(page).toHaveURL(/\/home/);
-  });
 });

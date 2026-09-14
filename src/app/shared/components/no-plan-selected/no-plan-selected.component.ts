@@ -25,7 +25,7 @@ export class NoPlanSelectedComponent {
 
   title = input<string>('Sin Plan Seleccionado');
   description = input<string>(
-    'Seleccioná un plan de estudio para comenzar a organizar tu carrera, visualizar tu horario semanal y explorar correlatividades.',
+    'Seleccioná un plan de estudio para comenzar a organizar tu carrera, visualizar tu horario semanal .',
   );
   icon = input<string>('school');
 

@@ -15,7 +15,7 @@ E2E tests reside under `e2e/` and are configured in `playwright.config.ts`:
 
 ```text
 e2e/
-├── course-navigation.spec.ts       # Navigation between /home, /myWeek, /requisites, and /workshop
+├── course-navigation.spec.ts       # Navigation between /home, /myWeek, and /workshop
 ├── course-status-workflow.spec.ts  # Status change cycle and downstream prerequisite lock checks
 ├── no-plan-selected-state.spec.ts  # Empty states and initial career selection workflows
 └── workshop-hub.spec.ts            # Searching, filtering, and subscribing to community plans

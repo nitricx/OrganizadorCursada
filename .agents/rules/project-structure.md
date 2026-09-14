@@ -6,7 +6,6 @@
    - Domains:
      - `dashboard`: Components for `/home` (`course-organizer`, `course-grid`, `course-card`, `course-organizer-legend`).
      - `schedule`: Components for `/myWeek` (`calendar`, `calendar-card`, `calendar-legend`, `lesson-selector-modal`, `export-calendar-modal`).
-     - `prerequisites`: Components for `/requisites` (`requisites-flow`).
      - `academic-calendar`: Components for `/academicCalendar` (`academic-calendar`).
      - `workshop`: Components for `/workshop` (`workshop-hub`, `plan-publisher-modal`, `plan-diff-viewer`, `career-selector`).
      - `shared`: Reusable layout and cross-cutting components (`sidebar`, `user-menu`, `toast-container`, `advisory-badge`, `lineage-indicator`, `no-plan-selected`, `onboarding-welcome`).

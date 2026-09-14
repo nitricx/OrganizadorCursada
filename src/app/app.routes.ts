@@ -10,6 +10,5 @@ export const routes: Routes = [
   { path: 'myWeek', component: Calendar },
   { path: 'academicCalendar', component: AcademicCalendarComponent },
   { path: 'academicCalendar/plan/:id', component: AcademicCalendarComponent },
-  { path: 'requisites', redirectTo: '/home', pathMatch: 'full' },
   { path: 'builder', component: CareerBuilderComponent },
 ];
