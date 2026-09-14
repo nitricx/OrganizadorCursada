@@ -72,7 +72,7 @@
   --color-danger-bg: #fee2e2;
   --color-danger-text: #991b1b;
   --color-danger-border: #f87171;
-  --color-danger-hover: rgba(220, 38, 38, 0.1);
+  --color-danger-hover: rgba(153, 27, 27, 0.1);
 
   --color-warning-bg: #fff8e1;
   --color-warning-text: #5d4e06;
@@ -614,7 +614,7 @@ a.app-btn-danger.mat-mdc-button,
   justify-content: center;
   gap: 6px;
   background-color: transparent;
-  color: #dc2626;
+  color: var(--color-danger-text);
   border: 1px solid transparent;
   border-radius: var(--radius-sm);
   padding: 8px 14px;
@@ -627,7 +627,7 @@ a.app-btn-danger.mat-mdc-button,
 button.app-btn-danger.mat-mdc-button:hover,
 a.app-btn-danger.mat-mdc-button:hover,
 .app-btn-danger:hover {
-  background-color: rgba(220, 38, 38, 0.1);
+  background-color: var(--color-danger-hover);
 }
 
 /* Modals & Dialog Overlays */
