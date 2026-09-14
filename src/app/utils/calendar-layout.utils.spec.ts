@@ -23,7 +23,7 @@ import {
 describe('CalendarLayoutUtils', () => {
   const dummyCourse: Course = {
     id: 1,
-    name: 'Materia Test',
+    name: 'Course Test',
     year: 1,
     q: 1,
     cursarReqId: [],

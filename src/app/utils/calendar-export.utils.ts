@@ -115,7 +115,7 @@ export function generateICalendarContent(options: ExportCalendarOptions): string
 
     const cleanLessonId = sanitizeICalHeaderValue(String(lesson.id));
     const summary = `${course.name} - ${lesson.professor ? 'Prof. ' + lesson.professor : 'Comisión'}`;
-    const description = `Materia: ${course.name}\\nProfesor: ${lesson.professor || 'No especificado'}\\nPlan: ${options.planLabel || 'Organizador de Cursada'}`;
+    const description = `Course: ${course.name}\\nProfesor: ${lesson.professor || 'No especificado'}\\nPlan: ${options.planLabel || 'Organizador de Cursada'}`;
     const uid = `lesson-${cleanLessonId}-${firstClassDate.getTime()}@organizadorcursada.app`;
     const dayCode = ICAL_DAY_MAP[lesson.day] || 'MO';
 
@@ -181,7 +181,7 @@ export function generateGoogleCalendarWebUrl(
   const untilIso = formatICalDateTime(semesterEnd);
 
   const title = `${course.name} (${lesson.professor || 'Cursada'})`;
-  const details = `Materia: ${course.name}\nProfesor: ${lesson.professor || 'No asignado'}\nPlan: ${planLabel}`;
+  const details = `Course: ${course.name}\nProfesor: ${lesson.professor || 'No asignado'}\nPlan: ${planLabel}`;
   const dayCode = ICAL_DAY_MAP[lesson.day] || 'MO';
   const recurParam = `RRULE:FREQ=WEEKLY;BYDAY=${dayCode};UNTIL=${untilIso}`;
 

@@ -280,7 +280,7 @@ export class CareerService {
       version: plan.version || '1.0.0',
       courses: (plan.courses || []).map((c, idx) => ({
         id: typeof c.id === 'number' && !isNaN(c.id) ? c.id : idx + 1,
-        name: c.name?.trim() || `Materia ${idx + 1}`,
+        name: c.name?.trim() || `Course ${idx + 1}`,
         year: c.year || 1,
         q: c.q || 1,
         cursarReqId: Array.isArray(c.cursarReqId) ? c.cursarReqId : [],

@@ -50,8 +50,8 @@ export class CourseCardComponent {
   ariaLabel = computed(() => {
     const c = this.course();
     const tag = this.statusTag();
-    const statusText = tag ? `Estado: ${tag}` : `Estado: ${c.status}`;
-    return `${c.name}. ${statusText}. Presione enter o espacio para cambiar estado.`;
+    const statusText = tag ? `Status: ${tag}` : `Status: ${c.status}`;
+    return `${c.name}. ${statusText}. Press enter or space to change status.`;
   });
 
   highlightClass = computed(() => {

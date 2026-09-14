@@ -172,7 +172,7 @@
     <div class="modal-backdrop app-modal-backdrop" (click)="closeModal()">
       <div class="modal-card app-modal-card" (click)="$event.stopPropagation()">
         <header class="modal-header app-modal-header">
-          <h3>{{ activeCourseId() !== null ? 'Editar Materia' : 'Nueva Materia' }}</h3>
+          <h3>{{ activeCourseId() !== null ? 'Editar Course' : 'Nueva Course' }}</h3>
           <button mat-icon-button (click)="closeModal()" class="close-modal-btn">
             <mat-icon>close</mat-icon>
           </button>
@@ -181,7 +181,7 @@
         <form (submit)="$event.preventDefault(); saveCourse()" class="modal-form">
           <div class="input-field">
             <mat-form-field appearance="outline" class="course-name-field">
-              <mat-label>Nombre de la Materia *</mat-label>
+              <mat-label>Nombre de la Course *</mat-label>
               <input
                 matInput
                 placeholder="Ej: Análisis Matemático I"
@@ -319,11 +319,11 @@
                   </div>
                 }
 
-                <!-- Dependencias ascendentes (Materias que esta materia desbloquea / habilita) -->
+                <!-- Dependencias ascendentes (Courses que esta materia desbloquea / habilita) -->
                 @let unlockedList = getUnlockedCourses(courseObj.id);
                 @if (unlockedList.length > 0) {
                   <div class="modal-reqs-list">
-                    <label>Materias que Habilita (lo que la requiere):</label>
+                    <label>Courses que Habilita (lo que la requiere):</label>
                     <div class="materia-req-chips">
                       @for (item of unlockedList; track item.course.id) {
                         <span class="req-chip" [class.cursar]="item.type === 'cursar'" [class.aprobar]="item.type === 'aprobar'" [matTooltip]="item.type === 'cursar' ? 'Es requisito de cursada' : 'Es requisito de aprobación'">

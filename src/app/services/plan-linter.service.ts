@@ -22,7 +22,7 @@ export class PlanLinterService {
     const warnings: string[] = [];
 
     if (!manifest || !Array.isArray(manifest.courses)) {
-      return { valid: false, errors: ['Manifest no válido o sin lista de materias.'], warnings: [] };
+      return { valid: false, errors: ['Manifest no valid o sin lista de materias.'], warnings: [] };
     }
 
     // 1. Structural Sanity Bounds Check
@@ -50,7 +50,7 @@ export class PlanLinterService {
       const allReqs = [...(c.cursarReq || []), ...(c.aprobarReq || [])];
       allReqs.forEach(req => {
         if (!knownIdentifiers.has(req)) {
-          errors.push(`Materia "${c.name}" posee una correlativa inexistente: "${req}".`);
+          errors.push(`Course "${c.name}" posee una correlativa inexistente: "${req}".`);
         }
       });
     });

@@ -52,7 +52,7 @@ describe('CareerSelectorComponent', () => {
     }
   });
 
-  it('debe limpiar careerToDelete al cancelar o ejecutar eliminacion', () => {
+  it('should clear careerToDelete on cancel or execute deletion', () => {
     const mockCareer: CareerIndexEntry = {
       id: 'test-career',
       name: 'Carrera de Prueba',

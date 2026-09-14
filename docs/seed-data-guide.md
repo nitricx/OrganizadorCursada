@@ -16,7 +16,7 @@ Este documento sirve de guía técnica para **agentes de IA y desarrolladores** 
 
 ## 2. Esquema de Datos JSON (JSON Schema)
 
-Cada archivo en `scripts/seed-data/<id-carrera>.json` debe ser un objeto JSON válido con la siguiente estructura:
+Cada archivo en `scripts/seed-data/<id-carrera>.json` debe ser un objeto JSON valid con la siguiente estructura:
 
 ### Objeto Raíz (`CareerPlan`)
 
@@ -96,14 +96,14 @@ Al generar un nuevo plan mediante IA, el agente **DEBE** verificar que se cumpla
 2. **IDs Únicos Numéricos**: Cada materia del plan debe poseer un `id` entero único e incremental (1, 2, 3, ...). No usar strings para el `id` de las materias.
 3. **Grafo Acíclico Dirigido (DAG)**: Una materia $A$ no puede tener como correlativa a una materia $B$ si $B$ a su vez requiere a $A$ (directa o transitivamente).
 4. **Referencias de Correlativas Válidas**: Todos los números presentes en `cursarReqId` y `aprobarReqId` **deben existir** como `id` de alguna materia en el mismo archivo JSON.
-5. **Formato JSON Estricto**: Archivo JSON válido (sin comas sobrantes / trailing commas, sin comentarios, con comillas dobles en todas las llaves y cadenas).
+5. **Formato JSON Estricto**: Archivo JSON valid (sin comas sobrantes / trailing commas, sin comentarios, con comillas dobles en todas las llaves y cadenas).
 
 ---
 
 ## 6. Procedimiento Paso a Paso para que un Agente IA Genere un Nuevo Plan
 
 1. **Recibir Documentación Oficial**: El usuario proporciona el plan de estudios o grilla curricular oficial.
-2. **Enumerar Materias**: El agente extrae las materias exactas y les asigna `id: 1`, `id: 2`, etc.
+2. **Enumerar Courses**: El agente extrae las materias exactas y les asigna `id: 1`, `id: 2`, etc.
 3. **Mapear Correlatividades Exactas**: Convertir los nombres de correlativas expresadas en la fuente a sus correspondientes `id` numéricos.
 4. **Procesar Horarios/Comisiones (`lessons`)**:
    - Si el documento contiene comisiones/horarios reales $\rightarrow$ mapear a `lessons`.
