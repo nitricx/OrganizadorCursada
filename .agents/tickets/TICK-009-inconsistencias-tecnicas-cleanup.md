@@ -7,7 +7,7 @@
 - **ID**: `TICK-009`
 - **Estado Actual**: `READY_FOR_DEV`
 - **Persona Asignada**: `desarrollador`
-- **Rama Asociada**: `feature/TICK-009-correccion-de-inconsistencias-tecnicas-hex-colors-sidebar-dead-events-y-e2e-phantoms`
+- **Rama Asociada**: `feature/TICK-009-inconsistencias-tecnicas-cleanup`
 - **Fecha de Creación**: 2026-09-13
 - **Última Actualización**: 2026-09-13
 

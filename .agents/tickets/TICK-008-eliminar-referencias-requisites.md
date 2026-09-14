@@ -7,7 +7,7 @@
 - **ID**: `TICK-008`
 - **Estado Actual**: `READY_FOR_DEV`
 - **Persona Asignada**: `desarrollador`
-- **Rama Asociada**: `feature/TICK-008-eliminacion-de-toda-referencia-a-la-ruta-requisites-y-al-componente-requisites-flow`
+- **Rama Asociada**: `feature/TICK-008-eliminar-referencias-requisites`
 - **Fecha de Creación**: 2026-09-13
 - **Última Actualización**: 2026-09-13
 
