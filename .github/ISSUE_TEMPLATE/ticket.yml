@@ -1,7 +1,7 @@
 name: 🎟️ Agent Task Ticket
 description: Create a functional requirement or technical task ticket for AI Agent workflow.
-title: "[TASK]: "
-labels: ["status:draft", "persona:analista"]
+title: '[TASK]: '
+labels: ['status:draft', 'persona:analista']
 body:
   - type: markdown
     attributes:
@@ -18,7 +18,7 @@ body:
     id: user_story
     attributes:
       label: Historias de Usuario (English Format)
-      description: "As a [persona] I want [action] So that [outcome]"
+      description: 'As a [persona] I want [action] So that [outcome]'
       placeholder: |
         As a student
         I want...

@@ -20,20 +20,20 @@ const VALID_STATUSES = [
 ];
 
 const STATUS_LABEL_MAP = {
-  'DRAFT': 'status:draft',
-  'READY_FOR_DEV': 'status:ready-for-dev',
-  'IN_DEVELOPMENT': 'status:in-development',
-  'READY_FOR_QA': 'status:ready-for-qa',
-  'QA_VERIFIED': 'status:qa-verified',
-  'REJECTED': 'status:rejected',
-  'CLOSED': 'status:qa-verified',
+  DRAFT: 'status:draft',
+  READY_FOR_DEV: 'status:ready-for-dev',
+  IN_DEVELOPMENT: 'status:in-development',
+  READY_FOR_QA: 'status:ready-for-qa',
+  QA_VERIFIED: 'status:qa-verified',
+  REJECTED: 'status:rejected',
+  CLOSED: 'status:qa-verified',
 };
 
 const PERSONA_LABEL_MAP = {
-  'analista': 'persona:analista',
-  'desarrollador': 'persona:desarrollador',
-  'qa': 'persona:qa',
-  'gitflow': 'persona:gitflow',
+  analista: 'persona:analista',
+  desarrollador: 'persona:desarrollador',
+  qa: 'persona:qa',
+  gitflow: 'persona:gitflow',
 };
 
 function createTicket(title, assignee = 'analista') {
@@ -74,19 +74,21 @@ function updateTicketStatus(issueNum, newStatus, assignee = null) {
 
   try {
     // Remove old status labels
-    const currentLabelsRaw = execSync(`gh issue view ${num} --json labels --jq ".labels[].name"`, { encoding: 'utf-8' });
+    const currentLabelsRaw = execSync(`gh issue view ${num} --json labels --jq ".labels[].name"`, {
+      encoding: 'utf-8',
+    });
     const currentLabels = currentLabelsRaw.split('\n').filter(Boolean);
-    
-    const removeLabels = currentLabels.filter(l => l.startsWith('status:'));
-    let removeCmd = removeLabels.map(l => `--remove-label "${l}"`).join(' ');
+
+    const removeLabels = currentLabels.filter((l) => l.startsWith('status:'));
+    let removeCmd = removeLabels.map((l) => `--remove-label "${l}"`).join(' ');
 
     const newStatusLabel = STATUS_LABEL_MAP[statusUpper];
     let addCmd = `--add-label "${newStatusLabel}"`;
 
     if (assignee && PERSONA_LABEL_MAP[assignee]) {
-      const removePersonaLabels = currentLabels.filter(l => l.startsWith('persona:'));
+      const removePersonaLabels = currentLabels.filter((l) => l.startsWith('persona:'));
       if (removePersonaLabels.length > 0) {
-        removeCmd += ' ' + removePersonaLabels.map(l => `--remove-label "${l}"`).join(' ');
+        removeCmd += ' ' + removePersonaLabels.map((l) => `--remove-label "${l}"`).join(' ');
       }
       addCmd += ` --add-label "${PERSONA_LABEL_MAP[assignee]}"`;
     }
