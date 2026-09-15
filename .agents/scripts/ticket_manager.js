@@ -30,42 +30,44 @@ const STATUS_LABEL_MAP = {
 };
 
 const PERSONA_LABEL_MAP = {
-  analista: 'persona:analista',
-  desarrollador: 'persona:desarrollador',
+  analyst: 'persona:analyst',
+  developer: 'persona:developer',
+  analista: 'persona:analyst',
+  desarrollador: 'persona:developer',
   qa: 'persona:qa',
   gitflow: 'persona:gitflow',
 };
 
-function createTicket(title, assignee = 'analista') {
+function createTicket(title, assignee = 'analyst') {
   if (!title) {
-    console.error('❌ Error: You must provide a title for the ticket.');
+    console.error('[ERROR] You must provide a title for the ticket.');
     console.error('Usage: node ticket_manager.js new "<title>" [persona]');
     process.exit(1);
   }
 
-  const personaLabel = PERSONA_LABEL_MAP[assignee] || 'persona:analista';
+  const personaLabel = PERSONA_LABEL_MAP[assignee] || 'persona:analyst';
   const statusLabel = 'status:draft';
 
   try {
-    const cmd = `gh issue create --title "${title}" --label "${statusLabel},${personaLabel}" --body "## 📝 1. Functional Specification (Analyst)\n\n### Context & Problem Statement\n\n### User Stories (English Format)\n\n### Acceptance Criteria (Gherkin Format)\n\n### Service & Domain Model Impact\n\n---\n## 💻 2. Implementation Record (Developer)\n- Status: PENDING\n\n---\n## 🔍 3. Quality Certification (QA)\n- Status: PENDING\n\n---\n## 🚀 4. Closure & Release (GitFlow)\n- Status: PENDING"`;
+    const cmd = `gh issue create --title "${title}" --label "${statusLabel},${personaLabel}" --body "## 1. Functional Specification (Analyst)\n\n### Context & Problem Statement\n\n### User Stories (English Format)\n\n### Acceptance Criteria (Gherkin Format)\n\n### Service & Domain Model Impact\n\n---\n## 2. Implementation Record (Developer)\n- Status: PENDING\n\n---\n## 3. Quality Certification (QA)\n- Status: PENDING\n\n---\n## 4. Closure & Release (GitFlow)\n- Status: PENDING"`;
     const output = execSync(cmd, { encoding: 'utf-8' }).trim();
-    console.log(`✅ GitHub Issue created successfully: ${output}`);
+    console.log(`[SUCCESS] GitHub Issue created: ${output}`);
   } catch (err) {
-    console.error(`❌ Error creating GitHub issue: ${err.message}`);
+    console.error(`[ERROR] Creating GitHub issue: ${err.message}`);
     process.exit(1);
   }
 }
 
 function updateTicketStatus(issueNum, newStatus, assignee = null) {
   if (!issueNum || !newStatus) {
-    console.error('❌ Error: You must specify the issue number and the new status.');
+    console.error('[ERROR] You must specify the issue number and the new status.');
     console.error('Usage: node ticket_manager.js status <ISSUE-NUMBER> <NEW_STATUS> [persona]');
     process.exit(1);
   }
 
   const statusUpper = newStatus.toUpperCase().trim();
   if (!VALID_STATUSES.includes(statusUpper)) {
-    console.error(`❌ Error: Invalid status '${newStatus}'.`);
+    console.error(`[ERROR] Invalid status '${newStatus}'.`);
     console.error(`Valid statuses: ${VALID_STATUSES.join(', ')}`);
     process.exit(1);
   }
@@ -73,7 +75,6 @@ function updateTicketStatus(issueNum, newStatus, assignee = null) {
   const num = issueNum.replace('#', '').replace('TICK-', '');
 
   try {
-    // Remove old status labels
     const currentLabelsRaw = execSync(`gh issue view ${num} --json labels --jq ".labels[].name"`, {
       encoding: 'utf-8',
     });
@@ -98,12 +99,12 @@ function updateTicketStatus(issueNum, newStatus, assignee = null) {
 
     if (statusUpper === 'CLOSED') {
       execSync(`gh issue close ${num}`, { encoding: 'utf-8' });
-      console.log(`🔒 Issue #${num} closed.`);
+      console.log(`[SUCCESS] Issue #${num} closed.`);
+    } else {
+      console.log(`[SUCCESS] Issue #${num} -> ${statusUpper}`);
     }
-
-    console.log(`✅ Issue #${num} updated to status: ${statusUpper}`);
   } catch (err) {
-    console.error(`❌ Error updating GitHub issue: ${err.message}`);
+    console.error(`[ERROR] Updating GitHub issue: ${err.message}`);
     process.exit(1);
   }
 }
@@ -119,7 +120,7 @@ switch (command) {
     updateTicketStatus(args[1], args[2], args[3]);
     break;
   default:
-    console.log('📖 Ticket Manager (GitHub Issues) for OrganizadorCursada');
+    console.log('Ticket Manager (GitHub Issues) for OrganizadorCursada');
     console.log('Commands:');
     console.log('  node ticket_manager.js new "<title>" [persona]');
     console.log('  node ticket_manager.js status <ISSUE-NUM> <NEW_STATUS> [persona]');

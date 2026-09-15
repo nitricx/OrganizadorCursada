@@ -4,7 +4,7 @@ Welcome to the **OrganizadorCursada** repository, a progressive web application 
 
 ---
 
-## 🏛️ 1. Architecture & System Layers
+## 1. Architecture & System Layers
 
 The codebase enforces a strict separation of concerns across three layers:
 
@@ -26,7 +26,7 @@ The codebase enforces a strict separation of concerns across three layers:
 
 ---
 
-## 🚫 2. The 4 Inviolable Repository Rules
+## 2. Inviolable Repository Rules
 
 > [!CAUTION]
 >
@@ -34,36 +34,37 @@ The codebase enforces a strict separation of concerns across three layers:
 > 2. **Mandatory Service Unit Tests**: Every change or addition in `src/app/services/**/*.service.ts` MUST include its corresponding test suite in `*.service.spec.ts`. UI components do NOT require unit tests.
 > 3. **Zero Hardcoded Hexadecimal Colors**: NEVER use `#ffffff`, `#1a1a1a`, etc. in component styles or inline HTML attributes. Consume centralized CSS Design Tokens from `src/styles.css` supporting both light and dark themes (`[data-theme="dark"]`).
 > 4. **Strict Privacy Airgap**: Personal student progress data must never be transmitted across public network boundaries without prior sanitization via `PlanSanitizerService`.
+> 5. **Prohibition of Emojis**: NEVER use emojis (see [`.agents/rules/no-emojis.md`](file:///.agents/rules/no-emojis.md)).
 
 ---
 
-## 🎭 3. AI Agent Personas & Guardrails
+## 3. AI Agent Personas & Guardrails
 
 To prevent conflicts of interest and enforce rigorous software engineering standards, agent collaboration is strictly governed by specialized **Personas** with distinct operational boundaries (see [`.agents/PERSONAS.md`](file:///.agents/PERSONAS.md) and [`.agents/WORKFLOW.md`](file:///.agents/WORKFLOW.md)):
 
 ```
-   [1. ANALISTA]             [2. DESARROLLADOR]          [3. QA TESTER]           [4. GITFLOW]
+   [1. ANALYST]              [2. DEVELOPER]             [3. QA TESTER]           [4. GITFLOW]
    Creates Ticket        --> Implements Feature      --> Certifies/Rejects    --> Integrates to develop
    Gherkin Acceptance        Services + Unit Tests       Impartial audit          Conventional Commits
    (src/app/ forbidden)      (Self-approval forbidden)   (Fixing code forbidden)  (QA sign-off required)
 ```
 
-- **`analista`**: Specifies requirements, defines Gherkin scenarios, and authors tickets in [`.agents/tickets/`](file:///.agents/tickets/README.md). _Prohibited from touching `src/app/`_.
-- **`desarrollador`**: Implements business logic in services and presentation components with mandatory unit tests. _Prohibited from self-approving or closing tickets without QA_.
+- **`analyst`**: Specifies requirements, defines Gherkin scenarios, and creates issues exclusively in [GitHub Issues](https://github.com/nitricx/OrganizadorCursada/issues) (`gh issue`). Local markdown tickets in repository are strictly prohibited. _Prohibited from touching `src/app/`_.
+- **`developer`**: Implements business logic in services and presentation components with mandatory unit tests. _Prohibited from self-approving or closing tickets without QA_.
 - **`qa`**: Audits features against acceptance criteria, runs test suites (`npm test`, `npm run build`, `npm run test:e2e`), and certifies or rejects tickets. _Prohibited from modifying feature code directly_.
 - **`gitflow`**: Manages semantic branches, Conventional Commits, and PRs once a ticket is marked `QA_VERIFIED`.
 
 ---
 
-## 🧭 4. Directory of Available Skills (`.agents/skills/`)
+## 4. Directory of Available Skills (`.agents/skills/`)
 
 Activate or consult the relevant skill for each task:
 
 | Skill                         | Location                                                                                            | Trigger When                                                                                        |
 | :---------------------------- | :-------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------- |
 | **`organizador-cursada`**     | [`.agents/skills/organizador-cursada`](file:///.agents/skills/organizador-cursada/SKILL.md)         | Domain models (`Course`, `CareerPlan`, `PlanManifest`), component index, baseline rules.            |
-| **`desarrollador`**           | [`.agents/skills/desarrollador`](file:///.agents/skills/desarrollador/SKILL.md)                     | Feature implementation, refactoring, service architecture, TDD workflows.                           |
-| **`analista`**                | [`.agents/skills/analista`](file:///.agents/skills/analista/SKILL.md)                               | Requirements analysis, user stories, Gherkin acceptance criteria, domain rules.                     |
+| **`developer`**               | [`.agents/skills/developer`](file:///.agents/skills/developer/SKILL.md)                             | Feature implementation, refactoring, service architecture, TDD workflows.                           |
+| **`analyst`**                 | [`.agents/skills/analyst`](file:///.agents/skills/analyst/SKILL.md)                                 | Requirements analysis, user stories, Gherkin acceptance criteria, domain rules.                     |
 | **`qa`**                      | [`.agents/skills/qa`](file:///.agents/skills/qa/SKILL.md)                                           | Test strategy, status transition matrix, bug reports, pre-release checklists.                       |
 | **`gitflow`**                 | [`.agents/skills/gitflow`](file:///.agents/skills/gitflow/SKILL.md)                                 | Branching strategy (`main`, `develop`, `feature/*`), Conventional Commits, Pull Requests.           |
 | **`angular`**                 | [`.agents/skills/angular`](file:///.agents/skills/angular/SKILL.md)                                 | Angular 21, Signals, Standalone Components, `inject()`, `input()`, `output()`, modern control flow. |
@@ -75,7 +76,7 @@ Activate or consult the relevant skill for each task:
 
 ---
 
-## ⚡ 5. Essential Verification Commands
+## 5. Essential Verification Commands
 
 ```bash
 # Run unit test suite (Vitest)

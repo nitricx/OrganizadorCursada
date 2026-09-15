@@ -1,11 +1,7 @@
 #!/usr/bin/env node
 /**
  * qa_audit.js
- * Deterministic static audit of the 4 Inviolable Rules of the Repository:
- * 1. Prohibition of Dummy Data or unauthorized Mocks.
- * 2. Mandatory unit tests for each *.service.ts file.
- * 3. Zero hardcoded hex colors (#fff, #1a1a1a, etc.) in component styles or inline HTML attributes.
- * 4. Strict synchronization between package.json and package-lock.json (previene fallos en npm ci).
+ * Deterministic static audit of Repository Inviolable Rules.
  */
 const fs = require('fs');
 const path = require('path');
@@ -18,13 +14,9 @@ const PACKAGE_LOCK = path.join(ROOT_DIR, 'package-lock.json');
 
 let errorCount = 0;
 
-function logHeader(title) {
-  console.log(`\n🔍 ${title}`);
-}
-
 function reportError(rule, file, line, message) {
   errorCount++;
-  console.error(`  ❌ [${rule}] ${path.relative(process.cwd(), file)}:${line} -> ${message}`);
+  console.error(`[ERROR] [${rule}] ${path.relative(process.cwd(), file)}:${line} -> ${message}`);
 }
 
 function getAllFiles(dir, extensions, excludeSpec = false) {
@@ -47,31 +39,26 @@ function getAllFiles(dir, extensions, excludeSpec = false) {
   return results;
 }
 
-// 1. Audit: Mandatory Service Unit Tests
 function auditServiceTests() {
-  logHeader('Regla 2: Verifying unit tests for services...');
   const serviceFiles = getAllFiles(SERVICES_DIR, ['.ts'], true);
-  let checked = 0;
-
   for (const serviceFile of serviceFiles) {
     if (serviceFile.endsWith('.service.ts')) {
-      checked++;
       const specFile = serviceFile.replace(/\.service\.ts$/, '.service.spec.ts');
       if (!fs.existsSync(specFile)) {
-        reportError('MISSING_SERVICE_SPEC', serviceFile, 1, 'Unit test file not found *.service.spec.ts');
+        reportError(
+          'MISSING_SERVICE_SPEC',
+          serviceFile,
+          1,
+          'Unit test file missing (*.service.spec.ts)',
+        );
       }
     }
   }
-
-  console.log(`  ✅ ${checked} services audited. Spec files coverage: 100%.`);
 }
 
-// 2. Audit: Zero Hardcoded Hex Colors in Component Styles & Inline HTML
 function auditHexColors() {
-  logHeader('Regla 3: Verifying absence of hex colors in component styles and inline HTML...');
   const hexColorRegex = /#([0-9a-fA-F]{3}|[0-9a-fA-F]{4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})\b/g;
 
-  // A. Auditar todos los archivos .css en src/app/
   const cssFiles = getAllFiles(SRC_APP_DIR, ['.css'], false);
   for (const file of cssFiles) {
     const content = fs.readFileSync(file, 'utf-8');
@@ -87,13 +74,12 @@ function auditHexColors() {
           'HEX_COLOR_IN_CSS',
           file,
           idx + 1,
-          `Hardcoded hex color detected '${match[0]}'. Must consume a CSS token var(--...) de src/styles.css.`
+          `Hardcoded hex color '${match[0]}'. Use CSS design token var(--...)`,
         );
       }
     });
   }
 
-  // B. Auditar archivos .html buscando style="...#hex..."
   const htmlFiles = getAllFiles(SRC_APP_DIR, ['.html'], false);
   for (const file of htmlFiles) {
     const content = fs.readFileSync(file, 'utf-8');
@@ -110,22 +96,17 @@ function auditHexColors() {
               'HEX_COLOR_IN_INLINE_HTML',
               file,
               idx + 1,
-              `Hex color detected in inline style attribute '${match[0]}'. Usar clases with tokens CSS.`
+              `Hex color in inline style '${match[0]}'. Use CSS token classes`,
             );
           }
         }
       }
     });
   }
-
-  console.log(`  ✅ ${cssFiles.length} hojas de estilo CSS y ${htmlFiles.length} plantillas HTML auditadas.`);
 }
 
-// 3. Audit: No Dummy Data
 function auditNoDummyData() {
-  logHeader('Regla 1: Verificando ausencia de planes/carreras dummy o ficticias...');
   const files = getAllFiles(SRC_APP_DIR, ['.ts'], false);
-
   const forbiddenTerms = [
     'medicina.json',
     'abogacia.json',
@@ -138,31 +119,14 @@ function auditNoDummyData() {
     const content = fs.readFileSync(file, 'utf-8');
     for (const term of forbiddenTerms) {
       if (content.toLowerCase().includes(term)) {
-        reportError(
-          'DUMMY_DATA_FORBIDDEN',
-          file,
-          1,
-          `Se detectó referencia a dataset simulado '${term}'. Usar solo carreras auténticas.`
-        );
+        reportError('DUMMY_DATA_FORBIDDEN', file, 1, `Forbidden dummy dataset reference '${term}'`);
       }
     }
   }
-
-  console.log(`  ✅ Integridad de planes de estudio auténticos verificada.`);
 }
 
-// 4. Audit: Lockfile Synchronization (previene fallos de CI por npm ci)
 function auditLockfileSync() {
-  logHeader('Regla 4: Verificando sincronización de package.json y package-lock.json...');
-
-  if (!fs.existsSync(PACKAGE_JSON)) {
-    reportError('LOCKFILE_DESYNC', PACKAGE_JSON, 1, 'No se encontró package.json');
-    return;
-  }
-  if (!fs.existsSync(PACKAGE_LOCK)) {
-    reportError('LOCKFILE_DESYNC', PACKAGE_LOCK, 1, 'No se encontró package-lock.json');
-    return;
-  }
+  if (!fs.existsSync(PACKAGE_JSON) || !fs.existsSync(PACKAGE_LOCK)) return;
 
   const pkgJson = JSON.parse(fs.readFileSync(PACKAGE_JSON, 'utf-8'));
   const pkgLock = JSON.parse(fs.readFileSync(PACKAGE_LOCK, 'utf-8'));
@@ -175,41 +139,63 @@ function auditLockfileSync() {
     ...(pkgJson.devDependencies || {}),
   };
 
-  let missingInLock = 0;
-
   for (const [dep, reqVersion] of Object.entries(allDeclared)) {
     const nodeModulePath = `node_modules/${dep}`;
     const inPackages = lockPackages[nodeModulePath] || lockPackages['']?.dependencies?.[dep];
     const inDeps = lockDeps[dep];
 
     if (!inPackages && !inDeps) {
-      missingInLock++;
       reportError(
         'LOCKFILE_DESYNC',
         PACKAGE_JSON,
         1,
-        `La dependencia '${dep}' (${reqVersion}) está en package.json pero NO está registrada en package-lock.json. Ejecuta 'npm install' para sincronizar.`
+        `Dependency '${dep}' (${reqVersion}) missing in package-lock.json. Run 'npm install'.`,
       );
     }
   }
+}
 
-  if (missingInLock === 0) {
-    console.log(`  ✅ Sincronización perfecta de lockfile (todos los paquetes de package.json existen en package-lock.json).`);
+function auditNoEmojis() {
+  const emojiRegex = /[\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/u;
+  const docsDir = path.resolve(ROOT_DIR, 'docs');
+  const scriptsDir = path.resolve(ROOT_DIR, 'scripts');
+
+  const filesToAudit = [
+    ...getAllFiles(SRC_APP_DIR, ['.ts', '.html', '.css'], false),
+    ...getAllFiles(path.resolve(__dirname, '../'), ['.js', '.json', '.md'], false),
+    ...getAllFiles(docsDir, ['.md', '.txt'], false),
+    ...getAllFiles(scriptsDir, ['.js', '.mjs', '.ts', '.md', '.json'], false),
+  ];
+
+  const rootFiles = ['README.md', 'AGENTS.md'];
+  for (const rf of rootFiles) {
+    const fullPath = path.join(ROOT_DIR, rf);
+    if (fs.existsSync(fullPath)) {
+      filesToAudit.push(fullPath);
+    }
+  }
+
+  for (const file of filesToAudit) {
+    const content = fs.readFileSync(file, 'utf-8');
+    const lines = content.split('\n');
+    lines.forEach((line, idx) => {
+      if (emojiRegex.test(line)) {
+        reportError('NO_EMOJIS', file, idx + 1, 'Emoji detected. Emojis are strictly prohibited.');
+      }
+    });
   }
 }
 
-// Ejecución
-console.log('🚀 Iniciando Auditoría Estática de Reglas Inviolables (OrganizadorCursada)...');
 auditServiceTests();
 auditHexColors();
 auditNoDummyData();
 auditLockfileSync();
+auditNoEmojis();
 
-console.log('\n─────────────────────────────────────────────────────────────');
 if (errorCount === 0) {
-  console.log('🎉 Auditoría exitosa: 0 infracciones detectadas. Todas las reglas se cumplen.');
+  console.log('[SUCCESS] Static audit passed: 0 violations.');
   process.exit(0);
 } else {
-  console.error(`❌ Auditoría fallida: Se encontraron ${errorCount} infracciones.`);
+  console.error(`[ERROR] Static audit failed: ${errorCount} violations found.`);
   process.exit(1);
 }

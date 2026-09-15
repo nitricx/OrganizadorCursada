@@ -1,5 +1,5 @@
 ---
-name: analista
+name: analyst
 description: Functional requirements analysis, domain modeling, user stories, and acceptance criteria specification for OrganizadorCursada. Trigger when defining new features, breaking down user stories, refining business rules, validating prerequisite logic, or handling edge cases. Triggers: analista, analyst, requirements, user stories, acceptance criteria, gherkin, functional analysis, edge cases, domain rules.
 ---
 
@@ -44,7 +44,7 @@ The system models the university academic trajectory of students, covering degre
 ## 2. Functional Specification Methodology
 
 > [!IMPORTANT]
-> **No Informal Todo Lists**: Instead of maintaining informal checklists or pending lists (`PENDIENTES.md`), all missing features, enhancements, and tasks MUST be tracked as structured tickets/issues in GitHub Issues using `npm run ticket:new -- "<title>"`.
+> **GitHub Issues Only (No Local MD Tickets)**: Instead of maintaining informal checklists, pending lists (`PENDIENTES.md`), or local `.md` ticket files in `.agents/tickets/`, all missing features, enhancements, and tasks MUST be tracked strictly in **GitHub Issues** using `npm run ticket:new -- "<title>"`. Creating or saving ticket markdown files locally in the repository is strictly prohibited.
 
 When analyzing or specifying a new feature or refinement, follow this structure:
 
@@ -94,7 +94,8 @@ Map affected layers before presenting specifications to development:
 
 | Requirement Scope              | Affected Services                           | Affected Components / Views                          |
 | :----------------------------- | :------------------------------------------ | :--------------------------------------------------- |
-| Prerequisite validation logic  | `CourseService`                             | `course-card`, `course-grid`      |
+| Prerequisite validation logic  | `CourseService`                             | `course-card`, `course-grid`                         |
+| Prerequisite validation logic  | `CourseService`                             | `course-card`, `course-grid`                         |
 | Weekly timetable / calendar    | `CourseService`, `CalendarExportService`    | `calendar`, `calendar-card`, `export-calendar-modal` |
 | Degree plan creation / cloning | `PlanService`, `CareerService`              | `course-organizer`, `workshop-hub`                   |
 | Community plan publishing      | `PlanSanitizerService`, `PlanLinterService` | `plan-publisher-modal`, `plan-diff-viewer`           |

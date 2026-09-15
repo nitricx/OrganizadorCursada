@@ -27,12 +27,10 @@ async function isSonarRunning() {
 async function getOrGenerateLocalToken() {
   if (process.env.SONAR_TOKEN) return process.env.SONAR_TOKEN;
 
-  // Try authenticating with local default admin credentials (admin:admin) to obtain a valid token
   try {
     const auth = Buffer.from('admin:admin').toString('base64');
     const tokenName = 'local-prepush-token';
 
-    // Revoke any existing token with the same name first to avoid 400 conflict
     await fetch(`${SONAR_HOST}/api/user_tokens/revoke?name=${tokenName}`, {
       method: 'POST',
       headers: { Authorization: `Basic ${auth}` },
@@ -53,11 +51,11 @@ async function getOrGenerateLocalToken() {
 }
 
 async function main() {
-  console.log(`\n🔍 [SonarQube] Checking local instance status at ${SONAR_HOST}...`);
+  console.log(`[SonarQube] Checking local instance status at ${SONAR_HOST}...`);
   const isUp = await isSonarRunning();
 
   if (!isUp) {
-    console.warn(`\n⚠️  [SonarQube] Local SonarQube instance is not reachable at ${SONAR_HOST}.`);
+    console.warn(`[WARN] Local SonarQube instance is not reachable at ${SONAR_HOST}.`);
     console.warn('   To run local security analysis and quality checks:');
     console.warn('     1. Start the container: npm run sonar:up');
     console.warn(`     2. Wait until ready (~30-60s) at ${SONAR_HOST}`);
@@ -65,8 +63,8 @@ async function main() {
     process.exit(1);
   }
 
-  console.log(`✓  [SonarQube] Local server is healthy and UP.`);
-  console.log(`🧪 [SonarQube] Generating unit test coverage with Vitest...`);
+  console.log('[INFO] Local server is healthy and UP.');
+  console.log('[INFO] Generating unit test coverage with Vitest...');
 
   const ngCliPath = path.resolve('node_modules', '@angular', 'cli', 'bin', 'ng.js');
 
@@ -74,14 +72,14 @@ async function main() {
     execFileSync(
       process.execPath,
       [ngCliPath, 'test', '--watch=false', '--coverage', '--coverage-reporters=lcov'],
-      { stdio: 'inherit' }
+      { stdio: 'inherit' },
     );
   } catch (err) {
-    console.error(`\n❌ [SonarQube] Unit tests failed! Aborting push.\n`);
+    console.error('[ERROR] Unit tests failed! Aborting push.');
     process.exit(1);
   }
 
-  console.log(`\n🚀 [SonarQube] Running SonarScanner with Quality Gate wait...`);
+  console.log('[INFO] Running SonarScanner with Quality Gate wait...');
 
   const token = await getOrGenerateLocalToken();
 
@@ -93,9 +91,9 @@ async function main() {
         'sonar.qualitygate.wait': 'true',
       },
     });
-    console.log(`\n✅ [SonarQube] Local Quality Gate passed successfully!\n`);
+    console.log('[SUCCESS] Local Quality Gate passed successfully!');
   } catch (err) {
-    console.error(`\n❌ [SonarQube] Quality Gate failed! Review issues at ${SONAR_HOST}.\n`);
+    console.error(`[ERROR] Quality Gate failed! Review issues at ${SONAR_HOST}.`);
     process.exit(1);
   }
 }
