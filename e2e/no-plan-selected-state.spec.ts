@@ -1,14 +1,14 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('Validación del Estado "Sin Plan Seleccionado" en /home y /myWeek', () => {
+test.describe('Validation of "No Plan Selected" State on /home and /myWeek', () => {
   test.beforeEach(async ({ page }) => {
-    // Limpiar localStorage antes de cada prueba para simular estado sin carrera/plan seleccionado
+    // Clear localStorage before each test to simulate state with no career/plan selected
     await page.goto('/');
     await page.evaluate(() => localStorage.clear());
     await page.reload();
   });
 
-  test('debe mostrar el componente app-no-plan-selected en /home cuando no hay plan seleccionado', async ({ page }) => {
+  test('should display app-no-plan-selected component on /home when no plan is selected', async ({ page }) => {
     await page.goto('/home');
     const noPlanComponent = page.locator('app-no-plan-selected');
     await expect(noPlanComponent).toBeVisible();
@@ -16,12 +16,12 @@ test.describe('Validación del Estado "Sin Plan Seleccionado" en /home y /myWeek
     const title = noPlanComponent.locator('.empty-state-title');
     await expect(title).toContainText('Plan de Cursada');
 
-    // Verificar que los botones de acción estén visibles
+    // Verify action buttons are visible
     await expect(page.getByRole('button', { name: /Explorar Planes/i })).toBeVisible();
     await expect(page.getByRole('button', { name: /Cargar Demo/i })).toBeVisible();
   });
 
-  test('debe mostrar el componente app-no-plan-selected en /myWeek cuando no hay plan seleccionado', async ({ page }) => {
+  test('should display app-no-plan-selected component on /myWeek when no plan is selected', async ({ page }) => {
     await page.goto('/myWeek');
     const noPlanComponent = page.locator('app-no-plan-selected');
     await expect(noPlanComponent).toBeVisible();
@@ -29,24 +29,24 @@ test.describe('Validación del Estado "Sin Plan Seleccionado" en /home y /myWeek
     const title = noPlanComponent.locator('.empty-state-title');
     await expect(title).toContainText('Plan de estudio');
 
-    // La grilla horaria normal no debe estar renderizada en este estado
+    // Normal schedule grid should not be rendered in this state
     await expect(page.locator('.calendar-grid-wrapper')).not.toBeVisible();
   });
 
-  test('debe cargar el plan demo al hacer click en "Cargar Demo" desde el estado sin plan y restaurar las vistas', async ({ page }) => {
+  test('should load demo plan when clicking "Cargar Demo" from no-plan state and restore views', async ({ page }) => {
     await page.goto('/home');
     const noPlanComponent = page.locator('app-no-plan-selected');
     await expect(noPlanComponent).toBeVisible();
 
-    // Hacer click en "Cargar Demo" dentro del componente NoPlanSelected
+    // Click "Cargar Demo" inside NoPlanSelected component
     const demoButton = noPlanComponent.getByRole('button', { name: /Cargar Demo/i });
     await demoButton.click();
 
-    // El componente vacio debe desaparecer y mostrar la grilla de materias
+    // Empty state component should disappear and show subject grid
     await expect(noPlanComponent).not.toBeVisible();
     await expect(page.locator('.header-title-group h1')).toHaveText('Plan de Cursada');
 
-    // Navegar a /myWeek y confirmar que ya no muestra el empty state
+    // Navigate to /myWeek and confirm empty state is no longer displayed
     await page.goto('/myWeek');
     await expect(page.locator('app-no-plan-selected')).not.toBeVisible();
   });

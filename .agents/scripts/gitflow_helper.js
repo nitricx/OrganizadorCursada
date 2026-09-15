@@ -190,6 +190,21 @@ function createPR(ticketId) {
       }
     }
     console.log(`[SUCCESS] PR created: ${prUrl}`);
+
+    try {
+      const prNumber = prUrl.split('/').pop();
+      const getNodesQuery = `query { repository(owner: "nitricx", name: "OrganizadorCursada") { issue(number: ${ticket.issueNumber}) { id } pullRequest(number: ${prNumber}) { id } } }`;
+      const nodesRaw = execSync(`gh api graphql -f query=${JSON.stringify(getNodesQuery.replace(/\s+/g, ' '))}`, { encoding: 'utf-8' });
+      const nodesData = JSON.parse(nodesRaw)?.data?.repository;
+      if (nodesData?.issue?.id && nodesData?.pullRequest?.id) {
+        const linkMutation = `mutation { addCloseIssueReferences(input: { issueId: "${nodesData.issue.id}", pullRequestIds: ["${nodesData.pullRequest.id}"] }) { clientMutationId } }`;
+        execSync(`gh api graphql -f query=${JSON.stringify(linkMutation.replace(/\s+/g, ' '))}`, { encoding: 'utf-8' });
+        console.log(`[SUCCESS] Explicitly linked Issue #${ticket.issueNumber} to PR #${prNumber} in GitHub Development section.`);
+      }
+    } catch (linkErr) {
+      console.warn(`[WARN] GraphQL issue linking fallback: ${linkErr.message}`);
+    }
+
     console.log(`[INFO] Issue #${ticket.issueNumber} linked to PR. Will be auto-closed upon PR merge.`);
   } catch (err) {
     console.error(`[ERROR] Creating PR: ${err.message}`);
