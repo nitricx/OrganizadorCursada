@@ -21,12 +21,12 @@ export class PlanPublisherModalComponent implements OnInit {
   rawPlan = input<unknown>();
   onClose = output<void>();
 
-  private sanitizer = inject(PlanSanitizerService);
-  private entropyScorer = inject(EntropyScorerService);
-  private linter = inject(PlanLinterService);
-  private antiSybil = inject(AntiSybilService);
-  private toast = inject(ToastService);
-  private courseService = inject(CourseService);
+  private readonly sanitizer = inject(PlanSanitizerService);
+  private readonly entropyScorer = inject(EntropyScorerService);
+  private readonly linter = inject(PlanLinterService);
+  private readonly antiSybil = inject(AntiSybilService);
+  private readonly toast = inject(ToastService);
+  private readonly courseService = inject(CourseService);
 
   sanitizedManifest?: PlanManifest;
   entropyReport?: EntropyReport;

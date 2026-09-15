@@ -26,15 +26,15 @@ describe('PlanSanitizerService (Exhaustive Test Suite)', () => {
           status: 'approved',
           grade: 9,
           user_notes: 'Profesor exigente',
-          cursarReq: []
-        }
-      ]
+          cursarReq: [],
+        },
+      ],
     };
 
     const sanitized = service.sanitizeForPublishing(dangerousPayload);
 
     expect(sanitized.name).toBe('Diseño Audiovisual');
-    expect(sanitized.courses.length).toBe(1);
+    expect(sanitized.courses).toHaveLength(1);
     expect((sanitized.courses[0] as any).status).toBeUndefined();
     expect((sanitized.courses[0] as any).user_notes).toBeUndefined();
     expect((sanitized.courses[0] as any).grade).toBeUndefined();
@@ -45,15 +45,21 @@ describe('PlanSanitizerService (Exhaustive Test Suite)', () => {
 
   it('should format professor names to LASTNAME, I. stripping emails, titles, and phone numbers', () => {
     expect(service.sanitizeProfessorName('Dr. Juan Pérez juan@unsam.edu.ar')).toBe('PÉREZ, J.');
-    expect(service.sanitizeProfessorName('Lic. Maria De Los Angeles Gonzalez')).toBe('GONZALEZ, M.');
+    expect(service.sanitizeProfessorName('Lic. Maria De Los Angeles Gonzalez')).toBe(
+      'GONZALEZ, M.',
+    );
     expect(service.sanitizeProfessorName('Prof. Carlos Smith +54 11 4455-6677')).toBe('SMITH, C.');
     expect(service.sanitizeProfessorName('SingleName')).toBe('SINGLENAME');
     expect(service.sanitizeProfessorName('')).toBe('');
   });
 
   it('should generalize physical location strings into standard time shifts', () => {
-    expect(service.generalizeLocationString('Sede San Martín - Aula 4B - Turno Noche')).toBe('Turno Noche');
-    expect(service.generalizeLocationString('Edificio Tornavías - Turno Mañana')).toBe('Turno Mañana');
+    expect(service.generalizeLocationString('Sede San Martín - Aula 4B - Turno Noche')).toBe(
+      'Turno Noche',
+    );
+    expect(service.generalizeLocationString('Edificio Tornavías - Turno Mañana')).toBe(
+      'Turno Mañana',
+    );
     expect(service.generalizeLocationString('Turno Tarde Aula 12')).toBe('Turno Tarde');
     expect(service.generalizeLocationString('Campus Miguelete')).toBe('General');
     expect(service.generalizeLocationString('')).toBe('');
@@ -64,7 +70,7 @@ describe('PlanSanitizerService (Exhaustive Test Suite)', () => {
       id: 'plan_hack',
       name: 'Ingeniería <script>alert("hack")</script>',
       university: 'UNSAM <b style="color:red">Test</b>',
-      courses: []
+      courses: [],
     };
 
     const sanitized = service.sanitizeForPublishing(maliciousPayload);

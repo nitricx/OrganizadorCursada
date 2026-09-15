@@ -172,13 +172,15 @@ describe('CalendarLayoutUtils', () => {
   describe('generateTimeSlots and CSS layout functions', () => {
     it('should generate time slots with labels on even steps', () => {
       const slots = generateTimeSlots(8, 10);
-      expect(slots.length).toBe(2);
+      expect(slots).toHaveLength(2);
       expect(slots[0]).toEqual({ label: '08:00', row: 2 });
       expect(slots[1]).toEqual({ label: '', row: 4 });
     });
 
     it('should generate gridTemplateColumns format', () => {
-      expect(generateGridTemplateColumns(5, 2)).toBe('44px repeat(2, 1fr) repeat(2, 1fr) repeat(2, 1fr) repeat(2, 1fr) repeat(2, 1fr)');
+      expect(generateGridTemplateColumns(5, 2)).toBe(
+        '44px repeat(2, 1fr) repeat(2, 1fr) repeat(2, 1fr) repeat(2, 1fr) repeat(2, 1fr)',
+      );
     });
 
     it('should generate gridTemplateRows format', () => {

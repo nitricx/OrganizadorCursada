@@ -42,11 +42,15 @@ describe('CalendarExportService', () => {
     planServiceMock = {
       selectedPlanId: signal('1'),
       getPlanLabel: vi.fn().mockReturnValue('Plan de Sistemas'),
-      getSemesterList: vi.fn().mockReturnValue([
-        { id: 'Y1Q1', courseYear: 1, courseQ: 1, startDate: '01/04/2026', endDate: '15/06/2026' },
-      ]),
+      getSemesterList: vi
+        .fn()
+        .mockReturnValue([
+          { id: 'Y1Q1', courseYear: 1, courseQ: 1, startDate: '01/04/2026', endDate: '15/06/2026' },
+        ]),
       getStartingYear: vi.fn().mockReturnValue(2026),
-      getDefaultSemesterDates: vi.fn().mockReturnValue({ startDate: '01/04/2026', endDate: '15/06/2026' }),
+      getDefaultSemesterDates: vi
+        .fn()
+        .mockReturnValue({ startDate: '01/04/2026', endDate: '15/06/2026' }),
     };
 
     toastServiceMock = {
@@ -73,7 +77,7 @@ describe('CalendarExportService', () => {
 
   it('should compute active coursing events', () => {
     const events = service.activeCoursingEvents();
-    expect(events.length).toBe(1);
+    expect(events).toHaveLength(1);
     expect(events[0].course.name).toBe('Programación I');
     expect(events[0].lesson.id).toBe('P1-L1');
   });
@@ -89,7 +93,7 @@ describe('CalendarExportService', () => {
 
   it('should generate Google Calendar web links for active events', () => {
     const links = service.getGoogleCalendarLinks();
-    expect(links.length).toBe(1);
+    expect(links).toHaveLength(1);
     expect(links[0].courseName).toBe('Programación I');
     expect(links[0].url).toContain('https://calendar.google.com/calendar/render');
   });

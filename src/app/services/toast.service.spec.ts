@@ -26,7 +26,7 @@ describe('ToastService', () => {
 
   it('should add a toast and auto-dismiss after duration', () => {
     const id = service.show('Test message', 'info', 3000);
-    expect(service.toasts().length).toBe(1);
+    expect(service.toasts()).toHaveLength(1);
     expect(service.toasts()[0]).toEqual({
       id,
       message: 'Test message',
@@ -35,10 +35,10 @@ describe('ToastService', () => {
     });
 
     vi.advanceTimersByTime(1500);
-    expect(service.toasts().length).toBe(1);
+    expect(service.toasts()).toHaveLength(1);
 
     vi.advanceTimersByTime(1500);
-    expect(service.toasts().length).toBe(0);
+    expect(service.toasts()).toHaveLength(0);
   });
 
   it('should support helper methods for warning, error, success, and info, keeping only the latest notification', () => {
@@ -48,28 +48,27 @@ describe('ToastService', () => {
     service.info('Info msg');
 
     const activeToasts = service.toasts();
-    expect(activeToasts.length).toBe(1);
+    expect(activeToasts).toHaveLength(1);
     expect(activeToasts[0].type).toBe('info');
     expect(activeToasts[0].message).toBe('Info msg');
 
     vi.advanceTimersByTime(3500);
-    expect(service.toasts().length).toBe(0);
+    expect(service.toasts()).toHaveLength(0);
   });
 
   it('should manually dismiss a toast', () => {
     const id = service.warning('Manual dismiss test', 10000);
-    expect(service.toasts().length).toBe(1);
+    expect(service.toasts()).toHaveLength(1);
 
     service.dismiss(id);
-    expect(service.toasts().length).toBe(0);
+    expect(service.toasts()).toHaveLength(0);
   });
 
   it('should clear active toast', () => {
     service.warning('Msg 1');
-    expect(service.toasts().length).toBe(1);
+    expect(service.toasts()).toHaveLength(1);
 
     service.clear();
-    expect(service.toasts().length).toBe(0);
+    expect(service.toasts()).toHaveLength(0);
   });
-
 });

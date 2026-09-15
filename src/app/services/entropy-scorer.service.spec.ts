@@ -18,15 +18,15 @@ describe('EntropyScorerService (Exhaustive Test Suite)', () => {
       version: '1.0.0',
       courses: [
         { id: 'c1', name: 'Matemática I', year: 1, q: 1, cursarReq: [], aprobarReq: [] },
-        { id: 'c2', name: 'Física I', year: 1, q: 2, cursarReq: [], aprobarReq: [] }
-      ]
+        { id: 'c2', name: 'Física I', year: 1, q: 2, cursarReq: [], aprobarReq: [] },
+      ],
     };
 
     const report = service.calculatePlanEntropy(manifest);
     expect(report.score).toBe(0);
     expect(report.riskLevel).toBe('low');
     expect(report.uniqueElectivesCount).toBe(0);
-    expect(report.warnings.length).toBe(0);
+    expect(report.warnings).toHaveLength(0);
   });
 
   it('should detect high risk level when plan contains 4+ electives and multi-campus indicators', () => {
@@ -36,11 +36,25 @@ describe('EntropyScorerService (Exhaustive Test Suite)', () => {
       university: 'UNRN',
       version: '1.0.0',
       courses: [
-        { id: 'c1', name: 'Course Electiva 1 Sede San Martín', year: 1, q: 1, cursarReq: [], aprobarReq: [] },
+        {
+          id: 'c1',
+          name: 'Course Electiva 1 Sede San Martín',
+          year: 1,
+          q: 1,
+          cursarReq: [],
+          aprobarReq: [],
+        },
         { id: 'c2', name: 'Course Optativa 2', year: 1, q: 2, cursarReq: [], aprobarReq: [] },
         { id: 'c3', name: 'Course Optativa 3', year: 2, q: 1, cursarReq: [], aprobarReq: [] },
-        { id: 'c4', name: 'Seminario Especial Optativo 4', year: 2, q: 2, cursarReq: [], aprobarReq: [] }
-      ]
+        {
+          id: 'c4',
+          name: 'Seminario Especial Optativo 4',
+          year: 2,
+          q: 2,
+          cursarReq: [],
+          aprobarReq: [],
+        },
+      ],
     };
 
     const report = service.calculatePlanEntropy(manifest);
@@ -48,8 +62,8 @@ describe('EntropyScorerService (Exhaustive Test Suite)', () => {
     expect(report.riskLevel).toBe('high');
     expect(report.uniqueElectivesCount).toBe(4);
     expect(report.warnings.length).toBeGreaterThanOrEqual(2);
-    expect(report.warnings.some(w => w.includes('optativas'))).toBe(true);
-    expect(report.warnings.some(w => w.includes('sede'))).toBe(true);
+    expect(report.warnings.some((w) => w.includes('optativas'))).toBe(true);
+    expect(report.warnings.some((w) => w.includes('sede'))).toBe(true);
   });
 
   it('should flag high course volume when total courses exceed 55', () => {
@@ -59,7 +73,7 @@ describe('EntropyScorerService (Exhaustive Test Suite)', () => {
       year: Math.floor(i / 10) + 1,
       q: 1,
       cursarReq: [],
-      aprobarReq: []
+      aprobarReq: [],
     }));
 
     const manifest: PlanManifest = {
@@ -67,12 +81,12 @@ describe('EntropyScorerService (Exhaustive Test Suite)', () => {
       name: 'Carrera Gigante',
       university: 'UNSAM',
       version: '1.0.0',
-      courses
+      courses,
     };
 
     const report = service.calculatePlanEntropy(manifest);
     expect(report.score).toBeGreaterThanOrEqual(20);
-    expect(report.warnings.some(w => w.includes('inusualmente elevado'))).toBe(true);
+    expect(report.warnings.some((w) => w.includes('inusualmente elevado'))).toBe(true);
   });
 
   it('should handle null/undefined manifest gracefully', () => {

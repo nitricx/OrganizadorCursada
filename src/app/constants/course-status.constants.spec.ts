@@ -12,7 +12,7 @@ import { CourseStatus } from '../models/course';
 
 describe('CourseStatusConstants', () => {
   it('should contain configuration for all four statuses', () => {
-    expect(COURSE_STATUS_LIST.length).toBe(4);
+    expect(COURSE_STATUS_LIST).toHaveLength(4);
     expect(COURSE_STATUS_CONFIG.pending.label).toBe('Pendiente');
     expect(COURSE_STATUS_CONFIG.coursing.label).toBe('Cursando');
     expect(COURSE_STATUS_CONFIG.coursed.label).toBe('Cursada');
@@ -50,4 +50,3 @@ describe('CourseStatusConstants', () => {
     expect(fallback.label).toBe('Pendiente');
   });
 });
-

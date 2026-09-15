@@ -11,7 +11,6 @@ import { CareerService } from '../../../services/career.service';
 import { ToastService } from '../../../services/toast.service';
 import { Course, DayOfWeek } from '../../../models/course';
 
-
 // Two courses with no year=2 so the inserted semester pair at year=2 starts empty
 const MOCK_Y1Q1: Course = {
   id: 101,
@@ -113,7 +112,9 @@ describe('AcademicCalendarComponent – semester insertion and course movement',
     await TestBed.configureTestingModule({
       imports: [AcademicCalendarComponent],
       providers: [
-        provideRouter([{ path: 'academicCalendar/plan/:id', component: AcademicCalendarComponent }]),
+        provideRouter([
+          { path: 'academicCalendar/plan/:id', component: AcademicCalendarComponent },
+        ]),
         {
           provide: ActivatedRoute,
           useValue: { paramMap: of(convertToParamMap({ id: '1' })) },
@@ -126,7 +127,6 @@ describe('AcademicCalendarComponent – semester insertion and course movement',
         set: { imports: [], schemas: [NO_ERRORS_SCHEMA] },
       })
       .compileComponents();
-
 
     fixture = TestBed.createComponent(AcademicCalendarComponent);
     component = fixture.componentInstance;
@@ -145,7 +145,7 @@ describe('AcademicCalendarComponent – semester insertion and course movement',
 
   it('should start with 4 display semesters derived from year=1 and year=3 courses', () => {
     const semesters = component.displaySemesters();
-    expect(semesters.length).toBe(4);
+    expect(semesters).toHaveLength(4);
     expect(semesters[0]).toEqual(expect.objectContaining({ courseYear: 1, q: 1 }));
     expect(semesters[1]).toEqual(expect.objectContaining({ courseYear: 1, q: 2 }));
     expect(semesters[2]).toEqual(expect.objectContaining({ courseYear: 3, q: 1 }));
@@ -159,7 +159,7 @@ describe('AcademicCalendarComponent – semester insertion and course movement',
     fixture.detectChanges();
 
     const afterInsert = component.displaySemesters();
-    expect(afterInsert.length).toBe(6);
+    expect(afterInsert).toHaveLength(6);
 
     // The newly created pair should be at positions 2 and 3 (display labels)
     const newQ1 = afterInsert[2];
@@ -169,12 +169,12 @@ describe('AcademicCalendarComponent – semester insertion and course movement',
 
     // New slots have unique virtual courseYears (>=1000), so no real courses appear in them yet
     expect(newQ1.courseYear).toBeGreaterThanOrEqual(1000);
-    expect(newQ1.courses.length).toBe(0);
-    expect(newQ2.courses.length).toBe(0);
+    expect(newQ1.courses).toHaveLength(0);
+    expect(newQ2.courses).toHaveLength(0);
 
     // The original year=3 slots (now at positions 4 and 5) are unaffected
     expect(afterInsert[4]).toEqual(expect.objectContaining({ courseYear: 3, q: 1 }));
-    expect(afterInsert[4].courses.length).toBe(1); // MOCK_Y3Q1 still there
+    expect(afterInsert[4].courses).toHaveLength(1); // MOCK_Y3Q1 still there
 
     // Move the year=1,q=1 course's lesson to the newly inserted q=1 slot
     component.onLessonMoveRequested(
@@ -186,11 +186,11 @@ describe('AcademicCalendarComponent – semester insertion and course movement',
     const afterMove = component.displaySemesters();
 
     // The new q=1 slot contains exactly the moved course
-    expect(afterMove[2].courses.length).toBe(1);
+    expect(afterMove[2].courses).toHaveLength(1);
     expect(afterMove[2].courses[0].name).toBe('Course 1');
 
     // The new q=2 slot remains empty
-    expect(afterMove[3].courses.length).toBe(0);
+    expect(afterMove[3].courses).toHaveLength(0);
 
     // The original y=3 q=1 slot is unaffected — Course 1 does NOT appear there
     const y3q1Slot = afterMove.find((s) => s.courseYear === 3 && s.q === 1);
@@ -218,7 +218,7 @@ describe('AcademicCalendarComponent – semester insertion and course movement',
       fixture.detectChanges();
 
       expect(toastService.warning).not.toHaveBeenCalled();
-      expect(toastService.toasts().length).toBe(0);
+      expect(toastService.toasts()).toHaveLength(0);
     });
 
     it('should call ToastService.warning with block reason when move is blocked', () => {
@@ -232,7 +232,7 @@ describe('AcademicCalendarComponent – semester insertion and course movement',
       fixture.detectChanges();
 
       expect(toastService.warning).toHaveBeenCalledWith(mockService.blockReason);
-      expect(toastService.toasts().length).toBe(1);
+      expect(toastService.toasts()).toHaveLength(1);
       expect(toastService.toasts()[0].message).toBe(mockService.blockReason);
     });
 
@@ -293,6 +293,4 @@ describe('AcademicCalendarComponent – semester insertion and course movement',
       expect(component.plans().some((p) => p.id === '1')).toBe(true);
     });
   });
-
 });
-

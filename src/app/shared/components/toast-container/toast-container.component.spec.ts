@@ -40,13 +40,13 @@ describe('ToastContainerComponent', () => {
     const id = toastService.error('Error de prueba');
     fixture.detectChanges();
 
-    expect(toastService.toasts().length).toBe(1);
+    expect(toastService.toasts()).toHaveLength(1);
 
     const closeBtn = fixture.nativeElement.querySelector('.toast-close');
     expect(closeBtn).not.toBeNull();
     closeBtn.click();
     fixture.detectChanges();
 
-    expect(toastService.toasts().length).toBe(0);
+    expect(toastService.toasts()).toHaveLength(0);
   });
 });

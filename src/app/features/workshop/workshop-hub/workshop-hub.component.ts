@@ -57,10 +57,10 @@ export class WorkshopHubComponent implements OnInit {
   onClose = output<void>();
   onSubscribe = output<PlanManifest>();
 
-  private toast = inject(ToastService);
-  private careerService = inject(CareerService);
-  private planService = inject(PlanService);
-  private router = inject(Router);
+  private readonly toast = inject(ToastService);
+  private readonly careerService = inject(CareerService);
+  private readonly planService = inject(PlanService);
+  private readonly router = inject(Router);
 
   searchQuery = '';
   catalog: WorkshopEntry[] = [...DEFAULT_CATALOG];

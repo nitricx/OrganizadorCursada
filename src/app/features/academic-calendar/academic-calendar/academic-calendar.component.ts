@@ -119,7 +119,9 @@ export class AcademicCalendarComponent {
       }
 
       if (!id && plans.length > 0) {
-        void this.router.navigateByUrl(`/academicCalendar/plan/${plans[0].id}`, { replaceUrl: true });
+        void this.router.navigateByUrl(`/academicCalendar/plan/${plans[0].id}`, {
+          replaceUrl: true,
+        });
         return;
       }
       if (id) {
@@ -131,7 +133,9 @@ export class AcademicCalendarComponent {
           const stored = this.planService.getSemesterList(id);
           if (stored.length === 0) {
             const courses: Course[] = this.courseService.getCoursesForPlan(id);
-            const yearsFromCourses = Array.from(new Set(courses.map((c) => c.year))).sort((a, b) => a - b);
+            const yearsFromCourses = Array.from(new Set(courses.map((c) => c.year))).sort(
+              (a, b) => a - b,
+            );
             const years = yearsFromCourses.length > 0 ? yearsFromCourses : [1, 2, 3, 4, 5];
             const startingYear = this.planService.getStartingYear(id);
             const base = years.flatMap((year) => [
@@ -154,7 +158,6 @@ export class AcademicCalendarComponent {
       }
     });
   }
-
 
   semesterList = computed(() => {
     const id = this.currentRouteId();
@@ -199,12 +202,12 @@ export class AcademicCalendarComponent {
     let yearValue: number;
     if (year instanceof Event) {
       const target = year.target as HTMLInputElement;
-      yearValue = parseInt(target.value, 10);
+      yearValue = Number.parseInt(target.value, 10);
     } else {
       yearValue = year;
     }
     const planId = this.currentRouteId();
-    if (planId && !isNaN(yearValue)) {
+    if (planId && !Number.isNaN(yearValue)) {
       this.planService.setStartingYear(planId, yearValue);
     }
   }
@@ -365,7 +368,10 @@ export class AcademicCalendarComponent {
     this.toastService.info('Calendario local eliminado');
 
     const remaining = this.planService.plans();
-    const fallback = remaining.length > 0 ? `/academicCalendar/plan/${remaining[0].id}` : '/academicCalendar/plan/1';
+    const fallback =
+      remaining.length > 0
+        ? `/academicCalendar/plan/${remaining[0].id}`
+        : '/academicCalendar/plan/1';
     void this.router.navigateByUrl(fallback);
   }
 
@@ -382,7 +388,7 @@ export class AcademicCalendarComponent {
     const existingIds = this.planService
       .plans()
       .map((p) => Number(p.id))
-      .filter((n) => !isNaN(n));
+      .filter((n) => !Number.isNaN(n));
     const nextId = existingIds.length > 0 ? Math.max(...existingIds) + 1 : 1;
     const labelNumber = this.planService.plans().length;
     const newPlanId = nextId.toString();
@@ -407,4 +413,3 @@ export class AcademicCalendarComponent {
     return plan.label || `Calendario ${plan.id}`;
   }
 }
-

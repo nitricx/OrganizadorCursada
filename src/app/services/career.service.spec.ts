@@ -9,7 +9,11 @@ describe('CareerService', () => {
 
   beforeEach(() => {
     try {
-      if (typeof localStorage !== 'undefined' && localStorage && typeof localStorage.clear === 'function') {
+      if (
+        typeof localStorage !== 'undefined' &&
+        localStorage &&
+        typeof localStorage.clear === 'function'
+      ) {
         localStorage.clear();
       }
     } catch {}
@@ -27,7 +31,11 @@ describe('CareerService', () => {
 
   afterEach(() => {
     try {
-      if (typeof localStorage !== 'undefined' && localStorage && typeof localStorage.clear === 'function') {
+      if (
+        typeof localStorage !== 'undefined' &&
+        localStorage &&
+        typeof localStorage.clear === 'function'
+      ) {
         localStorage.clear();
       }
     } catch {}
@@ -36,7 +44,6 @@ describe('CareerService', () => {
     openReqs.forEach((req) => req.error(new ProgressEvent('error')));
     httpMock.verify();
   });
-
 
   it('should be created', () => {
     expect(service).toBeTruthy();
@@ -81,8 +88,6 @@ describe('CareerService', () => {
     ).toBe(false); // invalid course id
   });
 
-
-
   it('should remove a career and switch selected career to remaining career', () => {
     service.addCareerFromManifest({ id: 'c1', name: 'Carrera 1', courses: [] });
     service.addCareerFromManifest({ id: 'c2', name: 'Carrera 2', courses: [] });
@@ -99,7 +104,7 @@ describe('CareerService', () => {
     const initialCareers = [...service.careers()];
     initialCareers.forEach((c) => service.removeCareer(c.id));
 
-    expect(service.careers().length).toBe(0);
+    expect(service.careers()).toHaveLength(0);
     expect(service.selectedCareerId()).toBe('');
     expect(service.activeCareer().id).toBe('empty-plan');
   });

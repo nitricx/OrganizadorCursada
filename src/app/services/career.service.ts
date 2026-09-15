@@ -1,6 +1,11 @@
 import { Injectable, inject, signal, Injector } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { CareerIndexEntry, CareerPlan, RawCourseData, EMPTY_CAREER_PLAN } from '../models/career.model';
+import {
+  CareerIndexEntry,
+  CareerPlan,
+  RawCourseData,
+  EMPTY_CAREER_PLAN,
+} from '../models/career.model';
 import { AwsSyncService } from './aws-sync.service';
 
 import sistemasPlan from '../../../scripts/seed-data/sistemas.json';
@@ -12,8 +17,8 @@ import { PlanService } from './plan.service';
   providedIn: 'root',
 })
 export class CareerService {
-  private awsSyncService = inject(AwsSyncService, { optional: true });
-  private injector = inject(Injector, { optional: true });
+  private readonly awsSyncService = inject(AwsSyncService, { optional: true });
+  private readonly injector = inject(Injector, { optional: true });
 
   private getPlanService(): PlanService | null {
     try {
@@ -147,7 +152,7 @@ export class CareerService {
   private async fetchRemoteIndex(): Promise<void> {
     const removed = new Set(this.loadRemovedCareerIds());
     const map = new Map<string, CareerIndexEntry>();
-    
+
     const custom = this.loadCustomIndex();
     custom.forEach((c) => {
       if (!removed.has(c.id)) map.set(c.id, c);
@@ -206,22 +211,38 @@ export class CareerService {
     const university = manifest.university || 'Universidad';
 
     const rawCourses: RawCourseData[] = (manifest.courses || []).map((c: any, index: number) => {
-      const numericId = typeof c.id === 'number' ? c.id : (parseInt(c.id, 10) || index + 1);
+      const numericId = typeof c.id === 'number' ? c.id : Number.parseInt(c.id, 10) || index + 1;
 
       let cursarReqId: number[] = Array.isArray(c.cursarReqId) ? c.cursarReqId : [];
       if (!cursarReqId.length && Array.isArray(c.cursarReq)) {
-        cursarReqId = c.cursarReq.map((reqStr: string) => {
-          const match = manifest.courses.find((other: any) => other.name === reqStr || String(other.id) === reqStr);
-          return match ? (typeof match.id === 'number' ? match.id : (parseInt(match.id, 10) || null)) : null;
-        }).filter((id: any) => id !== null && !isNaN(id));
+        cursarReqId = c.cursarReq
+          .map((reqStr: string) => {
+            const match = manifest.courses.find(
+              (other: any) => other.name === reqStr || String(other.id) === reqStr,
+            );
+            return match
+              ? typeof match.id === 'number'
+                ? match.id
+                : Number.parseInt(match.id, 10) || null
+              : null;
+          })
+          .filter((id: any) => id !== null && !Number.isNaN(id));
       }
 
       let aprobarReqId: number[] = Array.isArray(c.aprobarReqId) ? c.aprobarReqId : [];
       if (!aprobarReqId.length && Array.isArray(c.aprobarReq)) {
-        aprobarReqId = c.aprobarReq.map((reqStr: string) => {
-          const match = manifest.courses.find((other: any) => other.name === reqStr || String(other.id) === reqStr);
-          return match ? (typeof match.id === 'number' ? match.id : (parseInt(match.id, 10) || null)) : null;
-        }).filter((id: any) => id !== null && !isNaN(id));
+        aprobarReqId = c.aprobarReq
+          .map((reqStr: string) => {
+            const match = manifest.courses.find(
+              (other: any) => other.name === reqStr || String(other.id) === reqStr,
+            );
+            return match
+              ? typeof match.id === 'number'
+                ? match.id
+                : Number.parseInt(match.id, 10) || null
+              : null;
+          })
+          .filter((id: any) => id !== null && !Number.isNaN(id));
       }
 
       return {
@@ -231,7 +252,7 @@ export class CareerService {
         q: c.q || 3,
         cursarReqId,
         aprobarReqId,
-        lessons: Array.isArray(c.lessons) ? c.lessons : []
+        lessons: Array.isArray(c.lessons) ? c.lessons : [],
       };
     });
 
@@ -240,7 +261,7 @@ export class CareerService {
       name,
       university,
       version: manifest.version || '1.0.0',
-      courses: rawCourses
+      courses: rawCourses,
     };
 
     this.unmarkCareerAsRemoved(planId);
@@ -251,7 +272,7 @@ export class CareerService {
     const newEntry: CareerIndexEntry = {
       id: planId,
       name,
-      university
+      university,
     };
 
     const customIndex = this.loadCustomIndex();
@@ -279,7 +300,7 @@ export class CareerService {
       faculty: plan.faculty,
       version: plan.version || '1.0.0',
       courses: (plan.courses || []).map((c, idx) => ({
-        id: typeof c.id === 'number' && !isNaN(c.id) ? c.id : idx + 1,
+        id: typeof c.id === 'number' && !Number.isNaN(c.id) ? c.id : idx + 1,
         name: c.name?.trim() || `Course ${idx + 1}`,
         year: c.year || 1,
         q: c.q || 1,
@@ -360,7 +381,6 @@ export class CareerService {
     this.isLoadingSignal.set(false);
   }
 
-
   validateCareerPlan(data: any): data is CareerPlan {
     if (!data || typeof data !== 'object') return false;
     if (typeof data.id !== 'string' || !data.id.trim()) return false;
@@ -370,17 +390,17 @@ export class CareerService {
     return data.courses.every(
       (c: any) =>
         typeof c.id === 'number' &&
-        !isNaN(c.id) &&
+        !Number.isNaN(c.id) &&
         typeof c.name === 'string' &&
         c.name.trim() !== '' &&
         typeof c.year === 'number' &&
-        !isNaN(c.year) &&
+        !Number.isNaN(c.year) &&
         typeof c.q === 'number' &&
-        !isNaN(c.q) &&
+        !Number.isNaN(c.q) &&
         Array.isArray(c.cursarReqId) &&
-        c.cursarReqId.every((id: any) => typeof id === 'number' && !isNaN(id)) &&
+        c.cursarReqId.every((id: any) => typeof id === 'number' && !Number.isNaN(id)) &&
         Array.isArray(c.aprobarReqId) &&
-        c.aprobarReqId.every((id: any) => typeof id === 'number' && !isNaN(id)) &&
+        c.aprobarReqId.every((id: any) => typeof id === 'number' && !Number.isNaN(id)) &&
         Array.isArray(c.lessons),
     );
   }

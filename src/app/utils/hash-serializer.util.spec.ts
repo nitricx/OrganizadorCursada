@@ -8,8 +8,8 @@ describe('hash-serializer.util', () => {
     university: 'UNRN',
     version: '1.0.0',
     courses: [
-      { id: 'c1', name: 'Producción Audiovisual 1', year: 1, q: 1, cursarReq: [], aprobarReq: [] }
-    ]
+      { id: 'c1', name: 'Producción Audiovisual 1', year: 1, q: 1, cursarReq: [], aprobarReq: [] },
+    ],
   };
 
   it('should encode and decode PlanManifest cleanly through base64 URL hash', () => {
@@ -19,7 +19,7 @@ describe('hash-serializer.util', () => {
 
     const decoded = decodePlanFromUrlHash(encoded);
     expect(decoded.name).toBe('Diseño Audiovisual');
-    expect(decoded.courses.length).toBe(1);
+    expect(decoded.courses).toHaveLength(1);
     expect(decoded.courses[0].name).toBe('Producción Audiovisual 1');
   });
 });

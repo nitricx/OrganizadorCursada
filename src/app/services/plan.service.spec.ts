@@ -36,13 +36,13 @@ describe('PlanService', () => {
 
   it('should initialize with clean canvas (empty plans) for new user', () => {
     const plans = service.plans();
-    expect(plans.length).toBe(0);
+    expect(plans).toHaveLength(0);
   });
 
   it('should add a plan reactively', () => {
     service.addPlan({ id: '1', label: 'Plan de estudio 1' });
     const plans = service.plans();
-    expect(plans.length).toBe(1);
+    expect(plans).toHaveLength(1);
     expect(plans.find((p) => p.id === '1')?.label).toBe('Plan de estudio 1');
   });
 
@@ -105,7 +105,7 @@ describe('PlanService', () => {
     service.setSemesterList('2', [{ id: 'Y1Q1', courseYear: 1, courseQ: 1 }]);
     service.setStartingYear('2', 2024);
 
-    expect(service.getSemesterList('2').length).toBe(1);
+    expect(service.getSemesterList('2')).toHaveLength(1);
     expect(service.getStartingYear('2')).toBe(2024);
 
     service.deletePlan('2');
@@ -122,10 +122,10 @@ describe('PlanService', () => {
 
   it('should reset state to new user', () => {
     service.addPlan({ id: '1', label: 'Plan 1' });
-    expect(service.plans().length).toBe(1);
+    expect(service.plans()).toHaveLength(1);
 
     service.resetToNewUser();
-    expect(service.plans().length).toBe(0);
+    expect(service.plans()).toHaveLength(0);
   });
 
   it('should compute default semester dates for Q1 and Q2', () => {
@@ -149,4 +149,3 @@ describe('PlanService', () => {
     expect(newService.plans()).toEqual([]);
   });
 });
-

@@ -21,13 +21,13 @@ describe('PlanLinterService (Exhaustive Test Suite)', () => {
         { id: 'c1', name: 'Course 1', year: 1, q: 1, cursarReq: [], aprobarReq: [] },
         { id: 'c2', name: 'Course 2', year: 1, q: 2, cursarReq: ['c1'], aprobarReq: [] },
         { id: 'c3', name: 'Course 3', year: 1, q: 2, cursarReq: ['c1'], aprobarReq: [] },
-        { id: 'c4', name: 'Course 4', year: 2, q: 1, cursarReq: ['c2', 'c3'], aprobarReq: [] }
-      ]
+        { id: 'c4', name: 'Course 4', year: 2, q: 1, cursarReq: ['c2', 'c3'], aprobarReq: [] },
+      ],
     };
 
     const res = service.lintPlanManifest(validManifest);
     expect(res.valid).toBe(true);
-    expect(res.errors.length).toBe(0);
+    expect(res.errors).toHaveLength(0);
   });
 
   it('should detect 2-node circular prerequisite dependencies (A -> B -> A)', () => {
@@ -38,13 +38,13 @@ describe('PlanLinterService (Exhaustive Test Suite)', () => {
       version: '1.0.0',
       courses: [
         { id: 'c1', name: 'Course 1', year: 1, q: 1, cursarReq: ['c2'], aprobarReq: [] },
-        { id: 'c2', name: 'Course 2', year: 1, q: 2, cursarReq: ['c1'], aprobarReq: [] }
-      ]
+        { id: 'c2', name: 'Course 2', year: 1, q: 2, cursarReq: ['c1'], aprobarReq: [] },
+      ],
     };
 
     const res = service.lintPlanManifest(cyclicManifest);
     expect(res.valid).toBe(false);
-    expect(res.errors.some(e => e.includes('circular'))).toBe(true);
+    expect(res.errors.some((e) => e.includes('circular'))).toBe(true);
   });
 
   it('should detect 3-node circular prerequisite dependencies (A -> B -> C -> A)', () => {
@@ -56,13 +56,13 @@ describe('PlanLinterService (Exhaustive Test Suite)', () => {
       courses: [
         { id: 'c1', name: 'Course 1', year: 1, q: 1, cursarReq: ['c3'], aprobarReq: [] },
         { id: 'c2', name: 'Course 2', year: 1, q: 2, cursarReq: ['c1'], aprobarReq: [] },
-        { id: 'c3', name: 'Course 3', year: 2, q: 1, cursarReq: ['c2'], aprobarReq: [] }
-      ]
+        { id: 'c3', name: 'Course 3', year: 2, q: 1, cursarReq: ['c2'], aprobarReq: [] },
+      ],
     };
 
     const res = service.lintPlanManifest(cyclicManifest);
     expect(res.valid).toBe(false);
-    expect(res.errors.some(e => e.includes('circular'))).toBe(true);
+    expect(res.errors.some((e) => e.includes('circular'))).toBe(true);
   });
 
   it('should detect dangling prerequisite references to non-existent courses', () => {
@@ -72,13 +72,13 @@ describe('PlanLinterService (Exhaustive Test Suite)', () => {
       university: 'UNSAM',
       version: '1.0.0',
       courses: [
-        { id: 'c1', name: 'Course 1', year: 1, q: 1, cursarReq: ['c_ghost'], aprobarReq: [] }
-      ]
+        { id: 'c1', name: 'Course 1', year: 1, q: 1, cursarReq: ['c_ghost'], aprobarReq: [] },
+      ],
     };
 
     const res = service.lintPlanManifest(danglingManifest);
     expect(res.valid).toBe(false);
-    expect(res.errors.some(e => e.includes('inexistente'))).toBe(true);
+    expect(res.errors.some((e) => e.includes('inexistente'))).toBe(true);
   });
 
   it('should reject plans exceeding maximum course bounds (> 200 courses) or max years (> 15 years)', () => {
@@ -88,7 +88,7 @@ describe('PlanLinterService (Exhaustive Test Suite)', () => {
       year: 20, // 20 years exceeds max 15 years limit
       q: 1,
       cursarReq: [],
-      aprobarReq: []
+      aprobarReq: [],
     }));
 
     const hugeManifest: PlanManifest = {
@@ -96,30 +96,30 @@ describe('PlanLinterService (Exhaustive Test Suite)', () => {
       name: 'Plan Excesivo',
       university: 'UNSAM',
       version: '1.0.0',
-      courses: hugeCourses
+      courses: hugeCourses,
     };
 
     const res = service.lintPlanManifest(hugeManifest);
     expect(res.valid).toBe(false);
-    expect(res.errors.some(e => e.includes('límite máximo'))).toBe(true);
-    expect(res.errors.some(e => e.includes('límite razonable de años'))).toBe(true);
+    expect(res.errors.some((e) => e.includes('límite máximo'))).toBe(true);
+    expect(res.errors.some((e) => e.includes('límite razonable de años'))).toBe(true);
   });
 
   it('should validate raw course data arrays using lintRawCourses', () => {
     const validRawCourses = [
       { id: 1, name: 'Course 1', cursarReqId: [], aprobarReqId: [] },
       { id: 2, name: 'Course 2', cursarReqId: [1], aprobarReqId: [] },
-      { id: 3, name: 'Course 3', cursarReqId: [2], aprobarReqId: [] }
+      { id: 3, name: 'Course 3', cursarReqId: [2], aprobarReqId: [] },
     ];
     expect(service.lintRawCourses(validRawCourses).valid).toBe(true);
 
     const cyclicRawCourses = [
       { id: 1, name: 'Course 1', cursarReqId: [3], aprobarReqId: [] },
       { id: 2, name: 'Course 2', cursarReqId: [1], aprobarReqId: [] },
-      { id: 3, name: 'Course 3', cursarReqId: [2], aprobarReqId: [] }
+      { id: 3, name: 'Course 3', cursarReqId: [2], aprobarReqId: [] },
     ];
     const cyclicRes = service.lintRawCourses(cyclicRawCourses);
     expect(cyclicRes.valid).toBe(false);
-    expect(cyclicRes.errors.some(e => e.includes('circular'))).toBe(true);
+    expect(cyclicRes.errors.some((e) => e.includes('circular'))).toBe(true);
   });
 });

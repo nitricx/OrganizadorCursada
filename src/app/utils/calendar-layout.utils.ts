@@ -159,7 +159,7 @@ export function calculateStartHour(courses: Course[], readOnly: boolean): number
       if (readOnly && lesson.status !== 'coursing') {
         return courseMin;
       }
-      const lessonStartHour = parseInt(lesson.startTime.split(':')[0], 10);
+      const lessonStartHour = Number.parseInt(lesson.startTime.split(':')[0], 10);
       return lessonStartHour < courseMin ? lessonStartHour : courseMin;
     }, 24);
     return minCourseTime < min ? minCourseTime : min;
@@ -179,7 +179,7 @@ export function calculateEndHour(courses: Course[], readOnly: boolean): number {
       if (readOnly && lesson.status !== 'coursing') {
         return courseMax;
       }
-      const lessonEndHour = parseInt(lesson.endTime.split(':')[0], 10);
+      const lessonEndHour = Number.parseInt(lesson.endTime.split(':')[0], 10);
       return lessonEndHour > courseMax ? lessonEndHour : courseMax;
     }, 0);
     return maxCourseTime > max ? maxCourseTime : max;
