@@ -5,11 +5,6 @@
 }
 
 .page-header {
-  background: var(--color-background-primary);
-  border: 1px solid var(--color-border-tertiary);
-  border-radius: var(--radius-lg);
-  padding: 20px;
-  box-shadow: var(--shadow-sm);
   margin-bottom: 8px;
 }
 
@@ -19,17 +14,7 @@
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 12px;
-  margin-bottom: 12px;
-}
-
-.page-header h1 {
-  margin: 0;
-  font-size: 22px;
-  font-weight: 700;
-  color: var(--color-text-primary);
-  display: flex;
-  align-items: center;
-  gap: 12px;
+  width: 100%;
 }
 
 .btn-export-trigger {
@@ -58,16 +43,6 @@
   font-size: 18px;
   width: 18px;
   height: 18px;
-}
-
-.page-header h1 mat-icon {
-  cursor: pointer;
-  color: var(--color-text-secondary);
-  transition: color var(--transition-fast);
-}
-
-.page-header h1 mat-icon:hover {
-  color: var(--brand-primary);
 }
 
 .editable-title {

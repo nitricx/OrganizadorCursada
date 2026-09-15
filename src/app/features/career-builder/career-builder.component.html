@@ -1,6 +1,6 @@
 <div class="app-page-wrap">
   <!-- Header Bar -->
-  <header class="builder-header app-header-bar">
+  <header class="builder-header app-header-bar app-page-header">
     <div class="header-main-info">
       <div class="header-title-row">
         <button
@@ -11,7 +11,7 @@
         >
           <mat-icon>arrow_back</mat-icon>
         </button>
-        <h1 class="page-title">
+        <h1 class="page-title app-page-title">
           {{ isEditingPlan() ? 'Editar Plan de Estudio' : 'Diseñador de Carrera' }}
         </h1>
         @if (isEditingPlan()) {
