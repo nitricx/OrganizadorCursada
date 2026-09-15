@@ -1,5 +1,5 @@
 ---
-name: desarrollador
+name: developer
 description: Engineering methodology and architectural patterns for software developers working on OrganizadorCursada. Trigger when implementing features, fixing bugs, refactoring domain logic, writing services, or building components. Triggers: desarrollador, developer, software engineer, implement, feature, refactor, bugfix, backend logic, frontend logic, service, unit test.
 ---
 

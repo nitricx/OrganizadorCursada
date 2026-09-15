@@ -45,7 +45,7 @@
     <div class="header-actions">
       <!-- Hover Legend matching /home -->
       <div class="hover-legend">
-        <span class="legend-title">🖱️ AL PASAR EL CURSOR:</span>
+        <span class="legend-title">AL PASAR EL CURSOR:</span>
         <span class="legend-badge req-badge app-badge">
           <span class="badge-dot req-dot"></span> Requisito
         </span>
@@ -321,13 +321,13 @@
                     <div class="materia-req-chips">
                       @for (reqId of courseObj.cursarReqId; track reqId) {
                         <span class="req-chip cursar" matTooltip="Requisito de Cursada">
-                          📘 {{ getCourseNameById(reqId) }}
+                          [Cursar] {{ getCourseNameById(reqId) }}
                           <button
                             class="chip-del"
                             type="button"
                             (click)="removePrerequisite(courseObj.id, reqId, 'cursar', $event)"
                           >
-                            ✕
+                            &times;
                           </button>
                         </span>
                       }
@@ -336,13 +336,13 @@
                           class="req-chip aprobar"
                           matTooltip="Requisito de Examen Final / Aprobación"
                         >
-                          🟢 {{ getCourseNameById(reqId) }}
+                          [Aprobar] {{ getCourseNameById(reqId) }}
                           <button
                             class="chip-del"
                             type="button"
                             (click)="removePrerequisite(courseObj.id, reqId, 'aprobar', $event)"
                           >
-                            ✕
+                            &times;
                           </button>
                         </span>
                       }
@@ -367,7 +367,8 @@
                               : 'Es requisito de aprobación'
                           "
                         >
-                          {{ item.type === 'cursar' ? '📘' : '🟢' }} {{ item.course.name }}
+                          {{ item.type === 'cursar' ? '[Cursar]' : '[Aprobar]' }}
+                          {{ item.course.name }}
                           <button
                             class="chip-del"
                             type="button"
@@ -375,7 +376,7 @@
                               removePrerequisite(item.course.id, courseObj.id, item.type, $event)
                             "
                           >
-                            ✕
+                            &times;
                           </button>
                         </span>
                       }

@@ -1,48 +1,64 @@
 #!/usr/bin/env node
 /**
  * gitflow_helper.js
- * Automatización determinística de ramas y commits para la persona GitFlow:
- * - branch <TICK-ID>: Sincroniza develop y crea la rama feature/<TICK-ID>-<nombre>.
- * - commit <TICK-ID>: Verifica que el ticket esté en QA_VERIFIED y genera commit convencional.
+ * Deterministic branch and commit automation for the GitFlow persona:
+ * - branch <ISSUE-ID>: Syncs develop and creates feature/<ISSUE-ID>-<slug> branch.
+ * - commit <ISSUE-ID>: Verifies issue is QA_VERIFIED and generates conventional commit.
+ * - pr <ISSUE-ID>: Opens Pull Request targeting develop.
  */
 const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
-const TICKETS_DIR = path.resolve(__dirname, '../tickets');
+const LABEL_STATUS_MAP = {
+  'status:draft': 'DRAFT',
+  'status:ready-for-dev': 'READY_FOR_DEV',
+  'status:in-development': 'IN_DEVELOPMENT',
+  'status:ready-for-qa': 'READY_FOR_QA',
+  'status:qa-verified': 'QA_VERIFIED',
+  'status:rejected': 'REJECTED',
+};
 
 function runGit(cmd) {
   try {
     return execSync(cmd, { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'pipe'] }).trim();
   } catch (err) {
     const errorMsg = err.stderr ? err.stderr.toString() : err.message;
-    throw new Error(`Fallo comando git '${cmd}': ${errorMsg}`);
+    throw new Error(`Git command '${cmd}' failed: ${errorMsg}`);
   }
 }
 
 function findTicket(ticketId) {
-  if (!fs.existsSync(TICKETS_DIR)) return null;
-  const files = fs.readdirSync(TICKETS_DIR);
-  const normalized = ticketId.toUpperCase().trim();
+  if (!ticketId) return null;
+  const num = ticketId.replace('#', '').replace(/TICK-/i, '').trim();
+  try {
+    const raw = execSync(`gh issue view ${num} --json title,labels,state`, {
+      encoding: 'utf-8',
+      stdio: ['pipe', 'pipe', 'pipe'],
+    }).trim();
+    const issue = JSON.parse(raw);
 
-  for (const file of files) {
-    if (file.toUpperCase().startsWith(normalized)) {
-      const fullPath = path.join(TICKETS_DIR, file);
-      const content = fs.readFileSync(fullPath, 'utf-8');
-
-      const titleMatch = content.match(/^#\s+\[[^\]]+\]:\s*([^\n]+)/m);
-      const statusMatch = content.match(/- \*\*Estado Actual\*\*:\s*`([^`]+)`/);
-
-      return {
-        fileName: file,
-        fullPath,
-        content,
-        title: titleMatch ? titleMatch[1].trim() : file.replace('.md', ''),
-        status: statusMatch ? statusMatch[1].trim().toUpperCase() : 'UNKNOWN',
-      };
+    let status = 'UNKNOWN';
+    if (issue.state === 'CLOSED') {
+      status = 'CLOSED';
+    } else if (Array.isArray(issue.labels)) {
+      for (const l of issue.labels) {
+        if (LABEL_STATUS_MAP[l.name]) {
+          status = LABEL_STATUS_MAP[l.name];
+          break;
+        }
+      }
     }
+
+    return {
+      issueNumber: num,
+      title: issue.title || `Issue #${num}`,
+      status,
+      state: issue.state,
+    };
+  } catch {
+    return null;
   }
-  return null;
 }
 
 function toSlug(str) {
@@ -57,111 +73,101 @@ function toSlug(str) {
 
 function createBranch(ticketId) {
   if (!ticketId) {
-    console.error('❌ Error: Debes especificar el ID del ticket.');
-    console.error('Usage: node gitflow_helper.js branch <TICK-ID>');
+    console.error('[ERROR] You must specify the ticket/issue ID.');
     process.exit(1);
   }
 
   const ticket = findTicket(ticketId);
   if (!ticket) {
-    console.error(`❌ Error: No se encontró el ticket ${ticketId} en ${TICKETS_DIR}`);
+    console.error(`[ERROR] Issue #${ticketId} not found in GitHub Issues.`);
     process.exit(1);
   }
 
   const branchName = `feature/${ticketId.toUpperCase()}-${toSlug(ticket.title)}`;
 
-  console.log(`🌿 Preparando rama GitFlow para: ${ticket.title}`);
   try {
-    // Intentar checkout a develop
     try {
       runGit('git checkout develop');
       try {
         runGit('git pull origin develop');
       } catch {
-        console.log(
-          '  ℹ️ No se pudo hacer git pull de develop (modo local o sin upstream). Continuando...',
-        );
+        // Quiet fallback when local or no upstream
       }
     } catch {
-      console.log('  ℹ️ Rama develop no encontrada, creando desde rama actual.');
+      // Quiet fallback when develop branch absent
     }
 
     runGit(`git checkout -b ${branchName}`);
-    console.log(`✅ Rama creada y activa: ${branchName}`);
+    console.log(`[SUCCESS] Branch active: ${branchName}`);
   } catch (err) {
-    console.error(`❌ Error al crear la rama: ${err.message}`);
+    console.error(`[ERROR] Creating branch: ${err.message}`);
     process.exit(1);
   }
 }
 
 function makeCommit(ticketId) {
   if (!ticketId) {
-    console.error('❌ Error: Debes especificar el ID del ticket.');
-    console.error('Usage: node gitflow_helper.js commit <TICK-ID>');
+    console.error('[ERROR] You must specify the ticket/issue ID.');
     process.exit(1);
   }
 
   const ticket = findTicket(ticketId);
   if (!ticket) {
-    console.error(`❌ Error: No se encontró el ticket ${ticketId} en ${TICKETS_DIR}`);
+    console.error(`[ERROR] Issue #${ticketId} not found in GitHub Issues.`);
     process.exit(1);
   }
 
-  // Guardrail estricto: no commitear sin QA_VERIFIED
   if (ticket.status !== 'QA_VERIFIED') {
     console.error(
-      `🚫 GUARDRAIL ACTIVADO: El ticket ${ticketId} está en estado '${ticket.status}'.`,
+      `[GUARDRAIL] Issue #${ticketId} status is '${ticket.status}' (requires QA_VERIFIED).`,
     );
-    console.error('Solo los tickets con estado QA_VERIFIED pueden ser integrados por GitFlow.');
     process.exit(1);
   }
 
   const commitMsg = `feat(${ticketId.toUpperCase()}): ${ticket.title}`;
-  console.log(`📦 Creando Conventional Commit: "${commitMsg}"`);
 
   try {
     const status = runGit('git status --porcelain');
     if (!status) {
-      console.log('ℹ️ No hay cambios pendientes en el árbol de trabajo para commitear.');
+      console.log('[INFO] Working tree clean. Nothing to commit.');
       return;
     }
 
     runGit('git add -A');
     runGit(`git commit -m "${commitMsg}"`);
-    console.log(`✅ Commit generado con éxito.`);
+    console.log(`[SUCCESS] Commit created: "${commitMsg}"`);
   } catch (err) {
-    console.error(`❌ Error al crear el commit: ${err.message}`);
+    console.error(`[ERROR] Creating commit: ${err.message}`);
     process.exit(1);
   }
 }
 
 function createPR(ticketId) {
   if (!ticketId) {
-    console.error('❌ Error: Debes especificar el ID del ticket.');
+    console.error('[ERROR] You must specify the ticket/issue ID.');
     process.exit(1);
   }
 
   const ticket = findTicket(ticketId);
   if (!ticket) {
-    console.error(`❌ Error: No se encontró el ticket ${ticketId}`);
+    console.error(`[ERROR] Issue #${ticketId} not found in GitHub Issues.`);
     process.exit(1);
   }
 
   if (ticket.status !== 'QA_VERIFIED') {
-    console.error(`🚫 GUARDRAIL ACTIVADO: El ticket ${ticketId} debe estar en QA_VERIFIED para abrir un PR.`);
+    console.error(
+      `[GUARDRAIL] Issue #${ticketId} status is '${ticket.status}' (requires QA_VERIFIED).`,
+    );
     process.exit(1);
   }
 
-  const currentBranch = runGit('git branch --show-current');
-  console.log(`🚀 Creando Pull Request desde '${currentBranch}' hacia 'develop'...`);
-
   try {
     const title = `feat(${ticketId.toUpperCase()}): ${ticket.title}`;
-    const body = `## Ticket: ${ticketId}\n\n${ticket.title}\n\nCertificado por QA (\`QA_VERIFIED\`).`;
+    const body = `## Issue #${ticketId}\n\n${ticket.title}\n\nCertified by QA (\`QA_VERIFIED\`).`;
     const prUrl = runGit(`gh pr create --base develop --title "${title}" --body "${body}"`);
-    console.log(`✅ Pull Request creado exitosamente: ${prUrl}`);
+    console.log(`[SUCCESS] PR created: ${prUrl}`);
   } catch (err) {
-    console.error(`⚠️ No se pudo crear el PR automáticamente vía 'gh': ${err.message}`);
+    console.error(`[ERROR] Creating PR: ${err.message}`);
   }
 }
 
@@ -179,10 +185,6 @@ switch (command) {
     createPR(args[1]);
     break;
   default:
-    console.log('📖 Ayudante de GitFlow para OrganizadorCursada');
-    console.log('Comandos:');
-    console.log('  node gitflow_helper.js branch <TICK-ID>');
-    console.log('  node gitflow_helper.js commit <TICK-ID>');
-    console.log('  node gitflow_helper.js pr <TICK-ID>');
+    console.log('Usage: node gitflow_helper.js <branch|commit|pr> <ISSUE-ID>');
     process.exit(0);
 }

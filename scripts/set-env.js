@@ -18,4 +18,4 @@ const envConfigFile = `export const environment = {
 `;
 
 fs.writeFileSync(targetPath, envConfigFile, { encoding: 'utf8' });
-console.log(`[set-env] Archivo environment.prod.ts generado correctamente para AWS.`);
+console.log(`[set-env] File environment.prod.ts generated successfully for AWS.`);
