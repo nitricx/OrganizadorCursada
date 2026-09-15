@@ -2,8 +2,6 @@ import { Component, output, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
 import { PlanManifest } from '../../../models/plan-manifest.model';
 import { ToastService } from '../../../services/toast.service';
 import { normalizeString } from '../../../utils/string.utils';
@@ -51,7 +49,7 @@ const DEFAULT_CATALOG: WorkshopEntry[] = [
 @Component({
   selector: 'app-workshop-hub',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, MatButtonModule, MatIconModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './workshop-hub.component.html',
   styleUrl: './workshop-hub.component.css',
 })
@@ -117,11 +115,6 @@ export class WorkshopHubComponent implements OnInit {
       const valB = (b[col] || '').toLowerCase();
       return valA.localeCompare(valB, 'es', { sensitivity: 'base' }) * dirMultiplier;
     });
-  }
-
-  goBack(): void {
-    this.onClose.emit();
-    this.router.navigate(['/home']);
   }
 
   subscribePlan(item: WorkshopEntry): void {

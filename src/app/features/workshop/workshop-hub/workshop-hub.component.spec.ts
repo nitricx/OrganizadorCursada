@@ -96,11 +96,8 @@ describe('WorkshopHubComponent', () => {
     expect(result[0].faculty.localeCompare(result[1].faculty, 'es')).toBeGreaterThanOrEqual(0);
   });
 
-  it('debe emitir onClose al hacer click en volver o cerrar', () => {
-    let closed = false;
-    component.onClose.subscribe(() => (closed = true));
+  it('no debe renderizar el botón de volver en el encabezado del workshop hub', () => {
     const closeBtn = fixture.nativeElement.querySelector('button[aria-label="Volver"]');
-    closeBtn.click();
-    expect(closed).toBe(true);
+    expect(closeBtn).toBeNull();
   });
 });
