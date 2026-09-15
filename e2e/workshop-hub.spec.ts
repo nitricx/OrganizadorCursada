@@ -92,4 +92,13 @@ test.describe('Hub de Planes Comunitario - Buscador y Tabla Ordenable', () => {
     await expect(page.locator('.header-title-group h1')).toHaveText('Plan de Cursada');
     await expect(page.locator('app-no-plan-selected')).not.toBeVisible();
   });
+
+  test('debe verificar que el encabezado de /publish no tiene el botón de volver', async ({ page }) => {
+    await page.goto('/publish');
+    const headerTitle = page.locator('.app-page-header .app-page-title');
+    await expect(headerTitle).toHaveText('Compartir / Publicar Plan de Estudio');
+
+    const backBtn = page.locator('header button[aria-label="Volver"]');
+    await expect(backBtn).not.toBeVisible();
+  });
 });

@@ -1,7 +1,5 @@
 import { Component, input, output, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
-import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { PlanManifest } from '../../../models/plan-manifest.model';
 import { PlanSanitizerService } from '../../../services/plan-sanitizer.service';
@@ -15,7 +13,7 @@ import { CourseService } from '../../../services/course.service';
 @Component({
   selector: 'app-plan-publisher-modal',
   standalone: true,
-  imports: [CommonModule, RouterModule, MatButtonModule, MatIconModule],
+  imports: [CommonModule, MatIconModule],
   templateUrl: './plan-publisher-modal.component.html',
   styleUrl: './plan-publisher-modal.component.css',
 })
@@ -29,7 +27,6 @@ export class PlanPublisherModalComponent implements OnInit {
   private antiSybil = inject(AntiSybilService);
   private toast = inject(ToastService);
   private courseService = inject(CourseService);
-  private router = inject(Router);
 
   sanitizedManifest?: PlanManifest;
   entropyReport?: EntropyReport;
@@ -53,11 +50,6 @@ export class PlanPublisherModalComponent implements OnInit {
     );
     this.entropyReport = this.entropyScorer.calculatePlanEntropy(this.sanitizedManifest);
     this.lintResult = this.linter.lintPlanManifest(this.sanitizedManifest);
-  }
-
-  goBack(): void {
-    this.onClose.emit();
-    this.router.navigate(['/home']);
   }
 
   copyShareLink(): void {
