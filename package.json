@@ -27,6 +27,7 @@
     "gitflow:branch": "node .agents/scripts/gitflow_helper.js branch",
     "gitflow:commit": "node .agents/scripts/gitflow_helper.js commit",
     "gitflow:pr": "node .agents/scripts/gitflow_helper.js pr",
+    "gitflow:auto-close": "node .agents/scripts/auto_close_issue.js",
     "gen:service": "node .agents/scripts/generate_service.js"
   },
   "prettier": {
