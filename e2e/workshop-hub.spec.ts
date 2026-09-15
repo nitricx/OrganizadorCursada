@@ -8,7 +8,9 @@ test.describe('Hub de Planes Comunitario - Buscador y Tabla Ordenable', () => {
     await page.reload();
   });
 
-  test('debe abrir el Hub de Planes y mostrar la tabla con los planes comunitarios', async ({ page }) => {
+  test('debe abrir el Hub de Planes y mostrar la tabla con los planes comunitarios', async ({
+    page,
+  }) => {
     await page.goto('/workshop');
 
     // Confirmar visibilidad del encabezado del Hub de Planes
@@ -43,7 +45,9 @@ test.describe('Hub de Planes Comunitario - Buscador y Tabla Ordenable', () => {
     await expect(rows).toHaveCount(2);
   });
 
-  test('debe ordenar la tabla por Nombre de Carrera (ascendente y descendente)', async ({ page }) => {
+  test('debe ordenar la tabla por Nombre de Carrera (ascendente y descendente)', async ({
+    page,
+  }) => {
     await page.goto('/workshop');
 
     const sortNameHeader = page.locator('[data-testid="sort-name"]');
@@ -55,12 +59,17 @@ test.describe('Hub de Planes Comunitario - Buscador y Tabla Ordenable', () => {
 
     // Click en encabezado Carrera -> cambia a DESC -> Licenciatura en Diseño Audiovisual
     await sortNameHeader.click();
-    const firstRowNameDesc = page.locator('[data-testid="plan-row"]').first().locator('.plan-title');
+    const firstRowNameDesc = page
+      .locator('[data-testid="plan-row"]')
+      .first()
+      .locator('.plan-title');
     await expect(firstRowNameDesc).toHaveText('Licenciatura en Diseño Audiovisual');
 
     // Volver a clickear -> cambia a ASC -> Ingeniería en Sistemas
     await sortNameHeader.click();
-    await expect(page.locator('[data-testid="plan-row"]').first().locator('.plan-title')).toHaveText('Ingeniería en Sistemas de Información');
+    await expect(
+      page.locator('[data-testid="plan-row"]').first().locator('.plan-title'),
+    ).toHaveText('Ingeniería en Sistemas de Información');
   });
 
   test('debe ordenar la tabla por Facultad (ascendente y descendente)', async ({ page }) => {
@@ -71,12 +80,18 @@ test.describe('Hub de Planes Comunitario - Buscador y Tabla Ordenable', () => {
 
     // Click en Facultad -> ASC -> "Escuela de Artes y Medios" primera
     await sortFacultyHeader.click();
-    const firstRowFacultyAsc = page.locator('[data-testid="plan-row"]').first().locator('.col-faculty');
+    const firstRowFacultyAsc = page
+      .locator('[data-testid="plan-row"]')
+      .first()
+      .locator('.col-faculty');
     await expect(firstRowFacultyAsc).toHaveText('Escuela de Artes y Medios');
 
     // Click de nuevo -> DESC -> "Facultad Regional Buenos Aires" primera
     await sortFacultyHeader.click();
-    const firstRowFacultyDesc = page.locator('[data-testid="plan-row"]').first().locator('.col-faculty');
+    const firstRowFacultyDesc = page
+      .locator('[data-testid="plan-row"]')
+      .first()
+      .locator('.col-faculty');
     await expect(firstRowFacultyDesc).toHaveText('Facultad Regional Buenos Aires');
   });
 
@@ -85,7 +100,10 @@ test.describe('Hub de Planes Comunitario - Buscador y Tabla Ordenable', () => {
 
     // Buscar "Sistemas" y suscribirse
     await page.locator('[data-testid="search-input"]').fill('Sistemas');
-    const subscribeBtn = page.locator('[data-testid="plan-row"]').first().getByRole('button', { name: /Suscribirse/i });
+    const subscribeBtn = page
+      .locator('[data-testid="plan-row"]')
+      .first()
+      .getByRole('button', { name: /Suscribirse/i });
     await subscribeBtn.click();
 
     // Se redirige a /home con la carrera cargada
@@ -93,7 +111,9 @@ test.describe('Hub de Planes Comunitario - Buscador y Tabla Ordenable', () => {
     await expect(page.locator('app-no-plan-selected')).not.toBeVisible();
   });
 
-  test('debe verificar que el encabezado de /publish no tiene el botón de volver', async ({ page }) => {
+  test('debe verificar que el encabezado de /publish no tiene el botón de volver', async ({
+    page,
+  }) => {
     await page.goto('/publish');
     const headerTitle = page.locator('.app-page-header .app-page-title');
     await expect(headerTitle).toHaveText('Compartir / Publicar Plan de Estudio');
