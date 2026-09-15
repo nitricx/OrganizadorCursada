@@ -30,10 +30,10 @@ const STATUS_LABEL_MAP = {
 };
 
 const PERSONA_LABEL_MAP = {
-  analyst: 'persona:analyst',
-  developer: 'persona:developer',
-  analista: 'persona:analyst',
-  desarrollador: 'persona:developer',
+  analyst: 'persona:analista',
+  developer: 'persona:desarrollador',
+  analista: 'persona:analista',
+  desarrollador: 'persona:desarrollador',
   qa: 'persona:qa',
   gitflow: 'persona:gitflow',
 };
