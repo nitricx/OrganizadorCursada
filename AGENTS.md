@@ -35,6 +35,7 @@ The codebase enforces a strict separation of concerns across three layers:
 > 3. **Zero Hardcoded Hexadecimal Colors**: NEVER use `#ffffff`, `#1a1a1a`, etc. in component styles or inline HTML attributes. Consume centralized CSS Design Tokens from `src/styles.css` supporting both light and dark themes (`[data-theme="dark"]`).
 > 4. **Strict Privacy Airgap**: Personal student progress data must never be transmitted across public network boundaries without prior sanitization via `PlanSanitizerService`.
 > 5. **Prohibition of Emojis**: NEVER use emojis (see [`.agents/rules/no-emojis.md`](file:///.agents/rules/no-emojis.md)).
+> 6. **Mandatory End-to-End GitFlow Execution**: When resolving an issue, the agent MUST complete the full multi-persona workflow automatically without stopping at QA. Upon verifying tests and setting status to `QA_VERIFIED`, the agent must execute `npm run gitflow:commit -- <ID>` and `npm run gitflow:pr -- <ID>` to push the branch and open the Pull Request on GitHub before completing the task.
 
 ---
 
