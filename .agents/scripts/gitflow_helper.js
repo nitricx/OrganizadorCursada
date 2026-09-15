@@ -181,16 +181,7 @@ function createPR(ticketId) {
     const body = `## Issue #${ticket.issueNumber}\n\n${ticket.title}\n\nCertified by QA (\`QA_VERIFIED\`).\n\nCloses #${ticket.issueNumber}`;
     const prUrl = runGit(`gh pr create --base develop --title "${title}" --body "${body}"`);
     console.log(`[SUCCESS] PR created: ${prUrl}`);
-
-    try {
-      execSync(
-        `node ${path.join(__dirname, 'ticket_manager.js')} status ${ticket.issueNumber} CLOSED gitflow`,
-        { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'pipe'] },
-      );
-      console.log(`[SUCCESS] Issue #${ticket.issueNumber} marked as CLOSED.`);
-    } catch (statusErr) {
-      console.warn(`[WARN] Could not update ticket status: ${statusErr.message}`);
-    }
+    console.log(`[INFO] Issue #${ticket.issueNumber} linked to PR. Will be auto-closed upon PR merge.`);
   } catch (err) {
     console.error(`[ERROR] Creating PR: ${err.message}`);
     process.exit(1);
