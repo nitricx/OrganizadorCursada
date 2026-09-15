@@ -7,10 +7,10 @@
     />
   } @else {
     @if (showHeader()) {
-      <div class="calendar-header">
+      <div class="calendar-header app-page-header">
         <div class="title-group">
-          <h1>Mi Semana</h1>
-          <h2>{{ currentDate().toLocaleDateString('es-ES', { month: 'long', year: 'numeric' }) }}</h2>
+          <h1 class="app-page-title">Mi Semana</h1>
+          <h2 class="app-page-subtitle">{{ currentDate().toLocaleDateString('es-ES', { month: 'long', year: 'numeric' }) }}</h2>
         </div>
 
         <div class="header-actions">
