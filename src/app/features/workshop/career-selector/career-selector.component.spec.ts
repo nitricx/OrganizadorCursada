@@ -24,11 +24,11 @@ describe('CareerSelectorComponent', () => {
     fixture.detectChanges();
   });
 
-  it('debe crearse correctamente', () => {
+  it('should create component successfully', () => {
     expect(component).toBeTruthy();
   });
 
-  it('debe establecer careerToDelete y cerrar el menu al llamar a confirmDeleteCareer', () => {
+  it('should set careerToDelete and close menu when calling confirmDeleteCareer', () => {
     const mockCareer: CareerIndexEntry = {
       id: 'test-career',
       name: 'Carrera de Prueba',

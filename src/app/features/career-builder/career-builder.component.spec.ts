@@ -28,23 +28,23 @@ describe('CareerBuilderComponent', () => {
     fixture.detectChanges();
   });
 
-  it('debe crearse correctamente', () => {
+  it('should create component successfully', () => {
     expect(component).toBeTruthy();
   });
 
-  it('debe vincular materias correctamente en modo vinculación (primer orden)', () => {
+  it('should link subjects correctly in linking mode (first order)', () => {
     const course1: RawCourseData = { id: 101, name: 'Course 1', year: 1, q: 1, cursarReqId: [], aprobarReqId: [], lessons: [] };
     const course2: RawCourseData = { id: 102, name: 'Course 2', year: 1, q: 2, cursarReqId: [], aprobarReqId: [], lessons: [] };
     component.courses.set([course1, course2]);
 
-    component.toggleConnectMode(); // Activa modo vinculación
+    component.toggleConnectMode(); // Activate connect mode
     expect(component.isConnectMode()).toBe(true);
 
-    // Clic en origen
+    // Source click
     component.handleCourseClick(course1);
     expect(component.connectSourceCourse()?.id).toBe(101);
 
-    // Clic en destino
+    // Destination click
     component.handleCourseClick(course2);
 
     const updated2 = component.courses().find((c) => c.id === 102);
@@ -53,7 +53,7 @@ describe('CareerBuilderComponent', () => {
     expect(component.connectSourceCourse()).toBeNull();
   });
 
-  it('no debe permitir vincular la misma materia 2 veces como correlativa', () => {
+  it('should not allow linking the same subject twice as prerequisite', () => {
     const course1: RawCourseData = { id: 101, name: 'Course 1', year: 1, q: 1, cursarReqId: [], aprobarReqId: [], lessons: [] };
     const course2: RawCourseData = { id: 102, name: 'Course 2', year: 1, q: 2, cursarReqId: [101], aprobarReqId: [], lessons: [] };
     component.courses.set([course1, course2]);
@@ -61,8 +61,8 @@ describe('CareerBuilderComponent', () => {
     const warningSpy = vi.spyOn(toastService, 'warning');
 
     component.toggleConnectMode();
-    component.handleCourseClick(course1); // Origen
-    component.handleCourseClick(course2); // Destino (ya es correlativa)
+    component.handleCourseClick(course1); // Source
+    component.handleCourseClick(course2); // Destination (already prerequisite)
 
     expect(warningSpy).toHaveBeenCalledWith('La materia "Course 1" ya es correlativa de "Course 2".');
 
@@ -71,7 +71,7 @@ describe('CareerBuilderComponent', () => {
     expect(updated2?.aprobarReqId).toEqual([]);
   });
 
-  it('debe detectar ciclo circular y rechazar la vinculación', () => {
+  it('should detect circular cycle and reject linking', () => {
     const course1: RawCourseData = { id: 101, name: 'Course 1', year: 1, q: 1, cursarReqId: [], aprobarReqId: [], lessons: [] };
     const course2: RawCourseData = { id: 102, name: 'Course 2', year: 1, q: 1, cursarReqId: [101], aprobarReqId: [], lessons: [] };
     component.courses.set([course1, course2]);
@@ -79,8 +79,8 @@ describe('CareerBuilderComponent', () => {
     const warningSpy = vi.spyOn(toastService, 'warning');
 
     component.toggleConnectMode();
-    component.handleCourseClick(course2); // Origen: 102
-    component.handleCourseClick(course1); // Destino: 101 (crearía ciclo 101 -> 102 -> 101)
+    component.handleCourseClick(course2); // Source: 102
+    component.handleCourseClick(course1); // Destination: 101 (would create cycle 101 -> 102 -> 101)
 
     expect(warningSpy).toHaveBeenCalledWith(
       'No se puede vincular "Course 2" a "Course 1" porque generaría un ciclo de dependencia circular.',
@@ -91,7 +91,7 @@ describe('CareerBuilderComponent', () => {
     expect(updated1?.aprobarReqId).toEqual([]);
   });
 
-  it('no debe permitir guardar la carrera si contiene referencias circulares', () => {
+  it('should not allow saving career plan if it contains circular references', () => {
     component.careerName.set('Carrera Circular');
     component.university.set('Universidad X');
     const course1: RawCourseData = { id: 101, name: 'Course 1', year: 1, q: 1, cursarReqId: [102], aprobarReqId: [], lessons: [] };
@@ -105,19 +105,19 @@ describe('CareerBuilderComponent', () => {
     expect(warningSpy).toHaveBeenCalledWith('Se detectó una dependencia circular de correlativas entre las materias.');
   });
 
-  it('no debe permitir vincular una materia como correlativa si está en un año o cuatrimestre posterior', () => {
-    const course1stYear: RawCourseData = { id: 101, name: 'Course 1° Año', year: 1, q: 1, cursarReqId: [], aprobarReqId: [], lessons: [] };
-    const course3rdYear: RawCourseData = { id: 103, name: 'Course 3° Año', year: 3, q: 1, cursarReqId: [], aprobarReqId: [], lessons: [] };
+  it('should not allow linking a subject as prerequisite if it is in a later year or semester', () => {
+    const course1stYear: RawCourseData = { id: 101, name: 'Course 1st Year', year: 1, q: 1, cursarReqId: [], aprobarReqId: [], lessons: [] };
+    const course3rdYear: RawCourseData = { id: 103, name: 'Course 3rd Year', year: 3, q: 1, cursarReqId: [], aprobarReqId: [], lessons: [] };
     component.courses.set([course1stYear, course3rdYear]);
 
     const warningSpy = vi.spyOn(toastService, 'warning');
 
     component.toggleConnectMode();
-    component.handleCourseClick(course3rdYear); // Origen (3° Año)
-    component.handleCourseClick(course1stYear); // Destino (1° Año)
+    component.handleCourseClick(course3rdYear); // Source (3rd Year)
+    component.handleCourseClick(course1stYear); // Destination (1st Year)
 
     expect(warningSpy).toHaveBeenCalledWith(
-      'No se puede vincular "Course 3° Año" como correlativa de "Course 1° Año" porque pertenece a un período posterior.',
+      'No se puede vincular "Course 3rd Year" como correlativa de "Course 1st Year" porque pertenece a un período posterior.',
     );
 
     const updated1st = component.courses().find((c) => c.id === 101);
@@ -125,7 +125,7 @@ describe('CareerBuilderComponent', () => {
     expect(updated1st?.aprobarReqId).toEqual([]);
   });
 
-  it('debe cargar un plan de estudio suscrito en el builder', () => {
+  it('should load a subscribed study plan into the builder', () => {
     const plan = {
       id: 'ing-sistemas-test',
       name: 'Ingeniería Test',
@@ -143,7 +143,7 @@ describe('CareerBuilderComponent', () => {
     expect(component.isEditingPlan()).toBe(true);
   });
 
-  it('debe generar una nueva copia personalizada al guardar un plan estándar modificado', () => {
+  it('should generate a new custom copy when saving a modified standard plan', () => {
     const careerService = TestBed.inject(CareerService);
     const plan = {
       id: 'ing-sistemas',
@@ -166,7 +166,7 @@ describe('CareerBuilderComponent', () => {
     expect(savedPlan?.name).toBe('Mi Sistemas Personalizado');
   });
 
-  it('debe mantener el mismo ID al guardar si el plan ya era un plan custom del usuario', () => {
+  it('should retain the same ID when saving if the plan was already a user custom plan', () => {
     const careerService = TestBed.inject(CareerService);
     const plan = {
       id: 'custom-career-999',

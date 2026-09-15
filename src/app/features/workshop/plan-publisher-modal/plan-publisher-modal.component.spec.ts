@@ -15,16 +15,16 @@ describe('PlanPublisherModalComponent', () => {
     fixture.detectChanges();
   });
 
-  it('debe crearse correctamente', () => {
+  it('should create component successfully', () => {
     expect(component).toBeTruthy();
   });
 
-  it('no debe renderizar el botón de volver en el encabezado de la página de publicación', () => {
+  it('should not render back button in header of publication page', () => {
     const backBtn = fixture.nativeElement.querySelector('button[aria-label="Volver"]');
     expect(backBtn).toBeNull();
   });
 
-  it('debe renderizar el título e icono del encabezado correctamente con clases de diseño', () => {
+  it('should render header title and icon correctly with design classes', () => {
     const header = fixture.nativeElement.querySelector('header.app-header-bar.app-page-header');
     expect(header).toBeTruthy();
 
