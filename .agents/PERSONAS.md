@@ -131,11 +131,12 @@ This document formalizes the role assignment (**Personas**) for Artificial Intel
 - **Mandatory deliverables**:
   - Semantic branch (`feature/*`, `bugfix/*`, `chore/*`).
   - Conventional commits (`feat(...)`, `fix(...)`, etc.).
-  - PR documented with evidence of QA approval.
+  - Feature branch pushed to remote repository (`origin`).
+  - Automated Pull Request targeting `develop` containing explicit issue linkage (`Closes #<ID>`).
 - **Strict Limitations (Guardrails)**:
   - **PROHIBITED from committing or creating PRs for tickets not in state `QA_VERIFIED`**.
   - **PROHIBITED from forced push (`git push --force`) or hard reset on shared branches**.
-  - **PROHIBITED from committing directly to `main` or `develop`**.
+  - **PROHIBITED from committing directly to `main` or `develop` or performing direct local merges into `develop` without an open Pull Request**.
 
 ---
 
@@ -184,7 +185,7 @@ To avoid unnecessary reasoning token consumption on mechanical tasks, agents mus
 | **`qa`**        | Certify or reject ticket          | `npm run ticket:status -- <ISSUE-ID> QA_VERIFIED` (or `REJECTED`) | Modifies the ticket state automatically.                                  |
 | **`gitflow`**   | Create feature branch             | `npm run gitflow:branch -- <ISSUE-ID>`                            | Synchronizes develop and creates `feature/<ISSUE-ID>-<slug>`.             |
 | **`gitflow`**   | Create conventional commit        | `npm run gitflow:commit -- <ISSUE-ID>`                            | Validates `QA_VERIFIED` and generates commit `feat(<ISSUE-ID>): <title>`. |
-| **`gitflow`**   | Close ticket after PR             | `npm run ticket:status -- <ISSUE-ID> CLOSED`                      | Marks the ticket as completed.                                            |
+| **`gitflow`**   | Push branch & create PR (linked)  | `npm run gitflow:pr -- <ISSUE-ID>`                                | Pushes branch, creates PR with `Closes #<ID>`, and marks ticket `CLOSED`. |
 
 ---
 

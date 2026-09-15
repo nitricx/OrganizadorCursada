@@ -23,6 +23,7 @@
     "npm run ticket:status",
     "npm run gitflow:branch",
     "npm run gitflow:commit",
+    "npm run gitflow:pr",
     "npm run gen:service"
   ],
   "prefixes": [

@@ -103,16 +103,14 @@ Before committing or creating a Pull Request, verify project health:
 
 ---
 
-## 4. Pull Requests & Code Review
+## 4. Pull Requests & Automated Integration
 
 When opening a Pull Request (PR):
 
-- **Title**: Follow Conventional Commits syntax (e.g., `feat(workshop): allow downloading community career manifests`).
-- **Description**: Include:
-  - **Summary**: Concise overview of changes.
-  - **Motivation**: Why the modification was needed.
-  - **Verification Steps**: Reproducible steps demonstrating success.
-  - **Checklist**: Unit tests passing, design tokens respected, zero `any` types.
+- **Automated Command**: Always execute `npm run gitflow:pr -- <ISSUE-ID>` after ticket reaches `QA_VERIFIED`. This command automatically pushes the branch to `origin`, opens a GitHub Pull Request targeting `develop`, embeds `Closes #<ID>` in the description, and updates the ticket status to `CLOSED`.
+- **Title**: Follow Conventional Commits syntax (e.g., `feat(32): refactor gitflow pr automation`).
+- **Description**: Automatically populated with issue summary and explicit issue linking (`Closes #<ID>`).
+- **Prohibition of Direct Local Merges**: Direct local merges into `develop` without an open Pull Request are strictly prohibited by workflow guardrails.
 - **Merge Strategy**: **MANDATORY Squash and Merge**. All Pull Requests MUST squash their commits into a single cohesive commit upon merging into target branches (`develop` or `main`) to preserve a clean, linear history.
 
 ---
