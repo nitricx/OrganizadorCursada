@@ -179,7 +179,16 @@ function createPR(ticketId) {
 
     const title = `feat(${ticketId.toUpperCase()}): ${ticket.title}`;
     const body = `## Issue #${ticket.issueNumber}\n\n${ticket.title}\n\nCertified by QA (\`QA_VERIFIED\`).\n\nCloses #${ticket.issueNumber}`;
-    const prUrl = runGit(`gh pr create --base develop --title "${title}" --body "${body}"`);
+    const tmpBodyPath = path.join(__dirname, `tmp_pr_body_${ticket.issueNumber}.md`);
+    fs.writeFileSync(tmpBodyPath, body, 'utf-8');
+    let prUrl = '';
+    try {
+      prUrl = runGit(`gh pr create --base develop --title "${title}" -F "${tmpBodyPath}"`);
+    } finally {
+      if (fs.existsSync(tmpBodyPath)) {
+        fs.unlinkSync(tmpBodyPath);
+      }
+    }
     console.log(`[SUCCESS] PR created: ${prUrl}`);
     console.log(`[INFO] Issue #${ticket.issueNumber} linked to PR. Will be auto-closed upon PR merge.`);
   } catch (err) {
