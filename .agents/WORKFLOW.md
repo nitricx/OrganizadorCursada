@@ -10,7 +10,7 @@ Active and completed tickets reside in [GitHub Issues](https://github.com/nitric
 > AI agents MUST NOT pause execution after ticket specification (Phase 1) or QA verification (Phase 4) waiting for user prompt reminders. The agent must automatically transition personas to complete the hand-off chain:
 >
 > 1. When `analyst` advances a ticket to `READY_FOR_DEV`, the agent MUST immediately invoke `gitflow` to create the feature branch (`npm run gitflow:branch -- <ISSUE-ID>`).
-> 2. When `qa` certifies a ticket (`QA_VERIFIED`), the agent MUST immediately invoke `gitflow` to generate the Conventional Commit (`npm run gitflow:commit -- <ISSUE-ID>`) and prepare/open the Pull Request towards `develop`.
+> 2. When `qa` certifies a ticket (`QA_VERIFIED`), the agent MUST immediately invoke `gitflow` to generate the Conventional Commit (`npm run gitflow:commit -- <ISSUE-ID>`) and push the branch to open the Pull Request towards `develop` (`npm run gitflow:pr -- <ISSUE-ID>`).
 
 ---
 
@@ -124,11 +124,11 @@ Active and completed tickets reside in [GitHub Issues](https://github.com/nitric
 
 ### Phase 5: Integration & Delivery (Persona: `gitflow`)
 
-- **Objective**: Safely integrate validated changes into version control.
+- **Objective**: Safely integrate validated changes into version control via pushed remote branches and GitHub Pull Requests.
 - **Ticket Transition**: `QA_VERIFIED` $\rightarrow$ `CLOSED`.
 - **Deterministic Automation**:
   - Conventional Commit: `npm run gitflow:commit -- <TICK-ID>`
-  - Close Ticket: `npm run ticket:status -- <TICK-ID> CLOSED`
+  - Automated Push & PR Creation: `npm run gitflow:pr -- <TICK-ID>`
 - **Actions**:
   1. Verify the ticket is marked `QA_VERIFIED`.
   2. Generate Conventional Commit automatically:
@@ -136,9 +136,13 @@ Active and completed tickets reside in [GitHub Issues](https://github.com/nitric
      npm run gitflow:commit -- <TICK-ID>
      ```
   3. Rebase onto `develop` if upstream changes occurred (`git pull --rebase origin develop`).
-  4. Open Pull Request targeting `develop` (MUST ALWAYS use **Squash and Merge**).
-  5. Close ticket: `npm run ticket:status -- <TICK-ID> CLOSED`.
-- **Strict Limitation**: Never commit or open PR without prior `QA_VERIFIED` certification.
+  4. Push feature branch to `origin` and open Pull Request targeting `develop` with automated issue linking (`Closes #<ID>`):
+     ```bash
+     npm run gitflow:pr -- <TICK-ID>
+     ```
+- **Strict Limitations**:
+  - Never commit or open PR without prior `QA_VERIFIED` certification.
+  - **Direct local merges to `develop` without an open Pull Request are strictly prohibited.**
 - **References**:
   - [`.agents/PERSONAS.md`](./PERSONAS.md)
   - [`.agents/skills/gitflow`](./skills/gitflow/SKILL.md)
