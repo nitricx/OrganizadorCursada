@@ -199,12 +199,12 @@ export class AcademicCalendarComponent {
     let yearValue: number;
     if (year instanceof Event) {
       const target = year.target as HTMLInputElement;
-      yearValue = parseInt(target.value, 10);
+      yearValue = Number.parseInt(target.value, 10);
     } else {
       yearValue = year;
     }
     const planId = this.currentRouteId();
-    if (planId && !isNaN(yearValue)) {
+    if (planId && !Number.isNaN(yearValue)) {
       this.planService.setStartingYear(planId, yearValue);
     }
   }
@@ -382,7 +382,7 @@ export class AcademicCalendarComponent {
     const existingIds = this.planService
       .plans()
       .map((p) => Number(p.id))
-      .filter((n) => !isNaN(n));
+      .filter((n) => !Number.isNaN(n));
     const nextId = existingIds.length > 0 ? Math.max(...existingIds) + 1 : 1;
     const labelNumber = this.planService.plans().length;
     const newPlanId = nextId.toString();

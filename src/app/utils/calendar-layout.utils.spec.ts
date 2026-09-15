@@ -172,7 +172,7 @@ describe('CalendarLayoutUtils', () => {
   describe('generateTimeSlots and CSS layout functions', () => {
     it('should generate time slots with labels on even steps', () => {
       const slots = generateTimeSlots(8, 10);
-      expect(slots.length).toBe(2);
+      expect(slots).toHaveLength(2);
       expect(slots[0]).toEqual({ label: '08:00', row: 2 });
       expect(slots[1]).toEqual({ label: '', row: 4 });
     });

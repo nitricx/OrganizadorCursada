@@ -34,7 +34,7 @@ describe('PlanSanitizerService (Exhaustive Test Suite)', () => {
     const sanitized = service.sanitizeForPublishing(dangerousPayload);
 
     expect(sanitized.name).toBe('Diseño Audiovisual');
-    expect(sanitized.courses.length).toBe(1);
+    expect(sanitized.courses).toHaveLength(1);
     expect((sanitized.courses[0] as any).status).toBeUndefined();
     expect((sanitized.courses[0] as any).user_notes).toBeUndefined();
     expect((sanitized.courses[0] as any).grade).toBeUndefined();

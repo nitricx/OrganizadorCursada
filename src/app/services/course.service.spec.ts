@@ -269,7 +269,7 @@ describe('CourseService - Lesson State Toggling', () => {
       };
 
       service.setCareerPlan(mockSistemasPlan);
-      expect(service.courses().length).toBe(mockSistemasPlan.courses.length);
+      expect(service.courses()).toHaveLength(mockSistemasPlan.courses.length);
       expect(service.courses()[0].name).toBe(mockSistemasPlan.courses[0].name);
 
       // Change status of first course
@@ -281,7 +281,7 @@ describe('CourseService - Lesson State Toggling', () => {
       service.reset();
 
       // Courses should still belong to mockSistemasPlan and be reset to pending
-      expect(service.courses().length).toBe(mockSistemasPlan.courses.length);
+      expect(service.courses()).toHaveLength(mockSistemasPlan.courses.length);
       expect(service.courses()[0].status).toBe('pending');
     });
   });

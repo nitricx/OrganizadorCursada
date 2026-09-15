@@ -139,7 +139,7 @@ describe('CareerBuilderComponent', () => {
     expect(component.originalPlanId()).toBe('ing-sistemas-test');
     expect(component.careerName()).toBe('Ingeniería Test');
     expect(component.university()).toBe('UTN');
-    expect(component.courses().length).toBe(1);
+    expect(component.courses()).toHaveLength(1);
     expect(component.isEditingPlan()).toBe(true);
   });
 

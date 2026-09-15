@@ -47,12 +47,12 @@ import { PlanManifest } from './models/plan-manifest.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class App implements OnInit {
-  themeService = inject(ThemeService);
-  planService = inject(PlanService);
-  private careerService = inject(CareerService);
-  private courseService = inject(CourseService);
-  private toast = inject(ToastService);
-  private router = inject(Router);
+  readonly themeService = inject(ThemeService);
+  readonly planService = inject(PlanService);
+  private readonly careerService = inject(CareerService);
+  private readonly courseService = inject(CourseService);
+  private readonly toast = inject(ToastService);
+  private readonly router = inject(Router);
 
   isOpen = signal(true);
   private internalWorkshopSignal = signal(false);

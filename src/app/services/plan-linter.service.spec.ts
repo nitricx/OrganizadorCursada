@@ -27,7 +27,7 @@ describe('PlanLinterService (Exhaustive Test Suite)', () => {
 
     const res = service.lintPlanManifest(validManifest);
     expect(res.valid).toBe(true);
-    expect(res.errors.length).toBe(0);
+    expect(res.errors).toHaveLength(0);
   });
 
   it('should detect 2-node circular prerequisite dependencies (A -> B -> A)', () => {

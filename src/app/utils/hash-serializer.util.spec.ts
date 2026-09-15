@@ -19,7 +19,7 @@ describe('hash-serializer.util', () => {
 
     const decoded = decodePlanFromUrlHash(encoded);
     expect(decoded.name).toBe('Diseño Audiovisual');
-    expect(decoded.courses.length).toBe(1);
+    expect(decoded.courses).toHaveLength(1);
     expect(decoded.courses[0].name).toBe('Producción Audiovisual 1');
   });
 });

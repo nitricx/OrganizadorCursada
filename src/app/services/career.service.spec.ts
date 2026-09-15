@@ -99,7 +99,7 @@ describe('CareerService', () => {
     const initialCareers = [...service.careers()];
     initialCareers.forEach((c) => service.removeCareer(c.id));
 
-    expect(service.careers().length).toBe(0);
+    expect(service.careers()).toHaveLength(0);
     expect(service.selectedCareerId()).toBe('');
     expect(service.activeCareer().id).toBe('empty-plan');
   });

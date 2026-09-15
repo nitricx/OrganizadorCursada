@@ -22,10 +22,10 @@ export interface CourseStateEntry {
   providedIn: 'root',
 })
 export class CourseService {
-  private careerService = inject(CareerService, { optional: true });
-  private authService = inject(AuthService, { optional: true });
-  private awsSync = inject(AwsSyncService, { optional: true });
-  private secureStorage = inject(SecureStorageService, { optional: true });
+  private readonly careerService = inject(CareerService, { optional: true });
+  private readonly authService = inject(AuthService, { optional: true });
+  private readonly awsSync = inject(AwsSyncService, { optional: true });
+  private readonly secureStorage = inject(SecureStorageService, { optional: true });
 
   // Layout per plan (which semester each subject is placed in)
   private coursesByPlanSignal = signal<Map<string, Course[]>>(new Map());

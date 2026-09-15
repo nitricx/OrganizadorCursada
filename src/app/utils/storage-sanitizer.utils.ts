@@ -39,8 +39,8 @@ export function isValidSemesterSlot(val: unknown): val is SemesterSlot {
   if (typeof val !== 'object' || val === null) return false;
   const s = val as Partial<SemesterSlot>;
   const validId = typeof s.id === 'string' && s.id.trim() !== '';
-  const validYear = typeof s.courseYear === 'number' && !isNaN(s.courseYear);
-  const validQ = typeof s.courseQ === 'number' && !isNaN(s.courseQ);
+  const validYear = typeof s.courseYear === 'number' && !Number.isNaN(s.courseYear);
+  const validQ = typeof s.courseQ === 'number' && !Number.isNaN(s.courseQ);
   const validStartDate = s.startDate === undefined || typeof s.startDate === 'string';
   const validEndDate = s.endDate === undefined || typeof s.endDate === 'string';
   return validId && validYear && validQ && validStartDate && validEndDate;
@@ -54,12 +54,12 @@ export function sanitizeSemesterSlots(parsed: unknown): SemesterSlot[] {
 }
 
 export function sanitizeStartingYear(parsed: unknown, defaultYear: number): number {
-  if (typeof parsed === 'number' && !isNaN(parsed) && parsed >= 1900 && parsed <= 2100) {
+  if (typeof parsed === 'number' && !Number.isNaN(parsed) && parsed >= 1900 && parsed <= 2100) {
     return parsed;
   }
   if (typeof parsed === 'string') {
     const num = Number(parsed);
-    if (!isNaN(num) && num >= 1900 && num <= 2100) {
+    if (!Number.isNaN(num) && num >= 1900 && num <= 2100) {
       return num;
     }
   }
@@ -71,7 +71,7 @@ export function isValidLesson(val: unknown): val is Lesson {
   const l = val as Partial<Lesson>;
   const validId = typeof l.id === 'string' && l.id.trim() !== '';
   const validProf = typeof l.professor === 'string';
-  const validDay = typeof l.day === 'number' && !isNaN(l.day) && l.day >= 0 && l.day <= 6;
+  const validDay = typeof l.day === 'number' && !Number.isNaN(l.day) && l.day >= 0 && l.day <= 6;
   const validStart = typeof l.startTime === 'string';
   const validEnd = typeof l.endTime === 'string';
   const validStatus = l.status === undefined || isValidCourseStatus(l.status);
@@ -81,15 +81,15 @@ export function isValidLesson(val: unknown): val is Lesson {
 export function isValidCourse(val: unknown): val is Course {
   if (typeof val !== 'object' || val === null) return false;
   const c = val as Partial<Course>;
-  const validId = typeof c.id === 'number' && !isNaN(c.id);
+  const validId = typeof c.id === 'number' && !Number.isNaN(c.id);
   const validName = typeof c.name === 'string' && c.name.trim() !== '';
-  const validYear = typeof c.year === 'number' && !isNaN(c.year);
-  const validQ = typeof c.q === 'number' && !isNaN(c.q);
+  const validYear = typeof c.year === 'number' && !Number.isNaN(c.year);
+  const validQ = typeof c.q === 'number' && !Number.isNaN(c.q);
   const validStatus = isValidCourseStatus(c.status);
   const validCursarReq =
-    Array.isArray(c.cursarReqId) && c.cursarReqId.every((id) => typeof id === 'number' && !isNaN(id));
+    Array.isArray(c.cursarReqId) && c.cursarReqId.every((id) => typeof id === 'number' && !Number.isNaN(id));
   const validAprobarReq =
-    Array.isArray(c.aprobarReqId) && c.aprobarReqId.every((id) => typeof id === 'number' && !isNaN(id));
+    Array.isArray(c.aprobarReqId) && c.aprobarReqId.every((id) => typeof id === 'number' && !Number.isNaN(id));
   const validLessons = Array.isArray(c.lessons) && c.lessons.every(isValidLesson);
   return (
     validId &&
@@ -132,7 +132,7 @@ export function sanitizeCourseStatesMap(parsed: unknown): Map<number, CourseStat
   }
   Object.entries(parsed).forEach(([k, v]) => {
     const numericId = Number(k);
-    if (!isNaN(numericId)) {
+    if (!Number.isNaN(numericId)) {
       map.set(numericId, sanitizeCourseStateEntry(v));
     }
   });

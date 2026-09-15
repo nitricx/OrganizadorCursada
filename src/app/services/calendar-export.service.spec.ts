@@ -73,7 +73,7 @@ describe('CalendarExportService', () => {
 
   it('should compute active coursing events', () => {
     const events = service.activeCoursingEvents();
-    expect(events.length).toBe(1);
+    expect(events).toHaveLength(1);
     expect(events[0].course.name).toBe('Programación I');
     expect(events[0].lesson.id).toBe('P1-L1');
   });
@@ -89,7 +89,7 @@ describe('CalendarExportService', () => {
 
   it('should generate Google Calendar web links for active events', () => {
     const links = service.getGoogleCalendarLinks();
-    expect(links.length).toBe(1);
+    expect(links).toHaveLength(1);
     expect(links[0].courseName).toBe('Programación I');
     expect(links[0].url).toContain('https://calendar.google.com/calendar/render');
   });

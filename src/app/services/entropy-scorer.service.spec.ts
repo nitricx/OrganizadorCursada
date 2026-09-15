@@ -26,7 +26,7 @@ describe('EntropyScorerService (Exhaustive Test Suite)', () => {
     expect(report.score).toBe(0);
     expect(report.riskLevel).toBe('low');
     expect(report.uniqueElectivesCount).toBe(0);
-    expect(report.warnings.length).toBe(0);
+    expect(report.warnings).toHaveLength(0);
   });
 
   it('should detect high risk level when plan contains 4+ electives and multi-campus indicators', () => {

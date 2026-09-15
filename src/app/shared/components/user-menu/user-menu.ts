@@ -25,10 +25,10 @@ import { PlanService } from '../../../services/plan.service';
   styleUrl: './user-menu.css',
 })
 export class UserMenuComponent {
-  authService = inject(AuthService);
-  themeService = inject(ThemeService);
-  private planService = inject(PlanService);
-  private toastService = inject(ToastService, { optional: true });
+  readonly authService = inject(AuthService);
+  readonly themeService = inject(ThemeService);
+  private readonly planService = inject(PlanService);
+  private readonly toastService = inject(ToastService, { optional: true });
 
   getFirstName(displayName: string | null | undefined, email: string | null | undefined): string {
     if (displayName) {
