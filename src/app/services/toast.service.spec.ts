@@ -71,5 +71,4 @@ describe('ToastService', () => {
     service.clear();
     expect(service.toasts()).toHaveLength(0);
   });
-
 });

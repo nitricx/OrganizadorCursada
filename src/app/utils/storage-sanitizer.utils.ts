@@ -2,12 +2,7 @@ import { Course, CourseStatus, Lesson } from '../models/course';
 import { Plan, SemesterSlot } from '../services/plan.service';
 import { CourseStateEntry } from '../services/course.service';
 
-const VALID_COURSE_STATUSES = new Set<CourseStatus>([
-  'pending',
-  'coursing',
-  'coursed',
-  'approved',
-]);
+const VALID_COURSE_STATUSES = new Set<CourseStatus>(['pending', 'coursing', 'coursed', 'approved']);
 
 export function isValidCourseStatus(val: unknown): val is CourseStatus {
   return typeof val === 'string' && VALID_COURSE_STATUSES.has(val as CourseStatus);
@@ -87,9 +82,11 @@ export function isValidCourse(val: unknown): val is Course {
   const validQ = typeof c.q === 'number' && !Number.isNaN(c.q);
   const validStatus = isValidCourseStatus(c.status);
   const validCursarReq =
-    Array.isArray(c.cursarReqId) && c.cursarReqId.every((id) => typeof id === 'number' && !Number.isNaN(id));
+    Array.isArray(c.cursarReqId) &&
+    c.cursarReqId.every((id) => typeof id === 'number' && !Number.isNaN(id));
   const validAprobarReq =
-    Array.isArray(c.aprobarReqId) && c.aprobarReqId.every((id) => typeof id === 'number' && !Number.isNaN(id));
+    Array.isArray(c.aprobarReqId) &&
+    c.aprobarReqId.every((id) => typeof id === 'number' && !Number.isNaN(id));
   const validLessons = Array.isArray(c.lessons) && c.lessons.every(isValidLesson);
   return (
     validId &&
@@ -153,7 +150,10 @@ export function sanitizeCoursesByPlan(parsed: unknown): Map<string, Course[]> {
   return map;
 }
 
-export function cleanupOrphanedStorageKeys(activePlanIds: string[], activeCareerIds: string[]): void {
+export function cleanupOrphanedStorageKeys(
+  activePlanIds: string[],
+  activeCareerIds: string[],
+): void {
   try {
     if (typeof localStorage === 'undefined' || !localStorage) return;
 

@@ -33,8 +33,24 @@ describe('CareerBuilderComponent', () => {
   });
 
   it('should link subjects correctly in linking mode (first order)', () => {
-    const course1: RawCourseData = { id: 101, name: 'Course 1', year: 1, q: 1, cursarReqId: [], aprobarReqId: [], lessons: [] };
-    const course2: RawCourseData = { id: 102, name: 'Course 2', year: 1, q: 2, cursarReqId: [], aprobarReqId: [], lessons: [] };
+    const course1: RawCourseData = {
+      id: 101,
+      name: 'Course 1',
+      year: 1,
+      q: 1,
+      cursarReqId: [],
+      aprobarReqId: [],
+      lessons: [],
+    };
+    const course2: RawCourseData = {
+      id: 102,
+      name: 'Course 2',
+      year: 1,
+      q: 2,
+      cursarReqId: [],
+      aprobarReqId: [],
+      lessons: [],
+    };
     component.courses.set([course1, course2]);
 
     component.toggleConnectMode(); // Activate connect mode
@@ -54,8 +70,24 @@ describe('CareerBuilderComponent', () => {
   });
 
   it('should not allow linking the same subject twice as prerequisite', () => {
-    const course1: RawCourseData = { id: 101, name: 'Course 1', year: 1, q: 1, cursarReqId: [], aprobarReqId: [], lessons: [] };
-    const course2: RawCourseData = { id: 102, name: 'Course 2', year: 1, q: 2, cursarReqId: [101], aprobarReqId: [], lessons: [] };
+    const course1: RawCourseData = {
+      id: 101,
+      name: 'Course 1',
+      year: 1,
+      q: 1,
+      cursarReqId: [],
+      aprobarReqId: [],
+      lessons: [],
+    };
+    const course2: RawCourseData = {
+      id: 102,
+      name: 'Course 2',
+      year: 1,
+      q: 2,
+      cursarReqId: [101],
+      aprobarReqId: [],
+      lessons: [],
+    };
     component.courses.set([course1, course2]);
 
     const warningSpy = vi.spyOn(toastService, 'warning');
@@ -64,7 +96,9 @@ describe('CareerBuilderComponent', () => {
     component.handleCourseClick(course1); // Source
     component.handleCourseClick(course2); // Destination (already prerequisite)
 
-    expect(warningSpy).toHaveBeenCalledWith('La materia "Course 1" ya es correlativa de "Course 2".');
+    expect(warningSpy).toHaveBeenCalledWith(
+      'La materia "Course 1" ya es correlativa de "Course 2".',
+    );
 
     const updated2 = component.courses().find((c) => c.id === 102);
     expect(updated2?.cursarReqId).toEqual([101]);
@@ -72,8 +106,24 @@ describe('CareerBuilderComponent', () => {
   });
 
   it('should detect circular cycle and reject linking', () => {
-    const course1: RawCourseData = { id: 101, name: 'Course 1', year: 1, q: 1, cursarReqId: [], aprobarReqId: [], lessons: [] };
-    const course2: RawCourseData = { id: 102, name: 'Course 2', year: 1, q: 1, cursarReqId: [101], aprobarReqId: [], lessons: [] };
+    const course1: RawCourseData = {
+      id: 101,
+      name: 'Course 1',
+      year: 1,
+      q: 1,
+      cursarReqId: [],
+      aprobarReqId: [],
+      lessons: [],
+    };
+    const course2: RawCourseData = {
+      id: 102,
+      name: 'Course 2',
+      year: 1,
+      q: 1,
+      cursarReqId: [101],
+      aprobarReqId: [],
+      lessons: [],
+    };
     component.courses.set([course1, course2]);
 
     const warningSpy = vi.spyOn(toastService, 'warning');
@@ -94,20 +144,54 @@ describe('CareerBuilderComponent', () => {
   it('should not allow saving career plan if it contains circular references', () => {
     component.careerName.set('Carrera Circular');
     component.university.set('Universidad X');
-    const course1: RawCourseData = { id: 101, name: 'Course 1', year: 1, q: 1, cursarReqId: [102], aprobarReqId: [], lessons: [] };
-    const course2: RawCourseData = { id: 102, name: 'Course 2', year: 1, q: 1, cursarReqId: [101], aprobarReqId: [], lessons: [] };
+    const course1: RawCourseData = {
+      id: 101,
+      name: 'Course 1',
+      year: 1,
+      q: 1,
+      cursarReqId: [102],
+      aprobarReqId: [],
+      lessons: [],
+    };
+    const course2: RawCourseData = {
+      id: 102,
+      name: 'Course 2',
+      year: 1,
+      q: 1,
+      cursarReqId: [101],
+      aprobarReqId: [],
+      lessons: [],
+    };
     component.courses.set([course1, course2]);
 
     const warningSpy = vi.spyOn(toastService, 'warning');
 
     component.saveCareerPlan();
 
-    expect(warningSpy).toHaveBeenCalledWith('Se detectó una dependencia circular de correlativas entre las materias.');
+    expect(warningSpy).toHaveBeenCalledWith(
+      'Se detectó una dependencia circular de correlativas entre las materias.',
+    );
   });
 
   it('should not allow linking a subject as prerequisite if it is in a later year or semester', () => {
-    const course1stYear: RawCourseData = { id: 101, name: 'Course 1st Year', year: 1, q: 1, cursarReqId: [], aprobarReqId: [], lessons: [] };
-    const course3rdYear: RawCourseData = { id: 103, name: 'Course 3rd Year', year: 3, q: 1, cursarReqId: [], aprobarReqId: [], lessons: [] };
+    const course1stYear: RawCourseData = {
+      id: 101,
+      name: 'Course 1st Year',
+      year: 1,
+      q: 1,
+      cursarReqId: [],
+      aprobarReqId: [],
+      lessons: [],
+    };
+    const course3rdYear: RawCourseData = {
+      id: 103,
+      name: 'Course 3rd Year',
+      year: 3,
+      q: 1,
+      cursarReqId: [],
+      aprobarReqId: [],
+      lessons: [],
+    };
     component.courses.set([course1stYear, course3rdYear]);
 
     const warningSpy = vi.spyOn(toastService, 'warning');
@@ -131,7 +215,17 @@ describe('CareerBuilderComponent', () => {
       name: 'Ingeniería Test',
       university: 'UTN',
       version: '1.0.0',
-      courses: [{ id: 1, name: 'Sistemas 1', year: 1, q: 1, cursarReqId: [], aprobarReqId: [], lessons: [] }],
+      courses: [
+        {
+          id: 1,
+          name: 'Sistemas 1',
+          year: 1,
+          q: 1,
+          cursarReqId: [],
+          aprobarReqId: [],
+          lessons: [],
+        },
+      ],
     };
 
     component.loadPlanIntoBuilder(plan);
@@ -150,7 +244,17 @@ describe('CareerBuilderComponent', () => {
       name: 'Ingeniería en Sistemas de Información',
       university: 'UTN',
       version: '1.0.0',
-      courses: [{ id: 1, name: 'Algoritmos', year: 1, q: 1, cursarReqId: [], aprobarReqId: [], lessons: [] }],
+      courses: [
+        {
+          id: 1,
+          name: 'Algoritmos',
+          year: 1,
+          q: 1,
+          cursarReqId: [],
+          aprobarReqId: [],
+          lessons: [],
+        },
+      ],
     };
 
     component.loadPlanIntoBuilder(plan);
@@ -173,7 +277,17 @@ describe('CareerBuilderComponent', () => {
       name: 'Mi Carrera Custom',
       university: 'UNLP',
       version: '1.0.0',
-      courses: [{ id: 1, name: 'Course Custom', year: 1, q: 1, cursarReqId: [], aprobarReqId: [], lessons: [] }],
+      courses: [
+        {
+          id: 1,
+          name: 'Course Custom',
+          year: 1,
+          q: 1,
+          cursarReqId: [],
+          aprobarReqId: [],
+          lessons: [],
+        },
+      ],
     };
 
     component.loadPlanIntoBuilder(plan);

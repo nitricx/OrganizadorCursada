@@ -178,7 +178,9 @@ describe('CalendarLayoutUtils', () => {
     });
 
     it('should generate gridTemplateColumns format', () => {
-      expect(generateGridTemplateColumns(5, 2)).toBe('44px repeat(2, 1fr) repeat(2, 1fr) repeat(2, 1fr) repeat(2, 1fr) repeat(2, 1fr)');
+      expect(generateGridTemplateColumns(5, 2)).toBe(
+        '44px repeat(2, 1fr) repeat(2, 1fr) repeat(2, 1fr) repeat(2, 1fr) repeat(2, 1fr)',
+      );
     });
 
     it('should generate gridTemplateRows format', () => {

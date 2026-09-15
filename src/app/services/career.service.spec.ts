@@ -9,7 +9,11 @@ describe('CareerService', () => {
 
   beforeEach(() => {
     try {
-      if (typeof localStorage !== 'undefined' && localStorage && typeof localStorage.clear === 'function') {
+      if (
+        typeof localStorage !== 'undefined' &&
+        localStorage &&
+        typeof localStorage.clear === 'function'
+      ) {
         localStorage.clear();
       }
     } catch {}
@@ -27,7 +31,11 @@ describe('CareerService', () => {
 
   afterEach(() => {
     try {
-      if (typeof localStorage !== 'undefined' && localStorage && typeof localStorage.clear === 'function') {
+      if (
+        typeof localStorage !== 'undefined' &&
+        localStorage &&
+        typeof localStorage.clear === 'function'
+      ) {
         localStorage.clear();
       }
     } catch {}
@@ -36,7 +44,6 @@ describe('CareerService', () => {
     openReqs.forEach((req) => req.error(new ProgressEvent('error')));
     httpMock.verify();
   });
-
 
   it('should be created', () => {
     expect(service).toBeTruthy();
@@ -80,8 +87,6 @@ describe('CareerService', () => {
       service.validateCareerPlan({ id: 'test', name: 'Test', courses: [{ id: 'string-id' }] }),
     ).toBe(false); // invalid course id
   });
-
-
 
   it('should remove a career and switch selected career to remaining career', () => {
     service.addCareerFromManifest({ id: 'c1', name: 'Carrera 1', courses: [] });

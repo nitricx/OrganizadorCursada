@@ -3,10 +3,7 @@ import { signal, computed } from '@angular/core';
 import { Course, CourseStatus, LegendFilterKey } from '../models/course';
 import { CareerService } from './career.service';
 import { CareerPlan, parseCareerPlanToCourses, EMPTY_CAREER_PLAN } from '../models/career.model';
-import {
-  sanitizeCoursesByPlan,
-  sanitizeCourseStatesMap,
-} from '../utils/storage-sanitizer.utils';
+import { sanitizeCoursesByPlan, sanitizeCourseStatesMap } from '../utils/storage-sanitizer.utils';
 
 import { AuthService } from './auth.service';
 import { AwsSyncService, UserCareerStateDoc } from './aws-sync.service';
@@ -86,7 +83,11 @@ export class CourseService {
 
   getCoursesForPlan(planId: string): Course[] {
     let rawCourses = this.coursesByPlanSignal().get(planId);
-    if ((!rawCourses || rawCourses.length === 0) && (this.activeCareerIdSignal() === 'lic-diseno-audiovisual' || this.careerService?.selectedCareerId() === 'lic-diseno-audiovisual')) {
+    if (
+      (!rawCourses || rawCourses.length === 0) &&
+      (this.activeCareerIdSignal() === 'lic-diseno-audiovisual' ||
+        this.careerService?.selectedCareerId() === 'lic-diseno-audiovisual')
+    ) {
       rawCourses = this.initializeCourses();
     }
     rawCourses = rawCourses ?? [];
@@ -235,7 +236,6 @@ export class CourseService {
     this.loadState(careerPlan);
   }
 
-
   private currentRawCourses(): Course[] {
     const courses = this.coursesByPlanSignal().get(this.currentPlanIdSignal()) ?? [];
     const stateMap = this.courseStateSignal();
@@ -261,11 +261,7 @@ export class CourseService {
   }
 
   private get activeCareerPlan(): CareerPlan {
-    return (
-      this.activeCareerPlanSignal() ??
-      this.careerService?.activeCareer() ??
-      EMPTY_CAREER_PLAN
-    );
+    return this.activeCareerPlanSignal() ?? this.careerService?.activeCareer() ?? EMPTY_CAREER_PLAN;
   }
 
   private initializeCourses(plan?: CareerPlan): Course[] {
@@ -347,7 +343,11 @@ export class CourseService {
 
     if (targetStatus === 'coursing' || targetStatus === 'coursed') {
       // 1. Direct cursarReqId must be at least 'coursed' or 'approved'
-      const cursarReqMet = this.areRequirementsSatisfied(course.cursarReqId, 'coursed', coursesList);
+      const cursarReqMet = this.areRequirementsSatisfied(
+        course.cursarReqId,
+        'coursed',
+        coursesList,
+      );
       if (!cursarReqMet) return false;
 
       // 2. Nested aprobarReqId of prerequisites must be 'approved'
@@ -453,7 +453,8 @@ export class CourseService {
       const stateMap = new Map(this.courseStateSignal());
       const existing = stateMap.get(courseId);
 
-      let selectedLessonId = targetLessonId !== undefined ? targetLessonId : existing?.selectedLessonId ?? null;
+      let selectedLessonId =
+        targetLessonId !== undefined ? targetLessonId : (existing?.selectedLessonId ?? null);
       if (nextStatus === 'coursing') {
         if (!selectedLessonId && course.lessons.length > 0) {
           selectedLessonId = course.lessons[0].id;
@@ -465,7 +466,8 @@ export class CourseService {
       const updatedLessonStatuses: Record<string, CourseStatus> = {};
       course.lessons.forEach((lesson) => {
         if (nextStatus === 'coursing') {
-          updatedLessonStatuses[lesson.id] = lesson.id === selectedLessonId ? 'coursing' : 'pending';
+          updatedLessonStatuses[lesson.id] =
+            lesson.id === selectedLessonId ? 'coursing' : 'pending';
         } else {
           updatedLessonStatuses[lesson.id] = nextStatus;
         }
@@ -557,9 +559,7 @@ export class CourseService {
       });
     }
 
-    const lessonStatusValues = course.lessons.map(
-      (l) => updatedLessonStatuses[l.id] ?? 'pending',
-    );
+    const lessonStatusValues = course.lessons.map((l) => updatedLessonStatuses[l.id] ?? 'pending');
     const anyCoursing = lessonStatusValues.some((s) => s === 'coursing');
     const allSameStatus = lessonStatusValues.every((s) => s === lessonStatusValues[0]);
     const newCourseStatus = anyCoursing
@@ -643,9 +643,7 @@ export class CourseService {
 
     // Block if any prerequisite of this course is at or after the target year
     const allReqIds = [...new Set([...currentCourse.cursarReqId, ...currentCourse.aprobarReqId])];
-    const overlappingPrereq = courses.find(
-      (c) => c.year >= targetYear && allReqIds.includes(c.id),
-    );
+    const overlappingPrereq = courses.find((c) => c.year >= targetYear && allReqIds.includes(c.id));
     if (overlappingPrereq) {
       return `No se puede mover "${currentCourse.name}" porque su requisito "${overlappingPrereq.name}" está en el año ${overlappingPrereq.year}`;
     }
@@ -819,10 +817,29 @@ export class CourseService {
 
   private reconcileCoursesByPlan(
     storedByPlan: Map<string, Course[]>,
-    canonicalCourses: { id: number; name: string; year: number; q: number; cursarReqId: number[]; aprobarReqId: number[]; lessons: any[] }[]
+    canonicalCourses: {
+      id: number;
+      name: string;
+      year: number;
+      q: number;
+      cursarReqId: number[];
+      aprobarReqId: number[];
+      lessons: any[];
+    }[],
   ): Map<string, Course[]> {
     const resultMap = new Map<string, Course[]>();
-    const canonicalMap = new Map<number, { id: number; name: string; year: number; q: number; cursarReqId: number[]; aprobarReqId: number[]; lessons: any[] }>();
+    const canonicalMap = new Map<
+      number,
+      {
+        id: number;
+        name: string;
+        year: number;
+        q: number;
+        cursarReqId: number[];
+        aprobarReqId: number[];
+        lessons: any[];
+      }
+    >();
     canonicalCourses.forEach((c) => canonicalMap.set(c.id, c));
 
     storedByPlan.forEach((storedCourses, planId) => {
@@ -877,7 +894,7 @@ export class CourseService {
           cursarReqId: c.cursarReqId.slice(),
           aprobarReqId: c.aprobarReqId.slice(),
           lessons: c.lessons.map((l) => ({ ...l })),
-        }))
+        })),
       );
     }
 

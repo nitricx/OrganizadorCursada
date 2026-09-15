@@ -11,7 +11,6 @@ import { CareerService } from '../../../services/career.service';
 import { ToastService } from '../../../services/toast.service';
 import { Course, DayOfWeek } from '../../../models/course';
 
-
 // Two courses with no year=2 so the inserted semester pair at year=2 starts empty
 const MOCK_Y1Q1: Course = {
   id: 101,
@@ -113,7 +112,9 @@ describe('AcademicCalendarComponent – semester insertion and course movement',
     await TestBed.configureTestingModule({
       imports: [AcademicCalendarComponent],
       providers: [
-        provideRouter([{ path: 'academicCalendar/plan/:id', component: AcademicCalendarComponent }]),
+        provideRouter([
+          { path: 'academicCalendar/plan/:id', component: AcademicCalendarComponent },
+        ]),
         {
           provide: ActivatedRoute,
           useValue: { paramMap: of(convertToParamMap({ id: '1' })) },
@@ -126,7 +127,6 @@ describe('AcademicCalendarComponent – semester insertion and course movement',
         set: { imports: [], schemas: [NO_ERRORS_SCHEMA] },
       })
       .compileComponents();
-
 
     fixture = TestBed.createComponent(AcademicCalendarComponent);
     component = fixture.componentInstance;
@@ -293,6 +293,4 @@ describe('AcademicCalendarComponent – semester insertion and course movement',
       expect(component.plans().some((p) => p.id === '1')).toBe(true);
     });
   });
-
 });
-

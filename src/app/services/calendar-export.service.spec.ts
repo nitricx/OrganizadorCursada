@@ -42,11 +42,15 @@ describe('CalendarExportService', () => {
     planServiceMock = {
       selectedPlanId: signal('1'),
       getPlanLabel: vi.fn().mockReturnValue('Plan de Sistemas'),
-      getSemesterList: vi.fn().mockReturnValue([
-        { id: 'Y1Q1', courseYear: 1, courseQ: 1, startDate: '01/04/2026', endDate: '15/06/2026' },
-      ]),
+      getSemesterList: vi
+        .fn()
+        .mockReturnValue([
+          { id: 'Y1Q1', courseYear: 1, courseQ: 1, startDate: '01/04/2026', endDate: '15/06/2026' },
+        ]),
       getStartingYear: vi.fn().mockReturnValue(2026),
-      getDefaultSemesterDates: vi.fn().mockReturnValue({ startDate: '01/04/2026', endDate: '15/06/2026' }),
+      getDefaultSemesterDates: vi
+        .fn()
+        .mockReturnValue({ startDate: '01/04/2026', endDate: '15/06/2026' }),
     };
 
     toastServiceMock = {

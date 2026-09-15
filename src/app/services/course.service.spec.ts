@@ -263,7 +263,9 @@ describe('CourseService - Lesson State Toggling', () => {
             q: 1,
             cursarReqId: [],
             aprobarReqId: [],
-            lessons: [{ id: 'L1', professor: 'Prof. X', day: 1, startTime: '08:00', endTime: '12:00' }],
+            lessons: [
+              { id: 'L1', professor: 'Prof. X', day: 1, startTime: '08:00', endTime: '12:00' },
+            ],
           },
         ],
       };
@@ -334,11 +336,15 @@ describe('CourseService - Lesson State Toggling', () => {
       expect(updatedCourse.status).toBe('coursing');
       expect(updatedCourse.selectedLessonId).toBe(course.lessons[0].id);
 
-      const selectedLesson = updatedCourse.lessons.find((l) => l.id === updatedCourse.selectedLessonId);
+      const selectedLesson = updatedCourse.lessons.find(
+        (l) => l.id === updatedCourse.selectedLessonId,
+      );
       expect(selectedLesson?.status).toBe('coursing');
 
       if (updatedCourse.lessons.length > 1) {
-        const unselectedLessons = updatedCourse.lessons.filter((l) => l.id !== updatedCourse.selectedLessonId);
+        const unselectedLessons = updatedCourse.lessons.filter(
+          (l) => l.id !== updatedCourse.selectedLessonId,
+        );
         expect(unselectedLessons.every((l) => l.status === 'pending')).toBe(true);
       }
     });
@@ -425,7 +431,7 @@ describe('CourseService - Lesson State Toggling', () => {
       const corruptedState = {
         courseStates: {
           '1': { status: 'invalid_status', lessonStatuses: { 'PA1-L1': 'bad_status' } },
-          'not_a_number': { status: 'approved' },
+          not_a_number: { status: 'approved' },
           '12': null,
         },
       };
@@ -501,5 +507,3 @@ describe('CourseService - Lesson State Toggling', () => {
     });
   });
 });
-
-

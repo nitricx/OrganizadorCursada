@@ -50,4 +50,3 @@ describe('CourseStatusConstants', () => {
     expect(fallback.label).toBe('Pendiente');
   });
 });
-
