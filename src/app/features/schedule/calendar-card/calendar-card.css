@@ -7,7 +7,11 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
-  overflow: visible;
+  overflow-y: auto;
+  overflow-x: hidden;
+  box-sizing: border-box;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border-secondary) transparent;
   z-index: 1;
   outline: 2px dashed var(--brand-primary);
   outline-offset: -2px;
@@ -161,4 +165,22 @@
   background: rgba(0, 0, 255, 0.2);
   border: 1px dashed rgba(0, 0, 255, 0.5);
 }
+
+:host::-webkit-scrollbar {
+  width: 4px;
+}
+
+:host::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+:host::-webkit-scrollbar-thumb {
+  background: var(--color-border-secondary);
+  border-radius: var(--radius-full);
+}
+
+:host::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-tertiary);
+}
+
 
