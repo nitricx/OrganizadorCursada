@@ -8,15 +8,12 @@ test.describe('Hub de Planes Comunitario - Buscador y Tabla Ordenable', () => {
     await page.reload();
   });
 
-  test('debe abrir el modal del Hub de Planes y mostrar la tabla con los planes comunitarios', async ({ page }) => {
-    await page.goto('/home');
-    const exploreBtn = page.getByRole('button', { name: /Explorar Planes/i });
-    await expect(exploreBtn).toBeVisible();
-    await exploreBtn.click();
+  test('debe abrir el Hub de Planes y mostrar la tabla con los planes comunitarios', async ({ page }) => {
+    await page.goto('/workshop');
 
-    // Confirmar visibilidad del modal del Hub de Planes
-    const modalHeader = page.locator('.modal-header h3');
-    await expect(modalHeader).toContainText('Plan Hub Comunitario');
+    // Confirmar visibilidad del encabezado del Hub de Planes
+    const pageHeader = page.locator('.app-page-header .page-title');
+    await expect(pageHeader).toContainText('Plan Hub Comunitario');
 
     // Confirmar presencia del buscador y de la tabla
     const searchInput = page.locator('[data-testid="search-input"]');
@@ -32,8 +29,7 @@ test.describe('Hub de Planes Comunitario - Buscador y Tabla Ordenable', () => {
   });
 
   test('debe filtrar los planes en la tabla al escribir en el buscador', async ({ page }) => {
-    await page.goto('/home');
-    await page.getByRole('button', { name: /Explorar Planes/i }).click();
+    await page.goto('/workshop');
 
     const searchInput = page.locator('[data-testid="search-input"]');
     await searchInput.fill('Sistemas');
@@ -48,8 +44,7 @@ test.describe('Hub de Planes Comunitario - Buscador y Tabla Ordenable', () => {
   });
 
   test('debe ordenar la tabla por Nombre de Carrera (ascendente y descendente)', async ({ page }) => {
-    await page.goto('/home');
-    await page.getByRole('button', { name: /Explorar Planes/i }).click();
+    await page.goto('/workshop');
 
     const sortNameHeader = page.locator('[data-testid="sort-name"]');
     await expect(sortNameHeader).toBeVisible();
@@ -69,8 +64,7 @@ test.describe('Hub de Planes Comunitario - Buscador y Tabla Ordenable', () => {
   });
 
   test('debe ordenar la tabla por Facultad (ascendente y descendente)', async ({ page }) => {
-    await page.goto('/home');
-    await page.getByRole('button', { name: /Explorar Planes/i }).click();
+    await page.goto('/workshop');
 
     const sortFacultyHeader = page.locator('[data-testid="sort-faculty"]');
     await expect(sortFacultyHeader).toBeVisible();
@@ -87,15 +81,14 @@ test.describe('Hub de Planes Comunitario - Buscador y Tabla Ordenable', () => {
   });
 
   test('debe permitir suscribirse a un plan desde la tabla', async ({ page }) => {
-    await page.goto('/home');
-    await page.getByRole('button', { name: /Explorar Planes/i }).click();
+    await page.goto('/workshop');
 
     // Buscar "Sistemas" y suscribirse
     await page.locator('[data-testid="search-input"]').fill('Sistemas');
     const subscribeBtn = page.locator('[data-testid="plan-row"]').first().getByRole('button', { name: /Suscribirse/i });
     await subscribeBtn.click();
 
-    // El modal se cierra al suscribirse y redirige a /home con la carrera cargada
+    // Se redirige a /home con la carrera cargada
     await expect(page.locator('.header-title-group h1')).toHaveText('Plan de Cursada');
     await expect(page.locator('app-no-plan-selected')).not.toBeVisible();
   });

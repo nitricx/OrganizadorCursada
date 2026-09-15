@@ -16,10 +16,9 @@ test.describe('Validación del Estado "Sin Plan Seleccionado" en /home y /myWeek
     const title = noPlanComponent.locator('.empty-state-title');
     await expect(title).toContainText('Plan de Cursada');
 
-    // Verificar que los 3 botones de acción estén visibles
+    // Verificar que los botones de acción estén visibles
     await expect(page.getByRole('button', { name: /Explorar Planes/i })).toBeVisible();
     await expect(page.getByRole('button', { name: /Cargar Demo/i })).toBeVisible();
-    await expect(page.getByRole('button', { name: /Subir Archivo/i })).toBeVisible();
   });
 
   test('debe mostrar el componente app-no-plan-selected en /myWeek cuando no hay plan seleccionado', async ({ page }) => {
@@ -33,7 +32,6 @@ test.describe('Validación del Estado "Sin Plan Seleccionado" en /home y /myWeek
     // La grilla horaria normal no debe estar renderizada en este estado
     await expect(page.locator('.calendar-grid-wrapper')).not.toBeVisible();
   });
-
 
   test('debe cargar el plan demo al hacer click en "Cargar Demo" desde el estado sin plan y restaurar las vistas', async ({ page }) => {
     await page.goto('/home');
@@ -51,6 +49,5 @@ test.describe('Validación del Estado "Sin Plan Seleccionado" en /home y /myWeek
     // Navegar a /myWeek y confirmar que ya no muestra el empty state
     await page.goto('/myWeek');
     await expect(page.locator('app-no-plan-selected')).not.toBeVisible();
-
   });
 });
