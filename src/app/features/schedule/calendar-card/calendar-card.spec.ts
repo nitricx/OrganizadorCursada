@@ -101,4 +101,11 @@ describe('CalendarCard', () => {
     fixture.nativeElement.click();
     expect(mockCourseService.toggleLessonStatus).toHaveBeenCalledWith('MAT1-L1');
   });
+
+  it('should configure vertical overflow scrolling on host element', () => {
+    const cardEl: HTMLElement = fixture.nativeElement;
+    const style = window.getComputedStyle(cardEl);
+    expect(style.overflowY).toBe('auto');
+    expect(style.overflowX).toBe('hidden');
+  });
 });
