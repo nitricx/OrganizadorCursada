@@ -131,4 +131,11 @@ export class CourseCardComponent {
   onMouseLeave(): void {
     this.mouseLeft.emit();
   }
+
+  onTogglePause(event: Event): void {
+    event.stopPropagation();
+    const c = this.course();
+    const nextStatus = c.status === 'on-hold' ? 'pending' : 'on-hold';
+    this.courseService.setCourseStatus(c.id, nextStatus);
+  }
 }
