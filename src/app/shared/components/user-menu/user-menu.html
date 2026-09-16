@@ -20,7 +20,7 @@
   </button>
 
   <mat-menu #googleUserMenu="matMenu" xPosition="before" class="google-account-menu-panel">
-    <div class="google-card-container" (click)="$event.stopPropagation()">
+    <div class="google-card-container" (click)="$event.stopPropagation()" (keyup)="$event.stopPropagation()" tabindex="-1">
       <!-- Top header bar: Email & Close X button -->
       <div class="google-card-topbar">
         <span class="google-user-email">{{ user.email }}</span>
@@ -75,6 +75,7 @@
             [class.active]="themeService.mode() === 'light'"
             (click)="themeService.setMode('light')"
             matTooltip="Modo Claro"
+            aria-label="Modo Claro"
           >
             <mat-icon>light_mode</mat-icon>
             <span>Claro</span>
@@ -85,6 +86,7 @@
             [class.active]="themeService.mode() === 'dark'"
             (click)="themeService.setMode('dark')"
             matTooltip="Modo Oscuro"
+            aria-label="Modo Oscuro"
           >
             <mat-icon>dark_mode</mat-icon>
             <span>Oscuro</span>
@@ -95,6 +97,7 @@
             [class.active]="themeService.mode() === 'system'"
             (click)="themeService.setMode('system')"
             matTooltip="Seguir tema del sistema"
+            aria-label="Tema del sistema"
           >
             <mat-icon>desktop_windows</mat-icon>
             <span>Sistema</span>
@@ -123,7 +126,7 @@
   </button>
 
   <mat-menu #guestUserMenu="matMenu" xPosition="before" class="google-account-menu-panel">
-    <div class="google-card-container" (click)="$event.stopPropagation()">
+    <div class="google-card-container" (click)="$event.stopPropagation()" (keyup)="$event.stopPropagation()" tabindex="-1">
       <div class="google-card-topbar">
         <span class="google-user-email">Sin iniciar sesión</span>
         <button mat-icon-button class="google-close-btn" (click)="guestMenuTrigger.closeMenu()" aria-label="Cerrar">
@@ -163,6 +166,7 @@
             [class.active]="themeService.mode() === 'light'"
             (click)="themeService.setMode('light')"
             matTooltip="Modo Claro"
+            aria-label="Modo Claro"
           >
             <mat-icon>light_mode</mat-icon>
             <span>Claro</span>
@@ -173,6 +177,7 @@
             [class.active]="themeService.mode() === 'dark'"
             (click)="themeService.setMode('dark')"
             matTooltip="Modo Oscuro"
+            aria-label="Modo Oscuro"
           >
             <mat-icon>dark_mode</mat-icon>
             <span>Oscuro</span>
@@ -183,6 +188,7 @@
             [class.active]="themeService.mode() === 'system'"
             (click)="themeService.setMode('system')"
             matTooltip="Seguir tema del sistema"
+            aria-label="Tema del sistema"
           >
             <mat-icon>desktop_windows</mat-icon>
             <span>Sistema</span>

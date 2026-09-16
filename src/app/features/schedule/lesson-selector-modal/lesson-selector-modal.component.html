@@ -1,5 +1,5 @@
 @if (isOpen() && course()) {
-  <div class="modal-backdrop" (click)="closeModal()">
+  <div class="modal-backdrop" (click)="closeModal()" (keyup.escape)="closeModal()" tabindex="-1">
     <div class="modal-card mat-elevation-z8" (click)="$event.stopPropagation()" role="dialog" aria-modal="true" [attr.aria-labelledby]="'modal-title-' + course()?.id">
       <header class="modal-header">
         <div>
@@ -35,6 +35,7 @@
                   [checked]="isCurrentSelected"
                   (change)="selectLesson(lesson.id)"
                   (click)="$event.stopPropagation()"
+                  [attr.aria-label]="'Comisión ' + lesson.professor"
                 ></mat-radio-button>
               </div>
               <div class="lesson-details">

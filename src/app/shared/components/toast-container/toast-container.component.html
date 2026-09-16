@@ -1,4 +1,4 @@
-<div class="toast-container" role="region" aria-label="Notificaciones" aria-live="polite">
+<section class="toast-container" aria-label="Notificaciones" aria-live="polite">
   @for (toast of toastService.toasts(); track toast.id) {
     <div class="toast-item" [class]="'toast-' + toast.type">
       <mat-icon class="toast-icon">{{ getIcon(toast.type) }}</mat-icon>
@@ -13,4 +13,4 @@
       </button>
     </div>
   }
-</div>
+</section>

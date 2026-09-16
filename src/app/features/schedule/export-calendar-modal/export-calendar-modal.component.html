@@ -1,4 +1,4 @@
-<div class="modal-backdrop" (click)="onClose()">
+<div class="modal-backdrop" (click)="onClose()" (keyup.escape)="onClose()" tabindex="-1">
   <div
     class="modal-card glass-panel"
     (click)="$event.stopPropagation()"
@@ -85,12 +85,17 @@
                 class="course-item-card"
                 [class.selected]="selectedEventIds().has(item.lesson.id)"
                 (click)="toggleEvent(item.lesson.id)"
+                role="button"
+                tabindex="0"
+                (keyup.enter)="toggleEvent(item.lesson.id)"
+                (keyup.space)="toggleEvent(item.lesson.id)"
               >
                 <div class="custom-checkbox">
                   <mat-checkbox
                     [checked]="selectedEventIds().has(item.lesson.id)"
                     (change)="toggleEvent(item.lesson.id)"
                     (click)="$event.stopPropagation()"
+                    [attr.aria-label]="item.course.name"
                   ></mat-checkbox>
                 </div>
                 <div class="course-info">
