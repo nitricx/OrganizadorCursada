@@ -11,8 +11,8 @@ import { RebaseConflict } from '../../../models/plan-manifest.model';
 })
 export class PlanDiffViewerComponent {
   conflicts = input<RebaseConflict[]>([]);
-  onClose = output<void>();
-  onApply = output<void>();
+  closeModal = output<void>();
+  applyChanges = output<void>();
 
   formatVal(val: unknown): string {
     if (!val) return 'Ninguna';

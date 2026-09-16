@@ -54,8 +54,8 @@ const DEFAULT_CATALOG: WorkshopEntry[] = [
   styleUrl: './workshop-hub.component.css',
 })
 export class WorkshopHubComponent implements OnInit {
-  onClose = output<void>();
-  onSubscribe = output<PlanManifest>();
+  closeModal = output<void>();
+  planSubscribed = output<PlanManifest>();
 
   private readonly toast = inject(ToastService);
   private readonly careerService = inject(CareerService);
@@ -120,9 +120,9 @@ export class WorkshopHubComponent implements OnInit {
   subscribePlan(item: WorkshopEntry): void {
     const planId = this.careerService.addCareerFromManifest(item.manifest);
     this.planService.addPlan({ id: planId, label: item.name });
-    this.onSubscribe.emit(item.manifest);
+    this.planSubscribed.emit(item.manifest);
     this.toast.show(`¡Suscrito al plan "${item.name}"!`, 'success');
-    this.onClose.emit();
+    this.closeModal.emit();
     this.router.navigate(['/home']);
   }
 }

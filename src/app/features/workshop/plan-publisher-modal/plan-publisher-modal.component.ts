@@ -19,7 +19,7 @@ import { CourseService } from '../../../services/course.service';
 })
 export class PlanPublisherModalComponent implements OnInit {
   rawPlan = input<unknown>();
-  onClose = output<void>();
+  closeModal = output<void>();
 
   private readonly sanitizer = inject(PlanSanitizerService);
   private readonly entropyScorer = inject(EntropyScorerService);
@@ -82,7 +82,7 @@ export class PlanPublisherModalComponent implements OnInit {
         `¡Plan publicado exitosamente en el Workshop! (Prueba: ${proof.proofType.toUpperCase()})`,
         'success',
       );
-      this.onClose.emit();
+      this.closeModal.emit();
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Error al publicar en el Workshop.';
       this.toast.show(message, 'error');

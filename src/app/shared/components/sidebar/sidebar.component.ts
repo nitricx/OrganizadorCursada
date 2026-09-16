@@ -19,8 +19,8 @@ export interface SidebarItem {
   imports: [RouterModule, MatListModule, MatIconModule],
 })
 export class SidebarComponent {
-  onOpenWorkshop = output<void>();
-  onOpenPublisher = output<void>();
+  openWorkshop = output<void>();
+  openPublisher = output<void>();
 
   items = computed<SidebarItem[]>(() => [
     { label: 'Home', route: '/home', icon: 'home' },
@@ -32,9 +32,9 @@ export class SidebarComponent {
 
   handleAction(item: SidebarItem): void {
     if (item.action === 'open_workshop') {
-      this.onOpenWorkshop.emit();
+      this.openWorkshop.emit();
     } else if (item.action === 'open_publisher') {
-      this.onOpenPublisher.emit();
+      this.openPublisher.emit();
     }
   }
 }

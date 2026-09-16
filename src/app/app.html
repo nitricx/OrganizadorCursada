@@ -1,6 +1,6 @@
 <mat-sidenav-container class="app-container">
   <mat-sidenav mode="side" [opened]="isOpen()" role="navigation">
-    <app-sidebar (onOpenWorkshop)="openWorkshop()" (onOpenPublisher)="openPublisher()" />
+    <app-sidebar (openWorkshop)="openWorkshop()" (openPublisher)="openPublisher()" />
   </mat-sidenav>
   <mat-sidenav-content role="main">
     <mat-toolbar class="main-toolbar">
@@ -29,7 +29,7 @@
 <!-- Plan Diff Viewer Modal -->
 @if (showDiffViewer()) {
   <app-plan-diff-viewer
-    (onClose)="showDiffViewer.set(false)"
-    (onApply)="showDiffViewer.set(false)"
+    (closeModal)="showDiffViewer.set(false)"
+    (applyChanges)="showDiffViewer.set(false)"
   />
 }
