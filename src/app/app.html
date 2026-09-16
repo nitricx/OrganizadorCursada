@@ -29,7 +29,7 @@
 <!-- Plan Diff Viewer Modal -->
 @if (showDiffViewer()) {
   <app-plan-diff-viewer
-    (onClose)="showDiffViewer.set(false)"
-    (onApply)="showDiffViewer.set(false)"
+    (closeModal)="showDiffViewer.set(false)"
+    (applyChanges)="showDiffViewer.set(false)"
   />
 }
