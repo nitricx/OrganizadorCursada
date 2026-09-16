@@ -47,6 +47,15 @@ export const COURSE_STATUS_CONFIG: Record<CourseStatus, CourseStatusConfig> = {
     color: '#044e3a',
     borderColor: '#06d6a0',
   },
+  'on-hold': {
+    key: 'on-hold',
+    label: 'En Pausa',
+    tag: 'en pausa',
+    symbol: '',
+    bg: 'var(--color-background-secondary)',
+    color: 'var(--color-text-secondary)',
+    borderColor: 'var(--color-border-secondary)',
+  },
 };
 
 export const AVAILABLE_STATUS_CONFIG: CourseStatusConfig = {

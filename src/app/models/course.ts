@@ -6,9 +6,9 @@
  * - `'coursed'` (Cursada / Regular): Passed continuous assessment/attendance, pending final exam. Requires direct `cursarReq` prerequisites to be at least `'coursed'` and nested prior prerequisites to be `'approved'`.
  * - `'approved'` (Aprobada / Promocionada): Subject fully completed and credited (final exam passed or promoted). Requires direct `aprobarReq` prerequisites to be `'approved'`.
  */
-export type CourseStatus = 'pending' | 'coursing' | 'coursed' | 'approved';
+export type CourseStatus = 'pending' | 'coursing' | 'coursed' | 'approved' | 'on-hold';
 
-export type LegendFilterKey = 'pending' | 'available' | 'coursing' | 'coursed' | 'approved';
+export type LegendFilterKey = 'pending' | 'available' | 'coursing' | 'coursed' | 'approved' | 'on-hold';
 
 export enum DayOfWeek {
   Monday = 0,

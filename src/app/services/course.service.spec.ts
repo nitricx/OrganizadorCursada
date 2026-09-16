@@ -506,4 +506,23 @@ describe('CourseService - Lesson State Toggling', () => {
       expect(service.isCourseFiltered(course)).toBe(false);
     });
   });
+
+  describe('On-Hold Course Status & Prerequisite Validation', () => {
+    it('should set course status to on-hold and prevent downstream prerequisite satisfaction', () => {
+      service.setCourseStatus(1, 'on-hold');
+      const pa1 = service.getCourseById(1);
+      expect(pa1?.status).toBe('on-hold');
+
+      const canCoursePa2 = service.canChangeStatusTo(12, 'coursing');
+      expect(canCoursePa2).toBe(false);
+    });
+
+    it('should allow resuming an on-hold course back to pending', () => {
+      service.setCourseStatus(1, 'on-hold');
+      expect(service.getCourseById(1)?.status).toBe('on-hold');
+
+      service.setCourseStatus(1, 'pending');
+      expect(service.getCourseById(1)?.status).toBe('pending');
+    });
+  });
 });
