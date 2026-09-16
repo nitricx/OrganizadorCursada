@@ -23,7 +23,11 @@ export class AuthService {
   readonly loadingSignal = signal<boolean>(false);
 
   constructor() {
-    this.checkCurrentUser();
+    this.initAuth();
+  }
+
+  private initAuth(): void {
+    void this.checkCurrentUser();
     this.listenToAuthEvents();
   }
 

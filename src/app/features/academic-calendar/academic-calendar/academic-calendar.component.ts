@@ -107,16 +107,7 @@ export class AcademicCalendarComponent {
     // Set the current plan ID and initialize semester list when route changes
     effect(() => {
       const id = this.currentRouteId();
-      let plans = this.planService.plans();
-
-      if (plans.length === 0) {
-        untracked(() => {
-          const careerName = this.careerService.activeCareer().name;
-          const label = careerName && careerName !== 'Sin Plan' ? careerName : 'Calendario Oficial';
-          this.planService.addPlan({ id: '1', label });
-        });
-        plans = this.planService.plans();
-      }
+      const plans = this.ensurePlansAvailable();
 
       if (!id && plans.length > 0) {
         void this.router.navigateByUrl(`/academicCalendar/plan/${plans[0].id}`, {
@@ -124,39 +115,61 @@ export class AcademicCalendarComponent {
         });
         return;
       }
+
       if (id) {
-        // Cancel edit mode when route changes
-        this.isEditingTitle.set(false);
-        untracked(() => {
-          this.courseService.setCurrentPlanId(id);
-          this.planService.setSelectedPlanId(id);
-          const stored = this.planService.getSemesterList(id);
-          if (stored.length === 0) {
-            const courses: Course[] = this.courseService.getCoursesForPlan(id);
-            const yearsFromCourses = Array.from(new Set(courses.map((c) => c.year))).sort(
-              (a, b) => a - b,
-            );
-            const years = yearsFromCourses.length > 0 ? yearsFromCourses : [1, 2, 3, 4, 5];
-            const startingYear = this.planService.getStartingYear(id);
-            const base = years.flatMap((year) => [
-              {
-                id: `Y${year}Q1`,
-                courseYear: year,
-                courseQ: 1,
-                ...this.planService.getDefaultSemesterDates(startingYear, 1),
-              },
-              {
-                id: `Y${year}Q2`,
-                courseYear: year,
-                courseQ: 2,
-                ...this.planService.getDefaultSemesterDates(startingYear, 2),
-              },
-            ]);
-            this.planService.setSemesterList(id, base);
-          }
-        });
+        this.initializeRoutePlan(id);
       }
     });
+  }
+
+  private ensurePlansAvailable() {
+    let plans = this.planService.plans();
+    if (plans.length === 0) {
+      untracked(() => {
+        const careerName = this.careerService.activeCareer().name;
+        const label = careerName && careerName !== 'Sin Plan' ? careerName : 'Calendario Oficial';
+        this.planService.addPlan({ id: '1', label });
+      });
+      plans = this.planService.plans();
+    }
+    return plans;
+  }
+
+  private initializeRoutePlan(id: string): void {
+    this.isEditingTitle.set(false);
+    untracked(() => {
+      this.courseService.setCurrentPlanId(id);
+      this.planService.setSelectedPlanId(id);
+      this.ensureSemesterListPopulated(id);
+    });
+  }
+
+  private ensureSemesterListPopulated(id: string): void {
+    const stored = this.planService.getSemesterList(id);
+    if (stored.length > 0) return;
+
+    const courses: Course[] = this.courseService.getCoursesForPlan(id);
+    const yearsFromCourses = Array.from(new Set(courses.map((c) => c.year))).sort(
+      (a, b) => a - b,
+    );
+    const years = yearsFromCourses.length > 0 ? yearsFromCourses : [1, 2, 3, 4, 5];
+    const startingYear = this.planService.getStartingYear(id);
+
+    const base = years.flatMap((year) => [
+      {
+        id: `Y${year}Q1`,
+        courseYear: year,
+        courseQ: 1,
+        ...this.planService.getDefaultSemesterDates(startingYear, 1),
+      },
+      {
+        id: `Y${year}Q2`,
+        courseYear: year,
+        courseQ: 2,
+        ...this.planService.getDefaultSemesterDates(startingYear, 2),
+      },
+    ]);
+    this.planService.setSemesterList(id, base);
   }
 
   semesterList = computed(() => {
