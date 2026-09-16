@@ -14,6 +14,28 @@
         [(ngModel)]="searchQuery"
         data-testid="search-input"
       />
+      <select
+        [(ngModel)]="selectedUniversity"
+        class="filter-select app-input"
+        aria-label="Filtrar por universidad"
+        data-testid="filter-university"
+      >
+        <option value="all">Todas las Universidades</option>
+        @for (univ of universities; track univ) {
+          <option [value]="univ">{{ univ }}</option>
+        }
+      </select>
+      <select
+        [(ngModel)]="selectedFaculty"
+        class="filter-select app-input"
+        aria-label="Filtrar por facultad"
+        data-testid="filter-faculty"
+      >
+        <option value="all">Todas las Facultades</option>
+        @for (fac of faculties; track fac) {
+          <option [value]="fac">{{ fac }}</option>
+        }
+      </select>
     </div>
 
     <div class="table-container">
@@ -57,7 +79,10 @@
           @if (filteredAndSortedCatalog.length === 0) {
             <tr class="empty-row">
               <td colspan="4" class="empty-message">
-                No se encontraron planes de estudio que coincidan con la búsqueda.
+                <p>No se encontraron planes de estudio que coincidan con la búsqueda.</p>
+                <button type="button" class="btn btn-secondary" (click)="resetFilters()">
+                  Restablecer filtros
+                </button>
               </td>
             </tr>
           }

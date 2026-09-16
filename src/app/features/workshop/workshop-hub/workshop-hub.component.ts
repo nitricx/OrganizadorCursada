@@ -1,4 +1,4 @@
-import { Component, output, inject, OnInit } from '@angular/core';
+import { Component, output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
@@ -53,9 +53,9 @@ const DEFAULT_CATALOG: WorkshopEntry[] = [
   templateUrl: './workshop-hub.component.html',
   styleUrl: './workshop-hub.component.css',
 })
-export class WorkshopHubComponent implements OnInit {
-  onClose = output<void>();
-  onSubscribe = output<PlanManifest>();
+export class WorkshopHubComponent {
+  closeModal = output<void>();
+  planSubscribed = output<PlanManifest>();
 
   private readonly toast = inject(ToastService);
   private readonly careerService = inject(CareerService);
@@ -63,9 +63,27 @@ export class WorkshopHubComponent implements OnInit {
   private readonly router = inject(Router);
 
   searchQuery = '';
+  selectedUniversity = 'all';
+  selectedFaculty = 'all';
   catalog: WorkshopEntry[] = [...DEFAULT_CATALOG];
   sortColumn: SortColumn = 'name';
   sortDirection: SortDirection = 'asc';
+
+  get universities(): string[] {
+    const set = new Set(this.catalog.map((c) => c.university).filter(Boolean));
+    return Array.from(set).sort();
+  }
+
+  get faculties(): string[] {
+    const set = new Set(this.catalog.map((c) => c.faculty).filter(Boolean));
+    return Array.from(set).sort();
+  }
+
+  resetFilters(): void {
+    this.searchQuery = '';
+    this.selectedUniversity = 'all';
+    this.selectedFaculty = 'all';
+  }
 
   isSubscribed(item: WorkshopEntry): boolean {
     return this.careerService.careers().some((c) => c.id === item.id);
@@ -75,10 +93,6 @@ export class WorkshopHubComponent implements OnInit {
     event.stopPropagation();
     this.careerService.removeCareer(item.id);
     this.toast.show(`Te has desuscrito del plan "${item.name}".`, 'info');
-  }
-
-  async ngOnInit(): Promise<void> {
-    // AWS API fetch catalog when configured
   }
 
   toggleSort(column: SortColumn): void {
@@ -97,6 +111,15 @@ export class WorkshopHubComponent implements OnInit {
 
   get filteredAndSortedCatalog(): WorkshopEntry[] {
     let list = this.catalog;
+
+    if (this.selectedUniversity !== 'all') {
+      list = list.filter((c) => c.university === this.selectedUniversity);
+    }
+
+    if (this.selectedFaculty !== 'all') {
+      list = list.filter((c) => c.faculty === this.selectedFaculty);
+    }
+
     if (this.searchQuery.trim()) {
       const q = normalizeString(this.searchQuery);
       list = list.filter(
@@ -120,9 +143,9 @@ export class WorkshopHubComponent implements OnInit {
   subscribePlan(item: WorkshopEntry): void {
     const planId = this.careerService.addCareerFromManifest(item.manifest);
     this.planService.addPlan({ id: planId, label: item.name });
-    this.onSubscribe.emit(item.manifest);
+    this.planSubscribed.emit(item.manifest);
     this.toast.show(`¡Suscrito al plan "${item.name}"!`, 'success');
-    this.onClose.emit();
+    this.closeModal.emit();
     this.router.navigate(['/home']);
   }
 }
