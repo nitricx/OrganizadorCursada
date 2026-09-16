@@ -1,4 +1,4 @@
-import { Component, output, inject, OnInit } from '@angular/core';
+import { Component, output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
@@ -53,7 +53,7 @@ const DEFAULT_CATALOG: WorkshopEntry[] = [
   templateUrl: './workshop-hub.component.html',
   styleUrl: './workshop-hub.component.css',
 })
-export class WorkshopHubComponent implements OnInit {
+export class WorkshopHubComponent {
   onClose = output<void>();
   onSubscribe = output<PlanManifest>();
 
@@ -77,9 +77,6 @@ export class WorkshopHubComponent implements OnInit {
     this.toast.show(`Te has desuscrito del plan "${item.name}".`, 'info');
   }
 
-  async ngOnInit(): Promise<void> {
-    // AWS API fetch catalog when configured
-  }
 
   toggleSort(column: SortColumn): void {
     if (this.sortColumn === column) {

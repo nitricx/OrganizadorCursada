@@ -48,7 +48,11 @@ export class CareerService {
   error = this.errorSignal.asReadonly();
 
   constructor() {
-    this.fetchRemoteIndex();
+    this.initCareerService();
+  }
+
+  private initCareerService(): void {
+    void this.fetchRemoteIndex();
     const currentId = this.selectedCareerIdSignal();
     if (currentId) {
       this.loadCareerById(currentId);

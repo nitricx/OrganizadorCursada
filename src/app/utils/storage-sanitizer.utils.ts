@@ -73,14 +73,16 @@ export function isValidLesson(val: unknown): val is Lesson {
   return validId && validProf && validDay && validStart && validEnd && validStatus;
 }
 
-export function isValidCourse(val: unknown): val is Course {
-  if (typeof val !== 'object' || val === null) return false;
-  const c = val as Partial<Course>;
+function isValidCourseMetadata(c: Partial<Course>): boolean {
   const validId = typeof c.id === 'number' && !Number.isNaN(c.id);
   const validName = typeof c.name === 'string' && c.name.trim() !== '';
   const validYear = typeof c.year === 'number' && !Number.isNaN(c.year);
   const validQ = typeof c.q === 'number' && !Number.isNaN(c.q);
   const validStatus = isValidCourseStatus(c.status);
+  return validId && validName && validYear && validQ && validStatus;
+}
+
+function isValidCourseRequirements(c: Partial<Course>): boolean {
   const validCursarReq =
     Array.isArray(c.cursarReqId) &&
     c.cursarReqId.every((id) => typeof id === 'number' && !Number.isNaN(id));
@@ -88,16 +90,13 @@ export function isValidCourse(val: unknown): val is Course {
     Array.isArray(c.aprobarReqId) &&
     c.aprobarReqId.every((id) => typeof id === 'number' && !Number.isNaN(id));
   const validLessons = Array.isArray(c.lessons) && c.lessons.every(isValidLesson);
-  return (
-    validId &&
-    validName &&
-    validYear &&
-    validQ &&
-    validStatus &&
-    validCursarReq &&
-    validAprobarReq &&
-    validLessons
-  );
+  return validCursarReq && validAprobarReq && validLessons;
+}
+
+export function isValidCourse(val: unknown): val is Course {
+  if (typeof val !== 'object' || val === null) return false;
+  const c = val as Partial<Course>;
+  return isValidCourseMetadata(c) && isValidCourseRequirements(c);
 }
 
 export function sanitizeCourseStateEntry(val: unknown): CourseStateEntry {
@@ -150,6 +149,27 @@ export function sanitizeCoursesByPlan(parsed: unknown): Map<string, Course[]> {
   return map;
 }
 
+function isKeyOrphaned(
+  key: string,
+  validPlanIds: Set<string>,
+  validCareerIds: Set<string>,
+): boolean {
+  const prefixes = [
+    { prefix: 'plan-semesters-', validSet: validPlanIds },
+    { prefix: 'plan-starting-year-', validSet: validPlanIds },
+    { prefix: 'course-organizer-state-', validSet: validCareerIds },
+    { prefix: 'custom-career-', validSet: validCareerIds },
+  ];
+
+  for (const { prefix, validSet } of prefixes) {
+    if (key.startsWith(prefix)) {
+      const id = key.replace(prefix, '');
+      return !validSet.has(id);
+    }
+  }
+  return false;
+}
+
 export function cleanupOrphanedStorageKeys(
   activePlanIds: string[],
   activeCareerIds: string[],
@@ -159,24 +179,12 @@ export function cleanupOrphanedStorageKeys(
 
     const validPlanIds = new Set(activePlanIds);
     const validCareerIds = new Set(['lic-diseno-audiovisual', ...activeCareerIds]);
-
     const keysToRemove: string[] = [];
+
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);
-      if (!key) continue;
-
-      if (key.startsWith('plan-semesters-')) {
-        const planId = key.replace('plan-semesters-', '');
-        if (!validPlanIds.has(planId)) keysToRemove.push(key);
-      } else if (key.startsWith('plan-starting-year-')) {
-        const planId = key.replace('plan-starting-year-', '');
-        if (!validPlanIds.has(planId)) keysToRemove.push(key);
-      } else if (key.startsWith('course-organizer-state-')) {
-        const careerId = key.replace('course-organizer-state-', '');
-        if (!validCareerIds.has(careerId)) keysToRemove.push(key);
-      } else if (key.startsWith('custom-career-')) {
-        const careerId = key.replace('custom-career-', '');
-        if (!validCareerIds.has(careerId)) keysToRemove.push(key);
+      if (key && isKeyOrphaned(key, validPlanIds, validCareerIds)) {
+        keysToRemove.push(key);
       }
     }
 
