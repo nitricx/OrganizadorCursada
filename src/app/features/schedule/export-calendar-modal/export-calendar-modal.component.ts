@@ -41,7 +41,7 @@ export class ExportCalendarModalComponent {
   private readonly exportService = inject(CalendarExportService);
   private readonly toastService = inject(ToastService);
 
-  readonly close = output<void>();
+  readonly closed = output<void>();
 
   // State signals
   readonly activeEvents = computed(() => this.exportService.activeCoursingEvents());
@@ -120,7 +120,7 @@ export class ExportCalendarModalComponent {
       endDate: this.endDate(),
       selectedEvents: events,
     });
-    this.close.emit();
+    this.closed.emit();
   }
 
   openGoogleCalendarLinks(): void {
@@ -150,6 +150,6 @@ export class ExportCalendarModalComponent {
 
   @HostListener('window:keydown.escape')
   onClose(): void {
-    this.close.emit();
+    this.closed.emit();
   }
 }

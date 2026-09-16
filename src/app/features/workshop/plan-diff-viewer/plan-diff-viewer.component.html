@@ -1,10 +1,10 @@
-<div class="modal-backdrop" (click)="onClose.emit()">
+<div class="modal-backdrop" (click)="closeModal.emit()">
   <div class="modal-card glass-panel" (click)="$event.stopPropagation()">
     <header class="modal-header">
       <div class="header-title">
         <h3>Inspeccionador de Cambios del Plan</h3>
       </div>
-      <button class="btn-close" (click)="onClose.emit()">&times;</button>
+      <button class="btn-close" (click)="closeModal.emit()">&times;</button>
     </header>
 
     <section class="modal-body">
@@ -60,8 +60,8 @@
     </section>
 
     <footer class="modal-footer">
-      <button class="btn btn-secondary" (click)="onClose.emit()">Conservar Plan Actual</button>
-      <button class="btn btn-primary" (click)="onApply.emit()">Aplicar Cambios</button>
+      <button class="btn btn-secondary" (click)="closeModal.emit()">Conservar Plan Actual</button>
+      <button class="btn btn-primary" (click)="applyChanges.emit()">Aplicar Cambios</button>
     </footer>
   </div>
 </div>

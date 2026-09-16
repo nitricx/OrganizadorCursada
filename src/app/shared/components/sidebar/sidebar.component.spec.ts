@@ -31,7 +31,7 @@ describe('SidebarComponent', () => {
   });
 
   it('should handle action items when emitted', () => {
-    const workshopSpy = vi.spyOn(component.onOpenWorkshop, 'emit');
+    const workshopSpy = vi.spyOn(component.openWorkshop, 'emit');
     component.handleAction({ label: 'Workshop', action: 'open_workshop' });
     expect(workshopSpy).toHaveBeenCalled();
   });
