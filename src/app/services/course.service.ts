@@ -337,8 +337,8 @@ export class CourseService {
     const course = coursesList.find((c) => c.id === courseId);
     if (!course) return false;
 
-    if (targetStatus === 'pending') {
-      return true; // Always can go back to pending upstream-wise
+    if (targetStatus === 'pending' || targetStatus === 'on-hold') {
+      return true; // Always can go back to pending or on-hold upstream-wise
     }
 
     if (targetStatus === 'coursing' || targetStatus === 'coursed') {
@@ -498,7 +498,7 @@ export class CourseService {
       if (!selectedLessonId && course.lessons.length > 0) {
         selectedLessonId = course.lessons[0].id;
       }
-    } else if (targetStatus === 'pending') {
+    } else if (targetStatus === 'pending' || targetStatus === 'on-hold') {
       selectedLessonId = null;
     }
 

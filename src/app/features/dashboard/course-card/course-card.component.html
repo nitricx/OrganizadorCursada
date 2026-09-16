@@ -2,6 +2,7 @@
   [class]="'materia ' + course().status + highlightClass()"
   [attr.id]="'mat-' + course().id"
   [class.available]="allRequirementsMet() && course().status === 'pending'"
+  [class.on-hold-card]="course().status === 'on-hold'"
   (click)="onCardClick()"
   (keydown)="onKeyDown($event)"
   (mouseenter)="onMouseEnter()"
@@ -12,9 +13,20 @@
 >
   <span>{{ course().name }}</span>
   @if (statusTag()) {
-    <span class="tag">{{ statusTag() }}</span>
+    <span class="tag" [class.on-hold-tag]="course().status === 'on-hold'">{{ statusTag() }}</span>
   }
-  @if (course().status === 'coursing' && course().lessons.length > 1) {
+  @if (course().status === 'on-hold') {
+    <button
+      type="button"
+      class="btn-pause-toggle"
+      (click)="onTogglePause($event)"
+      title="Reanudar materia"
+      aria-label="Reanudar materia postergada"
+    >
+      <mat-icon class="badge-icon">play_arrow</mat-icon>
+      <span>Reanudar</span>
+    </button>
+  } @else if (course().status === 'coursing' && course().lessons.length > 1) {
     <button
       type="button"
       class="btn-commission-badge"
